@@ -50,7 +50,7 @@ $(BUILD)/example1: $(SQLITE_EXAMPLE1_OBJECTS)
 	$(CXX) -o $@ $(SQLITE_EXAMPLE1_OBJECTS) $(LINK_FLAGS) -lsqlite3
 
 
-$(BUILD)/main.o: src/main.cpp
+$(BUILD)/main.o: src/example1/main.cpp
 	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
 
 

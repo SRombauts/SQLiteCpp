@@ -186,11 +186,23 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\src\SQLiteC++\SQLiteC++.cpp"
+				RelativePath=".\src\SQLiteC++\Database.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\SQLiteC++\Database.h"
 				>
 			</File>
 			<File
 				RelativePath=".\src\SQLiteC++\SQLiteC++.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\SQLiteC++\Statement.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\SQLiteC++\Statement.h"
 				>
 			</File>
 		</Filter>

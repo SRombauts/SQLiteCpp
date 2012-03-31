@@ -45,7 +45,7 @@ public:
      * @param[in] apFilename    UTF-8 path/uri to the database file ("filename" sqlite3 parameter)
      * @param[in] aFlags        SQLITE_OPEN_READONLY/SQLITE_OPEN_READWRITE/SQLITE_OPEN_CREATE...
      */
-    explicit Database(const char* apFilename, const int aFlags = SQLITE_OPEN_READONLY) throw(SQLite::Exception);
+    explicit Database(const char* apFilename, const int aFlags = SQLITE_OPEN_READONLY); // throw(SQLite::Exception);
 
     /**
      * @brief Close the SQLite database connection.
@@ -58,12 +58,12 @@ public:
     /**
      * @brief Register a Statement object (a SQLite query)
      */
-    void registerStatement(Statement& aStatement) throw(SQLite::Exception);
+    void registerStatement(Statement& aStatement); // throw(SQLite::Exception);
 
     /**
      * @brief Unregister a Statement object
      */
-    void unregisterStatement(Statement& aStatement) throw(SQLite::Exception);
+    void unregisterStatement(Statement& aStatement); // throw(SQLite::Exception);
 
     /**
      * @brief Filename used to open the database

@@ -32,7 +32,7 @@ public:
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    explicit Statement(Database &aDatabase, const char* apQuery) throw(SQLite::Exception);
+    explicit Statement(Database &aDatabase, const char* apQuery); // throw(SQLite::Exception);
 
     /**
      * @brief Finalize and unregister the SQL query from the SQLite Database Connection.
@@ -42,37 +42,42 @@ public:
     /**
      * @brief Reset the statement to make it ready for a new execution.
      */
-    void reset(void) throw(SQLite::Exception);
+    void reset(void); // throw(SQLite::Exception);
 
     /**
      * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
      */
-    void bind(const int aIndex, const int&           aValue)   throw(SQLite::Exception);
+    void bind(const int aIndex, const int&           aValue)  ; // throw(SQLite::Exception);
     /**
      * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
      */
-    void bind(const int aIndex, const sqlite3_int64& aValue)   throw(SQLite::Exception);
+    void bind(const int aIndex, const sqlite3_int64& aValue)  ; // throw(SQLite::Exception);
     /**
      * @brief Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
      */
-    void bind(const int aIndex, const double&        aValue)   throw(SQLite::Exception);
+    void bind(const int aIndex, const double&        aValue)  ; // throw(SQLite::Exception);
     /**
      * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
      */
-    void bind(const int aIndex, const std::string&   aValue)   throw(SQLite::Exception);
+    void bind(const int aIndex, const std::string&   aValue)  ; // throw(SQLite::Exception);
     /**
      * @brief Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
      */
-    void bind(const int aIndex, const char*          apValue)  throw(SQLite::Exception);
+    void bind(const int aIndex, const char*          apValue) ; // throw(SQLite::Exception);
     /**
      * @brief Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
      */
-    void bind(const int aIndex) throw(SQLite::Exception); // bind NULL value
+    void bind(const int aIndex); // throw(SQLite::Exception); // bind NULL value
 
     /**
      * @brief Execute a step of the query to fetch one row of results.
      */
-    bool executeStep(void) throw(SQLite::Exception);
+    bool executeStep(void); // throw(SQLite::Exception);
+
+    /**
+     * @brief Return the number of columns in the result set returned by the prepared statement
+     */
+    int getColumnCount(void) const throw(); // nothrow
 
     /**
      * @brief UTF-8 SQL Query.

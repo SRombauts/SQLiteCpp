@@ -11,6 +11,7 @@ int main (void)
 
         // Compile a SQL query, containing one parameter (index 1)
         SQLite::Statement   query(db, "SELECT * FROM test WHERE size>?");
+        std::cout << "SQLite statement compiled (" << query.getColumnCount () << " collumns in the result)\n";
         // Bind an integer value "6" to the first parameter of the SQL query
         query.bind(1, 6);
 

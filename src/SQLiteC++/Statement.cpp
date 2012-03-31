@@ -16,7 +16,7 @@ namespace SQLite
 {
 
 // Compile and register the SQL query for the provided SQLite Database Connection
-Statement::Statement(Database &aDatabase, const char* apQuery) throw(SQLite::Exception) :
+Statement::Statement(Database &aDatabase, const char* apQuery) : // throw(SQLite::Exception)
     mpStmt(NULL),
     mDatabase(aDatabase),
     mQuery(apQuery),
@@ -43,7 +43,7 @@ Statement::~Statement(void) throw() // nothrow
 }
 
 // Reset the statement to make it ready for a new execution
-void Statement::reset(void) throw(SQLite::Exception)
+void Statement::reset(void) // throw(SQLite::Exception)
 {
     mbDone = false;
     int ret = sqlite3_reset(mpStmt);
@@ -54,7 +54,7 @@ void Statement::reset(void) throw(SQLite::Exception)
 }
 
 // Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const int& aValue) throw(SQLite::Exception)
+void Statement::bind(const int aIndex, const int& aValue) // throw(SQLite::Exception)
 {
     int ret = sqlite3_bind_int(mpStmt, aIndex, aValue);
     if (SQLITE_OK != ret)
@@ -64,7 +64,7 @@ void Statement::bind(const int aIndex, const int& aValue) throw(SQLite::Exceptio
 }
 
 // Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const sqlite3_int64& aValue) throw(SQLite::Exception)
+void Statement::bind(const int aIndex, const sqlite3_int64& aValue) // throw(SQLite::Exception)
 
 {
     int ret = sqlite3_bind_int64(mpStmt, aIndex, aValue);
@@ -75,7 +75,7 @@ void Statement::bind(const int aIndex, const sqlite3_int64& aValue) throw(SQLite
 }
 
 // Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const double& aValue) throw(SQLite::Exception)
+void Statement::bind(const int aIndex, const double& aValue) // throw(SQLite::Exception)
 {
     int ret = sqlite3_bind_double(mpStmt, aIndex, aValue);
     if (SQLITE_OK != ret)
@@ -85,7 +85,7 @@ void Statement::bind(const int aIndex, const double& aValue) throw(SQLite::Excep
 }
 
 // Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const std::string& aValue) throw(SQLite::Exception)
+void Statement::bind(const int aIndex, const std::string& aValue) // throw(SQLite::Exception)
 {
     int ret = sqlite3_bind_text(mpStmt, aIndex, aValue.c_str(), aValue.size(), SQLITE_TRANSIENT);
     if (SQLITE_OK != ret)
@@ -95,7 +95,7 @@ void Statement::bind(const int aIndex, const std::string& aValue) throw(SQLite::
 }
 
 // Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const char* apValue) throw(SQLite::Exception)
+void Statement::bind(const int aIndex, const char* apValue) // throw(SQLite::Exception)
 {
     int ret = sqlite3_bind_text(mpStmt, aIndex, apValue, -1, SQLITE_TRANSIENT);
     if (SQLITE_OK != ret)
@@ -105,7 +105,7 @@ void Statement::bind(const int aIndex, const char* apValue) throw(SQLite::Except
 }
 
 // Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex) throw(SQLite::Exception)
+void Statement::bind(const int aIndex) // throw(SQLite::Exception)
 {
     int ret = sqlite3_bind_null(mpStmt, aIndex);
     if (SQLITE_OK != ret)
@@ -115,7 +115,7 @@ void Statement::bind(const int aIndex) throw(SQLite::Exception)
 }
 
 // Execute a step of the query to fetch one row of results
-bool Statement::executeStep(void) throw(SQLite::Exception)
+bool Statement::executeStep(void) // throw(SQLite::Exception)
 {
     bool bOk = false;
 
@@ -140,5 +140,10 @@ bool Statement::executeStep(void) throw(SQLite::Exception)
     return bOk;
 }
 
+// Return the number of columns in the result set returned by the prepared statement
+int Statement::getColumnCount(void) const throw() // nothrow
+{
+    return sqlite3_column_count(mpStmt);
+}
 
 };  // namespace SQLite

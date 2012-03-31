@@ -16,7 +16,7 @@ namespace SQLite
 {
 
 // Open the provided database UTF-8 filename.
-Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READONLY*/) throw(SQLite::Exception) :
+Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READONLY*/) : // throw(SQLite::Exception)
     mpSQLite(NULL),
     mFilename(apFilename)
 {
@@ -50,13 +50,13 @@ Database::~Database(void) throw() // nothrow
 }
 
 // Register a Statement object (a SQLite query)
-void Database::registerStatement(Statement& aStatement) throw(SQLite::Exception)
+void Database::registerStatement(Statement& aStatement) // throw(SQLite::Exception)
 {
     mStatementList.push_back(&aStatement);
 }
 
 // Unregister a Statement object
-void Database::unregisterStatement(Statement& aStatement) throw(SQLite::Exception)
+void Database::unregisterStatement(Statement& aStatement) // throw(SQLite::Exception)
 {
     std::vector<Statement*>::iterator   iStatement;
     iStatement = std::find(mStatementList.begin(), mStatementList.end(), &aStatement);

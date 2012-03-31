@@ -16,9 +16,9 @@ namespace SQLite
 {
 
 // Open the provided database UTF-8 filename.
-    Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READONLY*/) throw (SQLite::Exception) :
+Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READONLY*/) throw(SQLite::Exception) :
     mpSQLite(NULL),
-    mFilename (apFilename)
+    mFilename(apFilename)
 {
     int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, NULL);
     if (SQLITE_OK != ret)
@@ -30,7 +30,7 @@ namespace SQLite
 }
 
 // Close the SQLite database connection.
-Database::~Database(void) throw () // nothrow
+Database::~Database(void) throw() // nothrow
 {
     // check for undestroyed statements
     std::vector<Statement*>::iterator   iStatement;
@@ -50,19 +50,19 @@ Database::~Database(void) throw () // nothrow
 }
 
 // Register a Statement object (a SQLite query)
-void Database::registerStatement (Statement& aStatement) throw (SQLite::Exception)
+void Database::registerStatement(Statement& aStatement) throw(SQLite::Exception)
 {
-    mStatementList.push_back (&aStatement);
+    mStatementList.push_back(&aStatement);
 }
 
 // Unregister a Statement object
-void Database::unregisterStatement (Statement& aStatement) throw (SQLite::Exception)
+void Database::unregisterStatement(Statement& aStatement) throw(SQLite::Exception)
 {
     std::vector<Statement*>::iterator   iStatement;
-    iStatement = std::find (mStatementList.begin(), mStatementList.end(), &aStatement);
+    iStatement = std::find(mStatementList.begin(), mStatementList.end(), &aStatement);
     if (mStatementList.end() != iStatement)
     {
-        mStatementList.erase (iStatement);
+        mStatementList.erase(iStatement);
     }
 }
 

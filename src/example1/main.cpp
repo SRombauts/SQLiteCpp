@@ -3,25 +3,26 @@
 
 int main (void)
 {
-    std::cout << "Hello SQLite.hpp\n";
     try
     {
+        // Open a database file
         SQLite::Database    db("example.db3");
-        std::cout << db.getFilename().c_str() << " onpened\n";
+        std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
-        SQLite::Statement   stmt(db, "SELECT * FROM test");
-        std::cout << "statement created\n";
+        // Compile a SQL query, containing one parameter (index 1)
+        SQLite::Statement   query(db, "SELECT * FROM test WHERE size>?");
+        // Bind an integer value "6" to the first parameter of the SQL query
+        query.bind(1, 6);
 
-        while (stmt.executeStep())
+        while (query.executeStep())
         {
             std::cout << "executeStep\n";
         }
     }
     catch (std::exception& e)
     {
-        std::cout << "SQLite exception: " <<  e.what() << std::endl;
+        std::cout << "SQLite exception: " << e.what() << std::endl;
     }
-    std::cout << "Bye SQLite.hpp\n";
 
     return 0;
 }

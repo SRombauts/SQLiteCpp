@@ -10,7 +10,7 @@
 #pragma once
 
 #include <sqlite3.h>
-#include <stdexcept>
+#include "Exception.h"
 
 namespace SQLite
 {
@@ -32,24 +32,24 @@ public:
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    explicit Statement(Database &aDatabase, const char* apQuery);
+    explicit Statement(Database &aDatabase, const char* apQuery) throw (SQLite::Exception);
 
     /**
      * @brief Finalize and unregister the SQL query from the SQLite Database Connection.
      */
-    virtual ~Statement(void);
+    virtual ~Statement(void) throw (); // nothrow
 
     /**
      * @brief Reset the statement to make it ready for a new execution.
      */
-    void reset (void);
+    void reset (void) throw (SQLite::Exception);
 
     // TODO bind 
 
     /**
      * @brief Execute a step of the query to fetch one row of results.
      */
-    bool executeStep (void);
+    bool executeStep (void) throw (SQLite::Exception);
 
     /**
      * @brief UTF-8 SQL Query.

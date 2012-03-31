@@ -1,6 +1,6 @@
 /**
  * @file  SQLiteC++.h
- * @brief SQLiteC++ is a smart and simple C++ SQLite3 wrapper.
+ * @brief SQLiteC++ is a smart and simple C++ SQLite3 wrapper. This file is only "easy include" for other files.
  *
  * Copyright (c) 2012 Sebastien Rombauts (sebastien dot rombauts at gmail dot com)
  *

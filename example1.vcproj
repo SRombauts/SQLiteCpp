@@ -181,12 +181,12 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="sqlite_hpp"
+			Name="SQLiteC++"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\src\sqlite.hpp"
+				RelativePath=".\src\SQLiteC++\SQLiteC++.h"
 				>
 			</File>
 		</Filter>

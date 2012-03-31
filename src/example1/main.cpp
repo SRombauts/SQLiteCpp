@@ -1,6 +1,5 @@
 #include <iostream>
-#include "../sqlite.hpp"
-
+#include "../SQLiteC++/SQLiteC++.h"
 
 int main (void)
 {

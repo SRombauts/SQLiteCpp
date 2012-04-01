@@ -44,40 +44,65 @@ public:
      */
     void reset(void); // throw(SQLite::Exception);
 
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
-     * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+     * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex, const int&           aValue)  ; // throw(SQLite::Exception);
     /**
-     * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+     * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex, const sqlite3_int64& aValue)  ; // throw(SQLite::Exception);
     /**
-     * @brief Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+     * @brief Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex, const double&        aValue)  ; // throw(SQLite::Exception);
     /**
-     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex, const std::string&   aValue)  ; // throw(SQLite::Exception);
     /**
-     * @brief Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+     * @brief Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex, const char*          apValue) ; // throw(SQLite::Exception);
     /**
-     * @brief Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+     * @brief Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex); // throw(SQLite::Exception); // bind NULL value
+
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * @brief Execute a step of the query to fetch one row of results.
      */
     bool executeStep(void); // throw(SQLite::Exception);
 
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
-     * @brief Return the number of columns in the result set returned by the prepared statement
+     * @brief Return the integer value of the column specified by its index starting at 0 (aIndex >= 0)
      */
-    int getColumnCount(void) const throw(); // nothrow
+    int             getColumnInt   (const int aIndex) const; // throw(SQLite::Exception);
+    /**
+     * @brief Return the 64bits integer value of the column specified by its index starting at 0 (aIndex >= 0)
+     */
+    sqlite3_int64   getColumnInt64 (const int aIndex) const; // throw(SQLite::Exception);
+    /**
+     * @brief Return the double (64bits float) value of the column specified by its index starting at 0 (aIndex >= 0)
+     */
+    double          getColumnDouble(const int aIndex) const; // throw(SQLite::Exception);
+    /**
+     * @brief Return the text value (NULL terminated string) of the column specified by its index starting at 0 (aIndex >= 0)
+     */
+    const char*     getColumnText  (const int aIndex) const; // throw(SQLite::Exception);
+
+    /**
+     * @brief Test if the column is NULL
+     */
+    bool            isColumnNull   (const int aIndex) const; // throw(SQLite::Exception);
+
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * @brief UTF-8 SQL Query.
@@ -85,6 +110,22 @@ public:
     inline const std::string& getQuery(void) const
     {
         return mQuery;
+    }
+
+    /**
+     * @brief Return the number of columns in the result set returned by the prepared statement
+     */
+    inline int getColumnCount(void) const
+    {
+        return mColumnCount;
+    }
+
+    /**
+     * @brief True when the last row is fetched with executeStep().
+     */
+    inline bool isOk(void) const
+    {
+        return mbOk;
     }
 
     /**
@@ -96,10 +137,12 @@ public:
     }
 
 private:
-    sqlite3_stmt*   mpStmt;     //!< Pointeur to SQLite Statement Object
-    Database&       mDatabase;  //!< Reference to the SQLite Database Connection
-    std::string     mQuery;     //!< UTF-8 SQL Query
-    bool            mbDone;     //!< True when the last row is fetched with executeStep()
+    sqlite3_stmt*   mpStmt;         //!< Pointeur to SQLite Statement Object
+    Database&       mDatabase;      //!< Reference to the SQLite Database Connection
+    std::string     mQuery;         //!< UTF-8 SQL Query
+    int             mColumnCount;   //!< Number of column in the result of the prepared statement
+    bool            mbOk;           //!< True when a row has been fetched with executeStep()
+    bool            mbDone;         //!< True when the last executeStep() had no more row to fetch
 };
 
 

@@ -137,6 +137,12 @@ public:
     }
 
 private:
+    /**
+     * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
+     */
+    void check(const int aRet) const; // throw(SQLite::Exception);
+
+private:
     sqlite3_stmt*   mpStmt;         //!< Pointeur to SQLite Statement Object
     Database&       mDatabase;      //!< Reference to the SQLite Database Connection
     std::string     mQuery;         //!< UTF-8 SQL Query

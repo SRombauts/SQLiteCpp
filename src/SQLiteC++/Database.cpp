@@ -45,7 +45,8 @@ Database::~Database(void) throw() // nothrow
     int ret = sqlite3_close(mpSQLite);
     if (SQLITE_OK != ret)
     {
-        std::cout << sqlite3_errmsg(mpSQLite);
+        // Never throw an exception in a destructor
+        //std::cout << sqlite3_errmsg(mpSQLite);
     }
 }
 

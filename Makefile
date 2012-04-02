@@ -34,7 +34,6 @@ SQLITE_EXAMPLE1_OBJECTS =  \
 	$(BUILD)/main.o \
 	$(BUILD)/Database.o \
 	$(BUILD)/Statement.o \
-	$(BUILD)/Column.o \
 	
 ### Targets: ###
 
@@ -60,9 +59,6 @@ $(BUILD)/Database.o: src/SQLiteC++/Database.cpp
 	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
 
 $(BUILD)/Statement.o: src/SQLiteC++/Statement.cpp
-	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
-
-$(BUILD)/Column.o: src/SQLiteC++/Column.cpp
 	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
 
 

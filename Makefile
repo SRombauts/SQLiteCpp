@@ -31,7 +31,10 @@ CPPDEPS = -MT $@ -MF`echo $@ | sed -e 's,\.o$$,.d,'` -MD -MP
 
 SQLITE_CXXFLAGS = $(BUILD_FLAGS) $(CXXFLAGS)
 SQLITE_EXAMPLE1_OBJECTS =  \
-	$(BUILD)/main.o
+	$(BUILD)/main.o \
+	$(BUILD)/Database.o \
+	$(BUILD)/Statement.o \
+	$(BUILD)/Column.o \
 	
 ### Targets: ###
 
@@ -47,10 +50,19 @@ $(BUILD): $(BUILD)/
 
 
 $(BUILD)/example1: $(SQLITE_EXAMPLE1_OBJECTS)
-	$(CXX) -o $@ $(SQLITE_EXAMPLE1_OBJECTS) $(LINK_FLAGS) -lsqlite3
+	$(CXX) -o $@ $(SQLITE_EXAMPLE1_OBJECTS) $(LINK_FLAGS) -lsqlite3 -lpthread 
 
 
 $(BUILD)/main.o: src/example1/main.cpp
+	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
+
+$(BUILD)/Database.o: src/SQLiteC++/Database.cpp
+	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
+
+$(BUILD)/Statement.o: src/SQLiteC++/Statement.cpp
+	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
+
+$(BUILD)/Column.o: src/SQLiteC++/Column.cpp
 	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
 
 

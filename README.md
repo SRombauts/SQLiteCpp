@@ -27,7 +27,7 @@ To use it in your project, you only need to add the 6 SQLiteC++ source files
 in your project code base (not the main.cpp example file).
 
 Tot get started, look at the provided examples in main.cpp, starting by :
-<code>
+<code><pre>
 int main (void)
 {
     try
@@ -62,7 +62,7 @@ int main (void)
         std::cout << "SQLite exception: " << e.what() << std::endl;
     }
 }
-</code>
+</pre></code>
 
 For other simple C++ SQLite wrappers look also at:
 

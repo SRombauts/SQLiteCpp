@@ -34,15 +34,15 @@ int main (void)
     {
         // Open a database file
         SQLite::Database    db("example.db3");
-        std::cout << "SQLite database file " << db.getFilename().c_str() << " opened successfully\n";
-
+        std::cout << "database file: " << db.getFilename().c_str() << " opened successfully\n";
+        
         // Compile a SQL query, containing one parameter (index 1)
         SQLite::Statement   query(db, "SELECT * FROM test WHERE size > ?");
-        std::cout << "SQLite statement " << query.getQuery().c_str() << " compiled (" << query.getColumnCount () << " columns in the result)\n";
+        std::cout << "statement: " << query.getQuery().c_str() << " compiled (" << query.getColumnCount () << " columns)\n";
         
         // Bind the integer value 6 to the first parameter of the SQL query
         query.bind(1, 6);
-
+        
         // Loop to execute the query step by step, to get one a row of results at a time
         while (query.executeStep())
         {
@@ -50,16 +50,16 @@ int main (void)
             int         id      = query.getColumn(0); // = query.getColumn(0).getInt()
             std::string value   = query.getColumn(1); // = query.getColumn(1).getText()
             int         size    = query.getColumn(2); // = query.getColumn(2).getInt()
-
+            
             std::cout << "row : (" << id << ", " << value << ", " << size << ")\n";
         }
-
+        
         // Reset the query to use it again later
         query.reset();
     }
     catch (std::exception& e)
     {
-        std::cout << "SQLite exception: " << e.what() << std::endl;
+        std::cout << "exception: " << e.what() << std::endl;
     }
 }
 </pre></code>

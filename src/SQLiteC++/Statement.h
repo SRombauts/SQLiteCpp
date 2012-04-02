@@ -137,6 +137,11 @@ public:
     }
 
 private:
+    // Database must be non copyable
+    Statement(void);
+    Statement(const Statement&);
+    Statement& operator=(const Statement&);
+
     /**
      * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      */

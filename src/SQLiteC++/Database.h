@@ -72,7 +72,13 @@ public:
     {
         return mFilename;
     }
-    
+
+private:
+    // Database must be non copyable
+    Database(void);
+    Database(const Database&);
+    Database& operator=(const Database&);
+
 private:
     sqlite3*                mpSQLite;       //!< Pointer to SQLite Database Connection Handle
     std::string             mFilename;      //!< UTF-8 filename used to open the database

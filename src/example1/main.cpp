@@ -77,7 +77,7 @@ int main (void)
             std::string value   = query.getColumn(1); // = query.getColumn(1).getText()
             int         size    = query.getColumn(2); // = query.getColumn(2).getInt()
 
-            std::cout << "row : (" << id << ", " << value << ", " << size << ")\n";
+            std::cout << "row : (" << id << ", " << value.c_str() << ", " << size << ")\n";
         }
 
         // Reset the query to use it again

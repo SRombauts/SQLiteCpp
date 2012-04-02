@@ -17,7 +17,13 @@ int main (void)
 
         while (query.executeStep())
         {
-            std::cout << "row : (" << query.getColumn(0).getInt() << ", " << query.getColumn(1).getText() << ", " << query.getColumn(2).getInt() << ")\n";
+            int         id      = query.getColumn(0); // = query.getColumn(0).getInt()
+          //const char* pvalue  = query.getColumn(1); // = query.getColumn(1).getText()
+            std::string value   = query.getColumn(1); // = query.getColumn(1).getText()
+            int         size    = query.getColumn(2); // = query.getColumn(2).getInt()
+
+            std::cout << "row : (" << id << ", " << value << ", " << size << ")\n";
+            std::cout << "row : (" << query.getColumn(0) << ", " << query.getColumn(1) << ", " << query.getColumn(2) << ")\n";
         }
     }
     catch (std::exception& e)

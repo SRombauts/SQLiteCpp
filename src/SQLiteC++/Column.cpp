@@ -53,3 +53,11 @@ const char * Column::getText(void) const // throw(SQLite::Exception)
 
 
 };  // namespace SQLite
+
+
+// Standard std::ostream inserter
+std::ostream& operator<<(std::ostream &stream, SQLite::Column const& column)
+{
+    stream << column.getText();
+    return stream;
+}

@@ -39,7 +39,7 @@ Database::~Database(void) throw() // nothrow
          iStatement++)
     {
         // TODO (*iStatement)->Finalize(); ?
-        std::cout << "Unregistered statement: " << (*iStatement)->getQuery().c_str() << " !\n";
+        //std::cout << "Unregistered statement: " << (*iStatement)->getQuery().c_str() << " !\n";
     }
 
     int ret = sqlite3_close(mpSQLite);

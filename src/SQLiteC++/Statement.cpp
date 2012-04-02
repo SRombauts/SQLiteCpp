@@ -118,7 +118,7 @@ bool Statement::executeStep(void) // throw(SQLite::Exception)
 }
 
 // Return a copy of the column data specified by its index starting at 0
-Column Statement::getColumn(const int aIndex) const // throw(SQLite::Exception)
+Statement::Column Statement::getColumn(const int aIndex) const // throw(SQLite::Exception)
 {
     if (false == mbOk)
     {
@@ -159,5 +159,55 @@ void Statement::check(const int aRet) const // throw(SQLite::Exception)
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Implementation of the inner class Statement::Column
+//
+// Warning : you should never try to use directly a Column object, nor copying it;
+//           is is only an Adapter class designed to convert the result value
+//           of Statement::getColumn() to the data type you want
+//
+
+// Encapsulation of a Column in a Row of the result.
+Statement::Column::Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, int aIndex) throw() : // nothrow
+    mpSQLite(apSQLite),
+    mpStmt(apStmt),
+    mIndex(aIndex)
+{
+}
+
+Statement::Column::~Column(void) throw() // nothrow
+{
+}
+
+// Return the integer value of the column specified by its index starting at 0
+int Statement::Column::getInt(void) const throw() // nothrow
+{
+    return sqlite3_column_int(mpStmt, mIndex);
+}
+
+// Return the 64bits integer value of the column specified by its index starting at 0
+sqlite3_int64 Statement::Column::getInt64(void) const throw() // nothrow
+{
+    return sqlite3_column_int64(mpStmt, mIndex);
+}
+
+// Return the double value of the column specified by its index starting at 0
+double Statement::Column::getDouble(void) const throw() // nothrow
+{
+    return sqlite3_column_double(mpStmt, mIndex);
+}
+
+// Return the text value (NULL terminated string) of the column specified by its index starting at 0
+const char * Statement::Column::getText(void) const throw() // nothrow
+{
+    return (const char*)sqlite3_column_text(mpStmt, mIndex);
+}
+
+// Standard std::ostream inserter
+std::ostream& operator<<(std::ostream &stream, const Statement::Column& column)
+{
+    stream << column.getText();
+    return stream;
+}
 
 };  // namespace SQLite

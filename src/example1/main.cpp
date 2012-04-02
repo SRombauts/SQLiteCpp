@@ -11,13 +11,13 @@ int main (void)
 
         // Compile a SQL query, containing one parameter (index 1)
         SQLite::Statement   query(db, "SELECT * FROM test WHERE size>?");
-        std::cout << "SQLite statement '" << query.getQuery().c_str() << "' compiled (" << query.getColumnCount () << " collumns in the result)\n";
+        std::cout << "SQLite statement '" << query.getQuery().c_str() << "' compiled (" << query.getColumnCount () << " columns in the result)\n";
         // Bind an integer value "6" to the first parameter of the SQL query
         query.bind(1, 6);
 
         while (query.executeStep())
         {
-            std::cout << "row : (" << query.getColumnInt(0) << ", " << query.getColumnText(1) << ", " << query.getColumnInt(2) << ")\n";
+            std::cout << "row : (" << query.getColumn(0).getInt() << ", " << query.getColumn(1).getText() << ", " << query.getColumn(2).getInt() << ")\n";
         }
     }
     catch (std::exception& e)

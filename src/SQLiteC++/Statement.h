@@ -11,6 +11,7 @@
 
 #include <sqlite3.h>
 #include "Exception.h"
+#include "Column.h"
 
 namespace SQLite
 {
@@ -81,26 +82,18 @@ public:
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * @brief Return the integer value of the column specified by its index starting at 0 (aIndex >= 0)
+     * @brief Return a copie of the column data specified by its index starting at 0 (aIndex >= 0)
+     *
+     * @warning The resulting Column object must not be copied or memorized as it is only valid for a short time,
+     *          only while the row from the Statement remains valid, that is only until next executeStep
      */
-    int             getColumnInt   (const int aIndex) const; // throw(SQLite::Exception);
-    /**
-     * @brief Return the 64bits integer value of the column specified by its index starting at 0 (aIndex >= 0)
-     */
-    sqlite3_int64   getColumnInt64 (const int aIndex) const; // throw(SQLite::Exception);
-    /**
-     * @brief Return the double (64bits float) value of the column specified by its index starting at 0 (aIndex >= 0)
-     */
-    double          getColumnDouble(const int aIndex) const; // throw(SQLite::Exception);
-    /**
-     * @brief Return the text value (NULL terminated string) of the column specified by its index starting at 0 (aIndex >= 0)
-     */
-    const char*     getColumnText  (const int aIndex) const; // throw(SQLite::Exception);
+    Column  getColumn (const int aIndex) const; // throw(SQLite::Exception);
+
 
     /**
      * @brief Test if the column is NULL
      */
-    bool            isColumnNull   (const int aIndex) const; // throw(SQLite::Exception);
+    bool    isColumnNull   (const int aIndex) const; // throw(SQLite::Exception);
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -137,7 +130,7 @@ public:
     }
 
 private:
-    // Database must be non copyable
+    // Statement must not be copyable
     Statement(void);
     Statement(const Statement&);
     Statement& operator=(const Statement&);

@@ -117,8 +117,8 @@ bool Statement::executeStep(void) // throw(SQLite::Exception)
     return mbOk;
 }
 
-// Return the integer value of the column specified by its index starting at 0
-int Statement::getColumnInt(const int aIndex) const // throw(SQLite::Exception)
+// Return a copy of the column data specified by its index starting at 0
+Column Statement::getColumn(const int aIndex) const // throw(SQLite::Exception)
 {
     if (false == mbOk)
     {
@@ -129,53 +129,7 @@ int Statement::getColumnInt(const int aIndex) const // throw(SQLite::Exception)
         throw SQLite::Exception("Column index out of range");
     }
 
-    return sqlite3_column_int(mpStmt, aIndex);
-}
-
-
-// Return the 64bits integer value of the column specified by its index starting at 0
-sqlite3_int64 Statement::getColumnInt64(const int aIndex) const // throw(SQLite::Exception)
-{
-    if (false == mbOk)
-    {
-        throw SQLite::Exception("No row to get a column from");
-    }
-    else if ((aIndex < 0) || (aIndex >= mColumnCount))
-    {
-        throw SQLite::Exception("Column index out of range");
-    }
-
-    return sqlite3_column_int64(mpStmt, aIndex);
-}
-
-// Return the double value of the column specified by its index starting at 0
-double Statement::getColumnDouble(const int aIndex) const // throw(SQLite::Exception)
-{
-    if (false == mbOk)
-    {
-        throw SQLite::Exception("No row to get a column from");
-    }
-    else if ((aIndex < 0) || (aIndex >= mColumnCount))
-    {
-        throw SQLite::Exception("Column index out of range");
-    }
-
-    return sqlite3_column_double(mpStmt, aIndex);
-}
-
-// Return the text value (NULL terminated string) of the column specified by its index starting at 0
-const char * Statement::getColumnText(const int aIndex) const // throw(SQLite::Exception)
-{
-    if (false == mbOk)
-    {
-        throw SQLite::Exception("No row to get a column from");
-    }
-    else if ((aIndex < 0) || (aIndex >= mColumnCount))
-    {
-        throw SQLite::Exception("Column index out of range");
-    }
-
-    return (const char*)sqlite3_column_text(mpStmt, aIndex);
+    return Column(mDatabase.mpSQLite, mpStmt, aIndex);
 }
 
 // Test if the column is NULL

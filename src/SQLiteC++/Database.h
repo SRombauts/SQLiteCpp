@@ -74,7 +74,7 @@ public:
     }
 
 private:
-    // Database must be non copyable
+    // Database must not be copyable
     Database(void);
     Database(const Database&);
     Database& operator=(const Database&);

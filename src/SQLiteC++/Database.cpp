@@ -59,7 +59,7 @@ void Database::registerStatement(Statement& aStatement) // throw(SQLite::Excepti
 // Unregister a Statement object
 void Database::unregisterStatement(Statement& aStatement) // throw(SQLite::Exception)
 {
-    std::vector<Statement*>::iterator   iStatement;
+    TStatementList::iterator   iStatement;
     iStatement = std::find(mStatementList.begin(), mStatementList.end(), &aStatement);
     if (mStatementList.end() != iStatement)
     {

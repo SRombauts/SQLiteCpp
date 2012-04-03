@@ -32,6 +32,9 @@ class Database
     friend class Statement;
 
 public:
+    typedef std::vector<Statement*> TStatementList; /// List of statements pointers
+
+public:
     /**
      * @brief Open the provided database UTF-8 filename.
      *
@@ -73,6 +76,14 @@ public:
         return mFilename;
     }
 
+    /**
+     * @brief List of registered statements
+     */
+    inline const TStatementList& getStatementList(void) const
+    {
+        return mStatementList;
+    }
+
 private:
     // Database must not be copyable
     Database(void);
@@ -80,9 +91,9 @@ private:
     Database& operator=(const Database&);
 
 private:
-    sqlite3*                mpSQLite;       //!< Pointer to SQLite Database Connection Handle
-    std::string             mFilename;      //!< UTF-8 filename used to open the database
-    std::vector<Statement*> mStatementList; //!< Liste of SQL statements used with this database connexion
+    sqlite3*        mpSQLite;       //!< Pointer to SQLite Database Connection Handle
+    std::string     mFilename;      //!< UTF-8 filename used to open the database
+    TStatementList  mStatementList; //!< List of SQL registered statements used with this database connexion
 };
 
 

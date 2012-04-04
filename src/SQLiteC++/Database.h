@@ -22,10 +22,14 @@ class Statement;
 class Exception;
 
 /**
- * @brief Management of a SQLite Database Connection.
+ * @brief RAII management of a SQLite Database Connection.
  *
  * A Database object manage a list of all SQLite Statements associated with the
  * underlying SQLite 3 database connection.
+ *
+ * Resource Acquisition Is Initialization (RAII) means that the Database Connection
+ * is opened in the constructor and closed in the destructor, so that there is
+ * no need to worry about memory management or the validity of the underlying SQLite Connection.
  */
 class Database
 {

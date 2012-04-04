@@ -9,11 +9,22 @@ or copy at [http://opensource.org/licenses/MIT])
 
 SQLiteC++ is a smart and simple C++ SQLite3 wrapper, easy to use and efficient.
 
+The goals of SQLiteC++ are:
+
+- to offer the best of actual existing simple wrappers
+- to use a permissible license like MIT or BSD
+- to be elegantly written with good C++ design, STL, exceptions and RAII idiom
+- to keep dependencies to a minimum (STL and SQLite3)
+- to be well documented, in code with Doxygen, and online with some good examples
+- to be portable
+- to be light and fast
+- to use API names sticking with those of the SQLite library
+
 It is designed with the Resource Acquisition Is Initialization (RAII) idom
 (see http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization),
 and throw exceptions in case of SQLite errors.
-
-Each SQLiteC++ object must be constructed with a valid SQLite database connexion, and then is always valid until destroyed.
+Each SQLiteC++ object must be constructed with a valid SQLite database connexion,
+and then is always valid until destroyed.
 
 Depandancies:
 

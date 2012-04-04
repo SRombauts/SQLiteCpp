@@ -42,10 +42,10 @@ public:
     /**
      * @brief Open the provided database UTF-8 filename.
      *
-     * Uses sqlite3_open_v2() with readonly default flag, which is the opposite behaviour
+     * Uses sqlite3_open_v2() with readonly default flag, which is the opposite behavior
      * of the old sqlite3_open() function (READWRITE+CREATE).
      * This makes sense if you want to use it on a readonly filesystem
-     * or to prenvent creation of a void file when a required file is missing.
+     * or to prevent creation of a void file when a required file is missing.
      *
      * Exception is thrown in case of error, then the Database object is NOT constructed.
      *
@@ -73,11 +73,11 @@ public:
     void unregisterStatement(Statement& aStatement); // throw(SQLite::Exception);
 
     /**
-     * @brief Shorcut to execute one or multiple statements without results.
+     * @brief Shortcut to execute one or multiple statements without results.
      *
-     *  This is usefull for Data Manipulation Language SQL statements like CREATE, INSERT, UPDATE, DROP
+     *  This is useful for Data Manipulation Language SQL statements like CREATE, INSERT, UPDATE, DROP
      *
-     * @see also Statement class for handling queries with resultats
+     * @see also Statement class for handling queries with results
      *
      * @param[in] apQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
      */

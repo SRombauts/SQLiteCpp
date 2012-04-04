@@ -10,7 +10,6 @@
 #include "Database.h"
 
 #include "Statement.h"
-#include <iostream>
 
 namespace SQLite
 {
@@ -67,13 +66,13 @@ void Database::unregisterStatement(Statement& aStatement) // throw(SQLite::Excep
     }
 }
 
-// Shorcut to execute one or multiple SQL statements without results.
+// Shortcut to execute one or multiple SQL statements without results.
 int Database::exec(const char* apQueries) // throw(SQLite::Exception);
 {
-	  int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);
+    int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);
     check(ret);
 
-    // Return the number of changes made by thoses SQL statements
+    // Return the number of changes made by those SQL statements
     return sqlite3_changes(mpSQLite);
 }
 

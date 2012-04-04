@@ -147,10 +147,7 @@ bool Statement::isColumnNull(const int aIndex) const // throw(SQLite::Exception)
     return (SQLITE_NULL == sqlite3_column_type(mpStmt, aIndex));
 }
 
-
-/**
- * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
- */
+// @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
 void Statement::check(const int aRet) const // throw(SQLite::Exception)
 {
     if (SQLITE_OK != aRet)
@@ -158,6 +155,7 @@ void Statement::check(const int aRet) const // throw(SQLite::Exception)
         throw SQLite::Exception(sqlite3_errmsg(mDatabase.mpSQLite));
     }
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Implementation of the inner class Statement::Column

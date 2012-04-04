@@ -55,7 +55,7 @@ private:
 
 int main (void)
 {
-    // Basic example (1/2) :
+    // Basic example (1/3) :
     try
     {
         // Open a database file
@@ -63,7 +63,7 @@ int main (void)
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement   query(db, "SELECT * FROM test WHERE size > ?");
+        SQLite::Statement   query(db, "SELECT * FROM test WHERE size > ?;SELECT id FROM test");
         std::cout << "SQLite statement '" << query.getQuery().c_str() << "' compiled (" << query.getColumnCount () << " columns in the result)\n";
         // Bind the integer value 6 to the first parameter of the SQL query
         query.bind(1, 6);
@@ -98,7 +98,7 @@ int main (void)
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Object Oriented Basic example (2/2) :
+    // Object Oriented Basic example (2/3) :
     try
     {
         // Open the database and compile the query
@@ -113,6 +113,30 @@ int main (void)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Simple batch queries example (3/3) :
+    try
+    {
+        // Open a database file
+        SQLite::Database    db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+        std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
+
+        db.exec("DROP TABLE IF EXISTS test");
+
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+
+        int nb = db.exec("INSERT INTO test VALUES (NULL, \"test\")");
+        std::cout << "INSERT INTO test VALUES (NULL, \"test\")\", returned " << nb << std::endl; 
+        
+        db.exec("DROP TABLE test");
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "SQLite exception: " << e.what() << std::endl;
+    }
+    std::remove("test.db3");
+
 
     return 0;
 }

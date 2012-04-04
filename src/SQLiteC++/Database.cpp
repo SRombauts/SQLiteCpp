@@ -67,5 +67,23 @@ void Database::unregisterStatement(Statement& aStatement) // throw(SQLite::Excep
     }
 }
 
+// Shorcut to execute one or multiple SQL statements without results.
+int Database::exec(const char* apQueries) // throw(SQLite::Exception);
+{
+	  int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);
+    check(ret);
+
+    // Return the number of changes made by thoses SQL statements
+    return sqlite3_changes(mpSQLite);
+}
+
+// Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
+void Database::check(const int aRet) const // throw(SQLite::Exception)
+{
+    if (SQLITE_OK != aRet)
+    {
+        throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
+    }
+}
 
 };  // namespace SQLite

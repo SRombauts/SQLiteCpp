@@ -69,6 +69,17 @@ public:
     void unregisterStatement(Statement& aStatement); // throw(SQLite::Exception);
 
     /**
+     * @brief Shorcut to execute one or multiple statements without results.
+     *
+     *  This is usefull for Data Manipulation Language SQL statements like CREATE, INSERT, UPDATE, DROP
+     *
+     * @see also Statement class for handling queries with resultats
+     *
+     * @param[in] apQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
+     */
+    int exec(const char* apQueries); // throw(SQLite::Exception);
+
+    /**
      * @brief Filename used to open the database
      */
     inline const std::string& getFilename(void) const
@@ -89,6 +100,11 @@ private:
     Database(void);
     Database(const Database&);
     Database& operator=(const Database&);
+
+    /**
+     * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
+     */
+    void check(const int aRet) const; // throw(SQLite::Exception);
 
 private:
     sqlite3*        mpSQLite;       //!< Pointer to SQLite Database Connection Handle

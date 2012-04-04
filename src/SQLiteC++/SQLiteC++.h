@@ -11,3 +11,4 @@
 
 #include "Database.h"
 #include "Statement.h"
+#include "Transaction.h"

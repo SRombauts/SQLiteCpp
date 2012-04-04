@@ -15,6 +15,7 @@
 
 #include "../SQLiteC++/Database.h"
 #include "../SQLiteC++/Statement.h"
+#include "../SQLiteC++/Transaction.h"
 
 
 /// Object Oriented Basic example
@@ -56,7 +57,7 @@ private:
 
 int main (void)
 {
-    // Basic example (1/3) :
+    // Basic example (1/4) :
     try
     {
         // Open a database file
@@ -64,7 +65,7 @@ int main (void)
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement   query(db, "SELECT * FROM test WHERE size > ?;SELECT id FROM test");
+        SQLite::Statement   query(db, "SELECT * FROM test WHERE size > ?");
         std::cout << "SQLite statement '" << query.getQuery().c_str() << "' compiled (" << query.getColumnCount () << " columns in the result)\n";
         // Bind the integer value 6 to the first parameter of the SQL query
         query.bind(1, 6);
@@ -99,7 +100,7 @@ int main (void)
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Object Oriented Basic example (2/3) :
+    // Object Oriented Basic example (2/4) :
     try
     {
         // Open the database and compile the query
@@ -116,7 +117,7 @@ int main (void)
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Simple batch queries example (3/3) :
+    // Simple batch queries example (3/4) :
     try
     {
         // Open a database file
@@ -137,6 +138,70 @@ int main (void)
         std::cout << "SQLite exception: " << e.what() << std::endl;
     }
     remove("test.db3");
+
+    ////////////////////////////////////////////////////////////////////////////
+    // RAII transaction example (4/4) :
+    try
+    {
+        // Open a database file
+        SQLite::Database    db("transaction.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+        std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
+
+        db.exec("DROP TABLE IF EXISTS test");
+
+        // Exemple of a successful transaction :
+        try
+        {
+            // Begin transaction
+            SQLite::Transaction transaction(db);
+
+            db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+
+            int nb = db.exec("INSERT INTO test VALUES (NULL, \"test\")");
+            std::cout << "INSERT INTO test VALUES (NULL, \"test\")\", returned " << nb << std::endl;
+
+            // Commit transaction
+            transaction.commit();
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "SQLite exception: " << e.what() << std::endl;
+        }
+
+        // Exemple of a rollbacked transaction :
+        try
+        {
+            // Begin transaction
+            SQLite::Transaction transaction(db);
+
+            int nb = db.exec("INSERT INTO test VALUES (NULL, \"second\")");
+            std::cout << "INSERT INTO test VALUES (NULL, \"second\")\", returned " << nb << std::endl;
+
+            nb = db.exec("INSERT INTO test \"error\"");
+            std::cout << "INSERT INTO test \"error\"\", returned " << nb << std::endl;
+
+            // Commit transaction
+            transaction.commit();
+        }
+        catch (std::exception& e)
+        {
+            std::cout << "SQLite exception: " << e.what() << std::endl;
+        }
+
+        // Check the results
+        SQLite::Statement   query(db, "SELECT * FROM test");
+        std::cout << "SELECT * FROM test :\n";
+        while (query.executeStep())
+        {
+            std::cout << "row : (" << query.getColumn(0) << ", " << query.getColumn(1) << ")\n";
+        }
+
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "SQLite exception: " << e.what() << std::endl;
+    }
+    remove("transaction.db3");
 
     return 0;
 }

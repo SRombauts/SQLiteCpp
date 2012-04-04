@@ -9,6 +9,27 @@
  */
 #pragma once
 
+
+// SQLiteC++.h requires sqlite3, and the corresponding library header
+#include "sqlite3.h"
+
+// Include useful headers of SQLiteC++
 #include "Database.h"
 #include "Statement.h"
 #include "Transaction.h"
+
+
+/**
+ * @brief Version numbers for SQLiteC++ are provided in the same way as sqlite3.h
+ *
+ * The [SQLITECPP_VERSION] C preprocessor macro in the SQLiteC++.h header
+ * evaluates to a string literal that is the SQLite version in the
+ * format "X.Y.Z" where X is the major version number
+ * and Y is the minor version number and Z is the release number.
+ *
+ * The [SQLITECPP_VERSION_NUMBER] C preprocessor macro resolves to an integer
+ * with the value (X*1000000 + Y*1000 + Z) where X, Y, and Z are the same
+ * numbers used in [SQLITECPP_VERSION].
+ */
+#define SQLITECPP_VERSION           "0.1.0"
+#define SQLITECPP_VERSION_NUMBER    0001000

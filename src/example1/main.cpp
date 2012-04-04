@@ -11,6 +11,7 @@
  */
 
 #include <iostream>
+#include "stdio.h"
 
 #include "../SQLiteC++/Database.h"
 #include "../SQLiteC++/Statement.h"
@@ -127,16 +128,15 @@ int main (void)
         db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
 
         int nb = db.exec("INSERT INTO test VALUES (NULL, \"test\")");
-        std::cout << "INSERT INTO test VALUES (NULL, \"test\")\", returned " << nb << std::endl; 
-        
+        std::cout << "INSERT INTO test VALUES (NULL, \"test\")\", returned " << nb << std::endl;
+
         db.exec("DROP TABLE test");
     }
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
     }
-    std::remove("test.db3");
-
+    remove("test.db3");
 
     return 0;
 }

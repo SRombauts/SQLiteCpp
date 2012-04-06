@@ -1,24 +1,29 @@
 SQLiteC++
 ---------
 
-Copyright (c) 2012 Sebastien Rombauts (sebastien dot rombauts at gmail dot com)
+SQLiteC++ is a smart and easy to use C++ SQLite3 wrapper.
+
+See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.
+
+
+Copyright (c) 2012 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 
 Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 or copy at http://opensource.org/licenses/MIT)
 
 
-SQLiteC++ is a smart and easy to use C++ SQLite3 wrapper.
-
 The goals of SQLiteC++ are:
 
-- to offer the best of actual existing simple wrappers
-- to use a permissible license like MIT or BSD
+- to offer the best of existing simple wrappers
+- to use a permissive license like MIT or BSD
 - to be elegantly written with good C++ design, STL, exceptions and RAII idiom
 - to keep dependencies to a minimum (STL and SQLite3)
 - to be well documented, in code with Doxygen, and online with some good examples
 - to be portable
 - to be light and fast
+- to be monothreaded
 - to use API names sticking with those of the SQLite library
+- to be well maintained
 
 It is designed with the Resource Acquisition Is Initialization (RAII) idom
 (see http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization),
@@ -82,5 +87,5 @@ For other simple C++ SQLite wrappers look also at:
  - **sqdbcpp**: RAII design, no depandencies, UTF-8/UTF-16, new BSD license (http://code.google.com/p/sqdbcpp/)
  - **sqlite3pp**: uses boost, MIT License (http://code.google.com/p/sqlite3pp/)
  - **SQLite++**: uses boost build system, Boost License 1.0 (http://sqlitepp.berlios.de/)
- - **sqlite3cc**: uses boost, LPGPL (https://launchpad.net/sqlite3cc)
+ - **sqlite3cc**: uses boost, LPGPL (http://ed.am/dev/sqlite3cc and https://launchpad.net/sqlite3cc)
  - **CppSQLite**: famous Code Project but old design, BSD License (http://www.codeproject.com/Articles/6343/CppSQLite-C-Wrapper-for-SQLite/)

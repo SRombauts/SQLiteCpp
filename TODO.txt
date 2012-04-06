@@ -1,10 +1,11 @@
-Add a table comparison of others C++ wrappers (code style, C++ design, in code documentation, tests, online documentation, examples, license, UTF-16) 
+Add a comparison of others C++ wrappers (code style, C++ design, in code documentation, tests, online documentation, examples, license, UTF-16) 
 
 Missing features :
 - BindNULL
 - LastInsertId
 - TableExists
 - SetBusyTimout
+- getColumnByName ? std::map getRow() ?
 - operator<< binding ?
 - execScalar() easy wrapper like CppSqlite
 - batch mode managing multiple queries semicolon separated 
@@ -13,5 +14,5 @@ Add a full test suite
 
 Add optionnal usage of experimental sqlite3_trace() function to enable statistics 
 
-Post an article to CodeProject : with a versionned downloadable ZIP file
+Post an article to CodeProject : Is there a license issue ?
 Mirror the repository to GoogleCode : with a versionned downloadable ZIP file

@@ -7,6 +7,7 @@ Missing features :
 - execScalar() easy wrapper like CppSqlite
 - TableExists
 - batch mode managing multiple queries semicolon separated 
+- support for different transaction mode
 
 - Function ?
 - Agregate ?
@@ -20,3 +21,7 @@ Add optionnal usage of experimental sqlite3_trace() function to enable statistic
 
 Post an article to CodeProject : Is there a license issue ?
 Mirror the repository to GoogleCode : with a versionned downloadable ZIP file
+
+Documentation:
+- explain the noncopyable property for RAII design
+- comment on returning error code instead of exception that shall not be thrown when exepected (!?)

@@ -205,6 +205,14 @@
 				RelativePath=".\src\SQLiteC++\Statement.h"
 				>
 			</File>
+			<File
+				RelativePath=".\src\SQLiteC++\Transaction.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\SQLiteC++\Transaction.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="example1"

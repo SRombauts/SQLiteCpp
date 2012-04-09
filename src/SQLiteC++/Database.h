@@ -69,6 +69,26 @@ public:
     int exec(const char* apQueries); // throw(SQLite::Exception);
 
     /**
+     * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
+     *
+     * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
+     */
+    inline int Database::setBusyTimeout(int aTimeoutMs) // throw(); nothrow
+    {
+        return sqlite3_busy_timeout(mpSQLite, aTimeoutMs);
+    }
+
+    /**
+     * @brief Get the rowid of the most recent successful INSERT into the database from the current connection.
+     * 
+     * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
+     */
+    inline sqlite3_int64 Database::getLastInsertRowid(void) const // throw(); nothrow
+    {
+        return sqlite3_last_insert_rowid(mpSQLite);
+    }
+
+    /**
      * @brief Filename used to open the database
      */
     inline const std::string& getFilename(void) const

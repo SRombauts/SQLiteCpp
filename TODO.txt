@@ -2,8 +2,6 @@ Add a comparison of others C++ wrappers (code style, C++ design, in code documen
 
 Missing features :
 - Bind(Name)
-- LastInsertId
-- SetBusyTimout
 - getColumnByName ? std::map getRow() ?
 - operator<< binding ?
 - execScalar() easy wrapper like CppSqlite
@@ -12,6 +10,9 @@ Missing features :
 
 - Function ?
 - Agregate ?
+
+- ATTACH Database ? can already be done by "ATTACH" Statement
+- :memory: ? can already be done by Database constructor with ":memory:" filename
 
 Add a full test suite
 

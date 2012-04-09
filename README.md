@@ -45,40 +45,31 @@ in your project code base (not the main.cpp example file).
 Tot get started, look at the provided examples in main.cpp, starting by :
 
 ```C++
-int main (void)
+try
 {
-    try
+    // Open a database file
+    SQLite::Database    db("example.db3");
+    
+    // Compile a SQL query, containing one parameter (index 1)
+    SQLite::Statement   query(db, "SELECT * FROM test WHERE size > ?");
+    
+    // Bind the integer value 6 to the first parameter of the SQL query
+    query.bind(1, 6);
+    
+    // Loop to execute the query step by step, to get rows of result
+    while (query.executeStep())
     {
-        // Open a database file
-        SQLite::Database    db("example.db3");
-        std::cout << "database file opened successfully\n";
+        // Demonstrate how to get some typed column value
+        int         id      = query.getColumn(0);
+        std::string value   = query.getColumn(1);
+        int         size    = query.getColumn(2);
         
-        // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement   query(db, "SELECT * FROM test WHERE size > ?");
-        std::cout << "statement: " << query.getQuery().c_str()
-                  << " compiled (" << query.getColumnCount () << " columns)\n";
-        
-        // Bind the integer value 6 to the first parameter of the SQL query
-        query.bind(1, 6);
-        
-        // Loop to execute the query step by step, to get rows of result
-        while (query.executeStep())
-        {
-            // Demonstrate how to get some typed column value
-            int         id      = query.getColumn(0);
-            std::string value   = query.getColumn(1);
-            int         size    = query.getColumn(2);
-            
-            std::cout << "row: " << id << ", " << value << ", " << size << "\n";
-        }
-        
-        // Reset the query to use it again later
-        query.reset();
+        std::cout << "row: " << id << ", " << value << ", " << size << std::endl;
     }
-    catch (std::exception& e)
-    {
-        std::cout << "exception: " << e.what() << std::endl;
-    }
+}
+catch (std::exception& e)
+{
+    std::cout << "exception: " << e.what() << std::endl;
 }
 ```
 

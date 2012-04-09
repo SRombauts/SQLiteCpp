@@ -2,7 +2,7 @@
  * @file  Statement.cpp
  * @brief A prepared SQLite Statement is a compiled SQL query ready to be executed.
  *
- * Copyright (c) 2012 Sebastien Rombauts (sebastien dot rombauts at gmail dot com)
+ * Copyright (c) 2012 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -26,7 +26,6 @@ Statement::Statement(Database &aDatabase, const char* apQuery) : // throw(SQLite
     int ret = sqlite3_prepare_v2(mDatabase.mpSQLite, mQuery.c_str(), mQuery.size(), &mpStmt, NULL);
     check(ret);
     mColumnCount = sqlite3_column_count(mpStmt);
-    mDatabase.registerStatement(*this);
 }
 
 // Finalize and unregister the SQL query from the SQLite Database Connection.
@@ -39,7 +38,6 @@ Statement::~Statement(void) throw() // nothrow
         //std::cout << sqlite3_errmsg(mDatabase.mpSQLite);
     }
     mpStmt = NULL;
-    mDatabase.unregisterStatement(*this);
 }
 
 // Reset the statement to make it ready for a new execution

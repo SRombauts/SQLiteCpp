@@ -2,7 +2,7 @@
  * @file  Database.h
  * @brief Management of a SQLite Database Connection.
  *
- * Copyright (c) 2012 Sebastien Rombauts (sebastien dot rombauts at gmail dot com)
+ * Copyright (c) 2012 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -10,8 +10,6 @@
 #pragma once
 
 #include <sqlite3.h>
-#include <vector>
-#include <algorithm>
 #include "Exception.h"
 
 namespace SQLite
@@ -34,9 +32,6 @@ class Exception;
 class Database
 {
     friend class Statement;
-
-public:
-    typedef std::vector<Statement*> TStatementList; /// List of statements pointers
 
 public:
     /**
@@ -63,16 +58,6 @@ public:
     virtual ~Database(void) throw(); // nothrow
 
     /**
-     * @brief Register a Statement object (a SQLite query)
-     */
-    void registerStatement(Statement& aStatement); // throw(SQLite::Exception);
-
-    /**
-     * @brief Unregister a Statement object
-     */
-    void unregisterStatement(Statement& aStatement); // throw(SQLite::Exception);
-
-    /**
      * @brief Shortcut to execute one or multiple statements without results.
      *
      *  This is useful for Data Manipulation Language SQL statements like CREATE, INSERT, UPDATE, DROP
@@ -91,14 +76,6 @@ public:
         return mFilename;
     }
 
-    /**
-     * @brief List of registered statements
-     */
-    inline const TStatementList& getStatementList(void) const
-    {
-        return mStatementList;
-    }
-
 private:
     // Database must not be copyable
     Database(void);
@@ -111,9 +88,8 @@ private:
     void check(const int aRet) const; // throw(SQLite::Exception);
 
 private:
-    sqlite3*        mpSQLite;       //!< Pointer to SQLite Database Connection Handle
-    std::string     mFilename;      //!< UTF-8 filename used to open the database
-    TStatementList  mStatementList; //!< List of SQL registered statements used with this database connexion
+    sqlite3*    mpSQLite;   //!< Pointer to SQLite Database Connection Handle
+    std::string mFilename;  //!< UTF-8 filename used to open the database
 };
 
 

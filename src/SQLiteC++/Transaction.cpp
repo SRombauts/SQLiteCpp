@@ -2,7 +2,7 @@
  * @file  Transaction.cpp
  * @brief A prepared SQLite Transaction is a compiled SQL query ready to be executed.
  *
- * Copyright (c) 2012 Sebastien Rombauts (sebastien dot rombauts at gmail dot com)
+ * Copyright (c) 2012 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)

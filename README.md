@@ -28,7 +28,7 @@ The goals of SQLiteC++ are:
 It is designed with the Resource Acquisition Is Initialization (RAII) idom
 (see http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization),
 and throw exceptions in case of SQLite errors.
-Each SQLiteC++ object must be constructed with a valid SQLite database connexion,
+Each SQLiteC++ object must be constructed with a valid SQLite database connection,
 and then is always valid until destroyed.
 
 Depandancies:
@@ -38,11 +38,14 @@ Depandancies:
  - the SQLite library, either by linking to it dynamicaly or staticaly,
    or by adding its source file in your project code base.
 
-
 To use it in your project, you only need to add the 6 SQLiteC++ source files
 in your project code base (not the main.cpp example file).
 
-Tot get started, look at the provided examples in main.cpp, starting by :
+## About SQLite:
+SQLite is a library that implements a serverless transactional SQL database engine.
+http://www.sqlite.org/about.html
+
+## First sample demonstrates how to query a database and get results: 
 
 ```C++
 try
@@ -61,7 +64,7 @@ try
     {
         // Demonstrate how to get some typed column value
         int         id      = query.getColumn(0);
-        std::string value   = query.getColumn(1);
+        const char* value   = query.getColumn(1);
         int         size    = query.getColumn(2);
         
         std::cout << "row: " << id << ", " << value << ", " << size << std::endl;
@@ -73,10 +76,37 @@ catch (std::exception& e)
 }
 ```
 
-For other simple C++ SQLite wrappers look also at:
+## Second sample shows how to manage a transaction:
 
+```C++
+try
+{
+    SQLite::Database    db("transaction.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+
+    db.exec("DROP TABLE IF EXISTS test");
+
+    // Begin transaction
+    SQLite::Transaction transaction(db);
+
+    db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+
+    int nb = db.exec("INSERT INTO test VALUES (NULL, \"test\")");
+    std::cout << "INSERT INTO test VALUES (NULL, \"test\")\", returned " << nb << std::endl;
+
+    // Commit transaction
+    transaction.commit();
+}
+catch (std::exception& e)
+{
+    std::cout << "exception: " << e.what() << std::endl;
+}
+```
+
+## For other simple C++ SQLite wrappers look also at:
+
+ - **sqlite3cc**: uses boost, LPGPL (http://ed.am/dev/sqlite3cc and https://launchpad.net/sqlite3cc)
  - **sqdbcpp**: RAII design, no depandencies, UTF-8/UTF-16, new BSD license (http://code.google.com/p/sqdbcpp/)
  - **sqlite3pp**: uses boost, MIT License (http://code.google.com/p/sqlite3pp/)
  - **SQLite++**: uses boost build system, Boost License 1.0 (http://sqlitepp.berlios.de/)
- - **sqlite3cc**: uses boost, LPGPL (http://ed.am/dev/sqlite3cc and https://launchpad.net/sqlite3cc)
  - **CppSQLite**: famous Code Project but old design, BSD License (http://www.codeproject.com/Articles/6343/CppSQLite-C-Wrapper-for-SQLite/)
+ - **easySQLite**: http://code.google.com/p/easysqlite/

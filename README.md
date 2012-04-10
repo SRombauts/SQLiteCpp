@@ -12,7 +12,7 @@ Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 or copy at http://opensource.org/licenses/MIT)
 
 
-The goals of SQLiteC++ are:
+### The goals of SQLiteC++ are:
 
 - to offer the best of existing simple wrappers
 - to use a permissive license like MIT or BSD
@@ -31,7 +31,7 @@ and throw exceptions in case of SQLite errors.
 Each SQLiteC++ object must be constructed with a valid SQLite database connection,
 and then is always valid until destroyed.
 
-Depandancies:
+### Depandancies:
 
  - a STL implementation (even an old one like VC6/eVC4 should work)
  - exception support (the class Exception inherite from std::runtime_error)
@@ -41,11 +41,11 @@ Depandancies:
 To use it in your project, you only need to add the 6 SQLiteC++ source files
 in your project code base (not the main.cpp example file).
 
-## About SQLite:
+### About SQLite:
 SQLite is a library that implements a serverless transactional SQL database engine.
 http://www.sqlite.org/about.html
 
-## First sample demonstrates how to query a database and get results: 
+### First sample demonstrates how to query a database and get results: 
 
 ```C++
 try
@@ -76,7 +76,7 @@ catch (std::exception& e)
 }
 ```
 
-## Second sample shows how to manage a transaction:
+### Second sample shows how to manage a transaction:
 
 ```C++
 try
@@ -102,7 +102,7 @@ catch (std::exception& e)
 }
 ```
 
-## For other simple C++ SQLite wrappers look also at:
+### For other simple C++ SQLite wrappers look at:
 
  - **sqlite3cc**: uses boost, LPGPL (http://ed.am/dev/sqlite3cc and https://launchpad.net/sqlite3cc)
  - **sqdbcpp**: RAII design, no depandencies, UTF-8/UTF-16, new BSD license (http://code.google.com/p/sqdbcpp/)

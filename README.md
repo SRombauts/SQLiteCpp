@@ -5,12 +5,12 @@ SQLiteC++ is a smart and easy to use C++ SQLite3 wrapper.
 
 See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.
 
+### License
 
 Copyright (c) 2012 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 
 Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 or copy at http://opensource.org/licenses/MIT)
-
 
 ### The goals of SQLiteC++ are:
 
@@ -41,6 +41,7 @@ and then is always valid until destroyed.
 To use it in your project, you only need to add the 6 SQLiteC++ source files
 in your project code base (not the main.cpp example file).
 
+## Getting started
 ### About SQLite:
 SQLite is a library that implements a serverless transactional SQL database engine.
 http://www.sqlite.org/about.html
@@ -102,11 +103,12 @@ catch (std::exception& e)
 }
 ```
 
-### For other simple C++ SQLite wrappers look at:
+## See also
+### Some other simple C++ SQLite wrappers:
 
- - **sqlite3cc**: uses boost, LPGPL (http://ed.am/dev/sqlite3cc and https://launchpad.net/sqlite3cc)
- - **sqdbcpp**: RAII design, no depandencies, UTF-8/UTF-16, new BSD license (http://code.google.com/p/sqdbcpp/)
- - **sqlite3pp**: uses boost, MIT License (http://code.google.com/p/sqlite3pp/)
- - **SQLite++**: uses boost build system, Boost License 1.0 (http://sqlitepp.berlios.de/)
- - **CppSQLite**: famous Code Project but old design, BSD License (http://www.codeproject.com/Articles/6343/CppSQLite-C-Wrapper-for-SQLite/)
- - **easySQLite**: http://code.google.com/p/easysqlite/
+ - [sqdbcpp](http://code.google.com/p/sqdbcpp/): RAII design, simple, no depandencies, UTF-8/UTF-16, new BSD license
+ - [sqlite3cc](http://ed.am/dev/sqlite3cc): uses boost, modern design, LPGPL
+ - [sqlite3pp](http://code.google.com/p/sqlite3pp/): uses boost, MIT License 
+ - [SQLite++](http://sqlitepp.berlios.de/): uses boost build system, Boost License 1.0 
+ - [CppSQLite](http://www.codeproject.com/Articles/6343/CppSQLite-C-Wrapper-for-SQLite/): famous Code Project but old design, BSD License 
+ - [easySQLite](http://code.google.com/p/easysqlite/): manages table as structured objects, complex 

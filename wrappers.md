@@ -62,7 +62,7 @@ http://www.reddit.com/search?q=sqlite
 
 **CppSQLite**: http://www.codeproject.com/Articles/6343/CppSQLite-C-Wrapper-for-SQLite/
 - Mar 2004, Jun 2011
-- (+/-) BSD License? CodeProject License?
+- (++??) BSD License? CodeProject License?
 - (+) famous CodeProject, good introductory article
 - (--) Not documented in code
 - (--) old design, no RAII
@@ -73,6 +73,7 @@ http://www.reddit.com/search?q=sqlite
 
 **easySQLite**: http://code.google.com/p/easysqlite/
 - Sep 2010
+- (++) new BSD license
 - (+/-) Manage table as objects, requiring to define their structure
 - (-) not RAII
 - (--) complex

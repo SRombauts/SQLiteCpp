@@ -1,0 +1,15 @@
+Fri Mar 30
+    Start of a new thin C++ SQLite wrapper
+
+Mon Apr 2
+    The wrapper is functionnal
+    Added documentation and examples
+    Publication on GitHub    
+
+Version 0.1.0 - Wed Apr 4
+    Added a Database::exec() methode to execute simple SQL statement
+    Added a version number like in sqlite3.h, starting with 0.1.0
+
+Version 0.2.0 - Wed Apr 11
+    Added getLastInsertId() and setBusyTimout()
+    Added bind() by name methods

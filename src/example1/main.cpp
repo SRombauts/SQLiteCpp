@@ -23,8 +23,8 @@ class Example
 {
 public:
     Example(void) :
-        mDb("example.db3"),                                 // Open a database file
-        mQuery(mDb, "SELECT * FROM test WHERE size > ?")    // Compile a SQL query, containing one parameter (index 1)
+        mDb("example.db3"),                                     // Open a database file
+        mQuery(mDb, "SELECT * FROM test WHERE size > :min_size")// Compile a SQL query, containing one parameter (index 1)
     {
     }
     virtual ~Example(void)
@@ -37,7 +37,7 @@ public:
         std::cout << "ListGreaterThan (" << aParamValue << ")\n";
 
         // Bind the integer value provided to the first parameter of the SQL query
-        mQuery.bind(1, aParamValue);
+        mQuery.bind(":min_size", aParamValue); // same as mQuery.bind(1, aParamValue);
 
         // Loop to execute the query step by step, to get one a row of results at a time
         while (mQuery.executeStep())

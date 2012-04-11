@@ -91,6 +91,56 @@ void Statement::bind(const int aIndex) // throw(SQLite::Exception)
     check(ret);
 }
 
+
+// Bind an int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const char* apName, const int& aValue) // throw(SQLite::Exception)
+{
+    int index = sqlite3_bind_parameter_index(mpStmt, apName);
+    int ret   = sqlite3_bind_int(mpStmt, index, aValue);
+    check(ret);
+}
+
+// Bind a 64bits int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const char* apName, const sqlite3_int64& aValue) // throw(SQLite::Exception)
+{
+    int index = sqlite3_bind_parameter_index(mpStmt, apName);
+    int ret   = sqlite3_bind_int64(mpStmt, index, aValue);
+    check(ret);
+}
+
+// Bind a double (64bits float) value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const char* apName, const double& aValue) // throw(SQLite::Exception)
+{
+    int index = sqlite3_bind_parameter_index(mpStmt, apName);
+    int ret   = sqlite3_bind_double(mpStmt, index, aValue);
+    check(ret);
+}
+
+// Bind a string value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const char* apName, const std::string& aValue) // throw(SQLite::Exception)
+{
+    int index = sqlite3_bind_parameter_index(mpStmt, apName);
+    int ret   = sqlite3_bind_text(mpStmt, index, aValue.c_str(), aValue.size(), SQLITE_TRANSIENT);
+    check(ret);
+}
+
+// Bind a text value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const char* apName, const char* apValue) // throw(SQLite::Exception)
+{
+    int index = sqlite3_bind_parameter_index(mpStmt, apName);
+    int ret   = sqlite3_bind_text(mpStmt, index, apValue, -1, SQLITE_TRANSIENT);
+    check(ret);
+}
+
+// Bind a NULL value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const char* apName) // throw(SQLite::Exception)
+{
+    int index = sqlite3_bind_parameter_index(mpStmt, apName);
+    int ret   = sqlite3_bind_null(mpStmt, index);
+    check(ret);
+}
+
+
 // Execute a step of the query to fetch one row of results
 bool Statement::executeStep(void) // throw(SQLite::Exception)
 {
@@ -145,7 +195,7 @@ bool Statement::isColumnNull(const int aIndex) const // throw(SQLite::Exception)
     return (SQLITE_NULL == sqlite3_column_type(mpStmt, aIndex));
 }
 
-// @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
+// Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
 void Statement::check(const int aRet) const // throw(SQLite::Exception)
 {
     if (SQLITE_OK != aRet)

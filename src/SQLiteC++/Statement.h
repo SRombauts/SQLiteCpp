@@ -53,6 +53,12 @@ public:
     void reset(void); // throw(SQLite::Exception);
 
     ////////////////////////////////////////////////////////////////////////////
+    // Bind a value to a parameter of the SQL statement,
+    // in the form "?" (unnamed), "?NNN", ":VVV", "@VVV" or "$VVV".
+    //
+    // Can use the parameter index, starting from "1", to the higher NNN value,
+    // or the complete parameter name "?NNN", ":VVV", "@VVV" or "$VVV"
+    // (prefixed with the corresponding sign "?", ":", "@" or "$")
 
     /**
      * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
@@ -77,7 +83,32 @@ public:
     /**
      * @brief Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex); // throw(SQLite::Exception); // bind NULL value
+    void bind(const int aIndex); // throw(SQLite::Exception);
+
+    /**
+     * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName, const int&            aValue)  ; // throw(SQLite::Exception);
+    /**
+     * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName, const sqlite3_int64&  aValue)  ; // throw(SQLite::Exception);
+    /**
+     * @brief Bind a double (64bits float) value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName, const double&         aValue)  ; // throw(SQLite::Exception);
+    /**
+     * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName, const std::string&    aValue)  ; // throw(SQLite::Exception);
+    /**
+     * @brief Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName, const char*           apValue) ; // throw(SQLite::Exception);
+    /**
+     * @brief Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName); // throw(SQLite::Exception); // bind NULL value
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -199,7 +230,7 @@ public:
 
     private:
         sqlite3*        mpSQLite;   //!< Pointer to SQLite Database Connection Handle
-        sqlite3_stmt*   mpStmt;     //!< Pointeur to SQLite Statement Object
+        sqlite3_stmt*   mpStmt;     //!< Pointer to SQLite Statement Object
         int             mIndex;     //!< Index of the column in the row of result
     };
 
@@ -210,12 +241,12 @@ private:
     Statement& operator=(const Statement&);
 
     /**
-     * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
+     * @brief Check if a return code equals SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      */
     void check(const int aRet) const; // throw(SQLite::Exception);
 
 private:
-    sqlite3_stmt*   mpStmt;         //!< Pointeur to SQLite Statement Object
+    sqlite3_stmt*   mpStmt;         //!< Pointer to SQLite Statement Object
     Database&       mDatabase;      //!< Reference to the SQLite Database Connection
     std::string     mQuery;         //!< UTF-8 SQL Query
     int             mColumnCount;   //!< Number of column in the result of the prepared statement

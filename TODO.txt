@@ -1,23 +1,25 @@
 Add a comparison of others C++ wrappers (code style, C++ design, in code documentation, tests, online documentation, examples, license, UTF-16) 
 
-Missing features :
-- Bind(Name)
+Missing features in v0.2.0:
+- Statement::execStepAndGetScalar() easy wrapper
+- Database::execScalar() easy wrapper like CppSqlite
+- Database::tableExists
 - getColumnByName ? std::map getRow() ?
-- operator<< binding ?
-- execScalar() easy wrapper like CppSqlite
-- TableExists
-- batch mode managing multiple queries semicolon separated 
-- support for different transaction mode
 
+Advanced missing features:
+- batch mode managing multiple queries semicolon separated ? 
 - Function ?
 - Agregate ?
 
-- ATTACH Database ? can already be done by "ATTACH" Statement
-- :memory: ? can already be done by Database constructor with ":memory:" filename
+- support for different transaction mode ? NO: too specific
+- operator<< binding ? NO: redundant with bind()
+
+- ATTACH Database ? NO: can already be done by "ATTACH" Statement
+- :memory: ? NO: can already be done by Database constructor with ":memory:" filename
 
 Add a full test suite
 
-Add optionnal usage of experimental sqlite3_trace() function to enable statistics 
+Add optional usage of experimental sqlite3_trace() function to enable statistics 
 
 Post an article to CodeProject : Is there a license issue ?
 Mirror the repository to GoogleCode : with a versionned downloadable ZIP file

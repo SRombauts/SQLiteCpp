@@ -22,7 +22,7 @@ class Database;
  * @brief RAII encapsulation of a SQLite Transaction.
  *
  * A Transaction is a way to group multiple SQL statements into an atomic secured operation;
- * either it succeeds, with all the changes commited to the database file,
+ * either it succeeds, with all the changes committed to the database file,
  * or if it fails, all the changes are rolled back to the initial state.
  *
  * Resource Acquisition Is Initialization (RAII) means that the Transaction
@@ -40,7 +40,7 @@ public:
     explicit Transaction(Database &aDatabase); // throw(SQLite::Exception);
 
     /**
-     * @brief Safely rollback the transaction if it has not been commited.
+     * @brief Safely rollback the transaction if it has not been committed.
      */
     virtual ~Transaction(void) throw(); // nothrow
 

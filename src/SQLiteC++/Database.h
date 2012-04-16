@@ -11,13 +11,10 @@
 
 #include <sqlite3.h>
 #include "Exception.h"
+#include "Column.h"
 
 namespace SQLite
 {
-
-// Forward declarations
-class Statement;
-class Exception;
 
 /**
  * @brief RAII management of a SQLite Database Connection.
@@ -69,6 +66,23 @@ public:
     int exec(const char* apQueries); // throw(SQLite::Exception);
 
     /**
+     * @brief Shortcut to execute a one step query and fetch the first column of the result.
+     *
+     *  This is a shortcut to execute a simple statement with a single result.
+     * This should be used only for non reusable queries (else you should use a Statement with bind()).
+     * This should be used only for queries with expected results (else an exception is fired).
+     *
+     * @warning WARNING: Be very careful with this dangerous method: you have to
+     *          make a COPY OF THE result, else it will be destroy before the next line
+     *          (when the underlying temporary Statement and Column objects are destroyed)
+     *
+     * @see also Statement class for handling queries with multiple results
+     *
+     * @param[in] apQuery  a UTF-8 encoded SQL query
+     */
+    Column execAndGet(const char* apQuery); // throw(SQLite::Exception);
+
+    /**
      * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
      *
      * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
@@ -80,7 +94,7 @@ public:
 
     /**
      * @brief Get the rowid of the most recent successful INSERT into the database from the current connection.
-     * 
+     *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */
     inline sqlite3_int64 getLastInsertRowid(void) const // throw(); nothrow

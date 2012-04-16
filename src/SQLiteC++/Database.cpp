@@ -10,7 +10,6 @@
 #include "Database.h"
 
 #include "Statement.h"
-#include "Column.h"
 
 namespace SQLite
 {
@@ -49,6 +48,18 @@ int Database::exec(const char* apQueries) // throw(SQLite::Exception);
     // Return the number of changes made by those SQL statements
     return sqlite3_changes(mpSQLite);
 }
+
+// Shortcut to execute a one step query and fetch the first column of the result.
+// WARNING: Be very careful with this dangerous method: you have to
+// make a COPY OF THE result, else it will be destroy before the next line
+// (when the underlying temporary Statement and Column objects are destroyed)
+Column Database::execAndGet(const char* apQuery) // throw(SQLite::Exception)
+{
+   Statement query(*this, apQuery);
+   query.executeStep();
+   return query.getColumn(0);
+}
+
 
 // Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
 void Database::check(const int aRet) const // throw(SQLite::Exception)

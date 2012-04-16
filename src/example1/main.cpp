@@ -58,12 +58,18 @@ private:
 
 int main (void)
 {
-    // Basic example (1/4) :
+    // Basic example (1/5) :
     try
     {
         // Open a database file
         SQLite::Database    db("example.db3");
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
+
+        // TODO SRombauts:
+        //SQLite::Statement::Column col = db.execAndGet("SELECT value FROM test WHERE id=2");
+        //const char* pvalue = col;
+        std::string value = db.execAndGet("SELECT value FROM test WHERE id=2");
+        std::cout << "execAndGet=" << value << std::endl;
 
         // Compile a SQL query, containing one parameter (index 1)
         SQLite::Statement   query(db, "SELECT * FROM test WHERE size > ?");
@@ -101,7 +107,7 @@ int main (void)
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Object Oriented Basic example (2/4) :
+    // Object Oriented Basic example (2/5) :
     try
     {
         // Open the database and compile the query
@@ -117,8 +123,26 @@ int main (void)
         std::cout << "SQLite exception: " << e.what() << std::endl;
     }
 
+    // The execAndGet wrapper example (3/5) :
+    try
+    {
+        // Open a database file
+        SQLite::Database    db("example.db3");
+        std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
+
+        // WARNING: Be very careful with this dangerous method: you have to
+        // make a COPY OF THE result, else it will be destroy before the next line
+        // (when the underlying temporary Statement and Column objects are destroyed)
+        std::string value = db.execAndGet("SELECT value FROM test WHERE id=2");
+        std::cout << "execAndGet=" << value << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "SQLite exception: " << e.what() << std::endl;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
-    // Simple batch queries example (3/4) :
+    // Simple batch queries example (4/5) :
     try
     {
         // Open a database file
@@ -141,7 +165,7 @@ int main (void)
     remove("test.db3");
 
     ////////////////////////////////////////////////////////////////////////////
-    // RAII transaction example (4/4) :
+    // RAII transaction example (5/5) :
     try
     {
         // Open a database file

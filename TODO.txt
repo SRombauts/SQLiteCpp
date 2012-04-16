@@ -1,9 +1,8 @@
 Add a comparison of others C++ wrappers (code style, C++ design, in code documentation, tests, online documentation, examples, license, UTF-16) 
 
-Missing features in v0.2.0:
-- Statement::execStepAndGetScalar() easy wrapper
-- Database::execScalar() easy wrapper like CppSqlite
+Missing features in v0.3.0:
 - Database::tableExists
+- Blob
 - getColumnByName ? std::map getRow() ?
 
 Advanced missing features:

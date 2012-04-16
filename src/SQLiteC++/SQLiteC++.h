@@ -16,6 +16,7 @@
 // Include useful headers of SQLiteC++
 #include "Database.h"
 #include "Statement.h"
+#include "Column.h"
 #include "Transaction.h"
 
 

@@ -10,6 +10,7 @@
 #include "Statement.h"
 
 #include "Database.h"
+#include "Column.h"
 #include <iostream>
 
 namespace SQLite
@@ -177,7 +178,7 @@ bool Statement::executeStep(void) // throw(SQLite::Exception)
 }
 
 // Return a copy of the column data specified by its index starting at 0
-Statement::Column Statement::getColumn(const int aIndex) const // throw(SQLite::Exception)
+Column Statement::getColumn(const int aIndex) const // throw(SQLite::Exception)
 {
     if (false == mbOk)
     {
@@ -214,66 +215,6 @@ void Statement::check(const int aRet) const // throw(SQLite::Exception)
     {
         throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
     }
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Implementation of the inner class Statement::Column
-//
-
-// Encapsulation of a Column in a Row of the result.
-Statement::Column::Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, unsigned int* apStmtRefCount, int aIndex) throw() : // nothrow
-    mpSQLite(apSQLite),
-    mpStmt(apStmt),
-    mpStmtRefCount(apStmtRefCount),
-    mIndex(aIndex)
-{
-    (*mpStmtRefCount)++;
-}
-
-Statement::Column::~Column(void) throw() // nothrow
-{
-    (*mpStmtRefCount)--;
-    if (0 == *mpStmtRefCount)
-    {
-        int ret = sqlite3_finalize(mpStmt);
-        if (SQLITE_OK != ret)
-        {
-            throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
-        }
-        mpStmt = NULL;
-    }
-}
-
-// Return the integer value of the column specified by its index starting at 0
-int Statement::Column::getInt(void) const throw() // nothrow
-{
-    return sqlite3_column_int(mpStmt, mIndex);
-}
-
-// Return the 64bits integer value of the column specified by its index starting at 0
-sqlite3_int64 Statement::Column::getInt64(void) const throw() // nothrow
-{
-    return sqlite3_column_int64(mpStmt, mIndex);
-}
-
-// Return the double value of the column specified by its index starting at 0
-double Statement::Column::getDouble(void) const throw() // nothrow
-{
-    return sqlite3_column_double(mpStmt, mIndex);
-}
-
-// Return a pointer to the text value (NULL terminated string) of the column specified by its index starting at 0
-const char* Statement::Column::getText(void) const throw() // nothrow
-{
-    return (const char*)sqlite3_column_text(mpStmt, mIndex);
-}
-
-// Standard std::ostream inserter
-std::ostream& operator<<(std::ostream &stream, const Statement::Column& column)
-{
-    stream << column.getText();
-    return stream;
 }
 
 };  // namespace SQLite

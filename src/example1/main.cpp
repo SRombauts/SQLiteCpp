@@ -15,6 +15,7 @@
 
 #include "../SQLiteC++/Database.h"
 #include "../SQLiteC++/Statement.h"
+#include "../SQLiteC++/Column.h"
 #include "../SQLiteC++/Transaction.h"
 
 

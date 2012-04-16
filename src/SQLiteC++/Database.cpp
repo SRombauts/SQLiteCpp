@@ -10,6 +10,7 @@
 #include "Database.h"
 
 #include "Statement.h"
+#include "Column.h"
 
 namespace SQLite
 {

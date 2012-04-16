@@ -18,26 +18,33 @@ namespace SQLite
 // Compile and register the SQL query for the provided SQLite Database Connection
 Statement::Statement(Database &aDatabase, const char* apQuery) : // throw(SQLite::Exception)
     mpStmt(NULL),
-    mDatabase(aDatabase),
+    mpStmtRefCount(NULL),
+    mpSQLite(aDatabase.mpSQLite),
     mQuery(apQuery),
     mbOk(false),
     mbDone(false)
 {
-    int ret = sqlite3_prepare_v2(mDatabase.mpSQLite, mQuery.c_str(), mQuery.size(), &mpStmt, NULL);
+    int ret = sqlite3_prepare_v2(mpSQLite, mQuery.c_str(), mQuery.size(), &mpStmt, NULL);
     check(ret);
     mColumnCount = sqlite3_column_count(mpStmt);
+    mpStmtRefCount = new unsigned int;
+    *mpStmtRefCount = 1;
 }
 
 // Finalize and unregister the SQL query from the SQLite Database Connection.
 Statement::~Statement(void) throw() // nothrow
 {
-    int ret = sqlite3_finalize(mpStmt);
-    if (SQLITE_OK != ret)
+    (*mpStmtRefCount)--;
+    if (0 == *mpStmtRefCount)
     {
-        // Never throw an exception in a destructor
-        //std::cout << sqlite3_errmsg(mDatabase.mpSQLite);
+        int ret = sqlite3_finalize(mpStmt);
+        if (SQLITE_OK != ret)
+        {
+            // Never throw an exception in a destructor
+            //std::cout << sqlite3_errmsg(mpSQLite);
+        }
+        mpStmt = NULL;
     }
-    mpStmt = NULL;
 }
 
 // Reset the statement to make it ready for a new execution
@@ -158,8 +165,12 @@ bool Statement::executeStep(void) // throw(SQLite::Exception)
         }
         else
         {
-            throw SQLite::Exception(sqlite3_errmsg(mDatabase.mpSQLite));
+            throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
         }
+    }
+    else
+    {
+        throw SQLite::Exception("Statement need to be reseted");
     }
 
     return mbOk;
@@ -177,7 +188,7 @@ Statement::Column Statement::getColumn(const int aIndex) const // throw(SQLite::
         throw SQLite::Exception("Column index out of range");
     }
 
-    return Column(mDatabase.mpSQLite, mpStmt, aIndex);
+    return Column(mpSQLite, mpStmt, mpStmtRefCount, aIndex);
 }
 
 // Test if the column is NULL
@@ -195,12 +206,13 @@ bool Statement::isColumnNull(const int aIndex) const // throw(SQLite::Exception)
     return (SQLITE_NULL == sqlite3_column_type(mpStmt, aIndex));
 }
 
+
 // Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
 void Statement::check(const int aRet) const // throw(SQLite::Exception)
 {
     if (SQLITE_OK != aRet)
     {
-        throw SQLite::Exception(sqlite3_errmsg(mDatabase.mpSQLite));
+        throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
     }
 }
 
@@ -208,21 +220,29 @@ void Statement::check(const int aRet) const // throw(SQLite::Exception)
 ////////////////////////////////////////////////////////////////////////////////
 // Implementation of the inner class Statement::Column
 //
-// Warning : you should never try to use directly a Column object, nor copying it;
-//           is is only an Adapter class designed to convert the result value
-//           of Statement::getColumn() to the data type you want
-//
 
 // Encapsulation of a Column in a Row of the result.
-Statement::Column::Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, int aIndex) throw() : // nothrow
+Statement::Column::Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, unsigned int* apStmtRefCount, int aIndex) throw() : // nothrow
     mpSQLite(apSQLite),
     mpStmt(apStmt),
+    mpStmtRefCount(apStmtRefCount),
     mIndex(aIndex)
 {
+    (*mpStmtRefCount)++;
 }
 
 Statement::Column::~Column(void) throw() // nothrow
 {
+    (*mpStmtRefCount)--;
+    if (0 == *mpStmtRefCount)
+    {
+        int ret = sqlite3_finalize(mpStmt);
+        if (SQLITE_OK != ret)
+        {
+            throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
+        }
+        mpStmt = NULL;
+    }
 }
 
 // Return the integer value of the column specified by its index starting at 0
@@ -243,8 +263,8 @@ double Statement::Column::getDouble(void) const throw() // nothrow
     return sqlite3_column_double(mpStmt, mIndex);
 }
 
-// Return the text value (NULL terminated string) of the column specified by its index starting at 0
-const char * Statement::Column::getText(void) const throw() // nothrow
+// Return a pointer to the text value (NULL terminated string) of the column specified by its index starting at 0
+const char* Statement::Column::getText(void) const throw() // nothrow
 {
     return (const char*)sqlite3_column_text(mpStmt, mIndex);
 }

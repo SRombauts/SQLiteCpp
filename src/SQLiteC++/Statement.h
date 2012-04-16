@@ -125,12 +125,12 @@ public:
      * @warning The resulting Column object must not be copied or memorized as it is only valid for a short time,
      *          only while the row from the Statement remains valid, that is only until next executeStep
      */
-    Column  getColumn (const int aIndex) const; // throw(SQLite::Exception);
+    Column  getColumn(const int aIndex) const; // throw(SQLite::Exception);
 
     /**
      * @brief Test if the column is NULL
      */
-    bool    isColumnNull   (const int aIndex) const; // throw(SQLite::Exception);
+    bool    isColumnNull(const int aIndex) const; // throw(SQLite::Exception);
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -177,24 +177,23 @@ public:
      */
     class Column
     {
-        /// Standard std::ostream inserter
-        friend std::ostream& operator<<(std::ostream &stream, const Column& column);
-
     public:
         /**
          * @brief Compile and register the SQL query for the provided SQLite Database Connection
          */
-        explicit Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, int aIndex) throw(); // nothrow
+        explicit Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, unsigned int* apStmtRefCount, int aIndex) throw(); // nothrow
         /// Basic destructor
         virtual ~Column(void) throw(); // nothrow
 
         /// Return the integer value of the column.
         int             getInt   (void) const throw();
-        // Return the 64bits integer value of the column.
+        /// Return the 64bits integer value of the column.
         sqlite3_int64   getInt64 (void) const throw();
-        // Return the double (64bits float) value of the column.
+        /// Return the double (64bits float) value of the column.
         double          getDouble(void) const throw();
-        // Return the text value (NULL terminated string) of the column.
+        /// Return a pointer to the text value (NULL terminated string) of the column.
+        /// Warning, the value pointed at is only valid while the statement is valid (ie. not finalized),
+        /// thus you must copy it before using it beyond its scope (to a std::string for instance).
         const char*     getText  (void) const throw();
 
         /// Inline cast operator to int
@@ -229,9 +228,10 @@ public:
         Column& operator=(const Column&);
 
     private:
-        sqlite3*        mpSQLite;   //!< Pointer to SQLite Database Connection Handle
-        sqlite3_stmt*   mpStmt;     //!< Pointer to SQLite Statement Object
-        int             mIndex;     //!< Index of the column in the row of result
+        sqlite3*        mpSQLite;       //!< Pointer to SQLite Database Connection Handle
+        sqlite3_stmt*   mpStmt;         //!< Pointer to SQLite Statement Object
+        unsigned int*   mpStmtRefCount; //!< Pointer to the reference counter of the (shared) Statement Object
+        int             mIndex;         //!< Index of the column in the row of result
     };
 
 private:
@@ -247,12 +247,17 @@ private:
 
 private:
     sqlite3_stmt*   mpStmt;         //!< Pointer to SQLite Statement Object
-    Database&       mDatabase;      //!< Reference to the SQLite Database Connection
+    unsigned int*   mpStmtRefCount; //!< Pointer to the reference counter of the (shared) Statement Object
+    sqlite3*        mpSQLite;       //!< Pointer to SQLite Database Connection Handle
     std::string     mQuery;         //!< UTF-8 SQL Query
     int             mColumnCount;   //!< Number of column in the result of the prepared statement
     bool            mbOk;           //!< True when a row has been fetched with executeStep()
     bool            mbDone;         //!< True when the last executeStep() had no more row to fetch
 };
+
+
+/// Standard std::ostream inserter
+std::ostream& operator<<(std::ostream &stream, const Statement::Column& column);
 
 
 };  // namespace SQLite

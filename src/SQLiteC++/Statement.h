@@ -176,7 +176,7 @@ private:
 
 private:
     sqlite3_stmt*   mpStmt;         //!< Pointer to SQLite Statement Object
-    unsigned int*   mpStmtRefCount; //!< Pointer to the reference counter of the (shared) Statement Object
+    unsigned int*   mpStmtRefCount; //!< Pointer to the reference counter of the Statement Object (to share it with Column objects)
     sqlite3*        mpSQLite;       //!< Pointer to SQLite Database Connection Handle
     std::string     mQuery;         //!< UTF-8 SQL Query
     int             mColumnCount;   //!< Number of column in the result of the prepared statement

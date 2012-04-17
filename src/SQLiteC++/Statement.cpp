@@ -28,6 +28,7 @@ Statement::Statement(Database &aDatabase, const char* apQuery) : // throw(SQLite
     int ret = sqlite3_prepare_v2(mpSQLite, mQuery.c_str(), mQuery.size(), &mpStmt, NULL);
     check(ret);
     mColumnCount = sqlite3_column_count(mpStmt);
+    // Initialize the reference counter of the Statement Object : used to share the mpStmt with Column objects
     mpStmtRefCount = new unsigned int;
     *mpStmtRefCount = 1;
 }
@@ -35,9 +36,13 @@ Statement::Statement(Database &aDatabase, const char* apQuery) : // throw(SQLite
 // Finalize and unregister the SQL query from the SQLite Database Connection.
 Statement::~Statement(void) throw() // nothrow
 {
+    // Decrement and check the reference counter
     (*mpStmtRefCount)--;
     if (0 == *mpStmtRefCount)
     {
+        // When count reaches zero, dealloc and finalize the statement
+        delete mpStmtRefCount;
+
         int ret = sqlite3_finalize(mpStmt);
         if (SQLITE_OK != ret)
         {
@@ -189,6 +194,7 @@ Column Statement::getColumn(const int aIndex) const // throw(SQLite::Exception)
         throw SQLite::Exception("Column index out of range");
     }
 
+    // Share the Statement Object handle with the new Column created
     return Column(mpSQLite, mpStmt, mpStmtRefCount, aIndex);
 }
 

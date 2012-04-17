@@ -5,6 +5,9 @@ Missing features in v0.3.0:
 - Blob
 - getColumnByName ? std::map getRow() ?
 
+Missing documentation in v0.3.0:
+- Help for the new helper functions
+
 Advanced missing features:
 - batch mode managing multiple queries semicolon separated ? 
 - Function ?

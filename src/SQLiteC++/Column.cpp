@@ -24,15 +24,21 @@ Column::Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, unsigned int* apStmtRefC
     (*mpStmtRefCount)++;
 }
 
+// Finalize and unregister the SQL query from the SQLite Database Connection.
 Column::~Column(void) throw() // nothrow
 {
+    // Decrement and check the reference counter
     (*mpStmtRefCount)--;
     if (0 == *mpStmtRefCount)
     {
+        // When count reaches zero, dealloc and finalize the statement
+        delete mpStmtRefCount;
+
         int ret = sqlite3_finalize(mpStmt);
         if (SQLITE_OK != ret)
         {
-            throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
+            // Never throw an exception in a destructor
+            //std::cout << sqlite3_errmsg(mpSQLite);
         }
         mpStmt = NULL;
     }

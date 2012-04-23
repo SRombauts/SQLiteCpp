@@ -78,9 +78,18 @@ public:
      *
      * @see also Statement class for handling queries with multiple results
      *
-     * @param[in] apQuery  a UTF-8 encoded SQL query
+     * @param[in] apQuery  an UTF-8 encoded SQL query
      */
     Column execAndGet(const char* apQuery); // throw(SQLite::Exception);
+
+    /**
+     * @brief Shortcut to test if a table exists.
+     *
+     *  Table names are case sensitive.
+     *
+     * @param[in] apTableName an UTF-8 encoded case sensitive Table name
+     */
+    bool tableExists(const char* apTableName); // throw(SQLite::Exception);
 
     /**
      * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.

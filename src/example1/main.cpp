@@ -65,9 +65,11 @@ int main (void)
         SQLite::Database    db("example.db3");
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
-        // TODO SRombauts:
-        //SQLite::Statement::Column col = db.execAndGet("SELECT value FROM test WHERE id=2");
-        //const char* pvalue = col;
+        // Test if the 'test' table exists
+        bool bExists = db.tableExists("test");
+        std::cout << "SQLite table 'test' exists=" << bExists << "\n";
+
+        // Get a single value result with an easy to use shortcut
         std::string value = db.execAndGet("SELECT value FROM test WHERE id=2");
         std::cout << "execAndGet=" << value << std::endl;
 

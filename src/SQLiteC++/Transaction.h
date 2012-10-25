@@ -61,4 +61,4 @@ private:
 };
 
 
-};  // namespace SQLite
+}  // namespace SQLite

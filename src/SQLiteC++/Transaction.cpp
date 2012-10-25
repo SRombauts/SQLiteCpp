@@ -46,4 +46,4 @@ void Transaction::commit(void) // throw(SQLite::Exception)
 }
 
 
-};  // namespace SQLite
+}  // namespace SQLite

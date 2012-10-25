@@ -43,17 +43,17 @@ public:
     const char*     getText  (void) const throw();
 
     /// Inline cast operator to int
-    inline operator const int() const
+    inline operator int() const
     {
         return getInt();
     }
     /// Inline cast operator to 64bits integer
-    inline operator const sqlite3_int64() const
+    inline operator sqlite3_int64() const
     {
         return getInt64();
     }
     /// Inline cast operator to double
-    inline operator const double() const
+    inline operator double() const
     {
         return getDouble();
     }
@@ -71,6 +71,7 @@ public:
 private:
     // Column is copyable, but copy should not be used elsewhere than in return form getColumn
     Column(void);
+    // TODO Column(const Column&);
     Column& operator=(const Column&);
 
 private:
@@ -83,4 +84,4 @@ private:
 /// Standard std::ostream inserter
 std::ostream& operator<<(std::ostream &stream, const Column& column);
 
-};  // namespace SQLite
+}  // namespace SQLite

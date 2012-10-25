@@ -12,7 +12,7 @@
 #include <stdexcept>
 
 #ifdef _WIN32
-#pragma warning(disable:4290) // Disable warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow) 
+#pragma warning(disable:4290) // Disable warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
 #endif
 
 namespace SQLite
@@ -31,4 +31,4 @@ public:
 };
 
 
-};  // namespace SQLite
+}  // namespace SQLite

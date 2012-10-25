@@ -85,10 +85,10 @@ int main (void)
             // Demonstrate how to get some typed column value
             int         id      = query.getColumn(0); // = query.getColumn(0).getInt()
           //const char* pvalue  = query.getColumn(1); // = query.getColumn(1).getText()
-            std::string value   = query.getColumn(1); // = query.getColumn(1).getText()
+            std::string value2  = query.getColumn(1); // = query.getColumn(1).getText()
             int         size    = query.getColumn(2); // = query.getColumn(2).getInt()
 
-            std::cout << "row : (" << id << ", " << value.c_str() << ", " << size << ")\n";
+            std::cout << "row : (" << id << ", " << value2.c_str() << ", " << size << ")\n";
         }
 
         // Reset the query to use it again
@@ -204,8 +204,8 @@ int main (void)
             int nb = db.exec("INSERT INTO test VALUES (NULL, \"second\")");
             std::cout << "INSERT INTO test VALUES (NULL, \"second\")\", returned " << nb << std::endl;
 
-            nb = db.exec("INSERT INTO test \"error\"");
-            std::cout << "INSERT INTO test \"error\"\", returned " << nb << std::endl;
+            nb = db.exec("INSERT INTO test ObviousError");
+            std::cout << "INSERT INTO test \"error\", returned " << nb << std::endl;
 
             // Commit transaction
             transaction.commit();

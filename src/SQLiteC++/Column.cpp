@@ -76,4 +76,4 @@ std::ostream& operator<<(std::ostream &stream, const Column& column)
     return stream;
 }
 
-};  // namespace SQLite
+}  // namespace SQLite

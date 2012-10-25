@@ -19,6 +19,7 @@ Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READ
     mpSQLite(NULL),
     mFilename(apFilename)
 {
+    // TODO SRombauts : add a :memory: mode, and a backup to/from :memory:
     int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, NULL);
     if (SQLITE_OK != ret)
     {

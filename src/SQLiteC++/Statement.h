@@ -184,4 +184,4 @@ private:
     bool            mbDone;         //!< True when the last executeStep() had no more row to fetch
 };
 
-};  // namespace SQLite
+}  // namespace SQLite

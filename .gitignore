@@ -5,4 +5,5 @@ Release
 *.suo
 *.user
 *~
+doc
 core

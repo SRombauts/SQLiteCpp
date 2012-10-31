@@ -23,8 +23,9 @@
 class Example
 {
 public:
+    // Constructor
     Example(void) :
-        mDb("example.db3"),                                     // Open a database file
+        mDb("example.db3"),                                     // Open a database file in readonly mode
         mQuery(mDb, "SELECT * FROM test WHERE size > :min_size")// Compile a SQL query, containing one parameter (index 1)
     {
     }
@@ -32,7 +33,7 @@ public:
     {
     }
 
-    // List the rows where the "size" column is greater than the provided aParamValue
+    /// List the rows where the "size" column is greater than the provided aParamValue
     void ListGreaterThan (const int aParamValue)
     {
         std::cout << "ListGreaterThan (" << aParamValue << ")\n";
@@ -51,8 +52,8 @@ public:
     }
 
 private:
-    SQLite::Database    mDb;
-    SQLite::Statement   mQuery;
+    SQLite::Database    mDb;    ///< Database connection
+    SQLite::Statement   mQuery; ///< Database prepared SQL query
 };
 
 
@@ -61,8 +62,8 @@ int main (void)
     // Basic example (1/5) :
     try
     {
-        // Open a database file
-        SQLite::Database    db("example.db3");
+        // Open a database file in readonly mode
+        SQLite::Database    db("example.db3");  // SQLITE_OPEN_READONLY
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
         // Test if the 'test' table exists
@@ -128,8 +129,8 @@ int main (void)
     // The execAndGet wrapper example (3/5) :
     try
     {
-        // Open a database file
-        SQLite::Database    db("example.db3");
+        // Open a database file in readonly mode
+        SQLite::Database    db("example.db3");  // SQLITE_OPEN_READONLY
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
         // WARNING: Be very careful with this dangerous method: you have to
@@ -147,7 +148,7 @@ int main (void)
     // Simple batch queries example (4/5) :
     try
     {
-        // Open a database file
+        // Open a database file in create/write mode
         SQLite::Database    db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
@@ -170,7 +171,7 @@ int main (void)
     // RAII transaction example (5/5) :
     try
     {
-        // Open a database file
+        // Open a database file in create/write mode
         SQLite::Database    db("transaction.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 

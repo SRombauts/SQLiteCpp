@@ -14,12 +14,13 @@
 namespace SQLite
 {
 
-// Open the provided database UTF-8 filename.
+// Open the provided database UTF-8 filename with SQLITE_OPEN_xxx provided flags.
 Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READONLY*/) : // throw(SQLite::Exception)
     mpSQLite(NULL),
     mFilename(apFilename)
 {
-    // TODO SRombauts : add a :memory: mode, and a backup to/from :memory:
+    // TODO SRombauts : use the "zVfs" (last) parameter to give access to the ":memory:" VFS module
+    // TODO SRombauts : then add a backup mode to/from ":memory:"
     int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, NULL);
     if (SQLITE_OK != ret)
     {

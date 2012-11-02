@@ -72,7 +72,7 @@ int main (void)
 
         // Get a single value result with an easy to use shortcut
         std::string value = db.execAndGet("SELECT value FROM test WHERE id=2");
-        std::cout << "execAndGet=" << value << std::endl;
+        std::cout << "execAndGet=" << value.c_str() << std::endl;
 
         // Compile a SQL query, containing one parameter (index 1)
         SQLite::Statement   query(db, "SELECT * FROM test WHERE size > ?");
@@ -137,7 +137,7 @@ int main (void)
         // make a COPY OF THE result, else it will be destroy before the next line
         // (when the underlying temporary Statement and Column objects are destroyed)
         std::string value = db.execAndGet("SELECT value FROM test WHERE id=2");
-        std::cout << "execAndGet=" << value << std::endl;
+        std::cout << "execAndGet=" << value.c_str() << std::endl;
     }
     catch (std::exception& e)
     {

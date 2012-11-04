@@ -62,11 +62,18 @@ public:
     {
         return getText();
     }
+#ifdef __GNUC__
+    // NOTE : the following is required by GCC to cast a Column result in a std::string
+    // (error: conversion from ‘SQLite::Column’ to non-scalar type ‘std::string {aka std::basic_string<char>}’ requested)
+    // but is not working under Microsoft Visual Studio 2010 and 2012
+    // (error C2440: 'initializing' : cannot convert from 'SQLite::Column' to 'std::basic_string<_Elem,_Traits,_Ax>'
+    //  [...] constructor overload resolution was ambiguous)
     /// Inline cast operator to std::string
     inline operator const std::string() const
     {
         return getText();
     }
+#endif
 
 private:
     // Column is copyable, but copy should not be used elsewhere than in return form getColumn

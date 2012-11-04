@@ -82,4 +82,4 @@ void Database::check(const int aRet) const // throw(SQLite::Exception)
     }
 }
 
-};  // namespace SQLite
+}  // namespace SQLite

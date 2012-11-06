@@ -31,6 +31,17 @@ and throw exceptions in case of SQLite errors.
 Each SQLiteC++ object must be constructed with a valid SQLite database connection,
 and then is always valid until destroyed.
 
+### Suported platforms:
+
+Developements and tests are done under the following OSs :
+- Debian 7 (testing)
+- Ubuntu 12.04
+- Windows XP/7/8
+And following IDEs/Compilers
+- GCC 4.7.x with a provided Makefile
+- Eclipse CDT under Linux, using directly GCC
+- Visual Studio Expres 2008/2010/2012 for testing compatibility purpose
+
 ### Depandancies:
 
  - a STL implementation (even an old one like VC6/eVC4 should work)

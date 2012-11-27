@@ -20,6 +20,8 @@ namespace SQLite
  * @brief Encapsulation of a Column in a Row of the result.
  *
  * A Column is a particular field of SQLite data in the current row of result of the Statement.
+ *
+ * @todo mpStmtRefCount is thread unsafe !
  */
 class Column
 {
@@ -84,7 +86,7 @@ private:
 private:
     sqlite3*        mpSQLite;       //!< Pointer to SQLite Database Connection Handle
     sqlite3_stmt*   mpStmt;         //!< Pointer to SQLite Statement Object
-    unsigned int*   mpStmtRefCount; //!< Pointer to the reference counter of the Statement Object (to share it with a Statement object)
+    unsigned int*   mpStmtRefCount; //!< Pointer to the heap allocated reference counter of the sqlite3_stmt (shared with the Statement object)
     int             mIndex;         //!< Index of the column in the row of result
 };
 

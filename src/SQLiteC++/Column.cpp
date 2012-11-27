@@ -21,19 +21,19 @@ Column::Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, unsigned int* apStmtRefC
     mpStmtRefCount(apStmtRefCount),
     mIndex(aIndex)
 {
+    // Increment the reference counter of the sqlite3_stmt,
+    // telling the Statement object not to finalize the sqlite3_stmt during the lifetime of this Column objet
     (*mpStmtRefCount)++;
 }
 
 // Finalize and unregister the SQL query from the SQLite Database Connection.
 Column::~Column(void) throw() // nothrow
 {
-    // Decrement and check the reference counter
+    // Decrement and check the reference counter of the sqlite3_stmt
     (*mpStmtRefCount)--;
     if (0 == *mpStmtRefCount)
     {
-        // When count reaches zero, dealloc and finalize the statement
-        delete mpStmtRefCount;
-
+        // When count reaches zero, finalize the sqlite3_stmt, as no Column nor Statement object use it any more
         int ret = sqlite3_finalize(mpStmt);
         if (SQLITE_OK != ret)
         {
@@ -41,7 +41,11 @@ Column::~Column(void) throw() // nothrow
             //std::cout << sqlite3_errmsg(mpSQLite);
         }
         mpStmt = NULL;
+
+        // and delete the reference counter
+        delete mpStmtRefCount;
     }
+    // else, the finalization will be done by the Statement or another Column object (the last one)
 }
 
 // Return the integer value of the column specified by its index starting at 0

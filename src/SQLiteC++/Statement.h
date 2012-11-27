@@ -28,6 +28,8 @@ class Column;
  * Resource Acquisition Is Initialization (RAII) means that the Statement
  * is compiled in the constructor and finalized in the destructor, so that there is
  * no need to worry about memory management or the validity of the underlying SQLite Statement.
+ *
+ * @todo mpStmtRefCount is thread unsafe !
  */
 class Statement
 {
@@ -176,7 +178,7 @@ private:
 
 private:
     sqlite3_stmt*   mpStmt;         //!< Pointer to SQLite Statement Object
-    unsigned int*   mpStmtRefCount; //!< Pointer to the reference counter of the Statement Object (to share it with Column objects)
+    unsigned int*   mpStmtRefCount; //!< Pointer to the heap allocated reference counter of the sqlite3_stmt (to share it with Column objects)
     sqlite3*        mpSQLite;       //!< Pointer to SQLite Database Connection Handle
     std::string     mQuery;         //!< UTF-8 SQL Query
     int             mColumnCount;   //!< Number of column in the result of the prepared statement

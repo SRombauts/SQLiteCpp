@@ -28,7 +28,8 @@ Statement::Statement(Database &aDatabase, const char* apQuery) : // throw(SQLite
     int ret = sqlite3_prepare_v2(mpSQLite, mQuery.c_str(), mQuery.size(), &mpStmt, NULL);
     check(ret);
     mColumnCount = sqlite3_column_count(mpStmt);
-    // Initialize the reference counter of the Statement Object : used to share the mpStmt with Column objects
+    // Initialize the reference counter of the sqlite3_stmt : used to share the mpStmt with Column objects;
+    // This is needed to enable Column objects to live longer than the Statement objet it refers to.
     mpStmtRefCount = new unsigned int;
     *mpStmtRefCount = 1;
 }
@@ -36,13 +37,11 @@ Statement::Statement(Database &aDatabase, const char* apQuery) : // throw(SQLite
 // Finalize and unregister the SQL query from the SQLite Database Connection.
 Statement::~Statement(void) throw() // nothrow
 {
-    // Decrement and check the reference counter
+    // Decrement and check the reference counter of the sqlite3_stmt
     (*mpStmtRefCount)--;
     if (0 == *mpStmtRefCount)
     {
-        // When count reaches zero, dealloc and finalize the statement
-        delete mpStmtRefCount;
-
+        // If count reaches zero, finalize the sqlite3_stmt, as no Column objet use it anymore
         int ret = sqlite3_finalize(mpStmt);
         if (SQLITE_OK != ret)
         {
@@ -50,7 +49,11 @@ Statement::~Statement(void) throw() // nothrow
             //std::cout << sqlite3_errmsg(mpSQLite);
         }
         mpStmt = NULL;
+
+        // and delete the reference counter
+        delete mpStmtRefCount;
     }
+    // else, the finalization will be done by the last Column object
 }
 
 // Reset the statement to make it ready for a new execution

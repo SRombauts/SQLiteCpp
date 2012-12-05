@@ -20,8 +20,9 @@ namespace SQLite
 Statement::Statement(Database &aDatabase, const char* apQuery) : // throw(SQLite::Exception)
     mpStmt(NULL),
     mpStmtRefCount(NULL),
-    mpSQLite(aDatabase.mpSQLite),
+    mpSQLite(aDatabase.mpSQLite),   // need Database friendship
     mQuery(apQuery),
+    mColumnCount(0),
     mbOk(false),
     mbDone(false)
 {
@@ -186,6 +187,7 @@ bool Statement::executeStep(void) // throw(SQLite::Exception)
 }
 
 // Return a copy of the column data specified by its index starting at 0
+// (use the Column copy-constructor)
 Column Statement::getColumn(const int aIndex) const // throw(SQLite::Exception)
 {
     if (false == mbOk)

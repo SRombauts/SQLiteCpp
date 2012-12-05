@@ -28,7 +28,7 @@ namespace SQLite
  */
 class Database
 {
-    friend class Statement;
+    friend class Statement; // Give Statement constructor access to the mpSQLite Connection Handle
 
 public:
     /**

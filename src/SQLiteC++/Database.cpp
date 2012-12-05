@@ -56,6 +56,7 @@ int Database::exec(const char* apQueries) // throw(SQLite::Exception);
 // make a COPY OF THE result, else it will be destroy before the next line
 // (when the underlying temporary Statement and Column objects are destroyed)
 // this is an issue only for pointer type result (ie. char* and blob)
+// (use the Column copy-constructor)
 Column Database::execAndGet(const char* apQuery) // throw(SQLite::Exception)
 {
     Statement query(*this, apQuery);

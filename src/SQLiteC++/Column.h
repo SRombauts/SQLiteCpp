@@ -30,8 +30,11 @@ public:
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
      */
     explicit Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, unsigned int* apStmtRefCount, int aIndex) throw(); // nothrow
-    /// Basic destructor
-    virtual ~Column(void) throw(); // nothrow
+    /// Simple destructor
+    virtual ~Column(void)                   throw(); // nothrow
+
+    /// @brief copy constructor : only way to copy a valid instance
+             Column(const Column& aOther)   throw(); // nothrow
 
     /// Return the integer value of the column.
     int             getInt   (void) const throw();
@@ -78,9 +81,9 @@ public:
 #endif
 
 private:
-    // Column is copyable, but copy should not be used elsewhere than in return form getColumn
+    // Forbid default constructor and assignment operator (no implementation)
+    // so that there is no way of having a Column instance not initialized
     Column(void);
-    // TODO Column(const Column&);
     Column& operator=(const Column&);
 
 private:

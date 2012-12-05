@@ -16,10 +16,22 @@ namespace SQLite
 
 // Encapsulation of a Column in a Row of the result.
 Column::Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, unsigned int* apStmtRefCount, int aIndex) throw() : // nothrow
-    mpSQLite(apSQLite),
-    mpStmt(apStmt),
-    mpStmtRefCount(apStmtRefCount),
-    mIndex(aIndex)
+    mpSQLite        (apSQLite),
+    mpStmt          (apStmt),
+    mpStmtRefCount  (apStmtRefCount),
+    mIndex          (aIndex)
+{
+    // Increment the reference counter of the sqlite3_stmt,
+    // telling the Statement object not to finalize the sqlite3_stmt during the lifetime of this Column objet
+    (*mpStmtRefCount)++;
+}
+
+// Copy constructor
+Column::Column(const Column& copy) throw() : // nothrow
+    mpSQLite        (copy.mpSQLite),
+    mpStmt          (copy.mpStmt),
+    mpStmtRefCount  (copy.mpStmtRefCount),
+    mIndex          (copy.mIndex)
 {
     // Increment the reference counter of the sqlite3_stmt,
     // telling the Statement object not to finalize the sqlite3_stmt during the lifetime of this Column objet

@@ -39,15 +39,15 @@ Developements and tests are done under the following OSs :
 - Windows XP/7/8
 And following IDEs/Compilers
 - GCC 4.7.x with a provided Makefile
-- Eclipse CDT under Linux, using directly GCC
-- Visual Studio Expres 2008/2010/2012 for testing compatibility purpose
+- Eclipse CDT under Linux, using the provided Makefile
+- Visual Studio Express 2008/2010/2012 for testing compatibility purpose
 
 ### Depandancies:
 
  - a STL implementation (even an old one like VC6/eVC4 should work)
- - exception support (the class Exception inherite from std::runtime_error)
+ - exception support (the class Exception inherit from std::runtime_error)
  - the SQLite library, either by linking to it dynamicaly or staticaly,
-   or by adding its source file in your project code base.
+   or by adding its source file in your project code base (source code provided in src/sqlite3).
 
 To use it in your project, you only need to add the 6 SQLiteC++ source files
 in your project code base (not the main.cpp example file).
@@ -119,7 +119,7 @@ catch (std::exception& e)
 
  - [sqdbcpp](http://code.google.com/p/sqdbcpp/): RAII design, simple, no depandencies, UTF-8/UTF-16, new BSD license
  - [sqlite3cc](http://ed.am/dev/sqlite3cc): uses boost, modern design, LPGPL
- - [sqlite3pp](http://code.google.com/p/sqlite3pp/): uses boost, MIT License 
+ - [sqlite3pp](http://code.google.com/p/sqlite3pp/): uses boost, but never updated since initial publication in may 2012, MIT License
  - [SQLite++](http://sqlitepp.berlios.de/): uses boost build system, Boost License 1.0 
  - [CppSQLite](http://www.codeproject.com/Articles/6343/CppSQLite-C-Wrapper-for-SQLite/): famous Code Project but old design, BSD License 
  - [easySQLite](http://code.google.com/p/easysqlite/): manages table as structured objects, complex 

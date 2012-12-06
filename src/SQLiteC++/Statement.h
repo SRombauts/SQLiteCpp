@@ -122,7 +122,9 @@ public:
      * @brief Return a copie of the column data specified by its index starting at 0 (aIndex >= 0)
      *
      * @warning The resulting Column object must not be copied or memorized as it is only valid for a short time,
-     *          only while the row from the Statement remains valid, that is only until next executeStep
+     *          only while the row from the Statement remains valid, that is only until next executeStep.
+     *          Thus, you should instead extract immediately its data (getInt()...) and use or copy this data
+     *          for any later usage.
      */
     Column  getColumn(const int aIndex) const; // throw(SQLite::Exception);
 

@@ -118,6 +118,8 @@ public:
      *                               then you have to call executeStep() again to fetch more rows until the query is finished
      *         - false (SQLITE_DONE) if the query has finished executing : there is no (more) row of result
      *                               (case of a query with no result, or after N rows fetched successfully)
+     *
+     * @see Database::exec() is a shortcut to execute one or multiple statements without results
      */
     bool executeStep(void); // throw(SQLite::Exception);
 

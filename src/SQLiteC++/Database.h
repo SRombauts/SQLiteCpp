@@ -57,9 +57,12 @@ public:
     /**
      * @brief Shortcut to execute one or multiple statements without results.
      *
-     *  This is useful for Data Manipulation Language SQL statements like CREATE, INSERT, UPDATE, DROP
+     *  This is useful for any kind of statements other than the Data Query Language (DQL) "SELECT" :
+     *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
+     *  - Data Manipulation Language (DML) statements "INSERT", "UPDATE" and "DELETE"
+     *  - Data Control Language (DCL) statements "GRANT", "REVOKE", "COMMIT" and "ROLLBACK"
      *
-     * @see also Statement class for handling queries with results
+     * @see Statement class and Statement::executeStep() for handling "SELECT" queries with results
      *
      * @param[in] apQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
      */

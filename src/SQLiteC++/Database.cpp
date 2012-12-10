@@ -41,7 +41,7 @@ Database::~Database(void) throw() // nothrow
     }
 }
 
-// Shortcut to execute one or multiple SQL statements without results.
+// Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT...).
 int Database::exec(const char* apQueries) // throw(SQLite::Exception);
 {
     int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);

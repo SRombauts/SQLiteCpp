@@ -113,6 +113,11 @@ public:
 
     /**
      * @brief Execute a step of the query to fetch one row of results.
+     *
+     * @return - true  (SQLITE_ROW)  if there is another row ready : you can call getColumn(N) to get it
+     *                               then you have to call executeStep() again to fetch more rows until the query is finished
+     *         - false (SQLITE_DONE) if the query has finished executing : there is no (more) row of result
+     *                               (case of a query with no result, or after N rows fetched successfully)
      */
     bool executeStep(void); // throw(SQLite::Exception);
 

@@ -57,7 +57,7 @@ private:
 
 private:
     Database&   mDatabase;  //!< Reference to the SQLite Database Connection
-    bool        mbCommited; //!< True when the last executeStep() had no more row to fetch
+    bool        mbCommited; //!< True when commit has been called
 };
 
 

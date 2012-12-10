@@ -1,6 +1,6 @@
 /**
  * @file  Transaction.cpp
- * @brief A prepared SQLite Transaction is a compiled SQL query ready to be executed.
+ * @brief A Transaction is way to group multiple SQL statements into an atomic secured operation.
  *
  * Copyright (c) 2012 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
@@ -14,7 +14,7 @@
 namespace SQLite
 {
 
-// Compile and register the SQL query for the provided SQLite Database Connection
+//Begins the SQLite transaction
 Transaction::Transaction(Database &aDatabase) : // throw(SQLite::Exception)
     mDatabase(aDatabase),
     mbCommited(false)
@@ -22,12 +22,20 @@ Transaction::Transaction(Database &aDatabase) : // throw(SQLite::Exception)
     mDatabase.exec("BEGIN");
 }
 
-// Finalize and unregister the SQL query from the SQLite Database Connection.
+// Safely rollback the transaction if it has not been committed.
 Transaction::~Transaction(void) throw() // nothrow
 {
     if (false == mbCommited)
     {
-        mDatabase.exec("ROLLBACK");
+        try
+        {
+            mDatabase.exec("ROLLBACK");
+        }
+        catch (SQLite::Exception& e)
+        {
+            // Never throw an exception in a destructor
+            //std::cout << e.what() << std::endl;
+        }
     }
 }
 

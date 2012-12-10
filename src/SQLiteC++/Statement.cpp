@@ -11,7 +11,6 @@
 
 #include "Database.h"
 #include "Column.h"
-#include <iostream>
 
 namespace SQLite
 {
@@ -47,7 +46,7 @@ Statement::~Statement(void) throw() // nothrow
         if (SQLITE_OK != ret)
         {
             // Never throw an exception in a destructor
-            //std::cout << sqlite3_errmsg(mpSQLite);
+            //std::cout << sqlite3_errmsg(mpSQLite) << std::endl;
         }
         mpStmt = NULL;
 

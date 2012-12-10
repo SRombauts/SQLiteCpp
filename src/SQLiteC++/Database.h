@@ -65,6 +65,8 @@ public:
      * @see Statement class and Statement::executeStep() for handling "SELECT" queries with results
      *
      * @param[in] apQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
+     *
+     * @return number of changes made by those SQL statements
      */
     int exec(const char* apQueries); // throw(SQLite::Exception);
 

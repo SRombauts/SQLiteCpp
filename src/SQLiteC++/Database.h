@@ -67,6 +67,8 @@ public:
      * @param[in] apQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
      *
      * @return number of changes made by those SQL statements
+     *
+     * @throw SQLite::Exception in case of error
      */
     int exec(const char* apQueries); // throw(SQLite::Exception);
 
@@ -84,6 +86,10 @@ public:
      * @see also Statement class for handling queries with multiple results
      *
      * @param[in] apQuery  an UTF-8 encoded SQL query
+     *
+     * @return a temporary Column object with the first column of result.
+     *
+     * @throw SQLite::Exception in case of error
      */
     Column execAndGet(const char* apQuery); // throw(SQLite::Exception);
 
@@ -93,6 +99,10 @@ public:
      *  Table names are case sensitive.
      *
      * @param[in] apTableName an UTF-8 encoded case sensitive Table name
+     *
+     * @return true if the table exists.
+     *
+     * @throw SQLite::Exception in case of error
      */
     bool tableExists(const char* apTableName); // throw(SQLite::Exception);
 

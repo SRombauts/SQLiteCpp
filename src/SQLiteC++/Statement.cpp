@@ -163,17 +163,19 @@ bool Statement::executeStep(void) // throw(SQLite::Exception)
     if (false == mbDone)
     {
         int ret = sqlite3_step(mpStmt);
-        if (SQLITE_ROW == ret)
+        if (SQLITE_ROW == ret) // one row is ready : call getColumn(N) to access it
         {
             mbOk = true;
         }
-        else if (SQLITE_DONE == ret)
+        else if (SQLITE_DONE == ret) // no (more) row ready : the query has finished executing
         {
             mbOk = false;
             mbDone = true;
         }
         else
         {
+            mbOk = false;
+            mbDone = false;
             throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
         }
     }
@@ -182,7 +184,40 @@ bool Statement::executeStep(void) // throw(SQLite::Exception)
         throw SQLite::Exception("Statement need to be reseted");
     }
 
-    return mbOk;
+    return mbOk; // true only if one row is accessible by getColumn(N)
+}
+
+// Execute a one-step query with no expected result
+int Statement::exec(void) // throw(SQLite::Exception)
+{
+    if (false == mbDone)
+    {
+        int ret = sqlite3_step(mpStmt);
+        if (SQLITE_DONE == ret) // the statement has finished executing successfully
+        {
+            mbOk = false;
+            mbDone = true;
+        }
+        else if (SQLITE_ROW == ret)
+        {
+            mbOk = false;
+            mbDone = false;
+            throw SQLite::Exception("exec() does not expect results");
+        }
+        else
+        {
+            mbOk = false;
+            mbDone = false;
+            throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
+        }
+    }
+    else
+    {
+        throw SQLite::Exception("Statement need to be reseted");
+    }
+
+    // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
+    return sqlite3_changes(mpSQLite);
 }
 
 // Return a copy of the column data specified by its index starting at 0

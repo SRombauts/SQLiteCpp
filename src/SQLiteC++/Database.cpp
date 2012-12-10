@@ -47,7 +47,7 @@ int Database::exec(const char* apQueries) // throw(SQLite::Exception);
     int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);
     check(ret);
 
-    // Return the number of changes made by those SQL statements
+    // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
     return sqlite3_changes(mpSQLite);
 }
 

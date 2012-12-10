@@ -112,8 +112,9 @@ public:
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * @brief Execute a step of the query to fetch one row of results.
+     * @brief Execute a step of the prepared query to fetch one row of results.
      *
+     * @see exec() execute a one-step prepared statement with no expected result
      * @see Database::exec() is a shortcut to execute one or multiple statements without results
      *
      * @return - true  (SQLITE_ROW)  if there is another row ready : you can call getColumn(N) to get it
@@ -124,6 +125,22 @@ public:
      * @throw SQLite::Exception in case of error
      */
     bool executeStep(void); // throw(SQLite::Exception);
+
+    /**
+     * @brief Execute a one-step query with no expected result.
+     *
+     *  This exec() method is to use with precompiled statement that does not fetch results (INSERT, UPDATE, DELETE...).
+     * It is intended for similar usage as Database::exec(), but is able to reuse the precompiled underlying SQLite statement
+     * for better performances.
+     *
+     * @see executeStep() execute a step of the prepared query to fetch one row of results
+     * @see Database::exec() is a shortcut to execute one or multiple statements without results
+     *
+     * @return number of row modified by this SQL statement (INSERT, UPDATE or DELETE)
+     *
+     * @throw SQLite::Exception in case of error, or if row of results are returned !
+     */
+    int exec(void); // throw(SQLite::Exception);
 
     ////////////////////////////////////////////////////////////////////////////
 

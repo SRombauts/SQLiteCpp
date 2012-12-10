@@ -62,11 +62,12 @@ public:
      *  - Data Manipulation Language (DML) statements "INSERT", "UPDATE" and "DELETE"
      *  - Data Control Language (DCL) statements "GRANT", "REVOKE", "COMMIT" and "ROLLBACK"
      *
-     * @see Statement class and Statement::executeStep() for handling "SELECT" queries with results
+     * @see Statement::exec() to handle precompiled statements (for better performances) without results
+     * @see Statement::executeStep() to handle "SELECT" queries with results
      *
      * @param[in] apQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
      *
-     * @return number of changes made by those SQL statements
+     * @return number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
      *
      * @throw SQLite::Exception in case of error
      */

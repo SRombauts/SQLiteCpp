@@ -107,6 +107,7 @@ int main (void)
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
+        abort(); // unexpected error : abort the example program
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -124,6 +125,7 @@ int main (void)
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
+        abort(); // unexpected error : abort the example program
     }
 
     // The execAndGet wrapper example (3/5) :
@@ -142,6 +144,7 @@ int main (void)
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
+        abort(); // unexpected error : abort the example program
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -181,6 +184,7 @@ int main (void)
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
+        abort(); // unexpected error : abort the example program
     }
     remove("test.db3");
 
@@ -211,6 +215,7 @@ int main (void)
         catch (std::exception& e)
         {
             std::cout << "SQLite exception: " << e.what() << std::endl;
+            abort(); // unexpected error : abort the example program
         }
 
         // Exemple of a rollbacked transaction :
@@ -225,12 +230,15 @@ int main (void)
             nb = db.exec("INSERT INTO test ObviousError");
             std::cout << "INSERT INTO test \"error\", returned " << nb << std::endl;
 
+            abort(); // unexpected success : abort the example program
+
             // Commit transaction
             transaction.commit();
         }
         catch (std::exception& e)
         {
             std::cout << "SQLite exception: " << e.what() << std::endl;
+            // expected error, see above
         }
 
         // Check the results (expect only one row of result, as the second one has been rollbacked by the error)
@@ -244,6 +252,7 @@ int main (void)
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
+        abort(); // unexpected error : abort the example program
     }
     remove("transaction.db3");
 

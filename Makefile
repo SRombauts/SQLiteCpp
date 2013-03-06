@@ -13,10 +13,10 @@ BUILD ?= Debug
 ### Conditionally set variables: ###
 
 ifeq ($(BUILD),Debug)
-BUILD_FLAGS = -g3 -rdynamic -fstack-protector-all -fno-inline -O0 -DDEBUG -D_DEBUG
+BUILD_FLAGS = -g3 -rdynamic -fstack-protector-all -fno-inline -O0 -D_DEBUG
 endif
 ifeq ($(BUILD),Release)
-BUILD_FLAGS = -O2
+BUILD_FLAGS = -O2 -DNDEBUG
 endif
 ifeq ($(BUILD),Debug)
 LINK_FLAGS = -g3 -rdynamic

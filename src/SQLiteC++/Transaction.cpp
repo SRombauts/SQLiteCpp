@@ -35,6 +35,7 @@ Transaction::~Transaction(void) throw() // nothrow
         {
             // Never throw an exception in a destructor
             //std::cout << e.what() << std::endl;
+            SQLITE_CPP_ASSERT(false);
         }
     }
 }

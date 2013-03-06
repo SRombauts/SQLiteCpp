@@ -10,6 +10,19 @@
 #pragma once
 
 #include <stdexcept>
+#include <cassert>
+
+
+// assert() is used in destructors, where exceptions are not allowed
+// here you can chose if you whant to use them or not
+#ifdef _DEBUG
+    // in debug mode :
+    #define SQLITE_CPP_ASSERT(expression) assert(expression)
+#else
+    // in release mode :
+    #define SQLITE_CPP_ASSERT(expression) (expression)
+#endif
+
 
 #ifdef _WIN32
 #pragma warning(disable:4290) // Disable warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)

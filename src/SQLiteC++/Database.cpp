@@ -34,11 +34,9 @@ Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READ
 Database::~Database(void) throw() // nothrow
 {
     int ret = sqlite3_close(mpSQLite);
-    if (SQLITE_OK != ret)
-    {
-        // Never throw an exception in a destructor
-        //std::cout << sqlite3_errmsg(mpSQLite) << std::endl;
-    }
+    // Never throw an exception in a destructor
+    //std::cout << sqlite3_errmsg(mpSQLite) << std::endl;
+    SQLITE_CPP_ASSERT (SQLITE_OK == ret);
 }
 
 // Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT...).

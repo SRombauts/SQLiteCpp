@@ -43,11 +43,10 @@ Statement::~Statement(void) throw() // nothrow
     {
         // If count reaches zero, finalize the sqlite3_stmt, as no Column objet use it anymore
         int ret = sqlite3_finalize(mpStmt);
-        if (SQLITE_OK != ret)
-        {
-            // Never throw an exception in a destructor
-            //std::cout << sqlite3_errmsg(mpSQLite) << std::endl;
-        }
+        // Never throw an exception in a destructor
+        //std::cout << sqlite3_errmsg(mpSQLite) << std::endl;
+        SQLITE_CPP_ASSERT (SQLITE_OK == ret);
+
         mpStmt = NULL;
 
         // and delete the reference counter

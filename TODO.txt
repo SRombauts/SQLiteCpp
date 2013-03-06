@@ -4,10 +4,8 @@ C++11 explicit support
 
 Adding an encapsulation to the statement ref counter
 
-copyright 2013
-
-
 => V0.5.0
+
 using assert() in example program to provide a basic test coverage
 
 Missing features in v0.4.0:

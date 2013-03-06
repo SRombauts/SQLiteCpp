@@ -43,5 +43,8 @@
     <ClInclude Include="src\SQLiteC++\Transaction.h">
       <Filter>SQLiteC++</Filter>
     </ClInclude>
+    <ClInclude Include="src\SQLiteC++\Exception.h">
+      <Filter>SQLiteC++</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

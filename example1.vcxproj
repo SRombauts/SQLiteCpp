@@ -95,6 +95,7 @@
   <ItemGroup>
     <ClInclude Include="src\SQLiteC++\Column.h" />
     <ClInclude Include="src\SQLiteC++\Database.h" />
+    <ClInclude Include="src\SQLiteC++\Exception.h" />
     <ClInclude Include="src\SQLiteC++\SQLiteC++.h" />
     <ClInclude Include="src\SQLiteC++\Statement.h" />
     <ClInclude Include="src\SQLiteC++\Transaction.h" />

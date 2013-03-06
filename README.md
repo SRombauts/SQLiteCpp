@@ -21,7 +21,7 @@ or copy at http://opensource.org/licenses/MIT)
 - to be well documented, in code with Doxygen, and online with some good examples
 - to be portable
 - to be light and fast
-- to be monothreaded
+- to be monothreaded (not thread-safe)
 - to use API names sticking with those of the SQLite library
 - to be well maintained
 

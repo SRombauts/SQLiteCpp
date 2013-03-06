@@ -20,8 +20,6 @@ namespace SQLite
  * @brief Encapsulation of a Column in a Row of the result.
  *
  * A Column is a particular field of SQLite data in the current row of result of the Statement.
- *
- * @todo mpStmtRefCount is thread unsafe !
  */
 class Column
 {

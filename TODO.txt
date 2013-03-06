@@ -1,5 +1,15 @@
 Add a comparison of others C++ wrappers (code style, C++ design, in code documentation, tests, online documentation, examples, license, UTF-16) 
 
+C++11 explicit support
+
+Adding an encapsulation to the statement ref counter
+
+Using (optionnal) assert() on errors in destructors
+
+copyright 2013
+
+=> V0.5.0
+
 Missing features in v0.4.0:
 - Blob
 - getColumnByName ? std::map getRow() ?
@@ -8,15 +18,14 @@ Missing documentation in v0.4.0:
 - Help for the new helper functions
 
 Advanced missing features:
+- :memory: : use the "zVfs" (last) parameter of sqlite3_open_v2() to give access to the ":memory:" VFS module
+- backup support to/from :memory:
 - batch mode managing multiple queries semicolon separated ? 
 - Function ?
 - Agregate ?
-
 - support for different transaction mode ? NO: too specific
 - operator<< binding ? NO: redundant with bind()
-
 - ATTACH Database ? NO: can already be done by "ATTACH" Statement
-- :memory: ? NO: can already be done by Database constructor with ":memory:" filename
 
 Add a full test suite
 

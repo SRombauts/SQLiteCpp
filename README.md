@@ -25,9 +25,10 @@ or copy at http://opensource.org/licenses/MIT)
 - to use API names sticking with those of the SQLite library
 - to be well maintained
 
-It is designed with the Resource Acquisition Is Initialization (RAII) idom
+It is designed using the Resource Acquisition Is Initialization (RAII) idom
 (see http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization),
-and throw exceptions in case of SQLite errors.
+and throwing exceptions in case of SQLite errors (exept in destructors,
+where assert() are used instead).
 Each SQLiteC++ object must be constructed with a valid SQLite database connection,
 and then is always valid until destroyed.
 
@@ -44,12 +45,12 @@ And following IDEs/Compilers
 
 ### Depandancies:
 
- - a STL implementation (even an old one like VC6/eVC4 should work)
+ - a STL implementation (even an old one, like those provided with VC6/eVC4 should work)
  - exception support (the class Exception inherit from std::runtime_error)
  - the SQLite library, either by linking to it dynamicaly or staticaly,
    or by adding its source file in your project code base (source code provided in src/sqlite3).
 
-To use it in your project, you only need to add the 6 SQLiteC++ source files
+To use it in your project, you only need to add the 10 SQLiteC++ source files
 in your project code base (not the main.cpp example file).
 
 ## Getting started

@@ -32,6 +32,8 @@ class Column;
 class Statement
 {
 public:
+    class Ptr;
+
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
      *
@@ -191,6 +193,34 @@ public:
         return mbDone;
     }
 
+public:
+    /**
+     * @brief Shared pointer to the sqlite3_stmt SQLite Statement Object
+     *
+     * This is a internal class, not part of the API (hence full documentation is in the cpp)
+     */
+    class Statement::Ptr
+    {
+    public:
+        // Prepare the statement and initialize its reference counter
+        Ptr(sqlite3* apSQLite, std::string& aQuery);
+        // Copy constructor increments the ref counter
+        Ptr(const Ptr& aPtr);
+        // Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
+        ~Ptr(void) throw(); // nothrow (no virtual destructor needed here)
+
+        /// Inline cast operator returning the pointer to SQLite Statement Object
+        inline operator sqlite3_stmt*() const { return mpStmt; }
+
+    private:
+        // Unused/forbidden copy operator
+        Ptr& operator=(const Ptr& aPtr);
+
+    private:
+        sqlite3_stmt*   mpStmt;     //!< Pointer to SQLite Statement Object
+        unsigned int*   mpRefCount; //!< Pointer to the heap allocated reference counter of the sqlite3_stmt (to share it with Column objects)
+    };
+
 private:
     // Statement must not be copyable
     Statement(void);
@@ -203,10 +233,9 @@ private:
     void check(const int aRet) const; // throw(SQLite::Exception);
 
 private:
-    sqlite3_stmt*   mpStmt;         //!< Pointer to SQLite Statement Object
-    unsigned int*   mpStmtRefCount; //!< Pointer to the heap allocated reference counter of the sqlite3_stmt (to share it with Column objects)
     sqlite3*        mpSQLite;       //!< Pointer to SQLite Database Connection Handle
     std::string     mQuery;         //!< UTF-8 SQL Query
+    Ptr             mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
     int             mColumnCount;   //!< Number of column in the result of the prepared statement
     bool            mbOk;           //!< True when a row has been fetched with executeStep()
     bool            mbDone;         //!< True when the last executeStep() had no more row to fetch

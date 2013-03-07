@@ -11,6 +11,7 @@
 
 #include <sqlite3.h>
 #include "Exception.h"
+#include "Statement.h"
 
 namespace SQLite
 {
@@ -24,15 +25,12 @@ namespace SQLite
 class Column
 {
 public:
-    /**
-     * @brief Compile and register the SQL query for the provided SQLite Database Connection
-     */
-    explicit Column(sqlite3* apSQLite, sqlite3_stmt* apStmt, unsigned int* apStmtRefCount, int aIndex) throw(); // nothrow
+    /// Encapsulation of a Column in a Row of the result.
+    explicit Column(Statement::Ptr aStmtPtr, int aIndex) throw(); // nothrow
     /// Simple destructor
     virtual ~Column(void)                   throw(); // nothrow
 
-    /// @brief copy constructor : only way to copy a valid instance
-             Column(const Column& aOther)   throw(); // nothrow
+    // default copy constructor and asignement operator are enough
 
     /// Return the integer value of the column.
     int             getInt   (void) const throw();
@@ -79,16 +77,8 @@ public:
 #endif
 
 private:
-    // Forbid default constructor and assignment operator (no implementation)
-    // so that there is no way of having a Column instance not initialized
-    Column(void);
-    Column& operator=(const Column&);
-
-private:
-    sqlite3*        mpSQLite;       //!< Pointer to SQLite Database Connection Handle
-    sqlite3_stmt*   mpStmt;         //!< Pointer to SQLite Statement Object
-    unsigned int*   mpStmtRefCount; //!< Pointer to the heap allocated reference counter of the sqlite3_stmt (shared with the Statement object)
-    int             mIndex;         //!< Index of the column in the row of result
+    Statement::Ptr  mStmtPtr;   //!< Shared Pointer to the prepared SQLite Statement Object
+    int             mIndex;     //!< Index of the column in the row of result
 };
 
 /// Standard std::ostream inserter

@@ -128,7 +128,7 @@ public:
     }
 
     /**
-     * @brief Filename used to open the database
+     * Return the filename used to open the database
      */
     inline const std::string& getFilename(void) const
     {
@@ -142,7 +142,7 @@ private:
     Database& operator=(const Database&);
 
     /**
-     * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
+     * Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      */
     void check(const int aRet) const; // throw(SQLite::Exception);
 

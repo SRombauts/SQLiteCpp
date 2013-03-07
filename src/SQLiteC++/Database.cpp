@@ -25,7 +25,7 @@ Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READ
     if (SQLITE_OK != ret)
     {
         std::string strerr = sqlite3_errmsg(mpSQLite);
-        sqlite3_close(mpSQLite);
+        sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw SQLite::Exception(strerr);
     }
 }

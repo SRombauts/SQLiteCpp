@@ -31,7 +31,7 @@ Transaction::~Transaction(void) throw() // nothrow
         {
             mDatabase.exec("ROLLBACK");
         }
-        catch (SQLite::Exception& e)
+        catch (SQLite::Exception& /*e*/)
         {
             // Never throw an exception in a destructor
             //std::cout << e.what() << std::endl;

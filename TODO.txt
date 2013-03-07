@@ -1,7 +1,5 @@
 C++11 explicit support
 
-Adding mpSQLite to the statement Shared Pointer
-
 => V0.5.0
 
 Missing features in v0.4.0:

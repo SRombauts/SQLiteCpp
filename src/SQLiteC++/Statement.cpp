@@ -17,9 +17,8 @@ namespace SQLite
 
 // Compile and register the SQL query for the provided SQLite Database Connection
 Statement::Statement(Database &aDatabase, const char* apQuery) : // throw(SQLite::Exception)
-    mpSQLite(aDatabase.mpSQLite),   // need Database friendship
     mQuery(apQuery),
-    mStmtPtr(mpSQLite, mQuery), // prepare the SQL query, and ref count
+    mStmtPtr(aDatabase.mpSQLite, mQuery), // prepare the SQL query, and ref count (needs Database friendship)
     mColumnCount(0),
     mbOk(false),
     mbDone(false)
@@ -153,7 +152,7 @@ bool Statement::executeStep(void) // throw(SQLite::Exception)
         {
             mbOk = false;
             mbDone = false;
-            throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
+            throw SQLite::Exception(sqlite3_errmsg(mStmtPtr));
         }
     }
     else
@@ -185,7 +184,7 @@ int Statement::exec(void) // throw(SQLite::Exception)
         {
             mbOk = false;
             mbDone = false;
-            throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
+            throw SQLite::Exception(sqlite3_errmsg(mStmtPtr));
         }
     }
     else
@@ -194,7 +193,7 @@ int Statement::exec(void) // throw(SQLite::Exception)
     }
 
     // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
-    return sqlite3_changes(mpSQLite);
+    return sqlite3_changes(mStmtPtr);
 }
 
 // Return a copy of the column data specified by its index starting at 0
@@ -234,7 +233,7 @@ void Statement::check(const int aRet) const // throw(SQLite::Exception)
 {
     if (SQLITE_OK != aRet)
     {
-        throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
+        throw SQLite::Exception(sqlite3_errmsg(mStmtPtr));
     }
 }
 
@@ -250,13 +249,14 @@ void Statement::check(const int aRet) const // throw(SQLite::Exception)
  * @param[in] aQuery    The SQL query string to prepare
  */
 Statement::Ptr::Ptr(sqlite3* apSQLite, std::string& aQuery) :
+    mpSQLite(apSQLite),
     mpStmt(NULL),
     mpRefCount(NULL)
 {
     int ret = sqlite3_prepare_v2(apSQLite, aQuery.c_str(), aQuery.size(), &mpStmt, NULL);
     if (SQLITE_OK != ret)
     {
-        throw SQLite::Exception(sqlite3_errmsg(apSQLite));
+        throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
     }
     // Initialize the reference counter of the sqlite3_stmt :
     // used to share the mStmtPtr between Statement and Column objects;
@@ -270,6 +270,7 @@ Statement::Ptr::Ptr(sqlite3* apSQLite, std::string& aQuery) :
  * @param[in] aPtr Pointer to copy
  */
 Statement::Ptr::Ptr (const Statement::Ptr& aPtr) :
+    mpSQLite(aPtr.mpSQLite),
     mpStmt(aPtr.mpStmt),
     mpRefCount(aPtr.mpRefCount)
 {
@@ -295,7 +296,6 @@ Statement::Ptr::~Ptr(void)
         // as no Statement not Column objet use it anymore
         int ret = sqlite3_finalize(mpStmt);
         // Never throw an exception in a destructor
-        // TODO : Add mpSQLite to the pointer ?
         //std::cout << sqlite3_errmsg(mpSQLite) << std::endl;
         SQLITE_CPP_ASSERT (SQLITE_OK == ret);
 

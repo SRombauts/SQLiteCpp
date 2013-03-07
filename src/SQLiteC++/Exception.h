@@ -32,11 +32,14 @@ namespace SQLite
 {
 
 /**
- * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
+ * Encapsulation of the error message from SQLite3, based on std::runtime_error.
  */
 class Exception : public std::runtime_error
 {
 public:
+    /**
+     * Encapsulation of the error message from SQLite3, based on std::runtime_error.
+     */
     Exception(const std::string& aErrorMessage) :
         std::runtime_error(aErrorMessage)
     {

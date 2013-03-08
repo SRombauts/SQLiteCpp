@@ -51,6 +51,18 @@ const char* Column::getText(void) const throw() // nothrow
     return (const char*)sqlite3_column_text(mStmtPtr, mIndex);
 }
 
+// Return a pointer to the text value (NULL terminated string) of the column specified by its index starting at 0
+const void* Column::getBlob(void) const throw() // nothrow
+{
+    return sqlite3_column_blob(mStmtPtr, mIndex);
+}
+
+// Return the type of the value of the column
+int Column::getType(void) const throw() // nothrow
+{
+    return sqlite3_column_type(mStmtPtr, mIndex);
+}
+
 // Return the number of bytes used by the text value of the column
 int Column::getBytes(void) const throw() // nothrow
 {

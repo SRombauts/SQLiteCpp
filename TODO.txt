@@ -5,14 +5,14 @@ C++11 explicit support
 Update Doxygen Documentation, but remove it from the master branch
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
 
-Missing features in v0.4.0:
-- **Blob** => make an example/test with image stored in a row
-- getColumnType + isText + isInt + isDouble...
+Missing test/example in v0.5.0:
+- BLOB : make an example with images stored in a row
+
+Missing features in v0.5.0:
+- make an example/test with image stored in a row
 - getColumnByName ? std::map getRow() ?
 
-Missing documentation in v0.4.0:
-- parameters of functions in Column and Statement
-- Help for the helper functions
+Missing documentation in v0.5.0:
 - This wrapper is not thread safe : compare to the thread safety of the SQLite3 library
 
 Advanced missing features:

@@ -42,16 +42,52 @@ public:
     // they copy the Statement::Ptr which in turn increments the reference counter.
     
     /// Return the integer value of the column.
-    int             getInt   (void) const throw();
+    int             getInt   (void) const throw(); // nothrow
     /// Return the 64bits integer value of the column.
-    sqlite3_int64   getInt64 (void) const throw();
+    sqlite3_int64   getInt64 (void) const throw(); // nothrow
     /// Return the double (64bits float) value of the column.
-    double          getDouble(void) const throw();
+    double          getDouble(void) const throw(); // nothrow
     /// Return a pointer to the text value (NULL terminated string) of the column.
     /// Warning, the value pointed at is only valid while the statement is valid (ie. not finalized),
     /// thus you must copy it before using it beyond its scope (to a std::string for instance).
-    const char*     getText  (void) const throw();
-// TODO const void* getBlob  (void) const throw();
+    const char*     getText  (void) const throw(); // nothrow
+    const void*     getBlob  (void) const throw(); // nothrow
+    
+    /**
+     * @brief Return the type of the value of the column
+     *
+     * Return either SQLITE_INTEGER, SQLITE_FLOAT, SQLITE_TEXT, SQLITE_BLOB, or SQLITE_NULL.
+     *
+     * @warning After a type conversion (by a call to a getXxx on a Column of a Yyy type),
+     *          the value returned by sqlite3_column_type() is undefined.
+     */
+    int getType(void) const throw(); // nothrow
+    
+    /// Test if the column is an integer type value (meaningfull only before any conversion)
+    inline bool isInteger(void) const throw() // nothrow
+    {
+        return (SQLITE_INTEGER == getType());
+    }
+    /// Test if the column is a floting point type value (meaningfull only before any conversion)
+    inline bool isFloat(void) const throw() // nothrow
+    {
+        return (SQLITE_FLOAT == getType());
+    }
+    /// Test if the column is a text type value (meaningfull only before any conversion)
+    inline bool isText(void) const throw() // nothrow
+    {
+        return (SQLITE_TEXT == getType());
+    }
+    /// Test if the column is a binary blob type value (meaningfull only before any conversion)
+    inline bool isBlob(void) const throw() // nothrow
+    {
+        return (SQLITE_BLOB == getType());
+    }
+    /// Test if the column is NULL (meaningfull only before any conversion)
+    inline bool isNull(void) const throw() // nothrow
+    {
+        return (SQLITE_NULL == getType());
+    }
     
     /**
      * @brief Return the number of bytes used by the text value of the column
@@ -83,6 +119,11 @@ public:
     inline operator const char*() const
     {
         return getText();
+    }
+    /// Inline cast operator to void*
+    inline operator const void*() const
+    {
+        return getBlob();
     }
 #ifdef __GNUC__
     // NOTE : the following is required by GCC to cast a Column result in a std::string

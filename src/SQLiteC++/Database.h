@@ -44,7 +44,7 @@ public:
      * @param[in] apFilename    UTF-8 path/uri to the database file ("filename" sqlite3 parameter)
      * @param[in] aFlags        SQLITE_OPEN_READONLY/SQLITE_OPEN_READWRITE/SQLITE_OPEN_CREATE...
      */
-    explicit Database(const char* apFilename, const int aFlags = SQLITE_OPEN_READONLY); // throw(SQLite::Exception);
+    Database(const char* apFilename, const int aFlags = SQLITE_OPEN_READONLY); // throw(SQLite::Exception);
 
     /**
      * @brief Close the SQLite database connection.
@@ -135,9 +135,16 @@ public:
         return mFilename;
     }
 
+    /**
+     * Return UTF-8 encoded English language explanation of the most recent error.
+     */
+    inline const char* errmsg(void) const
+    {
+        return sqlite3_errmsg(mpSQLite);
+    }
+
 private:
     // Database must not be copyable
-    Database(void);
     Database(const Database&);
     Database& operator=(const Database&);
 

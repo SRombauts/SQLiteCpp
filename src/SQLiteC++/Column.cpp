@@ -15,7 +15,7 @@ namespace SQLite
 {
 
 // Encapsulation of a Column in a Row of the result.
-Column::Column(Statement::Ptr aStmtPtr, int aIndex) throw() : // nothrow
+Column::Column(Statement::Ptr& aStmtPtr, int aIndex) throw() : // nothrow
     mStmtPtr    (aStmtPtr),
     mIndex      (aIndex)
 {
@@ -51,12 +51,11 @@ const char* Column::getText(void) const throw() // nothrow
     return (const char*)sqlite3_column_text(mStmtPtr, mIndex);
 }
 
-
 // Standard std::ostream inserter
-std::ostream& operator<<(std::ostream &stream, const Column& column)
+std::ostream& operator<<(std::ostream& aStream, const Column& aColumn)
 {
-    stream << column.getText();
-    return stream;
+    aStream << aColumn.getText();
+    return aStream;
 }
 
 }  // namespace SQLite

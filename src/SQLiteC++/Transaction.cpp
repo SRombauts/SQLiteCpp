@@ -14,8 +14,8 @@
 namespace SQLite
 {
 
-//Begins the SQLite transaction
-Transaction::Transaction(Database &aDatabase) : // throw(SQLite::Exception)
+// Begins the SQLite transaction
+Transaction::Transaction(Database& aDatabase) : // throw(SQLite::Exception)
     mDatabase(aDatabase),
     mbCommited(false)
 {

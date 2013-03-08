@@ -20,18 +20,27 @@ namespace SQLite
 /**
  * @brief Encapsulation of a Column in a Row of the result.
  *
- * A Column is a particular field of SQLite data in the current row of result of the Statement.
+ *  A Column is a particular field of SQLite data in the current row of result
+ * of the Statement : it points to a single cell.
+ *
+ * Its value can be expressed as a text, and, when applicable, as a numeric
+ * (integer or floting point) or a binary blob.
  */
 class Column
 {
 public:
-    /// Encapsulation of a Column in a Row of the result.
-    explicit Column(Statement::Ptr aStmtPtr, int aIndex) throw(); // nothrow
+    /**
+     * @brief Encapsulation of a Column in a Row of the result.
+     *
+     * @param[in] aStmtPtr  Shared pointer to the prepared SQLite Statement Object.
+     * @param[in] aIndex    Index of the column in the row of result
+     */
+    Column(Statement::Ptr& aStmtPtr, int aIndex)    throw(); // nothrow
     /// Simple destructor
-    virtual ~Column(void)                   throw(); // nothrow
-
-    // default copy constructor and asignement operator are enough
-
+    virtual ~Column(void)                           throw(); // nothrow
+    // default copy constructor and asignement operator are perfectly suited :
+    // they copy the Statement::Ptr which in turn increments the reference counter.
+    
     /// Return the integer value of the column.
     int             getInt   (void) const throw();
     /// Return the 64bits integer value of the column.
@@ -42,7 +51,9 @@ public:
     /// Warning, the value pointed at is only valid while the statement is valid (ie. not finalized),
     /// thus you must copy it before using it beyond its scope (to a std::string for instance).
     const char*     getText  (void) const throw();
-
+// TODO const void* getBlob  (void) const throw();
+// TODO int         getBytes (void) const throw();
+    
     /// Inline cast operator to int
     inline operator int() const
     {
@@ -76,12 +87,26 @@ public:
     }
 #endif
 
+    /// Return UTF-8 encoded English language explanation of the most recent error.
+    inline const char* errmsg(void) const
+    {
+        return sqlite3_errmsg(mStmtPtr);
+    }
 private:
     Statement::Ptr  mStmtPtr;   //!< Shared Pointer to the prepared SQLite Statement Object
     int             mIndex;     //!< Index of the column in the row of result
 };
 
-/// Standard std::ostream inserter
-std::ostream& operator<<(std::ostream &stream, const Column& column);
+/**
+ * @brief Standard std::ostream text inserter
+ *
+ * Insert the text value of the Column object, using getText(), into the provided stream.
+ *
+ * @param[in] aStream   Stream to use
+ * @param[in] aColumn   Column object to insert into the provided stream
+ *
+ * @return  Reference to the stream used
+ */
+std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
 
 }  // namespace SQLite

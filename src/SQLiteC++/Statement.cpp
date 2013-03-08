@@ -198,7 +198,7 @@ int Statement::exec(void) // throw(SQLite::Exception)
 
 // Return a copy of the column data specified by its index starting at 0
 // (use the Column copy-constructor)
-Column Statement::getColumn(const int aIndex) const // throw(SQLite::Exception)
+Column Statement::getColumn(const int aIndex) // throw(SQLite::Exception)
 {
     if (false == mbOk)
     {
@@ -282,7 +282,9 @@ Statement::Ptr::Ptr (const Statement::Ptr& aPtr) :
     ++(*mpRefCount);
 }
 
-// Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
+/**
+ * Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
+ */
 Statement::Ptr::~Ptr(void)
 {
     assert(NULL != mpRefCount);

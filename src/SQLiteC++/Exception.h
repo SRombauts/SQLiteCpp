@@ -39,6 +39,8 @@ class Exception : public std::runtime_error
 public:
     /**
      * Encapsulation of the error message from SQLite3, based on std::runtime_error.
+     *
+     * @param[in] aErrorMessage The string message describing the SQLite error
      */
     Exception(const std::string& aErrorMessage) :
         std::runtime_error(aErrorMessage)

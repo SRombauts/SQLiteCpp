@@ -37,9 +37,12 @@ public:
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
      *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] apQuery   an UTF-8 encoded query string 
+     *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    explicit Statement(Database &aDatabase, const char* apQuery); // throw(SQLite::Exception);
+    Statement(Database& aDatabase, const char* apQuery); // throw(SQLite::Exception);
 
     /**
      * Finalize and unregister the SQL query from the SQLite Database Connection.
@@ -114,6 +117,9 @@ public:
     /**
      * @brief Execute a step of the prepared query to fetch one row of results.
      *
+     *  While true is returned, a row of results is available, and can be accessed
+     * thru the getColumn() method
+     *
      * @see exec() execute a one-step prepared statement with no expected result
      * @see Database::exec() is a shortcut to execute one or multiple statements without results
      *
@@ -145,57 +151,72 @@ public:
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * @brief Return a copie of the column data specified by its index starting at 0 (aIndex >= 0)
+     * @brief Return a copie of the column data specified by its index
      *
-     * @warning The resulting Column object must not be copied or memorized as it is only valid for a short time,
-     *          only while the row from the Statement remains valid, that is only until next executeStep.
-     *          Thus, you should instead extract immediately its data (getInt()...) and use or copy this data
-     *          for any later usage.
+     *  Can be used to access the data of the current row of result when applicable,
+     * while the executeStep() method returns true.
+     *
+     *  Throw an exception if there is no row to return a Column from :
+     * - before any executeStep() call
+     * - after the last executeStep() returned false
+     * - after a reset() call
+     *
+     *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
+     *
+     * @param[in] aIndex    Index of the column, starting at 0
+     *
+     * @note    This method is no more const, starting in v0.5,
+     *          which reflects the fact that the returned Column object will
+     *          share the ownership of the underlying sqlite3_stmt.
+     *
+     * @warning The resulting Column object must not be memorized "as-is".
+     *          Is is only a wrapper arround the current result row, so it is only valid
+     *          while the row from the Statement remains valid, that is only until next executeStep() call.
+     *          Thus, you should instead extract immediately its data (getInt(), getText()...)
+     *          and use or copy this data for any later usage.
      */
-    Column  getColumn(const int aIndex) const; // throw(SQLite::Exception);
+    Column  getColumn(const int aIndex); // throw(SQLite::Exception);
 
     /**
-     * Test if the column is NULL
+     * Test if the column value is NULL
+     *
+     * @param[in] aIndex    Index of the column, starting at 0
+     *
+     * @return true if the column value is NULL
      */
     bool    isColumnNull(const int aIndex) const; // throw(SQLite::Exception);
 
     ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * UTF-8 SQL Query.
-     */
+    /// Returne the UTF-8 SQL Query.
     inline const std::string& getQuery(void) const
     {
         return mQuery;
     }
-
-    /**
-     * Return the number of columns in the result set returned by the prepared statement
-     */
+    /// Return the number of columns in the result set returned by the prepared statement
     inline int getColumnCount(void) const
     {
         return mColumnCount;
     }
-
-    /**
-     * true when the last row is fetched with executeStep().
-     */
+    /// true when a row has been fetched with executeStep()
     inline bool isOk(void) const
     {
         return mbOk;
     }
-
-    /**
-     * true when the last row is fetched with executeStep().
-     */
+    /// true when the last executeStep() had no more row to fetch
     inline bool isDone(void) const
     {
         return mbDone;
     }
+    /// Return UTF-8 encoded English language explanation of the most recent error.
+    inline const char* errmsg(void) const
+    {
+        return sqlite3_errmsg(mStmtPtr);
+    }
 
 public:
     /**
-     * Shared pointer to the sqlite3_stmt SQLite Statement Object.
+     * @brief Shared pointer to the sqlite3_stmt SQLite Statement Object.
      *
      * Manage the finalization of the sqlite3_stmt with a reference counter.
      *
@@ -241,15 +262,17 @@ private:
 
     /**
      * Check if a return code equals SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
+     *
+     * @param[in] SQLite return code to test against the SQLITE_OK expected value
      */
     void check(const int aRet) const; // throw(SQLite::Exception);
 
 private:
     std::string     mQuery;         //!< UTF-8 SQL Query
     Ptr             mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
-    int             mColumnCount;   //!< Number of column in the result of the prepared statement
-    bool            mbOk;           //!< True when a row has been fetched with executeStep()
-    bool            mbDone;         //!< True when the last executeStep() had no more row to fetch
+    int             mColumnCount;   //!< Number of columns in the result of the prepared statement
+    bool            mbOk;           //!< true when a row has been fetched with executeStep()
+    bool            mbDone;         //!< true when the last executeStep() had no more row to fetch
 };
 
 }  // namespace SQLite

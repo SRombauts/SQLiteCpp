@@ -35,9 +35,11 @@ public:
     /**
      * @brief Begins the SQLite transaction
      *
+     * @param[in] aDatabase the SQLite Database Connection
+     *
      * Exception is thrown in case of error, then the Transaction is NOT initiated.
      */
-    explicit Transaction(Database &aDatabase); // throw(SQLite::Exception);
+    explicit Transaction(Database& aDatabase); // throw(SQLite::Exception);
 
     /**
      * @brief Safely rollback the transaction if it has not been committed.
@@ -51,7 +53,6 @@ public:
 
 private:
     // Transaction must not be copyable
-    Transaction(void);
     Transaction(const Transaction&);
     Transaction& operator=(const Transaction&);
 

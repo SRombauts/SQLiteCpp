@@ -2,10 +2,14 @@ C++11 explicit support
 
 => V0.5.0
 
+Update Doxygen Documentation, but remove it from the master branch
+Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
+
 Missing features in v0.4.0:
 - **Blob** => make an example/test with image stored in a row
-- getColumnByName ? std::map getRow() ?
+- getBytes
 - getColumnType + isText + isInt + isDouble...
+- getColumnByName ? std::map getRow() ?
 
 Missing documentation in v0.4.0:
 - parameters of functions in Column and Statement

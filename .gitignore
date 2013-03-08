@@ -4,6 +4,8 @@ Release
 *.ncb
 *.suo
 *.user
+*sdf
 *~
 doc
 core
+/ipch/*

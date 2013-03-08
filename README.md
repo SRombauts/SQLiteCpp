@@ -1,28 +1,28 @@
 SQLiteC++
 ---------
 
-SQLiteC++ is a smart and easy to use C++ SQLite3 wrapper.
+SQLiteC++ (or SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
 
 See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.
 
 ### License
 
-Copyright (c) 2012 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+Copyright (c) 2012-2013 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 
 Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 or copy at http://opensource.org/licenses/MIT)
 
 ### The goals of SQLiteC++ are:
 
+- to use a permissive MIT license, similar to BSD or Boost, for proprietary/commercial usage
 - to offer the best of existing simple wrappers
-- to use a permissive license like MIT or BSD
 - to be elegantly written with good C++ design, STL, exceptions and RAII idiom
 - to keep dependencies to a minimum (STL and SQLite3)
-- to be well documented, in code with Doxygen, and online with some good examples
 - to be portable
 - to be light and fast
 - to be monothreaded (not thread-safe)
 - to use API names sticking with those of the SQLite library
+- to be well documented in code with Doxygen, and online with some good examples
 - to be well maintained
 
 It is designed using the Resource Acquisition Is Initialization (RAII) idom
@@ -56,6 +56,8 @@ in your project code base (not the main.cpp example file).
 ## Getting started
 ### About SQLite:
 SQLite is a library that implements a serverless transactional SQL database engine.
+It is the most widely deployed SQL database engine in the world.
+The source code for SQLite is in the public domain.
 http://www.sqlite.org/about.html
 
 ### First sample demonstrates how to query a database and get results: 
@@ -115,8 +117,7 @@ catch (std::exception& e)
 }
 ```
 
-## See also
-### Some other simple C++ SQLite wrappers:
+## See also - Some other simple C++ SQLite wrappers:
 
  - [sqdbcpp](http://code.google.com/p/sqdbcpp/): RAII design, simple, no depandencies, UTF-8/UTF-16, new BSD license
  - [sqlite3cc](http://ed.am/dev/sqlite3cc): uses boost, modern design, LPGPL

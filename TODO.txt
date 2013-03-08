@@ -3,11 +3,13 @@ C++11 explicit support
 => V0.5.0
 
 Missing features in v0.4.0:
-- Blob
+- **Blob** => make an example/test with image stored in a row
 - getColumnByName ? std::map getRow() ?
+- getColumnType + isText + isInt + isDouble...
 
 Missing documentation in v0.4.0:
-- Help for the new helper functions
+- parameters of functions in Column and Statement
+- Help for the helper functions
 - This wrapper is not thread safe : compare to the thread safety of the SQLite3 library
 
 Advanced missing features:

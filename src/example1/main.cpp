@@ -87,9 +87,10 @@ int main (void)
             int         id      = query.getColumn(0); // = query.getColumn(0).getInt()
           //const char* pvalue  = query.getColumn(1); // = query.getColumn(1).getText()
             std::string value2  = query.getColumn(1); // = query.getColumn(1).getText()
+            int         bytes   = query.getColumn(1).getBytes();
             int         size    = query.getColumn(2); // = query.getColumn(2).getInt()
 
-            std::cout << "row : (" << id << ", " << value2.c_str() << ", " << size << ")\n";
+            std::cout << "row : (" << id << ", " << value2.c_str() << ", "  << bytes << ", " << size << ")\n";
         }
 
         // Reset the query to use it again

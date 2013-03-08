@@ -52,8 +52,18 @@ public:
     /// thus you must copy it before using it beyond its scope (to a std::string for instance).
     const char*     getText  (void) const throw();
 // TODO const void* getBlob  (void) const throw();
-// TODO int         getBytes (void) const throw();
     
+    /**
+     * @brief Return the number of bytes used by the text value of the column
+     *
+     * Return either :
+     * - size in bytes (not in characters) of the string returned by getText() without the '\0' terminator
+     * - size in bytes of the string representation of the numerical value (integer or double)
+     * - TODO size in bytes of the binary blob returned by getBlob()
+     * - 0 for a NULL value
+     */
+    int getBytes(void) const throw();
+
     /// Inline cast operator to int
     inline operator int() const
     {

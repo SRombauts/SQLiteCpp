@@ -7,7 +7,6 @@ Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
 
 Missing features in v0.4.0:
 - **Blob** => make an example/test with image stored in a row
-- getBytes
 - getColumnType + isText + isInt + isDouble...
 - getColumnByName ? std::map getRow() ?
 

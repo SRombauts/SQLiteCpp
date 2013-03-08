@@ -51,6 +51,13 @@ const char* Column::getText(void) const throw() // nothrow
     return (const char*)sqlite3_column_text(mStmtPtr, mIndex);
 }
 
+// Return the number of bytes used by the text value of the column
+int Column::getBytes(void) const throw() // nothrow
+{
+    return sqlite3_column_bytes(mStmtPtr, mIndex);
+}
+
+
 // Standard std::ostream inserter
 std::ostream& operator<<(std::ostream& aStream, const Column& aColumn)
 {

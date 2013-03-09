@@ -269,7 +269,7 @@ Statement::Ptr::Ptr(sqlite3* apSQLite, std::string& aQuery) :
  *
  * @param[in] aPtr Pointer to copy
  */
-Statement::Ptr::Ptr (const Statement::Ptr& aPtr) :
+Statement::Ptr::Ptr(const Statement::Ptr& aPtr) :
     mpSQLite(aPtr.mpSQLite),
     mpStmt(aPtr.mpStmt),
     mpRefCount(aPtr.mpRefCount)
@@ -285,7 +285,7 @@ Statement::Ptr::Ptr (const Statement::Ptr& aPtr) :
 /**
  * Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
  */
-Statement::Ptr::~Ptr(void)
+Statement::Ptr::~Ptr(void) throw() // nothrow
 {
     assert(NULL != mpRefCount);
     assert(0 != *mpRefCount);

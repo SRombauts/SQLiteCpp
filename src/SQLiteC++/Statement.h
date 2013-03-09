@@ -222,7 +222,7 @@ public:
      *
      * This is a internal class, not part of the API (hence full documentation is in the cpp).
      */
-    class Statement::Ptr
+    class Ptr
     {
     public:
         // Prepare the statement and initialize its reference counter

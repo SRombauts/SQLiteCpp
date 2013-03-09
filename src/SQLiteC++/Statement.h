@@ -163,9 +163,9 @@ public:
     /**
      * @brief Execute a one-step query with no expected result.
      *
-     *  This exec() method is to use with precompiled statement that does not fetch results (INSERT, UPDATE, DELETE...).
-     * It is intended for similar usage as Database::exec(), but is able to reuse the precompiled underlying SQLite statement
-     * for better performances.
+     *  This exec() method is for use with precompiled statement that does not fetch results (INSERT, UPDATE, DELETE...).
+     * It is intended for similar usage as Database::exec(), but it add the ability to bind() arguments to it.
+     * Combined with reusing the underlying precompiled SQLite statement, it allows better performances.
      *
      * @see executeStep() execute a step of the prepared query to fetch one row of results
      * @see Database::exec() is a shortcut to execute one or multiple statements without results

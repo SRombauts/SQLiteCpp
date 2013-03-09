@@ -7,9 +7,11 @@ Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
 
 Missing test/example in v0.5.0:
 - BLOB : make an example with images stored in a row
+- :memory: table
 
 Missing features in v0.5.0:
-- make an example/test with image stored in a row
+- bind a SQLITE_STATIC value (string/blob)
+- bind a dynamic value with zerocopy (unlike SQLITE_TRANSIENT) with custom deleter
 - getColumnByName ? std::map getRow() ?
 
 Missing documentation in v0.5.0:

@@ -25,21 +25,21 @@ class Example
 public:
     // Constructor
     Example(void) :
-        mDb("example.db3"),                                     // Open a database file in readonly mode
-        mQuery(mDb, "SELECT * FROM test WHERE size > :min_size")// Compile a SQL query, containing one parameter (index 1)
+        mDb("example.db3"),                                         // Open a database file in readonly mode
+        mQuery(mDb, "SELECT * FROM test WHERE weight > :min_weight")// Compile a SQL query, containing one parameter (index 1)
     {
     }
     virtual ~Example(void)
     {
     }
 
-    /// List the rows where the "size" column is greater than the provided aParamValue
+    /// List the rows where the "weight" column is greater than the provided aParamValue
     void ListGreaterThan (const int aParamValue)
     {
         std::cout << "ListGreaterThan (" << aParamValue << ")\n";
 
         // Bind the integer value provided to the first parameter of the SQL query
-        mQuery.bind(":min_size", aParamValue); // same as mQuery.bind(1, aParamValue);
+        mQuery.bind(":min_weight", aParamValue); // same as mQuery.bind(1, aParamValue);
 
         // Loop to execute the query step by step, to get one a row of results at a time
         while (mQuery.executeStep())
@@ -75,10 +75,11 @@ int main (void)
         std::cout << "execAndGet=" << value.c_str() << std::endl;
 
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement   query(db, "SELECT * FROM test WHERE size > ?");
+        SQLite::Statement   query(db, "SELECT * FROM test WHERE weight > ?");
         std::cout << "SQLite statement '" << query.getQuery().c_str() << "' compiled (" << query.getColumnCount () << " columns in the result)\n";
-        // Bind the integer value 1 to the first parameter of the SQL query
-        query.bind(1, 1);
+        // Bind the integer value 2 to the first parameter of the SQL query
+        query.bind(1, 2);
+        std::cout << "binded with integer value 2 :\n";
 
         // Loop to execute the query step by step, to get one a row of results at a time
         while (query.executeStep())
@@ -88,9 +89,9 @@ int main (void)
           //const char* pvalue  = query.getColumn(1); // = query.getColumn(1).getText()
             std::string value2  = query.getColumn(1); // = query.getColumn(1).getText()
             int         bytes   = query.getColumn(1).getBytes();
-            int         size    = query.getColumn(2); // = query.getColumn(2).getInt()
+            double      weight  = query.getColumn(2); // = query.getColumn(2).getInt()
 
-            std::cout << "row : (" << id << ", " << value2.c_str() << ", "  << bytes << ", " << size << ")\n";
+            std::cout << "row : (" << id << ", \"" << value2.c_str() << "\" "  << bytes << "B, " << weight << ")\n";
         }
 
         // Reset the query to use it again
@@ -98,6 +99,7 @@ int main (void)
         std::cout << "SQLite statement '" << query.getQuery().c_str() << "' reseted (" << query.getColumnCount () << " columns in the result)\n";
         // Bind the string value "6" to the first parameter of the SQL query
         query.bind(1, "6");
+        std::cout << "binded with string value \"6\" :\n";
 
         while (query.executeStep())
         {

@@ -1,6 +1,6 @@
-C++11 explicit support
+Add a Changelog
 
-=> V0.5.0
+C++11 explicit support
 
 Update Doxygen Documentation, but remove it from the master branch
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)

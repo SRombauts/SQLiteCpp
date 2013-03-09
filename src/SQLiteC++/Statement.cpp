@@ -76,6 +76,13 @@ void Statement::bind(const int aIndex, const char* apValue) // throw(SQLite::Exc
     check(ret);
 }
 
+// Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const int aIndex, const void* apValue, const int aSize) // throw(SQLite::Exception)
+{
+    int ret = sqlite3_bind_blob(mStmtPtr, aIndex, apValue, -1, SQLITE_TRANSIENT);
+    check(ret);
+}
+
 // Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex) // throw(SQLite::Exception)
 {
@@ -121,6 +128,14 @@ void Statement::bind(const char* apName, const char* apValue) // throw(SQLite::E
 {
     int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
     int ret   = sqlite3_bind_text(mStmtPtr, index, apValue, -1, SQLITE_TRANSIENT);
+    check(ret);
+}
+
+// Bind a binary blob value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const char* apName, const void* apValue, const int aSize) // throw(SQLite::Exception)
+{
+    int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
+    int ret   = sqlite3_bind_blob(mStmtPtr, index, apValue, aSize, SQLITE_TRANSIENT);
     check(ret);
 }
 

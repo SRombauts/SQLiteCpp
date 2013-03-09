@@ -95,7 +95,7 @@ public:
      * Return either :
      * - size in bytes (not in characters) of the string returned by getText() without the '\0' terminator
      * - size in bytes of the string representation of the numerical value (integer or double)
-     * - TODO size in bytes of the binary blob returned by getBlob()
+     * - size in bytes of the binary blob returned by getBlob()
      * - 0 for a NULL value
      */
     int getBytes(void) const throw();

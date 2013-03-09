@@ -61,6 +61,14 @@ public:
     // Can use the parameter index, starting from "1", to the higher NNN value,
     // or the complete parameter name "?NNN", ":VVV", "@VVV" or "$VVV"
     // (prefixed with the corresponding sign "?", ":", "@" or "$")
+    //
+    // Note that for text and blob values, the SQLITE_TRANSIENT flag is used,
+    // which tell the sqlite library to make its own copy of the data before the bind() call returns.
+    // This choice is done to prevent any common misuses, like passing a pointer to a 
+    // dynamic allocated and temporary variable (a std::string for instance).
+    // This is under-optimized for static data (a static text define in code)
+    // as well as for dynamic allocated buffer which could be transfer to sqlite
+    // instead of being copied.
 
     /**
      * Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
@@ -75,13 +83,23 @@ public:
      */
     void bind(const int aIndex, const double&        aValue)  ; // throw(SQLite::Exception);
     /**
-     * Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const int aIndex, const std::string&   aValue)  ; // throw(SQLite::Exception);
     /**
-     * Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const int aIndex, const char*          apValue) ; // throw(SQLite::Exception);
+    /**
+     * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const int aIndex, const void*          apValue, const int aSize) ; // throw(SQLite::Exception);
     /**
      * Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -100,13 +118,23 @@ public:
      */
     void bind(const char* apName, const double&         aValue)  ; // throw(SQLite::Exception);
     /**
-     * Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const char* apName, const std::string&    aValue)  ; // throw(SQLite::Exception);
     /**
-     * Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const char* apName, const char*           apValue) ; // throw(SQLite::Exception);
+    /**
+     * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const char* apName, const void*           apValue, const int aSize) ; // throw(SQLite::Exception);
     /**
      * Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */

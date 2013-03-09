@@ -1,12 +1,7 @@
-Add a Changelog
-
 C++11 explicit support
 
 Update Doxygen Documentation, but remove it from the master branch
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
-
-Missing test/example in v0.5.0:
-- :memory: table
 
 Missing features in v0.5.0:
 - bind a SQLITE_STATIC value (string/blob)
@@ -17,8 +12,7 @@ Missing documentation in v0.5.0:
 - This wrapper is not thread safe : compare to the thread safety of the SQLite3 library
 
 Advanced missing features:
-- :memory: : use the "zVfs" (last) parameter of sqlite3_open_v2() to give access to the ":memory:" VFS module
-- backup support to/from :memory:
+- backup support to/from file/:memory:
 - batch mode managing multiple queries semicolon separated ? 
 - Function ?
 - Agregate ?

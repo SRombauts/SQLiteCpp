@@ -261,11 +261,11 @@ int main (void)
     remove("transaction.db3");
 
     ////////////////////////////////////////////////////////////////////////////
-    // Binary blob example (6/6) :
+    // Binary blob and in-memory database example (6/6) :
     try
     {
         // Open a database file in create/write mode
-        SQLite::Database    db("blob.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+        SQLite::Database    db(":memory:", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
         db.exec("DROP TABLE IF EXISTS test");
@@ -326,7 +326,6 @@ int main (void)
         std::cout << "SQLite exception: " << e.what() << std::endl;
         abort(); // unexpected error : abort the example program
     }
-    remove("blob.db3");
     remove("out.png");
 
     std::cout << "everything ok, quitting\n";

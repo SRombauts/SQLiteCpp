@@ -19,8 +19,6 @@ Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READ
     mpSQLite(NULL),
     mFilename(apFilename)
 {
-    // TODO SRombauts : use the "zVfs" (last) parameter to give access to the ":memory:" VFS module
-    // TODO SRombauts : then add a backup mode to/from ":memory:"
     int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, NULL);
     if (SQLITE_OK != ret)
     {

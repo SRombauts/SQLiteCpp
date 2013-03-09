@@ -11,7 +11,8 @@
  */
 
 #include <iostream>
-#include "stdio.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "../SQLiteC++/Database.h"
 #include "../SQLiteC++/Statement.h"
@@ -256,6 +257,8 @@ int main (void)
         abort(); // unexpected error : abort the example program
     }
     remove("transaction.db3");
+
+    std::cout << "everything ok, quitting" << std::endl;
 
     return 0;
 }

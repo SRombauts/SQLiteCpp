@@ -163,9 +163,14 @@ public:
     /**
      * @brief Execute a one-step query with no expected result.
      *
-     *  This exec() method is for use with precompiled statement that does not fetch results (INSERT, UPDATE, DELETE...).
-     * It is intended for similar usage as Database::exec(), but it add the ability to bind() arguments to it.
-     * Combined with reusing the underlying precompiled SQLite statement, it allows better performances.
+     *  This method is useful for any kind of statements other than the Data Query Language (DQL) "SELECT" :
+     *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
+     *  - Data Manipulation Language (DML) statements "INSERT", "UPDATE" and "DELETE"
+     *  - Data Control Language (DCL) statements "GRANT", "REVOKE", "COMMIT" and "ROLLBACK"
+     *
+     * It is similar to Database::exec(), but using a precompiled statement, it adds :
+     * - the ability to bind() arguments to it (best way to insert data),
+     * - reusing it allows for better performances (efficent for multiple insersion).
      *
      * @see executeStep() execute a step of the prepared query to fetch one row of results
      * @see Database::exec() is a shortcut to execute one or multiple statements without results

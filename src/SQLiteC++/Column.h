@@ -88,9 +88,9 @@ public:
     {
         return (SQLITE_NULL == getType());
     }
-    
+
     /**
-     * @brief Return the number of bytes used by the text value of the column
+     * @brief Return the number of bytes used by the text (or blob) value of the column
      *
      * Return either :
      * - size in bytes (not in characters) of the string returned by getText() without the '\0' terminator
@@ -99,6 +99,12 @@ public:
      * - 0 for a NULL value
      */
     int getBytes(void) const throw();
+
+    /// Alias returning the number of bytes used by the text (or blob) value of the column
+    inline int size(void) const throw()
+    {
+        return getBytes ();
+    }
 
     /// Inline cast operator to int
     inline operator int() const

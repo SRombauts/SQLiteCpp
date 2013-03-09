@@ -60,7 +60,7 @@ private:
 
 int main (void)
 {
-    // Basic example (1/5) :
+    // Basic example (1/6) :
     try
     {
         // Open a database file in readonly mode
@@ -115,7 +115,7 @@ int main (void)
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Object Oriented Basic example (2/5) :
+    // Object Oriented Basic example (2/6) :
     try
     {
         // Open the database and compile the query
@@ -132,7 +132,7 @@ int main (void)
         abort(); // unexpected error : abort the example program
     }
 
-    // The execAndGet wrapper example (3/5) :
+    // The execAndGet wrapper example (3/6) :
     try
     {
         // Open a database file in readonly mode
@@ -152,7 +152,7 @@ int main (void)
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Simple batch queries example (4/5) :
+    // Simple batch queries example (4/6) :
     try
     {
         // Open a database file in create/write mode
@@ -193,7 +193,7 @@ int main (void)
     remove("test.db3");
 
     ////////////////////////////////////////////////////////////////////////////
-    // RAII transaction example (5/5) :
+    // RAII transaction example (5/6) :
     try
     {
         // Open a database file in create/write mode
@@ -260,7 +260,76 @@ int main (void)
     }
     remove("transaction.db3");
 
-    std::cout << "everything ok, quitting" << std::endl;
+    ////////////////////////////////////////////////////////////////////////////
+    // Binary blob example (6/6) :
+    try
+    {
+        // Open a database file in create/write mode
+        SQLite::Database    db("blob.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+        std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
+
+        db.exec("DROP TABLE IF EXISTS test");
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value BLOB)");
+
+        FILE* fp = fopen("logo.png", "rb");
+        if (NULL != fp)
+        {
+            char  buffer[16*1024];
+            void* blob = &buffer;
+            size_t size = fread(blob, 1, 16*1024, fp);
+            buffer[size] = '\0';
+            fclose (fp);
+            std::cout << "blob size=" << size << " :\n";
+
+            // Insert query
+            SQLite::Statement   query(db, "INSERT INTO test VALUES (NULL, ?)");
+            // Bind the blob value to the first parameter of the SQL query
+            query.bind(1, blob, size);
+            std::cout << "blob binded successfully\n";
+
+            // Execute the one-step query to insert the blob
+            int nb = query.exec ();
+            std::cout << "INSERT INTO test VALUES (NULL, ?)\", returned " << nb << std::endl;
+        }
+        else
+        {
+            std::cout << "file logo.png not found !\n";
+            abort(); // unexpected error : abort the example program
+        }
+
+        fp = fopen("out.png", "wb");
+        if (NULL != fp)
+        {
+            const void* blob = NULL;
+            size_t size;
+
+            SQLite::Statement   query(db, "SELECT * FROM test");
+            std::cout << "SELECT * FROM test :\n";
+            if (query.executeStep())
+            {
+                SQLite::Column colBlob = query.getColumn(1);
+                blob = colBlob.getBlob ();
+                size = colBlob.getBytes ();
+                std::cout << "row : (" << query.getColumn(0) << ", size=" << size << ")\n";
+                size_t sizew = fwrite(blob, 1, size, fp);
+                fclose (fp);
+            }
+        }
+        else
+        {
+            std::cout << "file out.png not created !\n";
+            abort(); // unexpected error : abort the example program
+        }
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "SQLite exception: " << e.what() << std::endl;
+        abort(); // unexpected error : abort the example program
+    }
+    remove("blob.db3");
+    remove("out.png");
+
+    std::cout << "everything ok, quitting\n";
 
     return 0;
 }

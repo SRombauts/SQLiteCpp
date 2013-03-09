@@ -6,7 +6,6 @@ Update Doxygen Documentation, but remove it from the master branch
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
 
 Missing test/example in v0.5.0:
-- BLOB : make an example with images stored in a row
 - :memory: table
 
 Missing features in v0.5.0:

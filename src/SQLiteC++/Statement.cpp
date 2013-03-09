@@ -79,7 +79,7 @@ void Statement::bind(const int aIndex, const char* apValue) // throw(SQLite::Exc
 // Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const void* apValue, const int aSize) // throw(SQLite::Exception)
 {
-    int ret = sqlite3_bind_blob(mStmtPtr, aIndex, apValue, -1, SQLITE_TRANSIENT);
+    int ret = sqlite3_bind_blob(mStmtPtr, aIndex, apValue, aSize, SQLITE_TRANSIENT);
     check(ret);
 }
 

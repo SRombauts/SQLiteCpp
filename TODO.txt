@@ -2,8 +2,6 @@ Check C++11 explicit support
 
 Add a FAQ.txt
 Add a Tutorial: for SQLite newbies
-Link to GitHub/issue
-Coding Style Guidelines: CamelCase, see http://www.appinf.com/download/CppCodingStyleGuide.pdf
 Create Github Wiki pages with the README.md and FAQ.txt: Installation, Examples, Tutorial, How to contribute
 
 Publish a versionned ZIP file in Google Project Mirror

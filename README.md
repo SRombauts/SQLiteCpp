@@ -7,12 +7,17 @@ See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.
 
 Keywords: sqlite, sqlite3, C, library, wrapper C++
 
-### License
+### About SQLite:
 
-Copyright (c) 2012-2013 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+SQLite is a library that implements a serverless transactional SQL database engine.
+It is the most widely deployed SQL database engine in the world.
+The source code for SQLite is in the public domain.
+http://www.sqlite.org/about.html
 
-Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
-or copy at http://opensource.org/licenses/MIT)
+### About SQLiteC++:
+
+SQLiteC++ offers an encapsulation arround the native C APIs of sqlite,
+with a few intuitive and well documented C++ class.
 
 ### The goals of SQLiteC++ are:
 
@@ -23,7 +28,7 @@ or copy at http://opensource.org/licenses/MIT)
 - to be light and fast
 - to be monothreaded (not thread-safe)
 - to use API names sticking with those of the SQLite library
-- to be well documented in code with Doxygen, and online with some good examples
+- to be well documented with Doxygen tags, and with some good examples
 - to be well maintained
 - to use a permissive MIT license, similar to BSD or Boost, for proprietary/commercial usage
 
@@ -45,9 +50,9 @@ And following IDEs/Compilers
 - Eclipse CDT under Linux, using the provided Makefile
 - Visual Studio Express 2008/2010/2012 for testing compatibility purpose
 
-### Depandancies:
+### Dependencies:
 
-- a STL implementation (even an old one, like those provided with VC6/eVC4 should work)
+- a STL implementation (even an old one, like the one provided with VC6 should work)
 - exception support (the class Exception inherit from std::runtime_error)
 - the SQLite library, either by linking to it dynamicaly or staticaly (libsqlite3-dev under Linux),
   or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows).
@@ -57,14 +62,14 @@ And following IDEs/Compilers
 To use this wrappers, you need to add the 10 SQLiteC++ source files from the src/ directory
 in your project code base, and compile/link against the sqlite library.
 
+### License
+
+Copyright (c) 2012-2013 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+
+Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
+or copy at http://opensource.org/licenses/MIT)
+
 ## Getting started
-### About SQLite:
-
-SQLite is a library that implements a serverless transactional SQL database engine.
-It is the most widely deployed SQL database engine in the world.
-The source code for SQLite is in the public domain.
-http://www.sqlite.org/about.html
-
 ### First sample demonstrates how to query a database and get results: 
 
 ```C++
@@ -123,13 +128,23 @@ catch (std::exception& e)
 ```
 
 ## How to contribute
-
+### GitHub website
 The most efficient way to help and contribute to this wrapper project is to
 use the tools provided by GitHub:
 - please fill bug reports and feature requests here: https://github.com/SRombauts/SQLiteCpp/issues
 - fork the repository, make some small changes and submit them with pull-request
 
+### Contact
 You can also email me directly, I will answer any questions and requests.
+
+### Coding Style Guidelines
+The source code use the CamelCase naming style variant where :
+- type names (class, struct, typedef, enums...) begins with a capital letter
+- files (.cpp/.h) are named like the class they contains
+- function and variable names begins with a lower case letter
+- member variables begins with a 'm', function arguments begins with a 'a', boolean with a 'b', pointers with a 'p'
+- each file, class, method and member variable is documented using Doxygen tags
+See also http://www.appinf.com/download/CppCodingStyleGuide.pdf for good guidelines
 
 ## See also - Some other simple C++ SQLite wrappers:
 

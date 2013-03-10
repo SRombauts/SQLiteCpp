@@ -47,16 +47,19 @@ And following IDEs/Compilers
 
 ### Depandancies:
 
- - a STL implementation (even an old one, like those provided with VC6/eVC4 should work)
- - exception support (the class Exception inherit from std::runtime_error)
- - the SQLite library, either by linking to it dynamicaly or staticaly (libsqlite3-dev under Linux),
-   or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows).
+- a STL implementation (even an old one, like those provided with VC6/eVC4 should work)
+- exception support (the class Exception inherit from std::runtime_error)
+- the SQLite library, either by linking to it dynamicaly or staticaly (libsqlite3-dev under Linux),
+  or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows).
 
-To use it in your project, you only need to add the 10 SQLiteC++ source files
-in your project code base (not the main.cpp example file).
+### Installation:
+
+To use this wrappers, you need to add the 10 SQLiteC++ source files from the src/ directory
+in your project code base, and compile/link against the sqlite library.
 
 ## Getting started
 ### About SQLite:
+
 SQLite is a library that implements a serverless transactional SQL database engine.
 It is the most widely deployed SQL database engine in the world.
 The source code for SQLite is in the public domain.

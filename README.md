@@ -1,7 +1,7 @@
 SQLiteC++
 ---------
 
-SQLiteC++ (or SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
+SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
 
 See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.
 
@@ -47,8 +47,8 @@ And following IDEs/Compilers
 
  - a STL implementation (even an old one, like those provided with VC6/eVC4 should work)
  - exception support (the class Exception inherit from std::runtime_error)
- - the SQLite library, either by linking to it dynamicaly or staticaly,
-   or by adding its source file in your project code base (source code provided in src/sqlite3).
+ - the SQLite library, either by linking to it dynamicaly or staticaly (libsqlite3-dev under Linux),
+   or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows).
 
 To use it in your project, you only need to add the 10 SQLiteC++ source files
 in your project code base (not the main.cpp example file).
@@ -119,6 +119,7 @@ catch (std::exception& e)
 
 ## See also - Some other simple C++ SQLite wrappers:
 
+See also the file WRAPPERS.md offering a more complete comparison of other wrappers.
  - [sqdbcpp](http://code.google.com/p/sqdbcpp/): RAII design, simple, no depandencies, UTF-8/UTF-16, new BSD license
  - [sqlite3cc](http://ed.am/dev/sqlite3cc): uses boost, modern design, LPGPL
  - [sqlite3pp](http://code.google.com/p/sqlite3pp/): uses boost, but never updated since initial publication in may 2012, MIT License

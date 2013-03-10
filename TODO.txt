@@ -1,7 +1,11 @@
-C++11 explicit support
+Check C++11 explicit support
 
-Update Doxygen Documentation, but remove it from the master branch
+Add a FAQ.txt
+Create Github Wiki pages with the README.md and FAQ.txt : Installation, Examples, 
+
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
+
+Add a full test suite
 
 Missing features in v0.5.0:
 - bind a SQLITE_STATIC value (string/blob)
@@ -10,25 +14,17 @@ Missing features in v0.5.0:
 
 Missing documentation in v0.5.0:
 - This wrapper is not thread safe : compare to the thread safety of the SQLite3 library
+- explain the noncopyable property for RAII design
+- comment on returning error code instead of exception that shall not be thrown when exepected (!?)
 
 Advanced missing features:
 - backup support to/from file/:memory:
-- batch mode managing multiple queries semicolon separated ? 
 - Function ?
 - Agregate ?
 - support for different transaction mode ? NO: too specific
 - operator<< binding ? NO: redundant with bind()
 - ATTACH Database ? NO: can already be done by "ATTACH" Statement
-
-Add a full test suite
-
-Add optional usage of experimental sqlite3_trace() function to enable statistics 
-
-Add a comparison of others C++ wrappers (code style, C++ design, in code documentation, tests, online documentation, examples, license, UTF-16) 
+- Add optional usage of experimental sqlite3_trace() function to enable statistics 
 
 Post an article to CodeProject : Is there a license issue ?
 Mirror the repository to GoogleCode : with a versionned downloadable ZIP file
-
-Documentation:
-- explain the noncopyable property for RAII design
-- comment on returning error code instead of exception that shall not be thrown when exepected (!?)

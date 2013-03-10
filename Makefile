@@ -54,19 +54,19 @@ $(BUILD)/example1: $(SQLITE_EXAMPLE1_OBJECTS)
 	$(CXX) -o $@ $(SQLITE_EXAMPLE1_OBJECTS) $(LINK_FLAGS) -lsqlite3 -lpthread 
 
 
-$(BUILD)/main.o: src/example1/main.cpp
+$(BUILD)/main.o: examples/example1/main.cpp
 	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
 
-$(BUILD)/Column.o: src/SQLiteC++/Column.cpp
+$(BUILD)/Column.o: src/Column.cpp
 	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
 
-$(BUILD)/Database.o: src/SQLiteC++/Database.cpp
+$(BUILD)/Database.o: src/Database.cpp
 	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
 
-$(BUILD)/Statement.o: src/SQLiteC++/Statement.cpp
+$(BUILD)/Statement.o: src/Statement.cpp
 	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
 
-$(BUILD)/Transaction.o: src/SQLiteC++/Transaction.cpp
+$(BUILD)/Transaction.o: src/Transaction.cpp
 	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
 
 

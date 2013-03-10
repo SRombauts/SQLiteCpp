@@ -1,7 +1,12 @@
 Check C++11 explicit support
 
 Add a FAQ.txt
-Create Github Wiki pages with the README.md and FAQ.txt : Installation, Examples, 
+Add a Tutorial: for SQLite newbies
+Link to GitHub/issue
+Coding Style Guidelines: CamelCase, see http://www.appinf.com/download/CppCodingStyleGuide.pdf
+Create Github Wiki pages with the README.md and FAQ.txt: Installation, Examples, Tutorial, How to contribute
+
+Publish a versionned ZIP file in Google Project Mirror
 
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
 
@@ -13,7 +18,7 @@ Missing features in v0.5.0:
 - getColumnByName ? std::map getRow() ?
 
 Missing documentation in v0.5.0:
-- This wrapper is not thread safe : compare to the thread safety of the SQLite3 library
+- This wrapper is not thread safe: compare to the thread safety of the SQLite3 library
 - explain the noncopyable property for RAII design
 - comment on returning error code instead of exception that shall not be thrown when exepected (!?)
 
@@ -26,5 +31,4 @@ Advanced missing features:
 - ATTACH Database ? NO: can already be done by "ATTACH" Statement
 - Add optional usage of experimental sqlite3_trace() function to enable statistics 
 
-Post an article to CodeProject : Is there a license issue ?
-Mirror the repository to GoogleCode : with a versionned downloadable ZIP file
+Post an article to CodeProject: Is there a license issue ?

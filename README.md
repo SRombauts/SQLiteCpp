@@ -5,6 +5,8 @@ SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
 
 See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.
 
+Keywords: sqlite, sqlite3, C, library, wrapper C++
+
 ### License
 
 Copyright (c) 2012-2013 Sébastien Rombauts (sebastien.rombauts@gmail.com)

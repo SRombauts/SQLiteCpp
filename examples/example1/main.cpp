@@ -14,10 +14,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../SQLiteC++/Database.h"
-#include "../SQLiteC++/Statement.h"
-#include "../SQLiteC++/Column.h"
-#include "../SQLiteC++/Transaction.h"
+#include "../../src/Database.h"
+#include "../../src/Statement.h"
+#include "../../src/Column.h"
+#include "../../src/Transaction.h"
 
 
 /// Object Oriented Basic example

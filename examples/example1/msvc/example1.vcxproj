@@ -47,7 +47,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>src/sqlite3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\sqlite3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -68,7 +68,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>src/sqlite3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\sqlite3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -86,22 +86,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\SQLiteC++\Column.cpp" />
-    <ClCompile Include="src\SQLiteC++\Database.cpp" />
-    <ClCompile Include="src\SQLiteC++\Statement.cpp" />
-    <ClCompile Include="src\SQLiteC++\Transaction.cpp" />
-    <ClCompile Include="src\example1\main.cpp" />
+    <ClCompile Include="..\..\..\src\Column.cpp" />
+    <ClCompile Include="..\..\..\src\Database.cpp" />
+    <ClCompile Include="..\..\..\src\Statement.cpp" />
+    <ClCompile Include="..\..\..\src\Transaction.cpp" />
+    <ClCompile Include="..\..\..\examples\example1\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\SQLiteC++\Column.h" />
-    <ClInclude Include="src\SQLiteC++\Database.h" />
-    <ClInclude Include="src\SQLiteC++\Exception.h" />
-    <ClInclude Include="src\SQLiteC++\SQLiteC++.h" />
-    <ClInclude Include="src\SQLiteC++\Statement.h" />
-    <ClInclude Include="src\SQLiteC++\Transaction.h" />
+    <ClInclude Include="..\..\..\src\Column.h" />
+    <ClInclude Include="..\..\..\src\Database.h" />
+    <ClInclude Include="..\..\..\src\Exception.h" />
+    <ClInclude Include="..\..\..\src\SQLiteC++.h" />
+    <ClInclude Include="..\..\..\src\Statement.h" />
+    <ClInclude Include="..\..\..\src\Transaction.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="src\sqlite3\sqlite3.vcxproj">
+    <ProjectReference Include="..\..\..\sqlite3\msvc\sqlite3.vcxproj">
       <Project>{f9bf2ec1-c5e7-43d8-944d-dc5e2df1f976}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>

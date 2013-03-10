@@ -3,47 +3,45 @@
   <ItemGroup>
     <Filter Include="SQLiteC++">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="example1">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\SQLiteC++\Column.cpp">
+    <ClCompile Include="..\..\..\src\Column.cpp">
       <Filter>SQLiteC++</Filter>
     </ClCompile>
-    <ClCompile Include="src\SQLiteC++\Database.cpp">
+    <ClCompile Include="..\..\..\src\Database.cpp">
       <Filter>SQLiteC++</Filter>
     </ClCompile>
-    <ClCompile Include="src\SQLiteC++\Statement.cpp">
+    <ClCompile Include="..\..\..\src\Statement.cpp">
       <Filter>SQLiteC++</Filter>
     </ClCompile>
-    <ClCompile Include="src\SQLiteC++\Transaction.cpp">
+    <ClCompile Include="..\..\..\src\Transaction.cpp">
       <Filter>SQLiteC++</Filter>
     </ClCompile>
-    <ClCompile Include="src\example1\main.cpp">
+    <ClCompile Include="..\..\..\examples\example1\main.cpp">
       <Filter>example1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\SQLiteC++\Column.h">
+    <ClInclude Include="..\..\..\src\Column.h">
       <Filter>SQLiteC++</Filter>
     </ClInclude>
-    <ClInclude Include="src\SQLiteC++\Database.h">
+    <ClInclude Include="..\..\..\src\Database.h">
       <Filter>SQLiteC++</Filter>
     </ClInclude>
-    <ClInclude Include="src\SQLiteC++\SQLiteC++.h">
+    <ClInclude Include="..\..\..\src\SQLiteC++.h">
       <Filter>SQLiteC++</Filter>
     </ClInclude>
-    <ClInclude Include="src\SQLiteC++\Statement.h">
+    <ClInclude Include="..\..\..\src\Statement.h">
       <Filter>SQLiteC++</Filter>
     </ClInclude>
-    <ClInclude Include="src\SQLiteC++\Transaction.h">
+    <ClInclude Include="..\..\..\src\Transaction.h">
       <Filter>SQLiteC++</Filter>
     </ClInclude>
-    <ClInclude Include="src\SQLiteC++\Exception.h">
+    <ClInclude Include="..\..\..\src\Exception.h">
       <Filter>SQLiteC++</Filter>
     </ClInclude>
   </ItemGroup>

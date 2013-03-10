@@ -1,6 +1,6 @@
 /**
  * @file  Statement.h
- * @brief A prepared SQLite Statement is a compiled SQL query ready to be executed.
+ * @brief A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
@@ -45,12 +45,12 @@ public:
     Statement(Database& aDatabase, const char* apQuery); // throw(SQLite::Exception);
 
     /**
-     * Finalize and unregister the SQL query from the SQLite Database Connection.
+     * @brief Finalize and unregister the SQL query from the SQLite Database Connection.
      */
     virtual ~Statement(void) throw(); // nothrow
 
     /**
-     * Reset the statement to make it ready for a new execution.
+     * @brief Reset the statement to make it ready for a new execution.
      */
     void reset(void); // throw(SQLite::Exception);
 
@@ -71,15 +71,15 @@ public:
     // instead of being copied.
 
     /**
-     * Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex, const int&           aValue)  ; // throw(SQLite::Exception);
     /**
-     * Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex, const sqlite3_int64& aValue)  ; // throw(SQLite::Exception);
     /**
-     * Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex, const double&        aValue)  ; // throw(SQLite::Exception);
     /**
@@ -101,20 +101,20 @@ public:
      */
     void bind(const int aIndex, const void*          apValue, const int aSize) ; // throw(SQLite::Exception);
     /**
-     * Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex); // throw(SQLite::Exception);
 
     /**
-     * Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const char* apName, const int&            aValue)  ; // throw(SQLite::Exception);
     /**
-     * Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const char* apName, const sqlite3_int64&  aValue)  ; // throw(SQLite::Exception);
     /**
-     * Bind a double (64bits float) value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a double (64bits float) value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const char* apName, const double&         aValue)  ; // throw(SQLite::Exception);
     /**
@@ -136,7 +136,7 @@ public:
      */
     void bind(const char* apName, const void*           apValue, const int aSize) ; // throw(SQLite::Exception);
     /**
-     * Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const char* apName); // throw(SQLite::Exception); // bind NULL value
 
@@ -211,7 +211,7 @@ public:
     Column  getColumn(const int aIndex); // throw(SQLite::Exception);
 
     /**
-     * Test if the column value is NULL
+     * @brief Test if the column value is NULL
      *
      * @param[in] aIndex    Index of the column, starting at 0
      *
@@ -221,27 +221,27 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////
 
-    /// Returne the UTF-8 SQL Query.
+    /// @brief Return the UTF-8 SQL Query.
     inline const std::string& getQuery(void) const
     {
         return mQuery;
     }
-    /// Return the number of columns in the result set returned by the prepared statement
+    /// @brief Return the number of columns in the result set returned by the prepared statement
     inline int getColumnCount(void) const
     {
         return mColumnCount;
     }
-    /// true when a row has been fetched with executeStep()
+    /// @brief true when a row has been fetched with executeStep()
     inline bool isOk(void) const
     {
         return mbOk;
     }
-    /// true when the last executeStep() had no more row to fetch
+    /// @brief true when the last executeStep() had no more row to fetch
     inline bool isDone(void) const
     {
         return mbDone;
     }
-    /// Return UTF-8 encoded English language explanation of the most recent error.
+    /// @brief Return UTF-8 encoded English language explanation of the most recent error.
     inline const char* errmsg(void) const
     {
         return sqlite3_errmsg(mStmtPtr);
@@ -265,21 +265,22 @@ public:
         // Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
         ~Ptr(void) throw(); // nothrow (no virtual destructor needed here)
 
-        /// Inline cast operator returning the pointer to SQLite Database Connection Handle
+        /// @brief Inline cast operator returning the pointer to SQLite Database Connection Handle
         inline operator sqlite3*() const
         {
             return mpSQLite;
         }
 
-        /// Inline cast operator returning the pointer to SQLite Statement Object
+        /// @brief Inline cast operator returning the pointer to SQLite Statement Object
         inline operator sqlite3_stmt*() const
         {
             return mpStmt;
         }
 
     private:
-        // Unused/forbidden copy operator
+        /// @{ Unused/forbidden copy operator
         Ptr& operator=(const Ptr& aPtr);
+        /// @}
 
     private:
         sqlite3*        mpSQLite;   //!< Pointer to SQLite Database Connection Handle
@@ -288,13 +289,13 @@ public:
     };
 
 private:
-    // Statement must not be copyable
-    Statement(void);
+    /// @{ Statement must be non-copyable
     Statement(const Statement&);
     Statement& operator=(const Statement&);
+    /// @}
 
     /**
-     * Check if a return code equals SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
+     * @brief Check if a return code equals SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      *
      * @param[in] SQLite return code to test against the SQLITE_OK expected value
      */

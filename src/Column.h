@@ -1,6 +1,6 @@
 /**
  * @file  Column.h
- * @brief Encapsulation of a Column in a Row of the result.
+ * @brief Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
@@ -18,7 +18,7 @@ namespace SQLite
 
 
 /**
- * @brief Encapsulation of a Column in a Row of the result.
+ * @brief Encapsulation of a Column in a row of the result pointed by the prepared Statement.
  *
  *  A Column is a particular field of SQLite data in the current row of result
  * of the Statement : it points to a single cell.
@@ -36,21 +36,31 @@ public:
      * @param[in] aIndex    Index of the column in the row of result
      */
     Column(Statement::Ptr& aStmtPtr, int aIndex)    throw(); // nothrow
-    /// Simple destructor
+    /// @brief Simple destructor
     virtual ~Column(void)                           throw(); // nothrow
-    // default copy constructor and asignement operator are perfectly suited :
+    
+    // default copy constructor and assignment operator are perfectly suited :
     // they copy the Statement::Ptr which in turn increments the reference counter.
     
-    /// Return the integer value of the column.
+    /// @brief Return the integer value of the column.
     int             getInt   (void) const throw(); // nothrow
-    /// Return the 64bits integer value of the column.
+    /// @brief Return the 64bits integer value of the column.
     sqlite3_int64   getInt64 (void) const throw(); // nothrow
-    /// Return the double (64bits float) value of the column.
+    /// @brief Return the double (64bits float) value of the column.
     double          getDouble(void) const throw(); // nothrow
-    /// Return a pointer to the text value (NULL terminated string) of the column.
-    /// Warning, the value pointed at is only valid while the statement is valid (ie. not finalized),
-    /// thus you must copy it before using it beyond its scope (to a std::string for instance).
+    /**
+     * @brief Return a pointer to the text value (NULL terminated string) of the column.
+     *
+     * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
+     *          thus you must copy it before using it beyond its scope (to a std::string for instance).
+     */
     const char*     getText  (void) const throw(); // nothrow
+    /**
+     * @brief Return a pointer to the binary blob value of the column.
+     *
+     * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
+     *          thus you must copy it before using it beyond its scope (to a std::string for instance).
+     */
     const void*     getBlob  (void) const throw(); // nothrow
     
     /**
@@ -63,27 +73,27 @@ public:
      */
     int getType(void) const throw(); // nothrow
     
-    /// Test if the column is an integer type value (meaningfull only before any conversion)
+    /// @brief Test if the column is an integer type value (meaningfull only before any conversion)
     inline bool isInteger(void) const throw() // nothrow
     {
         return (SQLITE_INTEGER == getType());
     }
-    /// Test if the column is a floting point type value (meaningfull only before any conversion)
+    /// @brief Test if the column is a floting point type value (meaningfull only before any conversion)
     inline bool isFloat(void) const throw() // nothrow
     {
         return (SQLITE_FLOAT == getType());
     }
-    /// Test if the column is a text type value (meaningfull only before any conversion)
+    /// @brief Test if the column is a text type value (meaningfull only before any conversion)
     inline bool isText(void) const throw() // nothrow
     {
         return (SQLITE_TEXT == getType());
     }
-    /// Test if the column is a binary blob type value (meaningfull only before any conversion)
+    /// @brief Test if the column is a binary blob type value (meaningfull only before any conversion)
     inline bool isBlob(void) const throw() // nothrow
     {
         return (SQLITE_BLOB == getType());
     }
-    /// Test if the column is NULL (meaningfull only before any conversion)
+    /// @brief Test if the column is NULL (meaningfull only before any conversion)
     inline bool isNull(void) const throw() // nothrow
     {
         return (SQLITE_NULL == getType());
@@ -100,33 +110,41 @@ public:
      */
     int getBytes(void) const throw();
 
-    /// Alias returning the number of bytes used by the text (or blob) value of the column
+    /// @brief Alias returning the number of bytes used by the text (or blob) value of the column
     inline int size(void) const throw()
     {
         return getBytes ();
     }
 
-    /// Inline cast operator to int
+    /// @brief Inline cast operator to int
     inline operator int() const
     {
         return getInt();
     }
-    /// Inline cast operator to 64bits integer
+    /// @brief Inline cast operator to 64bits integer
     inline operator sqlite3_int64() const
     {
         return getInt64();
     }
-    /// Inline cast operator to double
+    /// @brief Inline cast operator to double
     inline operator double() const
     {
         return getDouble();
     }
-    /// Inline cast operator to char*
+    /**
+     * @brief Inline cast operator to char*
+     *
+     * @see getText 
+     */
     inline operator const char*() const
     {
         return getText();
     }
-    /// Inline cast operator to void*
+    /**
+     * @brief Inline cast operator to void*
+     *
+     * @see getBlob
+     */
     inline operator const void*() const
     {
         return getBlob();
@@ -144,7 +162,7 @@ public:
     }
 #endif
 
-    /// Return UTF-8 encoded English language explanation of the most recent error.
+    /// @brief Return UTF-8 encoded English language explanation of the most recent error.
     inline const char* errmsg(void) const
     {
         return sqlite3_errmsg(mStmtPtr);

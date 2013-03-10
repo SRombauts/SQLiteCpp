@@ -1,6 +1,6 @@
 /**
  * @file  Column.cpp
- * @brief Encapsulation of a Column in a Row of the result.
+ * @brief Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
@@ -14,7 +14,7 @@
 namespace SQLite
 {
 
-// Encapsulation of a Column in a Row of the result.
+// Encapsulation of a Column in a row of the result pointed by the prepared Statement.
 Column::Column(Statement::Ptr& aStmtPtr, int aIndex) throw() : // nothrow
     mStmtPtr    (aStmtPtr),
     mIndex      (aIndex)

@@ -28,6 +28,8 @@ class Database;
  * Resource Acquisition Is Initialization (RAII) means that the Transaction
  * begins in the constructor and is rollbacked in the destructor, so that there is
  * no need to worry about memory management or the validity of the underlying SQLite Connection.
+ *
+ * This method also offers big performances improvements compared to individually executed statements.
  */
 class Transaction
 {
@@ -52,9 +54,10 @@ public:
     void commit(void); // throw(SQLite::Exception);
 
 private:
-    // Transaction must not be copyable
+    // Transaction must be non-copyable
     Transaction(const Transaction&);
     Transaction& operator=(const Transaction&);
+    /// @}
 
 private:
     Database&   mDatabase;  //!< Reference to the SQLite Database Connection

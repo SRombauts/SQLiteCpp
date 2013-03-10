@@ -128,7 +128,7 @@ public:
     }
 
     /**
-     * Return the filename used to open the database
+     * @brief Return the filename used to open the database
      */
     inline const std::string& getFilename(void) const
     {
@@ -136,7 +136,7 @@ public:
     }
 
     /**
-     * Return UTF-8 encoded English language explanation of the most recent error.
+     * @brief Return UTF-8 encoded English language explanation of the most recent error.
      */
     inline const char* errmsg(void) const
     {
@@ -144,12 +144,13 @@ public:
     }
 
 private:
-    // Database must not be copyable
+    /// @{ Database must be non-copyable
     Database(const Database&);
     Database& operator=(const Database&);
+    /// @}
 
     /**
-     * Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
+     * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      */
     void check(const int aRet) const; // throw(SQLite::Exception);
 

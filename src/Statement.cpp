@@ -1,6 +1,6 @@
 /**
  * @file  Statement.cpp
- * @brief A prepared SQLite Statement is a compiled SQL query ready to be executed.
+ * @brief A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
@@ -280,7 +280,7 @@ Statement::Ptr::Ptr(sqlite3* apSQLite, std::string& aQuery) :
 }
 
 /**
- * Copy constructor increments the ref counter
+ * @brief Copy constructor increments the ref counter
  *
  * @param[in] aPtr Pointer to copy
  */
@@ -298,7 +298,7 @@ Statement::Ptr::Ptr(const Statement::Ptr& aPtr) :
 }
 
 /**
- * Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
+ * @brief Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
  */
 Statement::Ptr::~Ptr(void) throw() // nothrow
 {

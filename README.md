@@ -14,8 +14,7 @@ or copy at http://opensource.org/licenses/MIT)
 
 ### The goals of SQLiteC++ are:
 
-- to use a permissive MIT license, similar to BSD or Boost, for proprietary/commercial usage
-- to offer the best of existing simple wrappers
+- to offer the best of existing simple C++ SQLite wrappers
 - to be elegantly written with good C++ design, STL, exceptions and RAII idiom
 - to keep dependencies to a minimum (STL and SQLite3)
 - to be portable
@@ -24,6 +23,7 @@ or copy at http://opensource.org/licenses/MIT)
 - to use API names sticking with those of the SQLite library
 - to be well documented in code with Doxygen, and online with some good examples
 - to be well maintained
+- to use a permissive MIT license, similar to BSD or Boost, for proprietary/commercial usage
 
 It is designed using the Resource Acquisition Is Initialization (RAII) idom
 (see http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization),

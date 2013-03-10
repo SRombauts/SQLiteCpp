@@ -122,6 +122,15 @@ catch (std::exception& e)
 }
 ```
 
+## How to contribute
+
+The most efficient way to help and contribute to this wrapper project is to
+use the tools provided by GitHub:
+- please fill bug reports and feature requests here: https://github.com/SRombauts/SQLiteCpp/issues
+- fork the repository, make some small changes and submit them with pull-request
+
+You can also email me directly, I will answer any questions and requests.
+
 ## See also - Some other simple C++ SQLite wrappers:
 
 See also the file WRAPPERS.md offering a more complete comparison of other wrappers.

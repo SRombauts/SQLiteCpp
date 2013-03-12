@@ -44,7 +44,7 @@ and then is always valid until destroyed.
 
 Developements and tests are done under the following OSs :
 - Debian 7 (testing)
-- Ubuntu 12.04
+- Ubuntu 12.10
 - Windows XP/7/8
 And following IDEs/Compilers
 - GCC 4.7.x with a provided Makefile

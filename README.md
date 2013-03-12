@@ -27,6 +27,7 @@ with a few intuitive and well documented C++ class.
 - to be portable
 - to be light and fast
 - to be monothreaded (not thread-safe)
+- to have a good unit test coverage
 - to use API names sticking with those of the SQLite library
 - to be well documented with Doxygen tags, and with some good examples
 - to be well maintained

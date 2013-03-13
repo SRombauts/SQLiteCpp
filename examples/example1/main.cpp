@@ -20,13 +20,17 @@
 #include "../../src/Transaction.h"
 
 
+static const char* filename_example_db3 = "examples/example1/example.db3";
+static const char* filename_logo_png    = "examples/example1/logo.png";
+
+
 /// Object Oriented Basic example
 class Example
 {
 public:
     // Constructor
     Example(void) :
-        mDb("example.db3"),                                         // Open a database file in readonly mode
+        mDb(filename_example_db3),                                  // Open a database file in readonly mode
         mQuery(mDb, "SELECT * FROM test WHERE weight > :min_weight")// Compile a SQL query, containing one parameter (index 1)
     {
     }
@@ -64,7 +68,7 @@ int main (void)
     try
     {
         // Open a database file in readonly mode
-        SQLite::Database    db("example.db3");  // SQLITE_OPEN_READONLY
+        SQLite::Database    db(filename_example_db3);  // SQLITE_OPEN_READONLY
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
         // Test if the 'test' table exists
@@ -136,7 +140,7 @@ int main (void)
     try
     {
         // Open a database file in readonly mode
-        SQLite::Database    db("example.db3");  // SQLITE_OPEN_READONLY
+        SQLite::Database    db(filename_example_db3);  // SQLITE_OPEN_READONLY
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
         // WARNING: Be very careful with this dangerous method: you have to
@@ -271,7 +275,7 @@ int main (void)
         db.exec("DROP TABLE IF EXISTS test");
         db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value BLOB)");
 
-        FILE* fp = fopen("logo.png", "rb");
+        FILE* fp = fopen(filename_logo_png, "rb");
         if (NULL != fp)
         {
             char  buffer[16*1024];
@@ -293,7 +297,7 @@ int main (void)
         }
         else
         {
-            std::cout << "file logo.png not found !\n";
+            std::cout << "file " << filename_logo_png << " not found !\n";
             abort(); // unexpected error : abort the example program
         }
 
@@ -312,6 +316,7 @@ int main (void)
                 size = colBlob.getBytes ();
                 std::cout << "row : (" << query.getColumn(0) << ", size=" << size << ")\n";
                 size_t sizew = fwrite(blob, 1, size, fp);
+                assert(sizew == size);
                 fclose (fp);
             }
         }

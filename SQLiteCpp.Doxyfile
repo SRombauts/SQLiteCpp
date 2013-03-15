@@ -666,7 +666,7 @@ WARN_FORMAT            = "$file:$line: $text"
 # and error messages should be written. If left blank the output is written 
 # to stderr.
 
-WARN_LOGFILE           = doc/warnings.txt
+WARN_LOGFILE           = 
 
 #---------------------------------------------------------------------------
 # configuration options related to the input files

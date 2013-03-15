@@ -1,6 +1,7 @@
 /**
- * @file  Statement.h
- * @brief A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
+ * @file    Statement.h
+ * @brief   A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
+ * @ingroup SQLiteC++
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
@@ -170,7 +171,7 @@ public:
      *
      * It is similar to Database::exec(), but using a precompiled statement, it adds :
      * - the ability to bind() arguments to it (best way to insert data),
-     * - reusing it allows for better performances (efficent for multiple insersion).
+     * - reusing it allows for better performances (efficient for multiple insertion).
      *
      * @see executeStep() execute a step of the prepared query to fetch one row of results
      * @see Database::exec() is a shortcut to execute one or multiple statements without results
@@ -203,7 +204,7 @@ public:
      *          share the ownership of the underlying sqlite3_stmt.
      *
      * @warning The resulting Column object must not be memorized "as-is".
-     *          Is is only a wrapper arround the current result row, so it is only valid
+     *          Is is only a wrapper around the current result row, so it is only valid
      *          while the row from the Statement remains valid, that is only until next executeStep() call.
      *          Thus, you should instead extract immediately its data (getInt(), getText()...)
      *          and use or copy this data for any later usage.

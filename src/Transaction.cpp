@@ -1,6 +1,7 @@
 /**
- * @file  Transaction.cpp
- * @brief A Transaction is way to group multiple SQL statements into an atomic secured operation.
+ * @file    Transaction.cpp
+ * @brief   A Transaction is way to group multiple SQL statements into an atomic secured operation.
+ * @ingroup SQLiteC++
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *

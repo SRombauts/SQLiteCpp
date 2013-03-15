@@ -1,6 +1,7 @@
 /**
- * @file  Column.h
- * @brief Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
+ * @file    Column.h
+ * @brief   Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
+ * @ingroup SQLiteC++
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
@@ -24,7 +25,7 @@ namespace SQLite
  * of the Statement : it points to a single cell.
  *
  * Its value can be expressed as a text, and, when applicable, as a numeric
- * (integer or floting point) or a binary blob.
+ * (integer or floating point) or a binary blob.
  */
 class Column
 {
@@ -73,27 +74,27 @@ public:
      */
     int getType(void) const throw(); // nothrow
     
-    /// @brief Test if the column is an integer type value (meaningfull only before any conversion)
+    /// @brief Test if the column is an integer type value (meaningful only before any conversion)
     inline bool isInteger(void) const throw() // nothrow
     {
         return (SQLITE_INTEGER == getType());
     }
-    /// @brief Test if the column is a floting point type value (meaningfull only before any conversion)
+    /// @brief Test if the column is a floating point type value (meaningful only before any conversion)
     inline bool isFloat(void) const throw() // nothrow
     {
         return (SQLITE_FLOAT == getType());
     }
-    /// @brief Test if the column is a text type value (meaningfull only before any conversion)
+    /// @brief Test if the column is a text type value (meaningful only before any conversion)
     inline bool isText(void) const throw() // nothrow
     {
         return (SQLITE_TEXT == getType());
     }
-    /// @brief Test if the column is a binary blob type value (meaningfull only before any conversion)
+    /// @brief Test if the column is a binary blob type value (meaningful only before any conversion)
     inline bool isBlob(void) const throw() // nothrow
     {
         return (SQLITE_BLOB == getType());
     }
-    /// @brief Test if the column is NULL (meaningfull only before any conversion)
+    /// @brief Test if the column is NULL (meaningful only before any conversion)
     inline bool isNull(void) const throw() // nothrow
     {
         return (SQLITE_NULL == getType());

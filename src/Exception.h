@@ -1,6 +1,7 @@
 /**
- * @file  Exception.h
- * @brief Encapsulation of the error message from SQLite3 on a std::runtime_error.
+ * @file    Exception.h
+ * @brief   Encapsulation of the error message from SQLite3 on a std::runtime_error.
+ * @ingroup SQLiteC++
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
@@ -14,8 +15,8 @@
 
 
 // assert() is used in destructors, where exceptions are not allowed
-// here you can chose if you whant to use them or not
-#ifdef _DEBUG
+// here you can chose if you want to use them or not
+#ifndef NDEBUG
     // in debug mode :
     #define SQLITE_CPP_ASSERT(expression) assert(expression)
 #else
@@ -27,6 +28,7 @@
 #ifdef _WIN32
 #pragma warning(disable:4290) // Disable warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
 #endif
+
 
 namespace SQLite
 {

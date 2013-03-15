@@ -1,7 +1,7 @@
 /**
  * @file    Exception.h
  * @brief   Encapsulation of the error message from SQLite3 on a std::runtime_error.
- * @ingroup SQLiteC++
+ * @ingroup SQLiteCpp
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *

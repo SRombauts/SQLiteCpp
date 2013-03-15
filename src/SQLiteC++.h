@@ -1,20 +1,27 @@
 /**
  * @file    SQLiteC++.h
  * @brief   SQLiteC++ is a smart and simple C++ SQLite3 wrapper. This file is only "easy include" for other files.
- * @ingroup SQLiteC++
+ * @ingroup SQLiteCpp
+ *
+ * Include this main header file in your project to gain access to all functionality provided by the wrapper.
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
+/**
+ * @defgroup SQLiteCpp SQLiteC++
+ * @brief    SQLiteC++ is a smart and simple C++ SQLite3 wrapper. This file is only "easy include" for other files.
+ */
 #pragma once
 
 
 // SQLiteC++.h requires sqlite3, and the corresponding library header
-#include "sqlite3.h"
+#include <sqlite3.h>
 
 // Include useful headers of SQLiteC++
+#include "Exception.h"
 #include "Database.h"
 #include "Statement.h"
 #include "Column.h"

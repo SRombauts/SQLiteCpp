@@ -1,7 +1,7 @@
 /**
  * @file    Statement.h
  * @brief   A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
- * @ingroup SQLiteC++
+ * @ingroup SQLiteCpp
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *

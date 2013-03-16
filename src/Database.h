@@ -1,7 +1,7 @@
 /**
  * @file    Database.h
- * @brief   Management of a SQLite Database Connection.
  * @ingroup SQLiteCpp
+ * @brief   Management of a SQLite Database Connection.
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *

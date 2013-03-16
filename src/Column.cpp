@@ -1,7 +1,7 @@
 /**
  * @file    Column.cpp
- * @brief   Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
  * @ingroup SQLiteCpp
+ * @brief   Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
  *
  * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *

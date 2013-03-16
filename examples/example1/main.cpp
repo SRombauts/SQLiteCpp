@@ -1,6 +1,6 @@
 /**
  * @file  main.cpp
- * @brief Two short examples in a row.
+ * @brief A few short examples in a row.
  *
  *  Demonstrate how-to use the SQLite++ wrapper
  *

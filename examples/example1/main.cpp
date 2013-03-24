@@ -46,7 +46,7 @@ public:
         // Loop to execute the query step by step, to get one a row of results at a time
         while (mQuery.executeStep())
         {
-            std::cout << "row : (" << mQuery.getColumn(0) << ", " << mQuery.getColumn(1) << ", " << mQuery.getColumn(2) << ")\n";
+            std::cout << "row (" << mQuery.getColumn(0) << ", \"" << mQuery.getColumn(1) << "\", " << mQuery.getColumn(2) << ")\n";
         }
 
         // Reset the query to be able to use it again later
@@ -81,7 +81,7 @@ int main (void)
         std::cout << "SQLite statement '" << query.getQuery().c_str() << "' compiled (" << query.getColumnCount () << " columns in the result)\n";
         // Bind the integer value 2 to the first parameter of the SQL query
         query.bind(1, 2);
-        std::cout << "binded with integer value 2 :\n";
+        std::cout << "binded with integer value '2' :\n";
 
         // Loop to execute the query step by step, to get one a row of results at a time
         while (query.executeStep())
@@ -93,9 +93,21 @@ int main (void)
             int         bytes   = query.getColumn(1).getBytes();
             double      weight  = query.getColumn(2); // = query.getColumn(2).getInt()
 
-			std::string name(query.getColumn(0).getName());
+#ifdef SQLITE_ENABLE_COLUMN_METADATA
+            static bool bFirst = true;
+            if (bFirst)
+            {
+                // Show how to get the name of a column.
+                // Requires the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be also defined at compile times of the SQLite library.
+                std::string name0 = query.getColumn(0).getName();
+                std::string name1 = query.getColumn(1).getName();
+                std::string name2 = query.getColumn(2).getName();
+                std::cout << "table 'test' [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
+                bFirst = false;
+            }
+#endif
+            std::cout << "row (" << id << ", \"" << value2.c_str() << "\" "  << bytes << " bytes, " << weight << ")\n";
 
-            std::cout << "row : (" << id << " [" << name.c_str() << "], \"" << value2.c_str() << "\" "  << bytes << "B, " << weight << ")\n";
         }
 
         // Reset the query to use it again
@@ -108,7 +120,7 @@ int main (void)
         while (query.executeStep())
         {
             // Demonstrate that inserting column value in a std:ostream is natural
-            std::cout << "row : (" << query.getColumn(0) << ", " << query.getColumn(1) << ", " << query.getColumn(2) << ")\n";
+            std::cout << "row (" << query.getColumn(0) << ", \"" << query.getColumn(1) << "\", " << query.getColumn(2) << ")\n";
         }
     }
     catch (std::exception& e)
@@ -183,7 +195,7 @@ int main (void)
         std::cout << "SELECT * FROM test :\n";
         while (query.executeStep())
         {
-            std::cout << "row : (" << query.getColumn(0) << ", " << query.getColumn(1) << ")\n";
+            std::cout << "row (" << query.getColumn(0) << ", \"" << query.getColumn(1) << "\")\n";
         }
 
         db.exec("DROP TABLE test");
@@ -253,7 +265,7 @@ int main (void)
         std::cout << "SELECT * FROM test :\n";
         while (query.executeStep())
         {
-            std::cout << "row : (" << query.getColumn(0) << ", " << query.getColumn(1) << ")\n";
+            std::cout << "row (" << query.getColumn(0) << ", \"" << query.getColumn(1) << "\")\n";
         }
     }
     catch (std::exception& e)
@@ -313,7 +325,7 @@ int main (void)
                 SQLite::Column colBlob = query.getColumn(1);
                 blob = colBlob.getBlob ();
                 size = colBlob.getBytes ();
-                std::cout << "row : (" << query.getColumn(0) << ", size=" << size << ")\n";
+                std::cout << "row (" << query.getColumn(0) << ", size=" << size << ")\n";
                 size_t sizew = fwrite(blob, 1, size, fp);
                 assert(sizew == size);
                 fclose (fp);

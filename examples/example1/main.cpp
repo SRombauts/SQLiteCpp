@@ -14,10 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../src/Database.h"
-#include "../../src/Statement.h"
-#include "../../src/Column.h"
-#include "../../src/Transaction.h"
+#include "../../src/SQLiteC++.h"
 
 
 static const char* filename_example_db3 = "examples/example1/example.db3";
@@ -96,7 +93,9 @@ int main (void)
             int         bytes   = query.getColumn(1).getBytes();
             double      weight  = query.getColumn(2); // = query.getColumn(2).getInt()
 
-            std::cout << "row : (" << id << ", \"" << value2.c_str() << "\" "  << bytes << "B, " << weight << ")\n";
+			std::string name(query.getColumn(0).getName());
+
+            std::cout << "row : (" << id << " [" << name.c_str() << "], \"" << value2.c_str() << "\" "  << bytes << "B, " << weight << ")\n";
         }
 
         // Reset the query to use it again

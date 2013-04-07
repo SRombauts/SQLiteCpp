@@ -12,8 +12,10 @@
 
 #include <iostream>
 
+
 namespace SQLite
 {
+
 
 // Encapsulation of a Column in a row of the result pointed by the prepared Statement.
 Column::Column(Statement::Ptr& aStmtPtr, int aIndex) throw() : // nothrow
@@ -27,6 +29,14 @@ Column::~Column(void) throw() // nothrow
 {
     // the finalization will be done by the destructor of the last shared pointer
 }
+
+#ifdef SQLITE_ENABLE_COLUMN_METADATA
+// Return the name of the column
+const char * Column::getName(void) const throw() // nothrow
+{
+    return sqlite3_column_origin_name(mStmtPtr, mIndex);
+}
+#endif
 
 // Return the integer value of the column specified by its index starting at 0
 int Column::getInt(void) const throw() // nothrow
@@ -70,12 +80,12 @@ int Column::getBytes(void) const throw() // nothrow
     return sqlite3_column_bytes(mStmtPtr, mIndex);
 }
 
-
 // Standard std::ostream inserter
 std::ostream& operator<<(std::ostream& aStream, const Column& aColumn)
 {
     aStream << aColumn.getText();
     return aStream;
 }
+
 
 }  // namespace SQLite

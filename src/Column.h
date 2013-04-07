@@ -10,9 +10,19 @@
  */
 #pragma once
 
+/**
+ * @brief Enable APIs that provide convenient access to meta-data about tables and queries.
+ *
+ * @see #getName()
+ *
+ * @warning Requires this SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be also defined at compile times of the SQLite library.
+ */
+#define SQLITE_ENABLE_COLUMN_METADATA
 #include <sqlite3.h>
+
 #include "Exception.h"
 #include "Statement.h"
+
 
 namespace SQLite
 {
@@ -42,7 +52,18 @@ public:
     
     // default copy constructor and assignment operator are perfectly suited :
     // they copy the Statement::Ptr which in turn increments the reference counter.
-    
+
+#ifdef SQLITE_ENABLE_COLUMN_METADATA
+    /**
+     * @brief Return a pointer to the column name
+     * 
+     *  Require definition of the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro :
+     * - for compilation of the SQLite library,
+     * - and also when compiling this wrapper.
+     */
+	const char*     getName  (void) const throw(); // nothrow
+#endif
+
     /// @brief Return the integer value of the column.
     int             getInt   (void) const throw(); // nothrow
     /// @brief Return the 64bits integer value of the column.
@@ -184,5 +205,6 @@ private:
  * @return  Reference to the stream used
  */
 std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
+
 
 }  // namespace SQLite

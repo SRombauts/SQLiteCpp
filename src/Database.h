@@ -11,11 +11,13 @@
 #pragma once
 
 #include <sqlite3.h>
-#include "Exception.h"
+
 #include "Column.h"
+
 
 namespace SQLite
 {
+
 
 /**
  * @brief RAII management of a SQLite Database Connection.

@@ -11,10 +11,12 @@
 #pragma once
 
 #include <sqlite3.h>
-#include "Exception.h"
+#include <string>
+
 
 namespace SQLite
 {
+
 
 // Forward declaration
 class Database;
@@ -309,5 +311,6 @@ private:
     bool            mbOk;           //!< true when a row has been fetched with executeStep()
     bool            mbDone;         //!< true when the last executeStep() had no more row to fetch
 };
+
 
 }  // namespace SQLite

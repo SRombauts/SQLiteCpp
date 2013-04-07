@@ -12,8 +12,10 @@
 
 #include "Database.h"
 
+
 namespace SQLite
 {
+
 
 // Begins the SQLite transaction
 Transaction::Transaction(Database& aDatabase) : // throw(SQLite::Exception)

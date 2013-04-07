@@ -10,11 +10,10 @@
  */
 #pragma once
 
-#include <sqlite3.h>
-#include "Exception.h"
 
 namespace SQLite
 {
+
 
 // Forward declaration
 class Database;

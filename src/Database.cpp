@@ -12,8 +12,10 @@
 
 #include "Statement.h"
 
+
 namespace SQLite
 {
+
 
 // Open the provided database UTF-8 filename with SQLITE_OPEN_xxx provided flags.
 Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READONLY*/) : // throw(SQLite::Exception)
@@ -79,5 +81,6 @@ void Database::check(const int aRet) const // throw(SQLite::Exception)
         throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
     }
 }
+
 
 }  // namespace SQLite

@@ -59,7 +59,7 @@ int Database::exec(const char* apQueries) // throw(SQLite::Exception);
 Column Database::execAndGet(const char* apQuery) // throw(SQLite::Exception)
 {
     Statement query(*this, apQuery);
-    query.executeStep();
+    (void)query.executeStep(); // Can return false if no result, which will throw next line in getColumn()
     return query.getColumn(0);
 }
 
@@ -68,7 +68,7 @@ bool Database::tableExists(const char* apTableName) // throw(SQLite::Exception)
 {
     Statement query(*this, "SELECT count(*) FROM sqlite_master WHERE type='table' AND name=?");
     query.bind(1, apTableName);
-    query.executeStep();
+    (void)query.executeStep(); // Cannot return false, as the above query always return a result
     int Nb = query.getColumn(0);
     return (1 == Nb);
 }

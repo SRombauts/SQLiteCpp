@@ -31,6 +31,13 @@ class Column;
  * Resource Acquisition Is Initialization (RAII) means that the Statement
  * is compiled in the constructor and finalized in the destructor, so that there is
  * no need to worry about memory management or the validity of the underlying SQLite Statement.
+ *
+ * Thread-safety: a Statement object shall not be shared by multiple threads, because :
+ * 1) in the SQLite "Thread Safe" mode, "SQLite can be safely used by multiple threads
+ *    provided that no single database connection is used simultaneously in two or more threads."
+ * 2) the SQLite "Serialized" mode is not supported by SQLiteC++,
+ *    because of the way it shares the underling SQLite precompiled statement
+ *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
 class Statement
 {

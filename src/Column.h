@@ -36,6 +36,13 @@ namespace SQLite
  *
  * Its value can be expressed as a text, and, when applicable, as a numeric
  * (integer or floating point) or a binary blob.
+ *
+ * Thread-safety: a Column object shall not be shared by multiple threads, because :
+ * 1) in the SQLite "Thread Safe" mode, "SQLite can be safely used by multiple threads
+ *    provided that no single database connection is used simultaneously in two or more threads."
+ * 2) the SQLite "Serialized" mode is not supported by SQLiteC++,
+ *    because of the way it shares the underling SQLite precompiled statement
+ *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
 class Column
 {

@@ -30,6 +30,13 @@ class Database;
  * no need to worry about memory management or the validity of the underlying SQLite Connection.
  *
  * This method also offers big performances improvements compared to individually executed statements.
+ *
+ * Thread-safety: a Transaction object shall not be shared by multiple threads, because :
+ * 1) in the SQLite "Thread Safe" mode, "SQLite can be safely used by multiple threads
+ *    provided that no single database connection is used simultaneously in two or more threads."
+ * 2) the SQLite "Serialized" mode is not supported by SQLiteC++,
+ *    because of the way it shares the underling SQLite precompiled statement
+ *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
 class Transaction
 {

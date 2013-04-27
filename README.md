@@ -26,7 +26,7 @@ with a few intuitive and well documented C++ class.
 - to keep dependencies to a minimum (STL and SQLite3)
 - to be portable
 - to be light and fast
-- to be monothreaded (not thread-safe)
+- to be thread-safe only as much as SQLite "Multi-thread" mode (see below)
 - to have a good unit test coverage
 - to use API names sticking with those of the SQLite library
 - to be well documented with Doxygen tags, and with some good examples
@@ -57,6 +57,22 @@ And following IDEs/Compilers
 - exception support (the class Exception inherit from std::runtime_error)
 - the SQLite library, either by linking to it dynamicaly or staticaly (libsqlite3-dev under Linux),
   or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows).
+
+### Thread-safety
+
+SQLite supports three mode of thread safety, as describe in "SQLite And Multiple Threads" :
+see http://www.sqlite.org/threadsafe.html
+
+This SQLiteC++ wrapper does no add any lock (no mutexes) nor any other thread-safety mecanism
+above the SQLite library itself, by design, for lightness and speed.
+
+Thus, SQLiteC++ naturally supports the "Multi Thread" mode of SQLite ;
+"In this mode, SQLite can be safely used by multiple threads
+provided that no single database connection is used simultaneously in two or more threads."
+
+But SQLiteC++ does not support the fully thread-safe "Serialized" mode of SQLite,
+because of the way it shares the underling SQLite precompiled statement
+in a custom shared pointer (See the inner class "Statement::Ptr").
 
 ### Installation:
 

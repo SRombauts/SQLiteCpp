@@ -79,6 +79,25 @@ in a custom shared pointer (See the inner class "Statement::Ptr").
 To use this wrappers, you need to add the 10 SQLiteC++ source files from the src/ directory
 in your project code base, and compile/link against the sqlite library.
 
+### Buildng the examples:
+
+A basic Makefile is provided, tested under Linux/Ubuntu 12.10, requiring the sqlite3 static library (sqlite3-dev Debian/Ubuntu package)
+Solutions for Visual Studio 2008 and 2010 are provided in the "msvc/" directory, directly using the sqlite3.c source code for ease of use.
+
+#### CMake
+A CMake configuration file is also provided for other platform support.
+Generating the Linux Makefile and building in Debug:
+mkdir Debug
+cd Debug
+cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
+make -j
+
+And for the Release version:
+mkdir Release
+cd Release
+cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+make -j
+
 ### License
 
 Copyright (c) 2012-2013 Sébastien Rombauts (sebastien.rombauts@gmail.com)

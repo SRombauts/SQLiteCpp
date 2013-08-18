@@ -51,7 +51,7 @@ $(BUILD): $(BUILD)/
 
 
 $(BUILD)/example1: $(SQLITE_EXAMPLE1_OBJECTS)
-	$(CXX) -o $@ $(SQLITE_EXAMPLE1_OBJECTS) $(LINK_FLAGS) -lsqlite3 -lpthread 
+	$(CXX) -o $@ $(SQLITE_EXAMPLE1_OBJECTS) $(LINK_FLAGS) -lsqlite3 
 
 
 $(BUILD)/main.o: examples/example1/main.cpp

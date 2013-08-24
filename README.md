@@ -101,7 +101,8 @@ make -j
 ### Continuous Integration
 
 This project is continuously tested under Ubuntu Linux with the gcc and clang compilers
-using the Travis-CI community service (https://travis-ci.org)
+using the Travis-CI community service.
+Results can be seen online: https://travis-ci.org/SRombauts/SQLiteCpp
 
 ### License
 

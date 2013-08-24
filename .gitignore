@@ -1,5 +1,6 @@
 Debug
 Release
+build
 
 *.ncb
 *.suo
@@ -9,3 +10,4 @@ Release
 doc
 core
 *ipch
+.settings/

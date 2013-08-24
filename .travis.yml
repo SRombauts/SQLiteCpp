@@ -1,0 +1,15 @@
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
+# using a symbolic link to get the "make test" to work as if launched from the root directorys
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - ln -s ../examples examples
+
+script: make && make test
+

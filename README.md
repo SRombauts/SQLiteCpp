@@ -98,6 +98,11 @@ cd Release
 cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
 make -j
 
+### Continuous Integration
+
+This project is continuously tested under Ubuntu Linux with the gcc and clang compilers
+using the Travis-CI community service (https://travis-ci.org)
+
 ### License
 
 Copyright (c) 2012-2013 Sébastien Rombauts (sebastien.rombauts@gmail.com)

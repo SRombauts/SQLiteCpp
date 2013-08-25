@@ -84,25 +84,31 @@ in your project code base, and compile/link against the sqlite library.
 A basic Makefile is provided, tested under Linux/Ubuntu 12.10, requiring the sqlite3 static library (sqlite3-dev Debian/Ubuntu package)
 Solutions for Visual Studio 2008 and 2010 are provided in the "msvc/" directory, directly using the sqlite3.c source code for ease of use.
 
-#### CMake
-A CMake configuration file is also provided for other platform support.
-Generating the Linux Makefile and building in Debug:
+#### CMake and test
+A CMake configuration file is also provided for better multiplatform support and testing.
+
+Generating the Linux Makefile, building in Debug and executing the tests:
 mkdir Debug
 cd Debug
-cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
+cmake .. -DCMAKE_BUILD_TYPE=Debug
 make -j
+ln -s ../examples examples
+make test
 
 And for the Release version:
 mkdir Release
 cd Release
-cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j
+ln -s ../examples examples
+make test
 
 ### Continuous Integration
 
 This project is continuously tested under Ubuntu Linux with the gcc and clang compilers
-using the Travis-CI community service.
-Results can be seen online: https://travis-ci.org/SRombauts/SQLiteCpp
+using the Travis CI community service with the above CMake building and testing procedure.
+Current build status: ![SQLiteCpp build status](https://api.travis-ci.org/SRombauts/SQLiteCpp.png "SQLiteCpp build status")
+Matrix of results can be seen online: https://travis-ci.org/SRombauts/SQLiteCpp
 
 ### License
 

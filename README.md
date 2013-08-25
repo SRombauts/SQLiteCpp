@@ -89,6 +89,9 @@ Solutions for Visual Studio 2008 and 2010 are provided in the "msvc/" directory,
 #### CMake and test
 A CMake configuration file is also provided for better multiplatform support and testing.
 
+Generating the Visual Studio 2010 Solution (similar for any other VS up to 2013):
+cmake . -G "Visual Studio 10"
+
 Generating the Linux Makefile, building in Debug and executing the tests:
 mkdir Debug
 cd Debug

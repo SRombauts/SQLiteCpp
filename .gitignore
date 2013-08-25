@@ -6,8 +6,12 @@ build
 *.suo
 *.user
 *sdf
+*.vc*
 *~
 doc
 core
 *ipch
 .settings/
+
+CMakeCache.txt
+*.cmake

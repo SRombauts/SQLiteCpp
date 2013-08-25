@@ -79,6 +79,8 @@ in a custom shared pointer (See the inner class "Statement::Ptr").
 To use this wrappers, you need to add the 10 SQLiteC++ source files from the src/ directory
 in your project code base, and compile/link against the sqlite library.
 
+You can also build the wrapper as a library; this is how CMake link the examples.
+
 ### Building the examples:
 
 A basic Makefile is provided, tested under Linux/Ubuntu 12.10, requiring the sqlite3 static library (sqlite3-dev Debian/Ubuntu package)
@@ -105,9 +107,11 @@ make test
 
 ### Continuous Integration
 
+Current build status: ![SQLiteCpp build status](https://api.travis-ci.org/SRombauts/SQLiteCpp.png "SQLiteCpp build status")
+
 This project is continuously tested under Ubuntu Linux with the gcc and clang compilers
 using the Travis CI community service with the above CMake building and testing procedure.
-Current build status: ![SQLiteCpp build status](https://api.travis-ci.org/SRombauts/SQLiteCpp.png "SQLiteCpp build status")
+
 Matrix of results can be seen online: https://travis-ci.org/SRombauts/SQLiteCpp
 
 ### License

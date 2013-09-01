@@ -9,9 +9,9 @@ cmake_minimum_required (VERSION 2.6)
 project (SQLiteCpp)
 
 if (MSVC)
-  # build the SQLite3 C library for windows build (for ease of use)
+  # build the SQLite3 C library for Windows (for ease of use)
+  add_subdirectory (sqlite3) 
   include_directories ("${PROJECT_SOURCE_DIR}/sqlite3")
-  add_library (sqlite3 sqlite3/sqlite3.c sqlite3/sqlite3.h) 
   # disable Visual Studio warnings for fopen() used in the example
   add_definitions (/D_CRT_SECURE_NO_WARNINGS)
 elseif (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
@@ -20,7 +20,7 @@ elseif (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 endif ()
 
 ################################################################################
-# add the subdirectory containing the CMakeLists.txt of the library
+# add the subdirectory containing the CMakeLists.txt of the wrapper library
 add_subdirectory (src) 
 include_directories ("${PROJECT_SOURCE_DIR}/src")
 ################################################################################

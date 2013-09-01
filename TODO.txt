@@ -16,7 +16,6 @@ Missing features in v0.5.0:
 - getColumnByName ? std::map getRow() ?
 
 Missing documentation in v0.5.0:
-- This wrapper is not thread safe: compare to the thread safety of the SQLite3 library
 - explain the noncopyable property for RAII design
 - comment on returning error code instead of exception that shall not be thrown when exepected (!?)
 

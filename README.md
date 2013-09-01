@@ -1,6 +1,8 @@
 SQLiteC++
 ---------
 
+![SQLiteCpp build status](https://api.travis-ci.org/SRombauts/SQLiteCpp.png "SQLiteCpp build status")
+
 SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
 
 See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.
@@ -109,8 +111,6 @@ ln -s ../examples examples
 make test
 
 ### Continuous Integration
-
-Current build status: ![SQLiteCpp build status](https://api.travis-ci.org/SRombauts/SQLiteCpp.png "SQLiteCpp build status")
 
 This project is continuously tested under Ubuntu Linux with the gcc and clang compilers
 using the Travis CI community service with the above CMake building and testing procedure.

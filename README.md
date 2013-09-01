@@ -81,7 +81,11 @@ in a custom shared pointer (See the inner class "Statement::Ptr").
 To use this wrappers, you need to add the 10 SQLiteC++ source files from the src/ directory
 in your project code base, and compile/link against the sqlite library.
 
-You can also build the wrapper as a library; this is how CMake link the examples.
+The easiest way to do this is to add the wrapper as a library.
+The proper "CMakeLists.txt" file defining the static library is provided in the src/ subdirectory,
+so you simply have to add_directory(SQLiteCpp/src) to you main CMakeLists.txt
+and link to the "SQLiteCpp" wrapper library.
+Thus this SQLiteCpp repository can directly be used as a Git submoldule.
 
 ### Building the examples:
 

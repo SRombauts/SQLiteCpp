@@ -2,6 +2,7 @@ Debug
 Release
 build
 
+/SQLiteCpp.sln
 *.ncb
 *.suo
 *.user
@@ -14,4 +15,8 @@ core
 .settings/
 
 CMakeCache.txt
+CMakeFiles
 *.cmake
+*.dir
+Testing
+Win32

@@ -1,3 +1,5 @@
+Create a "SQLiteCppExample" repository using the wrapper as a Git submodule.
+
 Check C++11 explicit support
 
 Add a FAQ.txt

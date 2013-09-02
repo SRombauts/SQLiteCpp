@@ -95,24 +95,20 @@ Solutions for Visual Studio 2008 and 2010 are provided in the "msvc/" directory,
 #### CMake and test
 A CMake configuration file is also provided for better multiplatform support and testing.
 
-Generating the Visual Studio 2010 Solution (similar for any other VS up to 2013):
-cmake . -G "Visual Studio 10"
+Typical generic build (see also "build.bat" or "./build.sh"):
+mkdir build
+cd build
+cmake ..        # cmake .. -G "Visual Studio 10"    # for Visual Studio 2010
+cmake --build . # make
+ctest .         # make test
 
 Generating the Linux Makefile, building in Debug and executing the tests:
 mkdir Debug
 cd Debug
 cmake .. -DCMAKE_BUILD_TYPE=Debug
-make -j
+cmake --build . # make
 ln -s ../examples examples
-make test
-
-And for the Release version:
-mkdir Release
-cd Release
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j
-ln -s ../examples examples
-make test
+ctest .         # make test
 
 ### Continuous Integration
 

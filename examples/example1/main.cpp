@@ -126,7 +126,7 @@ int main (void)
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
-        abort(); // unexpected error : abort the example program
+        return EXIT_FAILURE; // unexpected error : exit the example program
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ int main (void)
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
-        abort(); // unexpected error : abort the example program
+        return EXIT_FAILURE; // unexpected error : exit the example program
     }
 
     // The execAndGet wrapper example (3/6) :
@@ -163,7 +163,7 @@ int main (void)
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
-        abort(); // unexpected error : abort the example program
+        return EXIT_FAILURE; // unexpected error : exit the example program
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -203,7 +203,7 @@ int main (void)
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
-        abort(); // unexpected error : abort the example program
+        return EXIT_FAILURE; // unexpected error : exit the example program
     }
     remove("test.db3");
 
@@ -234,7 +234,7 @@ int main (void)
         catch (std::exception& e)
         {
             std::cout << "SQLite exception: " << e.what() << std::endl;
-            abort(); // unexpected error : abort the example program
+            return EXIT_FAILURE; // unexpected error : exit the example program
         }
 
         // Exemple of a rollbacked transaction :
@@ -249,7 +249,7 @@ int main (void)
             nb = db.exec("INSERT INTO test ObviousError");
             std::cout << "INSERT INTO test \"error\", returned " << nb << std::endl;
 
-            abort(); // unexpected success : abort the example program
+            return EXIT_FAILURE; // unexpected success : exit the example program
 
             // Commit transaction
             transaction.commit();
@@ -271,7 +271,7 @@ int main (void)
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
-        abort(); // unexpected error : abort the example program
+        return EXIT_FAILURE; // unexpected error : exit the example program
     }
     remove("transaction.db3");
 
@@ -309,7 +309,7 @@ int main (void)
         else
         {
             std::cout << "file " << filename_logo_png << " not found !\n";
-            abort(); // unexpected error : abort the example program
+            return EXIT_FAILURE; // unexpected error : exit the example program
         }
 
         fp = fopen("out.png", "wb");
@@ -327,24 +327,24 @@ int main (void)
                 size = colBlob.getBytes ();
                 std::cout << "row (" << query.getColumn(0) << ", size=" << size << ")\n";
                 size_t sizew = fwrite(blob, 1, size, fp);
-                assert(sizew == size);
+                SQLITE_CPP_ASSERT(sizew == size);
                 fclose (fp);
             }
         }
         else
         {
             std::cout << "file out.png not created !\n";
-            abort(); // unexpected error : abort the example program
+            return EXIT_FAILURE; // unexpected error : exit the example program
         }
     }
     catch (std::exception& e)
     {
         std::cout << "SQLite exception: " << e.what() << std::endl;
-        abort(); // unexpected error : abort the example program
+        return EXIT_FAILURE; // unexpected error : exit the example program
     }
     remove("out.png");
 
     std::cout << "everything ok, quitting\n";
 
-    return 0;
+    return EXIT_SUCCESS;
 }

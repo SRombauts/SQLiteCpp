@@ -1,3 +1,5 @@
+Add a full googletest suite
+
 Create a "SQLiteCppExample" repository using the wrapper as a Git submodule.
 
 Check C++11 explicit support
@@ -9,8 +11,6 @@ Create Github Wiki pages with the README.md and FAQ.txt: Installation, Examples,
 Publish a versionned ZIP file in Google Project Mirror
 
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
-
-Add a full test suite
 
 Missing features in v0.5.0:
 - bind a SQLITE_STATIC value (string/blob)

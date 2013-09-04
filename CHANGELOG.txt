@@ -21,10 +21,13 @@ Version 0.4.0 - Apr 23 2012
     Added a Database::tableExists() easy to use function
     
 Dec 10 2012
-    Adding a Statement::exec() method to execute a one-step query with no expected result
+    Added a Statement::exec() method to execute a one-step query with no expected result
     
 Version 0.5.0 - March 9 2013
     Added assert() on errors on destructors
     Added getBytes()
     Added getBlob(), getType() and isInteger/isFloat/isText/isBlob/isNull
     Added bind() for binary blob data
+    
+Version 0.5.1 - April 7 2013
+    Added getName()

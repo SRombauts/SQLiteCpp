@@ -121,7 +121,7 @@ ctest .         # make test
 This project is continuously tested under Ubuntu Linux with the gcc and clang compilers
 using the Travis CI community service with the above CMake building and testing procedure.
 
-Matrix of results can be seen online: https://travis-ci.org/SRombauts/SQLiteCpp
+Detailed results can be seen online: https://travis-ci.org/SRombauts/SQLiteCpp
 
 ### License
 

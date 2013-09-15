@@ -291,7 +291,7 @@ int main (void)
         {
             char  buffer[16*1024];
             void* blob = &buffer;
-            size_t size = fread(blob, 1, 16*1024, fp);
+            int size = static_cast<int>(fread(blob, 1, 16*1024, fp));
             buffer[size] = '\0';
             fclose (fp);
             std::cout << "blob size=" << size << " :\n";

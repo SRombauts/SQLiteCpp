@@ -66,7 +66,7 @@ void Statement::bind(const int aIndex, const double& aValue) // throw(SQLite::Ex
 // Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const std::string& aValue) // throw(SQLite::Exception)
 {
-    int ret = sqlite3_bind_text(mStmtPtr, aIndex, aValue.c_str(), aValue.size(), SQLITE_TRANSIENT);
+    int ret = sqlite3_bind_text(mStmtPtr, aIndex, aValue.c_str(), static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
     check(ret);
 }
 
@@ -120,7 +120,7 @@ void Statement::bind(const char* apName, const double& aValue) // throw(SQLite::
 void Statement::bind(const char* apName, const std::string& aValue) // throw(SQLite::Exception)
 {
     int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    int ret   = sqlite3_bind_text(mStmtPtr, index, aValue.c_str(), aValue.size(), SQLITE_TRANSIENT);
+    int ret   = sqlite3_bind_text(mStmtPtr, index, aValue.c_str(), static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
     check(ret);
 }
 
@@ -269,7 +269,7 @@ Statement::Ptr::Ptr(sqlite3* apSQLite, std::string& aQuery) :
     mpStmt(NULL),
     mpRefCount(NULL)
 {
-    int ret = sqlite3_prepare_v2(apSQLite, aQuery.c_str(), aQuery.size(), &mpStmt, NULL);
+    int ret = sqlite3_prepare_v2(apSQLite, aQuery.c_str(), static_cast<int>(aQuery.size()), &mpStmt, NULL);
     if (SQLITE_OK != ret)
     {
         throw SQLite::Exception(sqlite3_errmsg(mpSQLite));

@@ -57,24 +57,9 @@ And following IDEs/Compilers
 
 - a STL implementation (even an old one, like the one provided with VC6 should work)
 - exception support (the class Exception inherit from std::runtime_error)
-- the SQLite library, either by linking to it dynamicaly or staticaly (libsqlite3-dev under Linux),
-  or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows).
-
-### Thread-safety
-
-SQLite supports three mode of thread safety, as describe in "SQLite And Multiple Threads" :
-see http://www.sqlite.org/threadsafe.html
-
-This SQLiteC++ wrapper does no add any lock (no mutexes) nor any other thread-safety mecanism
-above the SQLite library itself, by design, for lightness and speed.
-
-Thus, SQLiteC++ naturally supports the "Multi Thread" mode of SQLite ;
-"In this mode, SQLite can be safely used by multiple threads
-provided that no single database connection is used simultaneously in two or more threads."
-
-But SQLiteC++ does not support the fully thread-safe "Serialized" mode of SQLite,
-because of the way it shares the underling SQLite precompiled statement
-in a custom shared pointer (See the inner class "Statement::Ptr").
+- the SQLite library, either by linking to it dynamicaly or staticaly (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),
+  or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows),
+  with the SQLITE_ENABLE_COLUMN_METADATA macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).
 
 ### Installation:
 
@@ -86,6 +71,8 @@ The proper "CMakeLists.txt" file defining the static library is provided in the 
 so you simply have to add_directory(SQLiteCpp/src) to you main CMakeLists.txt
 and link to the "SQLiteCpp" wrapper library.
 Thus this SQLiteCpp repository can directly be used as a Git submoldule.
+
+Under Debian/Ubuntu/Mint Linux, install the libsqlite3-dev package.
 
 ### Building the examples:
 
@@ -116,12 +103,39 @@ ln -s ../examples examples
 ctest .         # make test
 ```
 
+#### Troubleshooting
+
+Under Linux, if you get muliple linker errors like "undefined reference to sqlite3_xxx",
+it's that you lack the "sqlite3" library: install the libsqlite3-dev package.
+
+If you get a single linker error "Column.cpp: undefined reference to sqlite3_column_origin_name",
+it's that your "sqlite3" library was not compiled with
+the SQLITE_ENABLE_COLUMN_METADATA macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).
+You can either recompile it yourself (seek help online) or you can comment out the following line in src/Column.h:
+#define SQLITE_ENABLE_COLUMN_METADATA
+
 ### Continuous Integration
 
 This project is continuously tested under Ubuntu Linux with the gcc and clang compilers
 using the Travis CI community service with the above CMake building and testing procedure.
 
 Detailed results can be seen online: https://travis-ci.org/SRombauts/SQLiteCpp
+
+### Thread-safety
+
+SQLite supports three mode of thread safety, as describe in "SQLite And Multiple Threads" :
+see http://www.sqlite.org/threadsafe.html
+
+This SQLiteC++ wrapper does no add any lock (no mutexes) nor any other thread-safety mecanism
+above the SQLite library itself, by design, for lightness and speed.
+
+Thus, SQLiteC++ naturally supports the "Multi Thread" mode of SQLite ;
+"In this mode, SQLite can be safely used by multiple threads
+provided that no single database connection is used simultaneously in two or more threads."
+
+But SQLiteC++ does not support the fully thread-safe "Serialized" mode of SQLite,
+because of the way it shares the underling SQLite precompiled statement
+in a custom shared pointer (See the inner class "Statement::Ptr").
 
 ### License
 

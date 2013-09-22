@@ -112,7 +112,10 @@ If you get a single linker error "Column.cpp: undefined reference to sqlite3_col
 it's that your "sqlite3" library was not compiled with
 the SQLITE_ENABLE_COLUMN_METADATA macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).
 You can either recompile it yourself (seek help online) or you can comment out the following line in src/Column.h:
+
+```C++
 #define SQLITE_ENABLE_COLUMN_METADATA
+```
 
 ### Continuous Integration
 

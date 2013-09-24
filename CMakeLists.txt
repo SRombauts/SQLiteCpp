@@ -140,11 +140,16 @@ endif (SQLITECPP_RUN_CPPLINT)
 
 option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." OFF)
 if (SQLITECPP_RUN_CPPCHECK)
-    # add a cppcheck target to the "all" target
-    add_custom_target(SQLiteCpp_cppcheck
-     ALL
-     COMMAND cppcheck -j 4 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
-    )
+    find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
+    if (CPPCHECK_EXECUTABLE)
+       # add a cppcheck target to the "all" target
+       add_custom_target(SQLiteCpp_cppcheck
+        ALL
+        COMMAND cppcheck -j 4 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
+       )
+    else (CPPCHECK_EXECUTABLE)
+        message(STATUS "cppcheck not found")
+    endif (CPPCHECK_EXECUTABLE)
 else (SQLITECPP_RUN_CPPCHECK)
     message(STATUS "SQLITECPP_RUN_CPPCHECK OFF")
 endif (SQLITECPP_RUN_CPPCHECK)

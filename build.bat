@@ -6,7 +6,7 @@
 mkdir build
 cd build
 @REM generate solution for Visual Studio 2010, and build it
-cmake .. -G "Visual Studio 10"
+cmake -DSQLITECPP_RUN_CPPLINT=ON -DSQLITECPP_RUN_CPPCHECK=ON -DSQLITECPP_RUN_DOXYGEN=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON .. -G "Visual Studio 10"
 cmake --build .
 
 @REM prepare and launch tests

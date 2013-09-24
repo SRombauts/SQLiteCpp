@@ -6,7 +6,7 @@
 mkdir -p build
 cd build
 # generate solution for GCC
-cmake ..
+cmake -DSQLITECPP_RUN_CPPLINT=ON -DSQLITECPP_RUN_CPPCHECK=ON -DSQLITECPP_RUN_DOXYGEN=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
 cmake --build .
 
 # prepare and launch tests

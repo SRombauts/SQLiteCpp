@@ -8,6 +8,14 @@
 cmake_minimum_required (VERSION 2.6)
 project (SQLiteCpp)
 
+# Enable the use of SQLite column metadata and Column::getName() method,
+# Require that the sqlite3 library is also compiled with this flag.
+option (SQLITE_ENABLE_COLUMN_METADATA 
+        "Enable Column::getName(). Require support from sqlite3 library." OFF)
+if (SQLITE_ENABLE_COLUMN_METADATA) 
+  add_definitions(-DSQLITE_ENABLE_COLUMN_METADATA)
+endif()   
+
 if (MSVC)
   # build the SQLite3 C library for Windows (for ease of use)
   add_subdirectory (sqlite3) 

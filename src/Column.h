@@ -10,14 +10,6 @@
  */
 #pragma once
 
-/**
- * @brief Enable APIs that provide convenient access to meta-data about tables and queries.
- *
- * @see #getName()
- *
- * @warning Requires this SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be also defined at compile times of the SQLite library.
- */
-#define SQLITE_ENABLE_COLUMN_METADATA
 #include <sqlite3.h>
 
 #include "Exception.h"

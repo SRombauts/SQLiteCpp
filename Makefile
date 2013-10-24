@@ -39,7 +39,7 @@ SQLITE_EXAMPLE1_OBJECTS =  \
 	
 ### Targets: ###
 
-all: $(BUILD) $(BUILD)/example1
+all: $(BUILD) $(BUILD)/example1 cppcheck
 
 clean: 
 	rm -f $(BUILD)/*.o
@@ -69,8 +69,10 @@ $(BUILD)/Statement.o: src/Statement.cpp
 $(BUILD)/Transaction.o: src/Transaction.cpp
 	$(CXX) -c -o $@ $(SQLITE_CXXFLAGS) $(CPPDEPS) $<
 
+cppcheck:
+	cppcheck -j 4 cppcheck --enable=style --quiet --template='{file}:{line}: warning: cppcheck: {message} [{severity}/{id}]' src
 
-.PHONY: all clean
+.PHONY: all clean cppcheck
 
 
 # Dependencies tracking:

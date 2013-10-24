@@ -27,6 +27,13 @@ elseif (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   add_definitions (-rdynamic -fstack-protector-all -Wall -Wextra -pedantic -Weffc++ -Wformat-security -Winit-self -Wswitch-default -Wswitch-enum -Wfloat-equal -Wundef -Wshadow -Wcast-qual -Wconversion -Wlogical-op -Winline -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn)
 endif ()
 
+# add a cppcheck target to the "all" target
+add_custom_target(cppcheck
+ ALL
+ COMMAND cppcheck -j 4 cppcheck --enable=style,portability,performance,information --quiet --template='{file}:{line}: warning: cppcheck: {message} [{severity}/{id}]' src
+ WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}  
+)
+
 ################################################################################
 # add the subdirectory containing the CMakeLists.txt of the wrapper library
 add_subdirectory (src) 

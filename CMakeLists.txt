@@ -16,8 +16,8 @@ if (SQLITE_ENABLE_COLUMN_METADATA)
   add_definitions(-DSQLITE_ENABLE_COLUMN_METADATA)
 endif()
 
+# Enable the user defintion of a assertion_failed() handler.
 add_definitions(-DSQLITECPP_ENABLE_ASSERT_HANDLER)
-  
 
 if (MSVC)
   # build the SQLite3 C library for Windows (for ease of use)

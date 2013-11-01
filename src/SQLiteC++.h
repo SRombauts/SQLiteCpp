@@ -18,7 +18,7 @@
 
 
 // Include useful headers of SQLiteC++
-#include "Assert.h"
+#include "Assertion.h"
 #include "Exception.h"
 #include "Database.h"
 #include "Statement.h"

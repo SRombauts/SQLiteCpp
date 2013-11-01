@@ -11,7 +11,7 @@
 #include "Database.h"
 
 #include "Statement.h"
-#include "Assert.h"
+#include "Assertion.h"
 #include "Exception.h"
 
 

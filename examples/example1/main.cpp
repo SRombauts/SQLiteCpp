@@ -11,8 +11,8 @@
  */
 
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <cstdlib>
 
 
@@ -25,7 +25,7 @@ namespace SQLite
 void assertion_failed(const char* apFile, const long apLine, const char* apFunc, const char* apExpr, const char* apMsg)
 {
     // Print a message to the standard error output stream, and abort the program.
-    std::cerr << apFile << ":" << apLine << ":" << " error: assertion (" << apExpr << ") failed in " << apFunc << ": '" << apMsg << "'\n";
+    std::cerr << apFile << ":" << apLine << ":" << " error: assertion failed (" << apExpr << ") in " << apFunc << "() with message \"" << apMsg << "\"\n";
     std::abort();
 }
 }

@@ -12,7 +12,7 @@
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library (SQLiteCpp
  SQLiteC++.h
- Assert.h
+ Assertion.h
  Column.cpp
  Column.h
  Database.cpp

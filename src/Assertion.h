@@ -1,5 +1,5 @@
 /**
- * @file    Assert.h
+ * @file    Assertion.h
  * @ingroup SQLiteCpp
  * @brief   Definition of the SQLITECPP_ASSERT() macro.
  *
@@ -39,14 +39,8 @@ namespace SQLite
 #else
 
 // if no assert handler provided by user code, use standard assert()
-
-#ifndef NDEBUG
-    // in debug mode, assert() :
-    #define SQLITECPP_ASSERT(expression,message) assert(expression)
-#else
-    // in release mode, nothing :
-    #define SQLITECPP_ASSERT(expression,message) (expression)
-#endif
+// (note: in debug mode, assert() does nothing)
+#define SQLITECPP_ASSERT(expression,message)    assert(expression && message)
 
 #endif
 

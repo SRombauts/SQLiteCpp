@@ -12,7 +12,7 @@
 
 #include "Database.h"
 #include "Column.h"
-#include "Assert.h"
+#include "Assertion.h"
 #include "Exception.h"
 
 

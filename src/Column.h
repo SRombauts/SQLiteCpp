@@ -12,7 +12,6 @@
 
 #include <sqlite3.h>
 
-#include "Exception.h"
 #include "Statement.h"
 
 

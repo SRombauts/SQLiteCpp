@@ -11,6 +11,7 @@
 #include "Database.h"
 
 #include "Statement.h"
+#include "Exception.h"
 
 
 namespace SQLite

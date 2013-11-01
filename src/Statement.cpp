@@ -12,6 +12,8 @@
 
 #include "Database.h"
 #include "Column.h"
+#include "Exception.h"
+
 
 namespace SQLite
 {

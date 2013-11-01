@@ -11,6 +11,7 @@
 #include "Transaction.h"
 
 #include "Database.h"
+#include "Exception.h"
 
 
 namespace SQLite

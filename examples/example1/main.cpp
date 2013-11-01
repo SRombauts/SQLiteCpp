@@ -14,10 +14,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 #include "../../src/SQLiteC++.h"
 
+#ifdef SQLITECPP_ENABLE_ASSERT_HANDLER
+namespace SQLite
+{
+/// definition of the assertion handler enabled when SQLITECPP_ENABLE_ASSERT_HANDLER is defined in the project (CMakeList.txt)
+void assertion_failed(const char* apFile, const long apLine, const char* apFunc, const char* apExpr, const char* apMsg)
+{
+    // Print a message to the standard error output stream, and abort the program.
+    std::cerr << apFile << ":" << apLine << ":" << " error: assertion (" << apExpr << ") failed in " << apFunc << ": '" << apMsg << "'\n";
+    std::abort();
+}
+}
+#endif
 
+/// Example Database
 static const char* filename_example_db3 = "examples/example1/example.db3";
+/// Image
 static const char* filename_logo_png    = "examples/example1/logo.png";
 
 
@@ -107,7 +122,6 @@ int main (void)
             }
 #endif
             std::cout << "row (" << id << ", \"" << value2.c_str() << "\" "  << bytes << " bytes, " << weight << ")\n";
-
         }
 
         // Reset the query to use it again
@@ -327,7 +341,7 @@ int main (void)
                 size = colBlob.getBytes ();
                 std::cout << "row (" << query.getColumn(0) << ", size=" << size << ")\n";
                 size_t sizew = fwrite(blob, 1, size, fp);
-                SQLITE_CPP_ASSERT(sizew == size);
+                SQLITECPP_ASSERT(sizew == size, "fwrite failed");   // See SQLITECPP_ENABLE_ASSERT_HANDLER
                 fclose (fp);
             }
         }

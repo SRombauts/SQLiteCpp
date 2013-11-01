@@ -205,6 +205,25 @@ catch (std::exception& e)
 }
 ```
 
+### How to handle in assertion in SQLiteC++:
+Exceptions shall not be used in destructors, so SQLiteC++ use SQLITECPP_ASSERT() to check for errors in destructors.
+If you don't want assert() to be called, you have to enable and define an assert handler as shown below.
+
+```C++
+#ifdef SQLITECPP_ENABLE_ASSERT_HANDLER
+namespace SQLite
+{
+/// definition of the assertion handler enabled when SQLITECPP_ENABLE_ASSERT_HANDLER is defined in the project (CMakeList.txt)
+void assertion_failed(const char* apFile, const long apLine, const char* apFunc, const char* apExpr, const char* apMsg)
+{
+    // Print a message to the standard error output stream, and abort the program.
+    std::cerr << apFile << ":" << apLine << ":" << " error: assertion (" << apExpr << ") failed in '" << apFunc << "' (" << apMsg << ")\n";
+    std::abort();
+}
+}
+#endif
+```
+
 ## How to contribute
 ### GitHub website
 The most efficient way to help and contribute to this wrapper project is to

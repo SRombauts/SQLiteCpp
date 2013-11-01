@@ -14,7 +14,10 @@ option (SQLITE_ENABLE_COLUMN_METADATA
         "Enable Column::getName(). Require support from sqlite3 library." OFF)
 if (SQLITE_ENABLE_COLUMN_METADATA) 
   add_definitions(-DSQLITE_ENABLE_COLUMN_METADATA)
-endif()   
+endif()
+
+add_definitions(-DSQLITECPP_ENABLE_ASSERT_HANDLER)
+  
 
 if (MSVC)
   # build the SQLite3 C library for Windows (for ease of use)

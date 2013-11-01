@@ -12,6 +12,7 @@
 
 #include "Database.h"
 #include "Column.h"
+#include "Assert.h"
 #include "Exception.h"
 
 
@@ -316,8 +317,7 @@ Statement::Ptr::~Ptr(void) throw() // nothrow
         // as no Statement not Column objet use it anymore
         int ret = sqlite3_finalize(mpStmt);
         // Never throw an exception in a destructor
-        //std::cout << sqlite3_errmsg(mpSQLite) << std::endl;
-        SQLITE_CPP_ASSERT (SQLITE_OK == ret);
+        SQLITECPP_ASSERT (SQLITE_OK == ret, sqlite3_errmsg(mpSQLite));  // See SQLITECPP_ENABLE_ASSERT_HANDLER
 
         // and delete the reference counter
         delete mpRefCount;

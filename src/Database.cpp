@@ -11,6 +11,7 @@
 #include "Database.h"
 
 #include "Statement.h"
+#include "Assert.h"
 #include "Exception.h"
 
 
@@ -37,8 +38,7 @@ Database::~Database(void) throw() // nothrow
 {
     int ret = sqlite3_close(mpSQLite);
     // Never throw an exception in a destructor
-    //std::cout << sqlite3_errmsg(mpSQLite) << std::endl;
-    SQLITE_CPP_ASSERT (SQLITE_OK == ret);
+    SQLITECPP_ASSERT (SQLITE_OK == ret, sqlite3_errmsg(mpSQLite));  // See SQLITECPP_ENABLE_ASSERT_HANDLER
 }
 
 // Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT...).

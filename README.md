@@ -207,7 +207,8 @@ catch (std::exception& e)
 
 ### How to handle in assertion in SQLiteC++:
 Exceptions shall not be used in destructors, so SQLiteC++ use SQLITECPP_ASSERT() to check for errors in destructors.
-If you don't want assert() to be called, you have to enable and define an assert handler as shown below.
+If you don't want assert() to be called, you have to enable and define an assert handler as shown below,
+and by setting the flag SQLITECPP_ENABLE_ASSERT_HANDLER when compiling the lib.
 
 ```C++
 #ifdef SQLITECPP_ENABLE_ASSERT_HANDLER

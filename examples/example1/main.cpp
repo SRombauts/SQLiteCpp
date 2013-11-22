@@ -93,7 +93,7 @@ int main (void)
         std::cout << "execAndGet=" << value.c_str() << std::endl;
 
         // Compile a SQL query, containing one parameter (index 1)
-        SQLite::Statement   query(db, "SELECT * FROM test WHERE weight > ?");
+        SQLite::Statement   query(db, "SELECT id as test_id, value as test_val, weight as test_weight FROM test WHERE weight > ?");
         std::cout << "SQLite statement '" << query.getQuery().c_str() << "' compiled (" << query.getColumnCount () << " columns in the result)\n";
         // Bind the integer value 2 to the first parameter of the SQL query
         query.bind(1, 2);
@@ -109,20 +109,25 @@ int main (void)
             int         bytes   = query.getColumn(1).getBytes();
             double      weight  = query.getColumn(2); // = query.getColumn(2).getInt()
 
-#ifdef SQLITE_ENABLE_COLUMN_METADATA
             static bool bFirst = true;
             if (bFirst)
             {
-                // Show how to get the name of the table column from which this particular result column come from.
+                // Show how to get the aliased names of the result columns.
+                std::string name0 = query.getColumn(0).getName();
+                std::string name1 = query.getColumn(1).getName();
+                std::string name2 = query.getColumn(2).getName();
+                std::cout << "aliased result [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
+#ifdef SQLITE_ENABLE_COLUMN_METADATA
+                // Show how to get origin names of the table columns from which thoses result columns come from.
                 // Requires the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be
                 // also defined at compile times of the SQLite library itself.
-                std::string name0 = query.getColumn(0).getOriginName();
-                std::string name1 = query.getColumn(1).getOriginName();
-                std::string name2 = query.getColumn(2).getOriginName();
-                std::cout << "table 'test' [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
+                name0 = query.getColumn(0).getOriginName();
+                name1 = query.getColumn(1).getOriginName();
+                name2 = query.getColumn(2).getOriginName();
+                std::cout << "origin table 'test' [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
+#endif
                 bFirst = false;
             }
-#endif
             std::cout << "row (" << id << ", \"" << value2.c_str() << "\" "  << bytes << " bytes, " << weight << ")\n";
         }
 

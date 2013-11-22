@@ -30,6 +30,12 @@ Column::~Column(void) throw() // nothrow
     // the finalization will be done by the destructor of the last shared pointer
 }
 
+// Return the named assigned to this result column (potentially aliased)
+const char * Column::getName(void) const throw() // nothrow
+{
+    return sqlite3_column_name(mStmtPtr, mIndex);
+}
+
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
 // Return the name of the table column that is the origin of this result column
 const char * Column::getOriginName(void) const throw() // nothrow

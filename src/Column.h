@@ -51,7 +51,12 @@ public:
     // default copy constructor and assignment operator are perfectly suited :
     // they copy the Statement::Ptr which in turn increments the reference counter.
 
-#ifdef SQLITE_ENABLE_COLUMN_METADATA
+    /**
+     * @brief Return a pointer to the named assigned to a result column (potentially aliased)
+     */
+    const char*     getName (void) const throw(); // nothrow
+
+    #ifdef SQLITE_ENABLE_COLUMN_METADATA
     /**
      * @brief Return a pointer to the table column name that is the origin of this result column
      * 

@@ -32,6 +32,7 @@ Version 0.5.0 - March 9 2013
 Version 0.5.1 - April 7 2013
     Added Collumn::getName()
     
-TODO 0.6.0 - ?? 2013
+Version 0.6.0 - November 22 2013
     Renamed Collumn::getName() to Collumn::getOriginName()
+    Added a new Collumn::getName() 
     

@@ -113,11 +113,12 @@ int main (void)
             static bool bFirst = true;
             if (bFirst)
             {
-                // Show how to get the name of a column.
-                // Requires the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be also defined at compile times of the SQLite library.
-                std::string name0 = query.getColumn(0).getName();
-                std::string name1 = query.getColumn(1).getName();
-                std::string name2 = query.getColumn(2).getName();
+                // Show how to get the name of the table column from which this particular result column come from.
+                // Requires the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be
+                // also defined at compile times of the SQLite library itself.
+                std::string name0 = query.getColumn(0).getOriginName();
+                std::string name1 = query.getColumn(1).getOriginName();
+                std::string name2 = query.getColumn(2).getOriginName();
                 std::cout << "table 'test' [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
                 bFirst = false;
             }

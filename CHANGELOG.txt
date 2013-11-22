@@ -30,4 +30,8 @@ Version 0.5.0 - March 9 2013
     Added bind() for binary blob data
     
 Version 0.5.1 - April 7 2013
-    Added getName()
+    Added Collumn::getName()
+    
+TODO 0.6.0 - ?? 2013
+    Renamed Collumn::getName() to Collumn::getOriginName()
+    

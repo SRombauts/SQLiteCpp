@@ -53,13 +53,13 @@ public:
 
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
     /**
-     * @brief Return a pointer to the column name
+     * @brief Return a pointer to the table column name that is the origin of this result column
      * 
      *  Require definition of the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro :
-     * - for compilation of the SQLite library,
+     * - when building the SQLite library itself (which is the case for the Debian libsqlite3 binary for instance),
      * - and also when compiling this wrapper.
      */
-	const char*     getName  (void) const throw(); // nothrow
+	const char*     getOriginName   (void) const throw(); // nothrow
 #endif
 
     /// @brief Return the integer value of the column.

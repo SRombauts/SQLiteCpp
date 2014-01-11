@@ -30,6 +30,17 @@ Statement::Statement(Database &aDatabase, const char* apQuery) : // throw(SQLite
     mColumnCount = sqlite3_column_count(mStmtPtr);
 }
 
+// Compile and register the SQL query for the provided SQLite Database Connection
+Statement::Statement(Database &aDatabase, const std::string& aQuery) : // throw(SQLite::Exception)
+    mQuery(aQuery),
+    mStmtPtr(aDatabase.mpSQLite, mQuery), // prepare the SQL query, and ref count (needs Database friendship)
+    mColumnCount(0),
+    mbOk(false),
+    mbDone(false)
+{
+    mColumnCount = sqlite3_column_count(mStmtPtr);
+}
+
 // Finalize and unregister the SQL query from the SQLite Database Connection.
 Statement::~Statement(void) throw() // nothrow
 {

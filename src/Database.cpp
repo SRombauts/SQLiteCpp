@@ -14,6 +14,9 @@
 #include "Assertion.h"
 #include "Exception.h"
 
+#ifndef SQLITE_DETERMINISTIC
+#define SQLITE_DETERMINISTIC 0x800
+#endif //SQLITE_DETERMINISTIC
 
 namespace SQLite
 {
@@ -95,6 +98,21 @@ void Database::check(const int aRet) const // throw(SQLite::Exception)
     {
         throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
     }
+}
+    
+// Attach a custom function to your sqlite database.
+// assumes UTF8 text representation.
+// Parameter details can be found here: http://www.sqlite.org/c3ref/create_function.html
+void Database::createFunction(const char *funcName, int nArg, bool deterministic, void *pApp, void (*xFunc)(sqlite3_context *, int, sqlite3_value **), void (*xStep)(sqlite3_context *, int, sqlite3_value **), void (*xFinal)(sqlite3_context *), void (*xDestroy)(void *))
+{
+    int eTextRep = SQLITE_UTF8;
+    // optimization if deterministic function... e.g. of non deterministic function (random())
+    if (deterministic) {
+        eTextRep = eTextRep|SQLITE_DETERMINISTIC;
+    }
+    int ret = sqlite3_create_function_v2(mpSQLite, funcName, nArg, eTextRep, pApp, xFunc, xStep, xFinal, xDestroy);
+    
+    check(ret);
 }
 
 

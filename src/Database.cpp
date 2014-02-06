@@ -33,6 +33,20 @@ Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READ
     }
 }
 
+// Open the provided database UTF-8 filename with SQLITE_OPEN_xxx provided flags.
+Database::Database(const std::string& aFilename, const int aFlags /*= SQLITE_OPEN_READONLY*/) : // throw(SQLite::Exception)
+    mpSQLite(NULL),
+    mFilename(aFilename)
+{
+    int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, NULL);
+    if (SQLITE_OK != ret)
+    {
+        std::string strerr = sqlite3_errmsg(mpSQLite);
+        sqlite3_close(mpSQLite); // close is required even in case of error on opening
+        throw SQLite::Exception(strerr);
+    }
+}
+
 // Close the SQLite database connection.
 Database::~Database(void) throw() // nothrow
 {

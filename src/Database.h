@@ -229,6 +229,50 @@ public:
     {
         return sqlite3_errmsg(mpSQLite);
     }
+    
+    /**
+     * @brief Create a function in the sqlite database.
+     *
+     * This is the equivalent of the sqlite3_create_function_v2 command.
+     * NOTE: UTF-8 text encoding assumed.
+     *
+     *
+     * @param[in] funcName          Name of the SQL function to be created or redefined
+     * @param[in] nArg              Number of arguments in the function
+     * @param[in] determininistic   optimize for deterministic functions. Most sqlite functions are deterministic.
+     * a random number generator is an example of an indeterministic function.
+     * @param[in] pApp              See: http://www.sqlite.org/c3ref/create_function.html
+     * @param[in] xFunc             See: http://www.sqlite.org/c3ref/create_function.html
+     * @param[in] xStep             See: http://www.sqlite.org/c3ref/create_function.html
+     * @param[in] xFinal            See: http://www.sqlite.org/c3ref/create_function.html
+     * @param[in] xDestroy          See: http://www.sqlite.org/c3ref/create_function.html
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    void createFunction(const char *funcName, int nArg, bool deterministic, void *pApp, void (*xFunc)(sqlite3_context *, int, sqlite3_value **), void (*xStep)(sqlite3_context *, int, sqlite3_value **), void (*xFinal)(sqlite3_context *), void (*xDestroy)(void *));
+    /**
+     * @brief Create a function in the sqlite database.
+     *
+     * This is the equivalent of the sqlite3_create_function_v2 command.
+     * NOTE: UTF-8 text encoding assumed.
+     *
+     *
+     * @param[in] funcName          Name of the SQL function to be created or redefined
+     * @param[in] nArg              Number of arguments in the function
+     * @param[in] determininistic   optimize for deterministic functions. Most sqlite functions are deterministic.
+     * a random number generator is an example of an indeterministic function.
+     * @param[in] pApp              See: http://www.sqlite.org/c3ref/create_function.html
+     * @param[in] xFunc             See: http://www.sqlite.org/c3ref/create_function.html
+     * @param[in] xStep             See: http://www.sqlite.org/c3ref/create_function.html
+     * @param[in] xFinal            See: http://www.sqlite.org/c3ref/create_function.html
+     * @param[in] xDestroy          See: http://www.sqlite.org/c3ref/create_function.html
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    inline void createFunction(const std::string &funcName, int nArg, bool deterministic, void *pApp, void (*xFunc)(sqlite3_context *, int, sqlite3_value **), void (*xStep)(sqlite3_context *, int, sqlite3_value **), void (*xFinal)(sqlite3_context *), void (*xDestroy)(void *))
+    {
+        return createFunction(funcName.c_str(), nArg, deterministic, pApp, xFunc, xStep, xFinal, xDestroy);
+    }
 
 private:
     /// @{ Database must be non-copyable

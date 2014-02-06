@@ -231,47 +231,63 @@ public:
     }
     
     /**
-     * @brief Create a function in the sqlite database.
+     * @brief Create or redefine a SQL function or aggregate in the sqlite database. 
      *
-     * This is the equivalent of the sqlite3_create_function_v2 command.
-     * NOTE: UTF-8 text encoding assumed.
+     *  This is the equivalent of the sqlite3_create_function_v2 command.
+     * @see http://www.sqlite.org/c3ref/create_function.html
      *
+     * @note UTF-8 text encoding assumed.
      *
-     * @param[in] funcName          Name of the SQL function to be created or redefined
-     * @param[in] nArg              Number of arguments in the function
-     * @param[in] determininistic   optimize for deterministic functions. Most sqlite functions are deterministic.
-     * a random number generator is an example of an indeterministic function.
-     * @param[in] pApp              See: http://www.sqlite.org/c3ref/create_function.html
-     * @param[in] xFunc             See: http://www.sqlite.org/c3ref/create_function.html
-     * @param[in] xStep             See: http://www.sqlite.org/c3ref/create_function.html
-     * @param[in] xFinal            See: http://www.sqlite.org/c3ref/create_function.html
-     * @param[in] xDestroy          See: http://www.sqlite.org/c3ref/create_function.html
+     * @param[in] apFuncName    Name of the SQL function to be created or redefined
+     * @param[in] aNbArg        Number of arguments in the function
+     * @param[in] abDeterministic Optimize for deterministic functions (most are). A random number generator is not.
+     * @param[in] apApp         Arbitrary pointer ot user data, accessible with sqlite3_user_data().
+     * @param[in] apFunc        Pointer to a C-function to implement a scalar SQL function (apStep & apFinal NULL)
+     * @param[in] apStep        Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
+     * @param[in] apFinal       Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
+     * @param[in] apDestroy     If not NULL, then it is the destructor for the application data pointer.
      *
      * @throw SQLite::Exception in case of error
      */
-    void createFunction(const char *funcName, int nArg, bool deterministic, void *pApp, void (*xFunc)(sqlite3_context *, int, sqlite3_value **), void (*xStep)(sqlite3_context *, int, sqlite3_value **), void (*xFinal)(sqlite3_context *), void (*xDestroy)(void *));
+    void createFunction(const char* apFuncName,
+                        int         aNbArg,
+                        bool        abDeterministic,
+                        void*       apApp,
+                        void      (*apFunc)(sqlite3_context *, int, sqlite3_value **),
+                        void      (*apStep)(sqlite3_context *, int, sqlite3_value **),
+                        void      (*apFinal)(sqlite3_context *),
+                        void      (*axDestroy)(void *));
+
     /**
-     * @brief Create a function in the sqlite database.
+     * @brief Create or redefine a SQL function or aggregate in the sqlite database. 
      *
-     * This is the equivalent of the sqlite3_create_function_v2 command.
-     * NOTE: UTF-8 text encoding assumed.
+     *  This is the equivalent of the sqlite3_create_function_v2 command.
+     * @see http://www.sqlite.org/c3ref/create_function.html
      *
+     * @note UTF-8 text encoding assumed.
      *
-     * @param[in] funcName          Name of the SQL function to be created or redefined
-     * @param[in] nArg              Number of arguments in the function
-     * @param[in] determininistic   optimize for deterministic functions. Most sqlite functions are deterministic.
-     * a random number generator is an example of an indeterministic function.
-     * @param[in] pApp              See: http://www.sqlite.org/c3ref/create_function.html
-     * @param[in] xFunc             See: http://www.sqlite.org/c3ref/create_function.html
-     * @param[in] xStep             See: http://www.sqlite.org/c3ref/create_function.html
-     * @param[in] xFinal            See: http://www.sqlite.org/c3ref/create_function.html
-     * @param[in] xDestroy          See: http://www.sqlite.org/c3ref/create_function.html
+     * @param[in] aFuncName     Name of the SQL function to be created or redefined
+     * @param[in] aNbArg        Number of arguments in the function
+     * @param[in] abDeterministic Optimize for deterministic functions (most are). A random number generator is not.
+     * @param[in] apApp         Arbitrary pointer ot user data, accessible with sqlite3_user_data().
+     * @param[in] apFunc        Pointer to a C-function to implement a scalar SQL function (apStep & apFinal NULL)
+     * @param[in] apStep        Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
+     * @param[in] apFinal       Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
+     * @param[in] apDestroy     If not NULL, then it is the destructor for the application data pointer.
      *
      * @throw SQLite::Exception in case of error
      */
-    inline void createFunction(const std::string &funcName, int nArg, bool deterministic, void *pApp, void (*xFunc)(sqlite3_context *, int, sqlite3_value **), void (*xStep)(sqlite3_context *, int, sqlite3_value **), void (*xFinal)(sqlite3_context *), void (*xDestroy)(void *))
+    inline void createFunction(const std::string&   aFuncName,
+                               int                  aNbArg,
+                               bool                 abDeterministic,
+                               void*                apApp,
+                               void               (*apFunc)(sqlite3_context *, int, sqlite3_value **),
+                               void               (*apStep)(sqlite3_context *, int, sqlite3_value **),
+                               void               (*apFinal)(sqlite3_context *),
+                               void               (*apDestroy)(void *))
     {
-        return createFunction(funcName.c_str(), nArg, deterministic, pApp, xFunc, xStep, xFinal, xDestroy);
+        return createFunction(aFuncName.c_str(), aNbArg, abDeterministic,
+                              apApp, apFunc, apStep, apFinal, apDestroy);
     }
 
 private:

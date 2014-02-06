@@ -100,17 +100,24 @@ void Database::check(const int aRet) const // throw(SQLite::Exception)
     }
 }
     
-// Attach a custom function to your sqlite database.
-// assumes UTF8 text representation.
+// Attach a custom function to your sqlite database. Assumes UTF8 text representation.
 // Parameter details can be found here: http://www.sqlite.org/c3ref/create_function.html
-void Database::createFunction(const char *funcName, int nArg, bool deterministic, void *pApp, void (*xFunc)(sqlite3_context *, int, sqlite3_value **), void (*xStep)(sqlite3_context *, int, sqlite3_value **), void (*xFinal)(sqlite3_context *), void (*xDestroy)(void *))
+void Database::createFunction(const char*   apFuncName,
+                              int           aNbArg,
+                              bool          abDeterministic,
+                              void*         apApp,
+                              void        (*apFunc)(sqlite3_context *, int, sqlite3_value **),
+                              void        (*apStep)(sqlite3_context *, int, sqlite3_value **),
+                              void        (*apFinal)(sqlite3_context *),
+                              void        (*apDestroy)(void *))
 {
-    int eTextRep = SQLITE_UTF8;
-    // optimization if deterministic function... e.g. of non deterministic function (random())
-    if (deterministic) {
-        eTextRep = eTextRep|SQLITE_DETERMINISTIC;
+    int TextRep = SQLITE_UTF8;
+    // optimization if deterministic function (e.g. of nondeterministic function random())
+    if (abDeterministic) {
+        TextRep = TextRep|SQLITE_DETERMINISTIC;
     }
-    int ret = sqlite3_create_function_v2(mpSQLite, funcName, nArg, eTextRep, pApp, xFunc, xStep, xFinal, xDestroy);
+    int ret = sqlite3_create_function_v2(mpSQLite, apFuncName, aNbArg, TextRep,
+                                         apApp, apFunc, apStep, apFinal, apDestroy);
     
     check(ret);
 }

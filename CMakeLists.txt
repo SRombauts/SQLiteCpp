@@ -93,11 +93,17 @@ endif()
 option(SQLITECPP_RUN_DOXYGEN "Run Doxygen C++ documentation tool." ON)
 if (SQLITECPP_RUN_DOXYGEN)
     # add a Doxygen target to the "all" target
-    add_custom_target(SQLiteCpp_doxygen
-     ALL
-     COMMAND doxygen Doxyfile > ${DEV_NULL}
-     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    )
+    if (NOT DEFINED ENV{TRAVIS})
+        # if not runing on a Travis CI Virtual Machine
+        add_custom_target(SQLiteCpp_doxygen
+         ALL
+         COMMAND doxygen Doxyfile > ${DEV_NULL}
+         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        )
+    else()
+        # but no Doxygen under Travis CI: too costly and no real benefit
+        message("no Doxygen target when TRAVIS is defined")
+    endif()
 endif()
 
 option(SQLITECPP_RUN_TESTS "Run test tools." ON)

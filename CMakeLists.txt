@@ -79,6 +79,8 @@ if (SQLITECPP_RUN_CPPLINT)
      ALL
      COMMAND python cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${PROJECT_SOURCE_DIR}/${SQLITECPP_SRC}
     )
+else()
+    message(STATUS "SQLITECPP_RUN_CPPLINT OFF")
 endif()
 
 option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." ON)
@@ -88,22 +90,25 @@ if (SQLITECPP_RUN_CPPCHECK)
      ALL
      COMMAND cppcheck -j 4 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
     )
+else()
+    message(STATUS "SQLITECPP_RUN_CPPCHECK OFF")
 endif()
 
 option(SQLITECPP_RUN_DOXYGEN "Run Doxygen C++ documentation tool." ON)
 if (SQLITECPP_RUN_DOXYGEN)
-    # add a Doxygen target to the "all" target
-    if (NOT DEFINED ENV{TRAVIS})
-        # if not runing on a Travis CI Virtual Machine
+    find_package(Doxygen)
+    if (DOXYGEN_FOUND)
+        # add a Doxygen target to the "all" target
         add_custom_target(SQLiteCpp_doxygen
          ALL
          COMMAND doxygen Doxyfile > ${DEV_NULL}
          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         )
     else()
-        # but no Doxygen under Travis CI: too costly and no real benefit
-        message("no Doxygen target when TRAVIS is defined")
+        message(STATUS "Doxygen not found")
     endif()
+else()
+    message(STATUS "SQLITECPP_RUN_DOXYGEN OFF")
 endif()
 
 option(SQLITECPP_RUN_TESTS "Run test tools." ON)
@@ -117,4 +122,6 @@ if (SQLITECPP_RUN_TESTS)
 
     # does the example1 runs successfully?
     add_test(Example1Run example1)
+else()
+    message(STATUS "SQLITECPP_RUN_TESTS OFF")
 endif()

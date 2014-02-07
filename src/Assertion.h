@@ -14,7 +14,7 @@
 
 
 /**
- * @def SQLITECPP_ASSERT SQLITECPP_ASSERT() is used in destructors, where exceptions shall not be thrown
+ * SQLITECPP_ASSERT SQLITECPP_ASSERT() is used in destructors, where exceptions shall not be thrown
  *
  * Define SQLITECPP_ENABLE_ASSERT_HANDLER at the project level
  * and define a SQLite::assertion_failed() assertion handler

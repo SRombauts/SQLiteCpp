@@ -256,7 +256,7 @@ public:
                         void      (*apFunc)(sqlite3_context *, int, sqlite3_value **),
                         void      (*apStep)(sqlite3_context *, int, sqlite3_value **),
                         void      (*apFinal)(sqlite3_context *),
-                        void      (*axDestroy)(void *));
+                        void      (*apDestroy)(void *));
 
     /**
      * @brief Create or redefine a SQL function or aggregate in the sqlite database. 

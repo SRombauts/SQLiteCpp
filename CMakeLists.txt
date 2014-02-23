@@ -21,23 +21,30 @@ if (SQLITE_ENABLE_ASSERT_HANDLER)
     add_definitions(-DSQLITECPP_ENABLE_ASSERT_HANDLER)
 endif ()
 
-# Define useful variables to handle OS/Compiler differences
+# Define useful variables to handle OS differences:
+if (WIN32)
+    set(DEV_NULL                "NUL")
+else (WIN32)
+    set(DEV_NULL                "/dev/null")
+endif (WIN32)
+# then Compiler/IDE differences:
 if (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=vs7")
     set(CPPCHECK_ARG_TEMPLATE   "--template=vs")
-    set(DEV_NULL                "NUL")
-    # build the SQLite3 C library for Windows (for ease of use)
-    add_subdirectory(sqlite3) 
-    include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
     # disable Visual Studio warnings for fopen() used in the example
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-elseif (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
-    set(DEV_NULL                "/dev/null")
-    # GCC flags
-    add_definitions(-rdynamic -fstack-protector-all -Wall -Wextra -pedantic -Weffc++ -Wformat-security -Winit-self -Wswitch-default -Wswitch-enum -Wfloat-equal -Wundef -Wshadow -Wcast-qual -Wconversion -Wlogical-op -Winline -Wsuggest-attribute=pure -Wsuggest-attribute=const)
-endif ()
+    if (CMAKE_COMPILER_IS_GNUCXX)
+        # GCC flags
+        add_definitions(-rdynamic -fstack-protector-all -Wall -Wextra -pedantic -Wformat-security -Winit-self -Wswitch-default -Wswitch-enum -Wfloat-equal -Wshadow -Wcast-qual -Wconversion -Wlogical-op -Winline -Wsuggest-attribute=pure -Wsuggest-attribute=const)
+    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        # Clang flags
+        add_definitions(-fstack-protector-all -Wall -Wextra -pedantic -Wformat-security -Winit-self -Wswitch-default -Wswitch-enum -Wfloat-equal -Wshadow -Wcast-qual -Wconversion -Winline)
+    endif (CMAKE_COMPILER_IS_GNUCXX)
+endif (MSVC)
+# and then common variables
 set(CPPLINT_ARG_VERBOSE "--verbose=3")
 set(CPPLINT_ARG_LINELENGTH "--linelength=120")
 
@@ -69,6 +76,14 @@ if(UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Cl
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
 endif(UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
 
+
+# SQLite3 library (Windows only)
+
+if (WIN32)
+    # build the SQLite3 C library for Windows (for ease of use) versus Linux sqlite3-dev package
+    add_subdirectory(sqlite3) 
+    include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
+endif (WIN32)
 
 # Optional additional targets:
 

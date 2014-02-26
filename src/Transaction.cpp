@@ -12,7 +12,6 @@
 
 #include "Database.h"
 #include "Assertion.h"
-#include "Exception.h"
 
 
 namespace SQLite
@@ -28,7 +27,7 @@ Transaction::Transaction(Database& aDatabase) : // throw(SQLite::Exception)
 }
 
 // Safely rollback the transaction if it has not been committed.
-Transaction::~Transaction(void) throw() // nothrow
+Transaction::~Transaction(void) noexcept // nothrow
 {
     if (false == mbCommited)
     {

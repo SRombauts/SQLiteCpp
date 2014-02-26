@@ -42,7 +42,7 @@ Statement::Statement(Database &aDatabase, const std::string& aQuery) : // throw(
 }
 
 // Finalize and unregister the SQL query from the SQLite Database Connection.
-Statement::~Statement(void) throw() // nothrow
+Statement::~Statement(void) noexcept // nothrow
 {
     // the finalization will be done by the destructor of the last shared pointer
 }
@@ -315,7 +315,7 @@ Statement::Ptr::Ptr(const Statement::Ptr& aPtr) :
 /**
  * @brief Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
  */
-Statement::Ptr::~Ptr(void) throw() // nothrow
+Statement::Ptr::~Ptr(void) noexcept // nothrow
 {
     assert(NULL != mpRefCount);
     assert(0 != *mpRefCount);

@@ -13,6 +13,8 @@
 #include <sqlite3.h>
 #include <string>
 
+#include "Exception.h"
+
 
 namespace SQLite
 {
@@ -67,7 +69,7 @@ public:
     /**
      * @brief Finalize and unregister the SQL query from the SQLite Database Connection.
      */
-    virtual ~Statement(void) throw(); // nothrow
+    virtual ~Statement(void) noexcept; // nothrow
 
     /**
      * @brief Reset the statement to make it ready for a new execution.
@@ -341,7 +343,7 @@ public:
         // Copy constructor increments the ref counter
         Ptr(const Ptr& aPtr);
         // Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
-        ~Ptr(void) throw(); // nothrow (no virtual destructor needed here)
+        ~Ptr(void) noexcept; // nothrow (no virtual destructor needed here)
 
         /// @brief Inline cast operator returning the pointer to SQLite Database Connection Handle
         inline operator sqlite3*() const

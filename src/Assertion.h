@@ -43,8 +43,3 @@ namespace SQLite
 #define SQLITECPP_ASSERT(expression,message)    assert(expression && message)
 
 #endif
-
-
-#if defined(_WIN32) && defined(_MSC_VER)
-#pragma warning(disable:4290) // Disable warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-#endif

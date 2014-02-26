@@ -10,6 +10,8 @@
  */
 #pragma once
 
+#include "Exception.h"
+
 
 namespace SQLite
 {
@@ -53,7 +55,7 @@ public:
     /**
      * @brief Safely rollback the transaction if it has not been committed.
      */
-    virtual ~Transaction(void) throw(); // nothrow
+    virtual ~Transaction(void) noexcept; // nothrow
 
     /**
      * @brief Commit the transaction.

@@ -79,7 +79,7 @@ public:
      * All SQLite statements must have been finalized before,
      * so all Statement objects must have been unregistered.
      */
-    virtual ~Database(void) throw(); // nothrow
+    virtual ~Database(void) noexcept; // nothrow
 
     /**
      * @brief Shortcut to execute one or multiple statements without results.
@@ -201,7 +201,7 @@ public:
      *
      * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
      */
-    inline int setBusyTimeout(int aTimeoutMs) // throw(); nothrow
+    inline int setBusyTimeout(int aTimeoutMs) // noexcept; nothrow
     {
         return sqlite3_busy_timeout(mpSQLite, aTimeoutMs);
     }
@@ -211,7 +211,7 @@ public:
      *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */
-    inline sqlite3_int64 getLastInsertRowid(void) const // throw(); nothrow
+    inline sqlite3_int64 getLastInsertRowid(void) const // noexcept; nothrow
     {
         return sqlite3_last_insert_rowid(mpSQLite);
     }

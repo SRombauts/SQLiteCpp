@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
  *
- * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2014 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -35,6 +35,8 @@ namespace SQLite
  * 2) the SQLite "Serialized" mode is not supported by SQLiteC++,
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
+ *
+ * @todo inline all simple getters
  */
 class Column
 {
@@ -80,7 +82,7 @@ public:
      * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
      *          thus you must copy it before using it beyond its scope (to a std::string for instance).
      */
-    const char*     getText  (void) const noexcept; // nothrow
+    const char*     getText  (const char* apDefaultValue = "") const noexcept; // nothrow
     /**
      * @brief Return a pointer to the binary blob value of the column.
      *
@@ -184,7 +186,6 @@ public:
     /// Inline cast operator to std::string
     inline operator const std::string() const
     {
-        // TODO what if NULL !?
         return getText();
     }
 #endif

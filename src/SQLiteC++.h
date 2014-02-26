@@ -5,7 +5,7 @@
  *
  * Include this main header file in your project to gain access to all functionality provided by the wrapper.
  *
- * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2014 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -38,5 +38,5 @@
  * with the value (X*1000000 + Y*1000 + Z) where X, Y, and Z are the same
  * numbers used in [SQLITECPP_VERSION].
  */
-#define SQLITECPP_VERSION           "0.7.0"
-#define SQLITECPP_VERSION_NUMBER    0006000
+#define SQLITECPP_VERSION           "0.8.0"
+#define SQLITECPP_VERSION_NUMBER    0008000

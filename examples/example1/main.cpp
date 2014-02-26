@@ -4,7 +4,7 @@
  *
  *  Demonstrate how-to use the SQLite++ wrapper
  *
- * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2014 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -118,7 +118,7 @@ int main (void)
                 std::string name2 = query.getColumn(2).getName();
                 std::cout << "aliased result [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
-                // Show how to get origin names of the table columns from which thoses result columns come from.
+                // Show how to get origin names of the table columns from which theses result columns come from.
                 // Requires the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be
                 // also defined at compile times of the SQLite library itself.
                 name0 = query.getColumn(0).getOriginName();

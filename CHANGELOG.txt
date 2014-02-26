@@ -41,3 +41,6 @@ Version 0.7.0 - January 9 2014
     Added std::string version of existing APIs
     Improved CMake with more build options and Doxygen auto-detection
     
+Version 0.8.0 - Februrary 26 2014
+    Changed Column::getText() to return empty string "" by default instead of NULL pointer (to handle std::string conversion)
+    

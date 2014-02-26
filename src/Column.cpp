@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
  *
- * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2014 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -63,10 +63,10 @@ double Column::getDouble(void) const noexcept // nothrow
 }
 
 // Return a pointer to the text value (NULL terminated string) of the column specified by its index starting at 0
-const char* Column::getText(void) const noexcept // nothrow
+const char* Column::getText(const char* apDefaultValue /* = "" */) const noexcept // nothrow
 {
-   // TODO what if NULL !?
-    return (const char*)sqlite3_column_text(mStmtPtr, mIndex);
+    const char* pText = (const char*)sqlite3_column_text(mStmtPtr, mIndex);
+    return (pText?pText:apDefaultValue);
 }
 
 // Return a pointer to the text value (NULL terminated string) of the column specified by its index starting at 0

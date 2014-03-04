@@ -8,11 +8,11 @@
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
-#include "Database.h"
+#include <SQLiteCpp/Database.h>
 
-#include "Statement.h"
-#include "Assertion.h"
-#include "Exception.h"
+#include <SQLiteCpp/Statement.h>
+#include <SQLiteCpp/Assertion.h>
+#include <SQLiteCpp/Exception.h>
 
 #ifndef SQLITE_DETERMINISTIC
 #define SQLITE_DETERMINISTIC 0x800

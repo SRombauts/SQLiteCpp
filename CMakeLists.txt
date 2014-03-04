@@ -13,13 +13,13 @@ project(SQLiteCpp)
 option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getName(). Require support from sqlite3 library." ON)
 if (SQLITE_ENABLE_COLUMN_METADATA) 
     add_definitions(-DSQLITE_ENABLE_COLUMN_METADATA)
-endif ()
+endif (SQLITE_ENABLE_COLUMN_METADATA)
 
 option(SQLITE_ENABLE_ASSERT_HANDLER "Enable the user defintion of a assertion_failed() handler." ON)
 if (SQLITE_ENABLE_ASSERT_HANDLER) 
     # Enable the user defintion of a assertion_failed() handler.
     add_definitions(-DSQLITECPP_ENABLE_ASSERT_HANDLER)
-endif ()
+endif (SQLITE_ENABLE_ASSERT_HANDLER)
 
 # Define useful variables to handle OS differences:
 if (WIN32)
@@ -33,6 +33,11 @@ if (MSVC)
     set(CPPCHECK_ARG_TEMPLATE   "--template=vs")
     # disable Visual Studio warnings for fopen() used in the example
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    # Specific flags for multithread static linking
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+    set(CMAKE_C_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+    set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
@@ -56,25 +61,55 @@ set(CPPLINT_ARG_LINELENGTH "--linelength=120")
 
 # list of sources files of the library
 set(SQLITECPP_SRC
- src/SQLiteC++.h
- src/Assertion.h
- src/Column.cpp
- src/Column.h
- src/Database.cpp
- src/Database.h
- src/Exception.h
- src/Statement.cpp
- src/Statement.h
- src/Transaction.cpp
- src/Transaction.h
+ ${PROJECT_SOURCE_DIR}/src/Column.cpp
+ ${PROJECT_SOURCE_DIR}/src/Database.cpp
+ ${PROJECT_SOURCE_DIR}/src/Statement.cpp
+ ${PROJECT_SOURCE_DIR}/src/Transaction.cpp
 )
-# add sources of the wrapper as a "SQLiteCpp" static library
-add_library (SQLiteCpp  ${SQLITECPP_SRC})
 source_group(src FILES ${SQLITECPP_SRC})
 
-if(UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
+# list of header files of the library
+set(SQLITECPP_INC
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/SQLiteCpp.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Assertion.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Column.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Database.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Exception.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Statement.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Transaction.h
+)
+source_group(inc FILES ${SQLITECPP_INC})
+
+# list of test files of the library
+set(SQLITECPP_TESTS
+ tests/Database_test.cpp
+)
+source_group(tests FILES ${SQLITECPP_TESTS})
+
+# list of example files of the library
+set(SQLITECPP_EXAMPLES
+ examples/example1/main.cpp
+)
+source_group(example1 FILES ${SQLITECPP_EXAMPLES})
+
+# list of doc files of the library
+set(SQLITECPP_DOC
+ README.md
+ WRAPPERS.md
+ LICENSE.txt
+ TODO.txt
+)
+source_group(doc FILES ${SQLITECPP_DOC})
+
+# All includes are relative to the "include" directory 
+include_directories("${PROJECT_SOURCE_DIR}/include")
+
+# add sources of the wrapper as a "SQLiteCpp" static library
+add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC})
+
+if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
-endif(UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
+endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
 
 
 # SQLite3 library (Windows only)
@@ -85,6 +120,7 @@ if (WIN32)
     include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
 endif (WIN32)
 
+
 # Optional additional targets:
 
 option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." OFF)
@@ -92,11 +128,11 @@ if (SQLITECPP_RUN_CPPLINT)
     # add a cpplint target to the "all" target
     add_custom_target(SQLiteCpp_cpplint
      ALL
-     COMMAND python cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${PROJECT_SOURCE_DIR}/${SQLITECPP_SRC}
+     COMMAND python ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
     )
-else()
+else (SQLITECPP_RUN_CPPLINT)
     message(STATUS "SQLITECPP_RUN_CPPLINT OFF")
-endif()
+endif (SQLITECPP_RUN_CPPLINT)
 
 option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." ON)
 if (SQLITECPP_RUN_CPPCHECK)
@@ -105,9 +141,9 @@ if (SQLITECPP_RUN_CPPCHECK)
      ALL
      COMMAND cppcheck -j 4 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
     )
-else()
+else (SQLITECPP_RUN_CPPCHECK)
     message(STATUS "SQLITECPP_RUN_CPPCHECK OFF")
-endif()
+endif (SQLITECPP_RUN_CPPCHECK)
 
 option(SQLITECPP_RUN_DOXYGEN "Run Doxygen C++ documentation tool." ON)
 if (SQLITECPP_RUN_DOXYGEN)
@@ -119,24 +155,42 @@ if (SQLITECPP_RUN_DOXYGEN)
          COMMAND doxygen Doxyfile > ${DEV_NULL}
          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         )
-    else()
+    else (DOXYGEN_FOUND)
         message(STATUS "Doxygen not found")
-    endif()
-else()
+    endif (DOXYGEN_FOUND)
+else (SQLITECPP_RUN_DOXYGEN)
     message(STATUS "SQLITECPP_RUN_DOXYGEN OFF")
-endif()
+endif (SQLITECPP_RUN_DOXYGEN)
 
-option(SQLITECPP_RUN_TESTS "Run test tools." ON)
-if (SQLITECPP_RUN_TESTS)
-    # add the example1 executable, linked with the wrapper library
-    add_executable(example1 examples/example1/main.cpp)
-    target_link_libraries(example1 SQLiteCpp sqlite3)
+option(SQLITECPP_BUILD_EXAMPLES "Build examples." ON)
+if (SQLITECPP_BUILD_EXAMPLES)
+    # add the basic example executable
+    add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
+    target_link_libraries(SQLiteCpp_example1 SQLiteCpp sqlite3)
+else(SQLITECPP_BUILD_EXAMPLES)
+    message(STATUS "SQLITECPP_BUILD_EXAMPLES OFF")
+endif(SQLITECPP_BUILD_EXAMPLES)
+
+option(SQLITECPP_BUILD_TESTS "Build and run tests." ON)
+if (SQLITECPP_BUILD_TESTS)
+    # add the subdirectory containing the CMakeLists.txt for the gtest library
+    add_subdirectory(googletest) 
+    include_directories("${PROJECT_SOURCE_DIR}/googletest/include")
+
+    # add the unit test executable
+    add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
+    target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp sqlite3)
 
     # add a "test" target:
     enable_testing()
 
-    # does the example1 runs successfully?
-    add_test(Example1Run example1)
-else()
-    message(STATUS "SQLITECPP_RUN_TESTS OFF")
-endif()
+    # does the tests pass?
+    add_test(UnitTests SQLiteCpp_tests)
+
+    if (SQLITECPP_BUILD_EXAMPLES)
+        # does the example1 runs successfully?
+        add_test(Example1Run SQLiteCpp_example1)
+    endif(SQLITECPP_BUILD_EXAMPLES)
+else (SQLITECPP_BUILD_TESTS)
+    message(STATUS "SQLITECPP_BUILD_TESTS OFF")
+endif (SQLITECPP_BUILD_TESTS)

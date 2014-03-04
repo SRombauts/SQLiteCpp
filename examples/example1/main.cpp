@@ -16,7 +16,7 @@
 #include <cstdlib>
 
 
-#include "../../src/SQLiteC++.h"
+#include <SQLiteCpp/SQLiteCpp.h>
 
 #ifdef SQLITECPP_ENABLE_ASSERT_HANDLER
 namespace SQLite

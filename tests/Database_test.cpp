@@ -31,7 +31,7 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 TEST(Database, ctor) {
     remove("test.db3");
 
-    EXPECT_THROW(SQLite::Database unknow("_unknow.db3"), SQLite::Exception);
+    EXPECT_THROW(SQLite::Database absent("test.db3"), SQLite::Exception);
     SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
     EXPECT_STREQ("test.db3", db.getFilename().c_str());
     EXPECT_FALSE(db.tableExists("test"));

@@ -19,8 +19,8 @@ namespace SQLite
 
 // Encapsulation of a Column in a row of the result pointed by the prepared Statement.
 Column::Column(Statement::Ptr& aStmtPtr, int aIndex) noexcept : // nothrow
-    mStmtPtr    (aStmtPtr),
-    mIndex      (aIndex)
+    mStmtPtr(aStmtPtr),
+    mIndex(aIndex)
 {
 }
 

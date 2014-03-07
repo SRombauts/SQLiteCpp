@@ -50,7 +50,7 @@ public:
      *
      * Exception is thrown in case of error, then the Transaction is NOT initiated.
      */
-    explicit Transaction(Database& aDatabase); // throw(SQLite::Exception);
+    explicit Transaction(Database& aDatabase);
 
     /**
      * @brief Safely rollback the transaction if it has not been committed.
@@ -60,7 +60,7 @@ public:
     /**
      * @brief Commit the transaction.
      */
-    void commit(void); // throw(SQLite::Exception);
+    void commit(void);
 
 private:
     // Transaction must be non-copyable

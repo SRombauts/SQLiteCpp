@@ -15,6 +15,8 @@
 #include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Exception.h>
 
+#include <string>
+
 
 namespace SQLite
 {
@@ -50,14 +52,14 @@ public:
     Column(Statement::Ptr& aStmtPtr, int aIndex)    noexcept; // nothrow
     /// @brief Simple destructor
     virtual ~Column(void)                           noexcept; // nothrow
-    
+
     // default copy constructor and assignment operator are perfectly suited :
     // they copy the Statement::Ptr which in turn increments the reference counter.
 
     /**
      * @brief Return a pointer to the named assigned to a result column (potentially aliased)
      */
-    const char*     getName (void) const noexcept; // nothrow
+    const char*     getName(void) const noexcept; // nothrow
 
     #ifdef SQLITE_ENABLE_COLUMN_METADATA
     /**
@@ -67,13 +69,13 @@ public:
      * - when building the SQLite library itself (which is the case for the Debian libsqlite3 binary for instance),
      * - and also when compiling this wrapper.
      */
-	const char*     getOriginName   (void) const noexcept; // nothrow
+    const char*     getOriginName(void) const noexcept; // nothrow
 #endif
 
     /// @brief Return the integer value of the column.
-    int             getInt   (void) const noexcept; // nothrow
+    int             getInt(void) const noexcept; // nothrow
     /// @brief Return the 64bits integer value of the column.
-    sqlite3_int64   getInt64 (void) const noexcept; // nothrow
+    sqlite3_int64   getInt64(void) const noexcept; // nothrow
     /// @brief Return the double (64bits float) value of the column.
     double          getDouble(void) const noexcept; // nothrow
     /**
@@ -82,15 +84,15 @@ public:
      * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
      *          thus you must copy it before using it beyond its scope (to a std::string for instance).
      */
-    const char*     getText  (const char* apDefaultValue = "") const noexcept; // nothrow
+    const char*     getText(const char* apDefaultValue = "") const noexcept; // nothrow
     /**
      * @brief Return a pointer to the binary blob value of the column.
      *
      * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
      *          thus you must copy it before using it beyond its scope (to a std::string for instance).
      */
-    const void*     getBlob  (void) const noexcept; // nothrow
-    
+    const void*     getBlob(void) const noexcept; // nothrow
+
     /**
      * @brief Return the type of the value of the column
      *
@@ -100,7 +102,7 @@ public:
      *          the value returned by sqlite3_column_type() is undefined.
      */
     int getType(void) const noexcept; // nothrow
-    
+
     /// @brief Test if the column is an integer type value (meaningful only before any conversion)
     inline bool isInteger(void) const noexcept // nothrow
     {
@@ -179,7 +181,7 @@ public:
     }
 #ifdef __GNUC__
     // NOTE : the following is required by GCC to cast a Column result in a std::string
-    // (error: conversion from ‘SQLite::Column’ to non-scalar type ‘std::string {aka std::basic_string<char>}’ requested)
+    // (error: conversion from ‘SQLite::Column’ to non-scalar type ‘std::string {aka std::basic_string<char>}’)
     // but is not working under Microsoft Visual Studio 2010 and 2012
     // (error C2440: 'initializing' : cannot convert from 'SQLite::Column' to 'std::basic_string<_Elem,_Traits,_Ax>'
     //  [...] constructor overload resolution was ambiguous)

@@ -11,6 +11,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <string>
 
 
 namespace SQLite
@@ -28,7 +29,7 @@ public:
      *
      * @param[in] aErrorMessage The string message describing the SQLite error
      */
-    Exception(const std::string& aErrorMessage) :
+    explicit Exception(const std::string& aErrorMessage) :
         std::runtime_error(aErrorMessage)
     {
     }
@@ -40,7 +41,7 @@ public:
 
 /// Compatibility with non-clang compilers.
 #ifndef __has_feature
-   #define __has_feature(x) 0
+    #define __has_feature(x) 0
 #endif
 
 // Detect whether the compiler supports C++11 noexcept exception specifications.

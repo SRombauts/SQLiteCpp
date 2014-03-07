@@ -2032,7 +2032,7 @@ class _NestingState(object):
           slots = ''
           if access_match.group(3):
             slots = access_match.group(3)
-          error(filename, linenum, 'whitespace/indent', 3,
+          error(filename, linenum, 'whitespace/indent', 0,
                 '%s%s: should be indented +1 space inside %s' % (
                     access_match.group(2), slots, parent))
 
@@ -3660,7 +3660,7 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
     if Match(r'(f|ind|io|i|o|parse|pf|stdio|str|)?stream$', include):
       # Many unit tests use cout, so we exempt them.
       if not _IsTestFilename(filename):
-        error(filename, linenum, 'readability/streams', 3,
+        error(filename, linenum, 'readability/streams', 0,
               'Streams are highly discouraged.')
 
 

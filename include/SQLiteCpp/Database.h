@@ -14,6 +14,8 @@
 
 #include <SQLiteCpp/Column.h>
 
+#include <string>
+
 
 namespace SQLite
 {
@@ -54,8 +56,10 @@ public:
      * @param[in] apFilename    UTF-8 path/uri to the database file ("filename" sqlite3 parameter)
      * @param[in] aFlags        SQLITE_OPEN_READONLY/SQLITE_OPEN_READWRITE/SQLITE_OPEN_CREATE...
      * @param[in] apVfs         UTF-8 name of custom VFS to use, or nullptr for sqlite3 default
+     *
+     * @throw SQLite::Exception in case of error
      */
-    Database(const char* apFilename, const int aFlags = SQLITE_OPEN_READONLY, const char * apVfs = NULL); // throw(SQLite::Exception);
+    Database(const char* apFilename, const int aFlags = SQLITE_OPEN_READONLY, const char * apVfs = NULL);
 
     /**
      * @brief Open the provided database UTF-8 filename.
@@ -70,14 +74,18 @@ public:
      * @param[in] aFilename     UTF-8 path/uri to the database file ("filename" sqlite3 parameter)
      * @param[in] aFlags        SQLITE_OPEN_READONLY/SQLITE_OPEN_READWRITE/SQLITE_OPEN_CREATE...
      * @param[in] aVfs          UTF-8 name of custom VFS to use, or empty string for sqlite3 default
+     *
+     * @throw SQLite::Exception in case of error
      */
-    Database(const std::string& aFilename, const int aFlags = SQLITE_OPEN_READONLY, const std::string& aVfs = ""); // throw(SQLite::Exception);
+    Database(const std::string& aFilename, const int aFlags = SQLITE_OPEN_READONLY, const std::string& aVfs = "");
 
     /**
      * @brief Close the SQLite database connection.
      *
      * All SQLite statements must have been finalized before,
      * so all Statement objects must have been unregistered.
+     *
+     * @warning assert in case of error
      */
     virtual ~Database(void) noexcept; // nothrow
 
@@ -98,7 +106,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    int exec(const char* apQueries); // throw(SQLite::Exception);
+    int exec(const char* apQueries);
 
     /**
      * @brief Shortcut to execute one or multiple statements without results.
@@ -117,7 +125,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    inline int exec(const std::string& aQueries) // throw(SQLite::Exception);
+    inline int exec(const std::string& aQueries)
     {
         return exec(aQueries.c_str());
     }
@@ -141,7 +149,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    Column execAndGet(const char* apQuery); // throw(SQLite::Exception);
+    Column execAndGet(const char* apQuery);
 
     /**
      * @brief Shortcut to execute a one step query and fetch the first column of the result.
@@ -162,7 +170,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    inline Column execAndGet(const std::string& aQuery) // throw(SQLite::Exception);
+    inline Column execAndGet(const std::string& aQuery)
     {
         return execAndGet(aQuery.c_str());
     }
@@ -178,7 +186,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    bool tableExists(const char* apTableName); // throw(SQLite::Exception);
+    bool tableExists(const char* apTableName);
 
     /**
      * @brief Shortcut to test if a table exists.
@@ -191,7 +199,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    inline bool tableExists(const std::string& aTableName) // throw(SQLite::Exception);
+    inline bool tableExists(const std::string& aTableName)
     {
         return tableExists(aTableName.c_str());
     }
@@ -201,7 +209,7 @@ public:
      *
      * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
      */
-    inline int setBusyTimeout(int aTimeoutMs) // noexcept; nothrow
+    inline int setBusyTimeout(int aTimeoutMs) noexcept // nothrow
     {
         return sqlite3_busy_timeout(mpSQLite, aTimeoutMs);
     }
@@ -211,7 +219,7 @@ public:
      *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */
-    inline sqlite3_int64 getLastInsertRowid(void) const // noexcept; nothrow
+    inline sqlite3_int64 getLastInsertRowid(void) const noexcept // nothrow
     {
         return sqlite3_last_insert_rowid(mpSQLite);
     }
@@ -219,7 +227,7 @@ public:
     /**
      * @brief Return the filename used to open the database
      */
-    inline const std::string& getFilename(void) const
+    inline const std::string& getFilename(void) const noexcept // nothrow
     {
         return mFilename;
     }
@@ -227,11 +235,11 @@ public:
     /**
      * @brief Return UTF-8 encoded English language explanation of the most recent error.
      */
-    inline const char* errmsg(void) const
+    inline const char* errmsg(void) const noexcept // nothrow
     {
         return sqlite3_errmsg(mpSQLite);
     }
-    
+
     /**
      * @brief Create or redefine a SQL function or aggregate in the sqlite database. 
      *
@@ -243,7 +251,7 @@ public:
      * @param[in] apFuncName    Name of the SQL function to be created or redefined
      * @param[in] aNbArg        Number of arguments in the function
      * @param[in] abDeterministic Optimize for deterministic functions (most are). A random number generator is not.
-     * @param[in] apApp         Arbitrary pointer ot user data, accessible with sqlite3_user_data().
+     * @param[in] apApp         Arbitrary pointer of user data, accessible with sqlite3_user_data().
      * @param[in] apFunc        Pointer to a C-function to implement a scalar SQL function (apStep & apFinal NULL)
      * @param[in] apStep        Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
      * @param[in] apFinal       Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
@@ -257,7 +265,7 @@ public:
                         void*       apApp,
                         void      (*apFunc)(sqlite3_context *, int, sqlite3_value **),
                         void      (*apStep)(sqlite3_context *, int, sqlite3_value **),
-                        void      (*apFinal)(sqlite3_context *),
+                        void      (*apFinal)(sqlite3_context *),  // NOLINT(readability/casting)
                         void      (*apDestroy)(void *));
 
     /**
@@ -271,7 +279,7 @@ public:
      * @param[in] aFuncName     Name of the SQL function to be created or redefined
      * @param[in] aNbArg        Number of arguments in the function
      * @param[in] abDeterministic Optimize for deterministic functions (most are). A random number generator is not.
-     * @param[in] apApp         Arbitrary pointer ot user data, accessible with sqlite3_user_data().
+     * @param[in] apApp         Arbitrary pointer of user data, accessible with sqlite3_user_data().
      * @param[in] apFunc        Pointer to a C-function to implement a scalar SQL function (apStep & apFinal NULL)
      * @param[in] apStep        Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
      * @param[in] apFinal       Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
@@ -285,7 +293,7 @@ public:
                                void*                apApp,
                                void               (*apFunc)(sqlite3_context *, int, sqlite3_value **),
                                void               (*apStep)(sqlite3_context *, int, sqlite3_value **),
-                               void               (*apFinal)(sqlite3_context *),
+                               void               (*apFinal)(sqlite3_context *), // NOLINT(readability/casting)
                                void               (*apDestroy)(void *))
     {
         return createFunction(aFuncName.c_str(), aNbArg, abDeterministic,
@@ -301,7 +309,7 @@ private:
     /**
      * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      */
-    void check(const int aRet) const; // throw(SQLite::Exception);
+    void check(const int aRet) const;
 
 private:
     sqlite3*    mpSQLite;   //!< Pointer to SQLite Database Connection Handle

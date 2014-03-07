@@ -19,7 +19,7 @@ namespace SQLite
 
 
 // Begins the SQLite transaction
-Transaction::Transaction(Database& aDatabase) : // throw(SQLite::Exception)
+Transaction::Transaction(Database& aDatabase) :
     mDatabase(aDatabase),
     mbCommited(false)
 {
@@ -44,7 +44,7 @@ Transaction::~Transaction(void) noexcept // nothrow
 }
 
 // Commit the transaction.
-void Transaction::commit(void) // throw(SQLite::Exception)
+void Transaction::commit(void)
 {
     if (false == mbCommited)
     {

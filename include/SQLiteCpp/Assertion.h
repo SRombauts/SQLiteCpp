@@ -25,21 +25,22 @@
 // if an assert handler is provided by user code, use it instead of assert()
 namespace SQLite
 {
-	 // declaration of the assert handler to define in user code
-	 void assertion_failed(const char* apFile, const long apLine, const char* apFunc, const char* apExpr, const char* apMsg);
+    // declaration of the assert handler to define in user code
+    void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
+                          const char* apExpr, const char* apMsg);
 
 #ifdef _MSC_VER
-	 #define __func__ __FUNCTION__
+    #define __func__ __FUNCTION__
 #endif
 // call the assert handler provided by user code
-#define SQLITECPP_ASSERT(expression,message) \
-	 if (!(expression))  SQLite::assertion_failed(__FILE__, __LINE__, __func__, #expression, message)
-}
+#define SQLITECPP_ASSERT(expression, message) \
+    if (!(expression))  SQLite::assertion_failed(__FILE__, __LINE__, __func__, #expression, message)
+} // namespace SQLite
 
 #else
 
 // if no assert handler provided by user code, use standard assert()
 // (note: in debug mode, assert() does nothing)
-#define SQLITECPP_ASSERT(expression,message)    assert(expression && message)
+#define SQLITECPP_ASSERT(expression, message)   assert(expression && message)
 
 #endif

@@ -1,10 +1,5 @@
 Add a full googletest suite
 
-Create a "SQLiteCppExample" repository using the wrapper as a Git submodule.
-
-Check C++11 explicit support
-
-Add a FAQ.txt
 Add a Tutorial: for SQLite newbies
 Create Github Wiki pages with the README.md and FAQ.txt: Installation, Examples, Tutorial, How to contribute
 

@@ -30,21 +30,18 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 // Constructor
 TEST(Database, ctor) {
     remove("test.db3");
-
-    EXPECT_THROW(SQLite::Database absent("test.db3"), SQLite::Exception);
-    SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
-    EXPECT_STREQ("test.db3", db.getFilename().c_str());
-    EXPECT_FALSE(db.tableExists("test"));
-    EXPECT_FALSE(db.tableExists(std::string("test")));
-    EXPECT_EQ(0, db.getLastInsertRowid());
-    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
-    EXPECT_TRUE(db.tableExists("test"));
-    EXPECT_TRUE(db.tableExists(std::string("test")));
-    EXPECT_EQ(0, db.getLastInsertRowid());
-
+    {
+        EXPECT_THROW(SQLite::Database absent("test.db3"), SQLite::Exception);
+        SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+        EXPECT_STREQ("test.db3", db.getFilename().c_str());
+        EXPECT_FALSE(db.tableExists("test"));
+        EXPECT_FALSE(db.tableExists(std::string("test")));
+        EXPECT_EQ(0, db.getLastInsertRowid());
+        EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
+        EXPECT_TRUE(db.tableExists("test"));
+        EXPECT_TRUE(db.tableExists(std::string("test")));
+        EXPECT_EQ(0, db.getLastInsertRowid());
+    } // Close DB test.db3
     remove("test.db3");
 
-// TODO test
-//    EXPECT_FALSE(db.hasEntity(entity1));
-//    EXPECT_EQ((size_t)0, db.unregisterEntity(entity1));
 }

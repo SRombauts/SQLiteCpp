@@ -28,7 +28,7 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 
 
 // Constructor
-TEST(Database, ctor) {
+TEST(Database, ctorExecCreateDropExist) {
     remove("test.db3");
     {
         EXPECT_THROW(SQLite::Database absent("test.db3"), SQLite::Exception);
@@ -37,11 +37,18 @@ TEST(Database, ctor) {
         EXPECT_FALSE(db.tableExists("test"));
         EXPECT_FALSE(db.tableExists(std::string("test")));
         EXPECT_EQ(0, db.getLastInsertRowid());
+
         EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
         EXPECT_TRUE(db.tableExists("test"));
         EXPECT_TRUE(db.tableExists(std::string("test")));
+        EXPECT_EQ(0, db.getLastInsertRowid());
+        
+        EXPECT_EQ(0, db.exec("DROP TABLE IF EXISTS test"));
+        EXPECT_FALSE(db.tableExists("test"));
+        EXPECT_FALSE(db.tableExists(std::string("test")));
         EXPECT_EQ(0, db.getLastInsertRowid());
     } // Close DB test.db3
     remove("test.db3");
 
 }
+

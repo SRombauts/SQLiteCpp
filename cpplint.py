@@ -3002,14 +3002,14 @@ def CheckBraces(filename, clean_lines, linenum, error):
     prevline = GetPreviousNonBlankLine(clean_lines, linenum)[0]
     if (not Search(r'[,;:}{(]\s*$', prevline) and
         not Match(r'\s*#', prevline)):
-      error(filename, linenum, 'whitespace/braces', 4,
+      error(filename, linenum, 'whitespace/braces', 0,
             '{ should almost always be at the end of the previous line')
 
   # An else clause should be on the same line as the preceding closing brace.
   if Match(r'\s*else\s*', line):
     prevline = GetPreviousNonBlankLine(clean_lines, linenum)[0]
     if Match(r'\s*}\s*$', prevline):
-      error(filename, linenum, 'whitespace/newline', 4,
+      error(filename, linenum, 'whitespace/newline', 0,
             'An else should appear on the same line as the preceding }')
 
   # If braces come on one side of an else, they should be on both.

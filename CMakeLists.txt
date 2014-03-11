@@ -123,7 +123,7 @@ endif (WIN32)
 
 # Optional additional targets:
 
-option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." OFF)
+option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." ON)
 if (SQLITECPP_RUN_CPPLINT)
     # add a cpplint target to the "all" target
     add_custom_target(SQLiteCpp_cpplint

@@ -33,6 +33,7 @@ TEST(Database, ctorExecCreateDropExist) {
     remove("test.db3");
     {
         EXPECT_THROW(SQLite::Database absent("test.db3"), SQLite::Exception);
+
         SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
         EXPECT_STREQ("test.db3", db.getFilename().c_str());
         EXPECT_FALSE(db.tableExists("test"));
@@ -50,6 +51,22 @@ TEST(Database, ctorExecCreateDropExist) {
         EXPECT_EQ(0, db.getLastInsertRowid());
     } // Close DB test.db3
     remove("test.db3");
-
 }
 
+
+// Constructor
+TEST(Database, ctorExecAndGet) {
+    remove("test.db3");
+    {
+        SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+
+        EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
+        EXPECT_EQ(0, db.getLastInsertRowid());
+
+        // first row
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"test\")"));
+        EXPECT_EQ(1, db.getLastInsertRowid());
+
+    } // Close DB test.db3
+    remove("test.db3");
+}

@@ -14,5 +14,5 @@ mkdir examples
 mkdir examples\example1
 copy ..\examples\example1\example.db3 examples\example1
 copy ..\examples\example1\logo.png    examples\example1
-ctest .
+ctest --output-on-failure
 cd ..

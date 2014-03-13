@@ -13,4 +13,4 @@ cmake --build .
 mkdir -p examples/example1
 cp ../examples/example1/example.db3 examples/example1
 cp ../examples/example1/logo.png    examples/example1
-ctest .
+ctest --output-on-failure

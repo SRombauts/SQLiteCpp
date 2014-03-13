@@ -230,6 +230,16 @@ public:
     }
 
     /**
+     * @brief Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection.
+     *
+     * @return Total number of rows modified since connection to the database. DROP tables does not count.
+     */
+    inline int getTotalChanges() const noexcept // nothrow
+    {
+        return sqlite3_total_changes(mpSQLite);
+    }
+
+    /**
      * @brief Return the filename used to open the database
      */
     inline const std::string& getFilename() const noexcept // nothrow

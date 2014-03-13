@@ -44,13 +44,13 @@ Statement::Statement(Database &aDatabase, const std::string& aQuery) :
 }
 
 // Finalize and unregister the SQL query from the SQLite Database Connection.
-Statement::~Statement(void) noexcept // nothrow
+Statement::~Statement() noexcept // nothrow
 {
     // the finalization will be done by the destructor of the last shared pointer
 }
 
 // Reset the statement to make it ready for a new execution
-void Statement::reset(void)
+void Statement::reset()
 {
     mbOk = false;
     mbDone = false;
@@ -166,7 +166,7 @@ void Statement::bind(const char* apName)
 
 
 // Execute a step of the query to fetch one row of results
-bool Statement::executeStep(void)
+bool Statement::executeStep()
 {
     if (false == mbDone)
     {
@@ -196,7 +196,7 @@ bool Statement::executeStep(void)
 }
 
 // Execute a one-step query with no expected result
-int Statement::exec(void)
+int Statement::exec()
 {
     if (false == mbDone)
     {
@@ -317,7 +317,7 @@ Statement::Ptr::Ptr(const Statement::Ptr& aPtr) :
 /**
  * @brief Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
  */
-Statement::Ptr::~Ptr(void) noexcept // nothrow
+Statement::Ptr::~Ptr() noexcept // nothrow
 {
     assert(NULL != mpRefCount);
     assert(0 != *mpRefCount);

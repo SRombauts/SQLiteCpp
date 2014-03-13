@@ -69,12 +69,12 @@ public:
     /**
      * @brief Finalize and unregister the SQL query from the SQLite Database Connection.
      */
-    virtual ~Statement(void) noexcept; // nothrow
+    virtual ~Statement() noexcept; // nothrow
 
     /**
      * @brief Reset the statement to make it ready for a new execution.
      */
-    void reset(void);
+    void reset();
 
     ////////////////////////////////////////////////////////////////////////////
     // Bind a value to a parameter of the SQL statement,
@@ -238,7 +238,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    bool executeStep(void);
+    bool executeStep();
 
     /**
      * @brief Execute a one-step query with no expected result.
@@ -259,7 +259,7 @@ public:
      *
      * @throw SQLite::Exception in case of error, or if row of results are returned !
      */
-    int exec(void);
+    int exec();
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -302,27 +302,27 @@ public:
     ////////////////////////////////////////////////////////////////////////////
 
     /// @brief Return the UTF-8 SQL Query.
-    inline const std::string& getQuery(void) const
+    inline const std::string& getQuery() const
     {
         return mQuery;
     }
     /// @brief Return the number of columns in the result set returned by the prepared statement
-    inline int getColumnCount(void) const
+    inline int getColumnCount() const
     {
         return mColumnCount;
     }
     /// @brief true when a row has been fetched with executeStep()
-    inline bool isOk(void) const
+    inline bool isOk() const
     {
         return mbOk;
     }
     /// @brief true when the last executeStep() had no more row to fetch
-    inline bool isDone(void) const
+    inline bool isDone() const
     {
         return mbDone;
     }
     /// @brief Return UTF-8 encoded English language explanation of the most recent error.
-    inline const char* errmsg(void) const
+    inline const char* errmsg() const
     {
         return sqlite3_errmsg(mStmtPtr);
     }
@@ -343,7 +343,7 @@ public:
         // Copy constructor increments the ref counter
         Ptr(const Ptr& aPtr);
         // Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
-        ~Ptr(void) noexcept; // nothrow (no virtual destructor needed here)
+        ~Ptr() noexcept; // nothrow (no virtual destructor needed here)
 
         /// @brief Inline cast operator returning the pointer to SQLite Database Connection Handle
         inline operator sqlite3*() const

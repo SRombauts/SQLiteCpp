@@ -55,12 +55,12 @@ public:
     /**
      * @brief Safely rollback the transaction if it has not been committed.
      */
-    virtual ~Transaction(void) noexcept; // nothrow
+    virtual ~Transaction() noexcept; // nothrow
 
     /**
      * @brief Commit the transaction.
      */
-    void commit(void);
+    void commit();
 
 private:
     // Transaction must be non-copyable

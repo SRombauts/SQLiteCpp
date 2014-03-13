@@ -27,7 +27,7 @@ Transaction::Transaction(Database& aDatabase) :
 }
 
 // Safely rollback the transaction if it has not been committed.
-Transaction::~Transaction(void) noexcept // nothrow
+Transaction::~Transaction() noexcept // nothrow
 {
     if (false == mbCommited)
     {
@@ -44,7 +44,7 @@ Transaction::~Transaction(void) noexcept // nothrow
 }
 
 // Commit the transaction.
-void Transaction::commit(void)
+void Transaction::commit()
 {
     if (false == mbCommited)
     {

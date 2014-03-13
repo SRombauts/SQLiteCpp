@@ -42,12 +42,12 @@ class Example
 {
 public:
     // Constructor
-    Example(void) :
+    Example() :
         mDb(filename_example_db3),                                  // Open a database file in readonly mode
         mQuery(mDb, "SELECT * FROM test WHERE weight > :min_weight")// Compile a SQL query, containing one parameter (index 1)
     {
     }
-    virtual ~Example(void)
+    virtual ~Example()
     {
     }
 
@@ -75,7 +75,7 @@ private:
 };
 
 
-int main (void)
+int main ()
 {
     // Basic example (1/6) :
     try

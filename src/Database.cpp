@@ -54,7 +54,7 @@ Database::Database(const std::string& aFilename, const int aFlags /*= SQLITE_OPE
 }
 
 // Close the SQLite database connection.
-Database::~Database(void) noexcept // nothrow
+Database::~Database() noexcept // nothrow
 {
     int ret = sqlite3_close(mpSQLite);
     // Never throw an exception in a destructor

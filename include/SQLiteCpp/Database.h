@@ -87,7 +87,7 @@ public:
      *
      * @warning assert in case of error
      */
-    virtual ~Database(void) noexcept; // nothrow
+    virtual ~Database() noexcept; // nothrow
 
     /**
      * @brief Shortcut to execute one or multiple statements without results.
@@ -224,7 +224,7 @@ public:
      *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */
-    inline sqlite3_int64 getLastInsertRowid(void) const noexcept // nothrow
+    inline sqlite3_int64 getLastInsertRowid() const noexcept // nothrow
     {
         return sqlite3_last_insert_rowid(mpSQLite);
     }
@@ -232,7 +232,7 @@ public:
     /**
      * @brief Return the filename used to open the database
      */
-    inline const std::string& getFilename(void) const noexcept // nothrow
+    inline const std::string& getFilename() const noexcept // nothrow
     {
         return mFilename;
     }
@@ -240,7 +240,7 @@ public:
     /**
      * @brief Return UTF-8 encoded English language explanation of the most recent error.
      */
-    inline const char* errmsg(void) const noexcept // nothrow
+    inline const char* errmsg() const noexcept // nothrow
     {
         return sqlite3_errmsg(mpSQLite);
     }

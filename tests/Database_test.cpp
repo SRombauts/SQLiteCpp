@@ -111,10 +111,12 @@ TEST(Database, ctorExecAndGet) {
         EXPECT_EQ(2, db.getLastInsertRowid());
         EXPECT_EQ(7, db.getTotalChanges());
 
-        // insert two rows with only one statement => returns 2
+#if (SQLITE_VERSION_NUMBER >= 3007011)
+        // insert two rows with only one statement (starting with SQLite 3.7.11) => returns 2
         EXPECT_EQ(2, db.exec("INSERT INTO test VALUES (NULL, \"third\"), (NULL, \"fourth\");"));
         EXPECT_EQ(4, db.getLastInsertRowid());
         EXPECT_EQ(9, db.getTotalChanges());
+#endif
 
     } // Close DB test.db3
     remove("test.db3");

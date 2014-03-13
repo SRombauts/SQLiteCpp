@@ -32,8 +32,10 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 TEST(Database, ctorExecCreateDropExist) {
     remove("test.db3");
     {
-        EXPECT_THROW(SQLite::Database absent("test.db3"), SQLite::Exception);
+        // Try to open an unexisting database
+        EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
 
+        // Create a new database
         SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
         EXPECT_STREQ("test.db3", db.getFilename().c_str());
         EXPECT_FALSE(db.tableExists("test"));
@@ -58,14 +60,51 @@ TEST(Database, ctorExecCreateDropExist) {
 TEST(Database, ctorExecAndGet) {
     remove("test.db3");
     {
+        // Create a new database
         SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
 
-        EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
+        // Create a new table with an explicit "id" column aliasing the underlying rowid
+        // NOTE: here exec() returns 0 only because it is the first statements since database connexion,
+        //       but its return is an undefined value for "CREATE TABLE" statements.
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
         EXPECT_EQ(0, db.getLastInsertRowid());
 
-        // first row
-        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"test\")"));
+        // first row : insert the "first" text value into new row of id 1
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\")"));
         EXPECT_EQ(1, db.getLastInsertRowid());
+
+        // second row : insert the "second" text value into new row of id 2
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"second\")"));
+        EXPECT_EQ(2, db.getLastInsertRowid());
+
+        // third row : insert the "third" text value into new row of id 3
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"third\")"));
+        EXPECT_EQ(3, db.getLastInsertRowid());
+
+        // update the second row : update text value to "second_updated"
+        EXPECT_EQ(1, db.exec("UPDATE test SET value=\"second-updated\" WHERE id='2'"));
+        EXPECT_EQ(3, db.getLastInsertRowid()); // last inserted row ID is still 3
+
+        // delete the third row
+        EXPECT_EQ(1, db.exec("DELETE FROM test WHERE id='3'"));
+        EXPECT_EQ(3, db.getLastInsertRowid());
+
+        // drop the whole table, ie the two remaining columns
+        // NOTE: here exec() returns 1, like the last time, as it is an undefined value for "DROP TABLE" statements
+        db.exec("DROP TABLE IF EXISTS test");
+        EXPECT_FALSE(db.tableExists("test"));
+
+        // Re-Create the same table
+        // NOTE: here exec() returns 1, like the last time, as it is an undefined value for "CREATE TABLE" statements
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+
+        // insert two rows with two *different* statements => returns only 1, ie. for the second INSERT statement
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\");INSERT INTO test VALUES (NULL, \"second\");"));
+        EXPECT_EQ(2, db.getLastInsertRowid());
+
+        // insert two rows with only one statement => returns 2
+        EXPECT_EQ(2, db.exec("INSERT INTO test VALUES (NULL, \"third\"), (NULL, \"fourth\");"));
+        EXPECT_EQ(4, db.getLastInsertRowid());
 
     } // Close DB test.db3
     remove("test.db3");

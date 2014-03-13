@@ -195,8 +195,8 @@ int main (void)
         SQLite::Database    db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
+        // Create a new table with an explicit "id" column aliasing the underlying rowid
         db.exec("DROP TABLE IF EXISTS test");
-
         db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
 
         // first row

@@ -61,13 +61,13 @@ Database::~Database(void) noexcept // nothrow
     SQLITECPP_ASSERT(SQLITE_OK == ret, sqlite3_errmsg(mpSQLite));  // See SQLITECPP_ENABLE_ASSERT_HANDLER
 }
 
-// Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT...).
+// Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT, CREATE...).
 int Database::exec(const char* apQueries)
 {
     int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);
     check(ret);
 
-    // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
+    // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE only)
     return sqlite3_changes(mpSQLite);
 }
 

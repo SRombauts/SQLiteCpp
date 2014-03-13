@@ -93,8 +93,8 @@ public:
      * @brief Shortcut to execute one or multiple statements without results.
      *
      *  This is useful for any kind of statements other than the Data Query Language (DQL) "SELECT" :
-     *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
      *  - Data Manipulation Language (DML) statements "INSERT", "UPDATE" and "DELETE"
+     *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
      *  - Data Control Language (DCL) statements "GRANT", "REVOKE", "COMMIT" and "ROLLBACK"
      *
      * @see Statement::exec() to handle precompiled statements (for better performances) without results
@@ -102,7 +102,8 @@ public:
      *
      * @param[in] apQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
      *
-     * @return number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
+     * @return number of rows modified by the *last* INSERT, UPDATE or DELETE statement (beware of multiple statements)
+     * @warning undefined for CREATE or DROP table: returns the value of a previous INSERT, UPDATE or DELETE statement.
      *
      * @throw SQLite::Exception in case of error
      */
@@ -112,8 +113,8 @@ public:
      * @brief Shortcut to execute one or multiple statements without results.
      *
      *  This is useful for any kind of statements other than the Data Query Language (DQL) "SELECT" :
-     *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
      *  - Data Manipulation Language (DML) statements "INSERT", "UPDATE" and "DELETE"
+     *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
      *  - Data Control Language (DCL) statements "GRANT", "REVOKE", "COMMIT" and "ROLLBACK"
      *
      * @see Statement::exec() to handle precompiled statements (for better performances) without results
@@ -121,7 +122,8 @@ public:
      *
      * @param[in] aQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
      *
-     * @return number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
+     * @return number of rows modified by the *last* INSERT, UPDATE or DELETE statement (beware of multiple statements)
+     * @warning undefined for CREATE or DROP table: returns the value of a previous INSERT, UPDATE or DELETE statement.
      *
      * @throw SQLite::Exception in case of error
      */
@@ -216,6 +218,9 @@ public:
 
     /**
      * @brief Get the rowid of the most recent successful INSERT into the database from the current connection.
+     *
+     *  Each entry in an SQLite table always has a unique 64-bit signed integer key called the rowid.
+     * If the table has a column of type INTEGER PRIMARY KEY, then it is an alias for the rowid.
      *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */

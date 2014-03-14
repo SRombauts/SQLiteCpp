@@ -28,7 +28,6 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 #endif
 
 
-// Constructor
 TEST(Database, ctorExecCreateDropExist) {
     remove("test.db3");
     {
@@ -55,9 +54,7 @@ TEST(Database, ctorExecCreateDropExist) {
     remove("test.db3");
 }
 
-
-// Constructor
-TEST(Database, ctorExecAndGet) {
+TEST(Database, exec) {
     remove("test.db3");
     {
         // Create a new database
@@ -118,6 +115,29 @@ TEST(Database, ctorExecAndGet) {
         EXPECT_EQ(9, db.getTotalChanges());
 #endif
 
+    } // Close DB test.db3
+    remove("test.db3");
+}
+
+
+TEST(Database, execAndGet) {
+    remove("test.db3");
+    {
+        // Create a new database
+        SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+
+        // Create a new table with an explicit "id" column aliasing the underlying rowid
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT, weight INTEGER)");
+
+        // insert a few rows
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\",  3)"));
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"second\", 5)"));
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"third\",  7)"));
+
+        // Get a single value result with an easy to use shortcut
+        EXPECT_STREQ("second",  db.execAndGet("SELECT value FROM test WHERE id=2"));
+        EXPECT_STREQ("third",   db.execAndGet("SELECT value FROM test WHERE weight=7"));
+        EXPECT_EQ(3,       (int)db.execAndGet("SELECT weight FROM test WHERE value=\"first\""));
     } // Close DB test.db3
     remove("test.db3");
 }

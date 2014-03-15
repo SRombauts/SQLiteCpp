@@ -119,7 +119,6 @@ TEST(Database, exec) {
     remove("test.db3");
 }
 
-
 TEST(Database, execAndGet) {
     remove("test.db3");
     {
@@ -138,6 +137,32 @@ TEST(Database, execAndGet) {
         EXPECT_STREQ("second",  db.execAndGet("SELECT value FROM test WHERE id=2"));
         EXPECT_STREQ("third",   db.execAndGet("SELECT value FROM test WHERE weight=7"));
         EXPECT_EQ(3,       (int)db.execAndGet("SELECT weight FROM test WHERE value=\"first\""));
+    } // Close DB test.db3
+    remove("test.db3");
+}
+
+TEST(Database, execException) {
+    remove("test.db3");
+    {
+        // Create a new database
+        SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+
+        // exception with SQL error: "no such table"
+        EXPECT_THROW(db.exec("INSERT INTO test VALUES (NULL, \"first\",  3)"), SQLite::Exception);
+
+        // Create a new table
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT, weight INTEGER)");
+
+        // exception with SQL error: "table test has 3 columns but 2 values were supplied"
+        EXPECT_THROW(db.exec("INSERT INTO test VALUES (NULL,  3)"), SQLite::Exception);
+
+        // exception with SQL error: "No row to get a column from"
+        EXPECT_THROW(db.execAndGet("SELECT weight FROM test WHERE value=\"first\""), SQLite::Exception);
+
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\",  3)"));
+        // exception with SQL error: "No row to get a column from"
+        EXPECT_THROW(db.execAndGet("SELECT weight FROM test WHERE value=\"second\""), SQLite::Exception);
+
     } // Close DB test.db3
     remove("test.db3");
 }

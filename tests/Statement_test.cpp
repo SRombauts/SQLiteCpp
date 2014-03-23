@@ -32,8 +32,17 @@ TEST(Statement, exec) {
         SQLite::Statement   query(db, "SELECT * FROM test");
         EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
         EXPECT_EQ(2, query.getColumnCount ());
-
-
+        EXPECT_EQ(false, query.isOk());
+        EXPECT_EQ(false, query.isDone());
+        EXPECT_THROW(query.isColumnNull(-1), SQLite::Exception);
+        EXPECT_THROW(query.isColumnNull(0), SQLite::Exception);
+        EXPECT_THROW(query.isColumnNull(1), SQLite::Exception);
+        EXPECT_THROW(query.isColumnNull(2), SQLite::Exception);
+        EXPECT_THROW(query.getColumn(-1), SQLite::Exception);
+        EXPECT_THROW(query.getColumn(0), SQLite::Exception);
+        EXPECT_THROW(query.getColumn(1), SQLite::Exception);
+        EXPECT_THROW(query.getColumn(2), SQLite::Exception);
+        query.get
     } // Close DB test.db3
     remove("test.db3");
 }

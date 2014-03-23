@@ -42,7 +42,18 @@ TEST(Statement, exec) {
         EXPECT_THROW(query.getColumn(0), SQLite::Exception);
         EXPECT_THROW(query.getColumn(1), SQLite::Exception);
         EXPECT_THROW(query.getColumn(2), SQLite::Exception);
-        query.get
+
+        query.reset();
+        EXPECT_EQ(false, query.isOk());
+        EXPECT_EQ(false, query.isDone());
+
+        query.exec();
+        EXPECT_EQ(false, query.isOk());
+        EXPECT_EQ(true, query.isDone());
+        query.reset();
+        EXPECT_EQ(false, query.isOk());
+        EXPECT_EQ(false, query.isDone());
+
     } // Close DB test.db3
     remove("test.db3");
 }

@@ -17,7 +17,7 @@
 #include <cstdio>
 
 
-TEST(Statement, exec) {
+TEST(Statement, invalid) {
     remove("test.db3");
     {
         // Create a new database
@@ -49,10 +49,22 @@ TEST(Statement, exec) {
 
         query.exec();
         EXPECT_EQ(false, query.isOk());
-        EXPECT_EQ(true, query.isDone());
+        EXPECT_EQ(true,  query.isDone());
         query.reset();
         EXPECT_EQ(false, query.isOk());
         EXPECT_EQ(false, query.isDone());
+
+        query.reset();
+        EXPECT_THROW(query.bind(-1, 123), SQLite::Exception);
+        EXPECT_THROW(query.bind(0, 123), SQLite::Exception);
+        EXPECT_THROW(query.bind(1, 123), SQLite::Exception);
+        EXPECT_THROW(query.bind(2, 123), SQLite::Exception);
+        EXPECT_THROW(query.bind(0, "abc"), SQLite::Exception);
+        EXPECT_THROW(query.bind(0), SQLite::Exception);
+
+        query.exec();
+        EXPECT_THROW(query.isColumnNull(0), SQLite::Exception);
+        EXPECT_THROW(query.getColumn(0), SQLite::Exception);
 
     } // Close DB test.db3
     remove("test.db3");

@@ -32,8 +32,8 @@ TEST(Statement, invalid) {
         SQLite::Statement   query(db, "SELECT * FROM test");
         EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
         EXPECT_EQ(2, query.getColumnCount ());
-        EXPECT_EQ(false, query.isOk());
-        EXPECT_EQ(false, query.isDone());
+        EXPECT_FALSE(query.isOk());
+        EXPECT_FALSE(query.isDone());
         EXPECT_THROW(query.isColumnNull(-1), SQLite::Exception);
         EXPECT_THROW(query.isColumnNull(0), SQLite::Exception);
         EXPECT_THROW(query.isColumnNull(1), SQLite::Exception);
@@ -44,15 +44,15 @@ TEST(Statement, invalid) {
         EXPECT_THROW(query.getColumn(2), SQLite::Exception);
 
         query.reset();
-        EXPECT_EQ(false, query.isOk());
-        EXPECT_EQ(false, query.isDone());
+        EXPECT_FALSE(query.isOk());
+        EXPECT_FALSE(query.isDone());
 
         query.exec();
-        EXPECT_EQ(false, query.isOk());
-        EXPECT_EQ(true,  query.isDone());
+        EXPECT_FALSE(query.isOk());
+        EXPECT_TRUE( query.isDone());
         query.reset();
-        EXPECT_EQ(false, query.isOk());
-        EXPECT_EQ(false, query.isDone());
+        EXPECT_FALSE(query.isOk());
+        EXPECT_FALSE(query.isDone());
 
         query.reset();
         EXPECT_THROW(query.bind(-1, 123), SQLite::Exception);

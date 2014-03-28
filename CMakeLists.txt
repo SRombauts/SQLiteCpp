@@ -175,6 +175,10 @@ endif(SQLITECPP_BUILD_EXAMPLES)
 option(SQLITECPP_BUILD_TESTS "Build and run tests." ON)
 if (SQLITECPP_BUILD_TESTS)
     # add the subdirectory containing the CMakeLists.txt for the gtest library
+    if (NOT MSVC)
+        add_definitions(-Wno-variadic-macros -Wno-long-long -Wno-conversion -Wno-switch-enum)
+    endif (NOT MSVC)
+    
     add_subdirectory(googletest) 
     include_directories("${PROJECT_SOURCE_DIR}/googletest/include")
 

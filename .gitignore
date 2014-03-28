@@ -22,3 +22,8 @@ CMakeFiles
 *.dir
 Testing
 Win32
+
+SQLiteCpp_example1
+SQLiteCpp_tests
+
+!FindSQLiteCpp.cmake

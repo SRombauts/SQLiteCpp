@@ -49,8 +49,6 @@ public:
 // GCC 4.7 and following have noexcept
 #elif defined(__clang__) && __has_feature(cxx_noexcept)
 // Clang 3.0 and above have noexcept
-#elif defined(_MSC_VER) && (_MSC_VER >= 1700)
-// Visual Studio 2012 and above have noexcept
 #else
     #define noexcept    throw()
 #endif

@@ -29,7 +29,7 @@ endif
 
 CPPDEPS = -MT $@ -MF`echo $@ | sed -e 's,\.o$$,.d,'` -MD -MP
 
-SQLITE_CXXFLAGS = $(BUILD_FLAGS) $(CXXFLAGS)
+SQLITE_CXXFLAGS = $(BUILD_FLAGS) $(CXXFLAGS) -I include
 SQLITE_EXAMPLE1_OBJECTS =  \
 	$(BUILD)/main.o \
 	$(BUILD)/Column.o \

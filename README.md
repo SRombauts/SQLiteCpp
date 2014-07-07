@@ -253,3 +253,4 @@ See also the file WRAPPERS.md offering a more complete comparison of other wrapp
  - [SQLite++](http://sqlitepp.berlios.de/): uses boost build system, Boost License 1.0 
  - [CppSQLite](http://www.codeproject.com/Articles/6343/CppSQLite-C-Wrapper-for-SQLite/): famous Code Project but old design, BSD License 
  - [easySQLite](http://code.google.com/p/easysqlite/): manages table as structured objects, complex 
+ - [sqlite_modern_cpp](https://github.com/keramer/sqlite_modern_cpp): modern C++11, all in one file, MIT license

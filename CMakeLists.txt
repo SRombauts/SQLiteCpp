@@ -115,10 +115,13 @@ endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL
 
 # SQLite3 library (Windows only)
 
+option (SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
 if (WIN32)
-    # build the SQLite3 C library for Windows (for ease of use) versus Linux sqlite3-dev package
-    add_subdirectory(sqlite3) 
-    include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
+    if (SQLITECPP_INTERNAL_SQLITE)
+        # build the SQLite3 C library for Windows (for ease of use) versus Linux sqlite3-dev package
+        add_subdirectory(sqlite3)
+        include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
+    endif (SQLITECPP_INTERNAL_SQLITE)
 endif (WIN32)
 
 

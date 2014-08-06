@@ -7,12 +7,12 @@ Publish a versionned ZIP file in Google Project Mirror
 
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
 
-Missing features in v0.5.0:
+Missing features in v0.9.9:
+- getColumnByName() (issue #23) ? std::map getRow() ?
 - bind a SQLITE_STATIC value (string/blob)
 - bind a dynamic value with zerocopy (unlike SQLITE_TRANSIENT) with custom deleter
-- getColumnByName ? std::map getRow() ?
 
-Missing documentation in v0.5.0:
+Missing documentation in v0.9.9:
 - explain the noncopyable property for RAII design
 - comment on returning error code instead of exception that shall not be thrown when exepected (!?)
 

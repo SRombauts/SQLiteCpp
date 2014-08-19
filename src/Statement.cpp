@@ -58,6 +58,17 @@ void Statement::reset()
     check(ret);
 }
 
+// Clears away all the bindings of a prepared statement.
+// "Contrary to the intuition of many, [sqlite3_reset()] does not reset
+//    ** the [sqlite3_bind_blob | bindings] on a [prepared statement]."
+void Statement::clearBindings(void)
+{
+    mbOk = false;
+    mbDone = false;
+    int ret = sqlite3_clear_bindings(mStmtPtr);
+    check(ret);
+}
+
 // Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const int& aValue)
 {

@@ -75,6 +75,11 @@ public:
      * @brief Reset the statement to make it ready for a new execution.
      */
     void reset();
+    
+    /**
+     * @brief Clears away all the bindings of a prepared statement.
+     */
+    void clearBindings(void); // throw(SQLite::Exception)
 
     ////////////////////////////////////////////////////////////////////////////
     // Bind a value to a parameter of the SQL statement,

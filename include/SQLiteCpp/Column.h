@@ -49,7 +49,7 @@ public:
         mIndex(aOther.mIndex)
     {
     }
-    
+
     /**
      * @brief Encapsulation of a Column in a Row of the result.
      *

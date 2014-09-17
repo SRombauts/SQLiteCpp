@@ -43,6 +43,13 @@ namespace SQLite
 class Column
 {
 public:
+    // Make clang happy by explicitly implementing the copy-constructor:
+    Column(const Column & aOther) :
+        mStmtPtr(aOther.mStmtPtr),
+        mIndex(aOther.mIndex)
+    {
+    }
+    
     /**
      * @brief Encapsulation of a Column in a Row of the result.
      *

@@ -75,7 +75,7 @@ public:
      * @brief Reset the statement to make it ready for a new execution.
      */
     void reset();
-    
+
     /**
      * @brief Clears away all the bindings of a prepared statement.
      */

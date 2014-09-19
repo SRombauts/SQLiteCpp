@@ -362,14 +362,14 @@ public:
             return mpStmt;
         }
 
-        int getLastStatus () const
+        int getLastStatus() const
         {
-          return mLastStatus ;
+          return mLastStatus;
         }
 
-        void setLastStatus (int status)
+        void setLastStatus(int status)
         {
-          mLastStatus = status ;
+          mLastStatus = status;
         }
 
     private:
@@ -378,11 +378,11 @@ public:
         /// @}
 
     private:
-        sqlite3*        mpSQLite;   //!< Pointer to SQLite Database Connection Handle
-        sqlite3_stmt*   mpStmt;     //!< Pointer to SQLite Statement Object
-        unsigned int*   mpRefCount; //!< Pointer to the heap allocated reference counter of the sqlite3_stmt
-                                    //!< (to share it with Column objects)
-        int             mLastStatus;//!< The return status of the last statement evaluation
+        sqlite3*        mpSQLite;    //!< Pointer to SQLite Database Connection Handle
+        sqlite3_stmt*   mpStmt;      //!< Pointer to SQLite Statement Object
+        unsigned int*   mpRefCount;  //!< Pointer to the heap allocated reference counter of the sqlite3_stmt
+                                     //!< (to share it with Column objects)
+        int             mLastStatus; //!< The return status of the last statement evaluation
     };
 
 private:

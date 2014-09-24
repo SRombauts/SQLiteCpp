@@ -50,7 +50,7 @@ public:
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
      *
      * @param[in] aDatabase the SQLite Database Connection
-     * @param[in] apQuery   an UTF-8 encoded query string 
+     * @param[in] apQuery   an UTF-8 encoded query string
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
@@ -362,16 +362,27 @@ public:
             return mpStmt;
         }
 
+        int getLastStatus() const
+        {
+          return mLastStatus;
+        }
+
+        void setLastStatus(int status)
+        {
+          mLastStatus = status;
+        }
+
     private:
         /// @{ Unused/forbidden copy operator
         Ptr& operator=(const Ptr& aPtr);
         /// @}
 
     private:
-        sqlite3*        mpSQLite;   //!< Pointer to SQLite Database Connection Handle
-        sqlite3_stmt*   mpStmt;     //!< Pointer to SQLite Statement Object
-        unsigned int*   mpRefCount; //!< Pointer to the heap allocated reference counter of the sqlite3_stmt
-                                    //!< (to share it with Column objects)
+        sqlite3*        mpSQLite;    //!< Pointer to SQLite Database Connection Handle
+        sqlite3_stmt*   mpStmt;      //!< Pointer to SQLite Statement Object
+        unsigned int*   mpRefCount;  //!< Pointer to the heap allocated reference counter of the sqlite3_stmt
+                                     //!< (to share it with Column objects)
+        int             mLastStatus; //!< The return status of the last statement evaluation
     };
 
 private:
@@ -385,7 +396,7 @@ private:
      *
      * @param[in] SQLite return code to test against the SQLITE_OK expected value
      */
-    void check(const int aRet) const;
+    void check(const int aRet);
 
 private:
     std::string     mQuery;         //!< UTF-8 SQL Query

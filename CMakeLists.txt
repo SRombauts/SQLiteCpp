@@ -127,7 +127,7 @@ endif (WIN32)
 
 # Optional additional targets:
 
-option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." ON)
+option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." OFF)
 if (SQLITECPP_RUN_CPPLINT)
     # add a cpplint target to the "all" target
     add_custom_target(SQLiteCpp_cpplint
@@ -138,7 +138,7 @@ else (SQLITECPP_RUN_CPPLINT)
     message(STATUS "SQLITECPP_RUN_CPPLINT OFF")
 endif (SQLITECPP_RUN_CPPLINT)
 
-option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." ON)
+option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." OFF)
 if (SQLITECPP_RUN_CPPCHECK)
     # add a cppcheck target to the "all" target
     add_custom_target(SQLiteCpp_cppcheck
@@ -149,7 +149,7 @@ else (SQLITECPP_RUN_CPPCHECK)
     message(STATUS "SQLITECPP_RUN_CPPCHECK OFF")
 endif (SQLITECPP_RUN_CPPCHECK)
 
-option(SQLITECPP_RUN_DOXYGEN "Run Doxygen C++ documentation tool." ON)
+option(SQLITECPP_RUN_DOXYGEN "Run Doxygen C++ documentation tool." OFF)
 if (SQLITECPP_RUN_DOXYGEN)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
@@ -166,7 +166,7 @@ else (SQLITECPP_RUN_DOXYGEN)
     message(STATUS "SQLITECPP_RUN_DOXYGEN OFF")
 endif (SQLITECPP_RUN_DOXYGEN)
 
-option(SQLITECPP_BUILD_EXAMPLES "Build examples." ON)
+option(SQLITECPP_BUILD_EXAMPLES "Build examples." OFF)
 if (SQLITECPP_BUILD_EXAMPLES)
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
@@ -175,13 +175,13 @@ else(SQLITECPP_BUILD_EXAMPLES)
     message(STATUS "SQLITECPP_BUILD_EXAMPLES OFF")
 endif(SQLITECPP_BUILD_EXAMPLES)
 
-option(SQLITECPP_BUILD_TESTS "Build and run tests." ON)
+option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 if (SQLITECPP_BUILD_TESTS)
     # add the subdirectory containing the CMakeLists.txt for the gtest library
     if (NOT MSVC)
         add_definitions(-Wno-variadic-macros -Wno-long-long -Wno-conversion -Wno-switch-enum)
     endif (NOT MSVC)
-    
+
     add_subdirectory(googletest) 
     include_directories("${PROJECT_SOURCE_DIR}/googletest/include")
 

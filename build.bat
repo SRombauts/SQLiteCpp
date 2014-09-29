@@ -1,12 +1,12 @@
-@REM Copyright (c) 2013 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+@REM Copyright (c) 2013-2014 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 @REM 
 @REM Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 @REM or copy at http://opensource.org/licenses/MIT)
 
 mkdir build
 cd build
-@REM generate solution for Visual Studio 2010, and build it
-cmake -DSQLITECPP_RUN_CPPLINT=ON -DSQLITECPP_RUN_CPPCHECK=ON -DSQLITECPP_RUN_DOXYGEN=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON .. -G "Visual Studio 10"
+@REM generate solution for Visual Studio, and build it
+cmake -DSQLITECPP_RUN_CPPLINT=ON -DSQLITECPP_RUN_CPPCHECK=ON -DSQLITECPP_RUN_DOXYGEN=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
 cmake --build .
 
 @REM prepare and launch tests

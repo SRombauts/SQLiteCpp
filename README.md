@@ -76,11 +76,8 @@ Under Debian/Ubuntu/Mint Linux, install the libsqlite3-dev package.
 
 ### Building the examples:
 
-A basic Makefile is provided, tested under Linux/Ubuntu 12.10, requiring the sqlite3 static library (sqlite3-dev Debian/Ubuntu package)
-Solutions for Visual Studio 2008 and 2010 are provided in the "msvc/" directory, directly using the sqlite3.c source code for ease of use.
-
 #### CMake and test
-A CMake configuration file is also provided for better multiplatform support and testing.
+A CMake configuration file is also provided for multiplatform support and testing.
 
 Typical generic build (see also "build.bat" or "./build.sh"):
 

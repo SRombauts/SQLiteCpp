@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
  *
- * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2014 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -269,7 +269,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * @brief Return a copie of the column data specified by its index
+     * @brief Return a copy of the column data specified by its index
      *
      *  Can be used to access the data of the current row of result when applicable,
      * while the executeStep() method returns true.

@@ -1,10 +1,25 @@
-# Main CMake file for compiling the library itself, examples and tests.
+IF(BIICODE)
+  include(${CMAKE_HOME_DIRECTORY}/biicode.cmake)
+  # Initializes block variables
+  INIT_BIICODE_BLOCK()
+
+  # Include base block dir
+  ADD_BIICODE_TARGETS()
+  
+  # Link target with dl for linux
+  IF (UNIX)
+   IF(NOT APPLE)
+     TARGET_LINK_LIBRARIES(${BII_BLOCK_TARGET} INTERFACE dl)
+   ENDIF()
+  ENDIF()  
+
+ELSE()
+  # Main CMake file for compiling the library itself, examples and tests.
 #
 # Copyright (c) 2012-2014 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT) 
-
 cmake_minimum_required(VERSION 2.6)
 project(SQLiteCpp)
 
@@ -207,3 +222,4 @@ if (SQLITECPP_BUILD_TESTS)
 else (SQLITECPP_BUILD_TESTS)
     message(STATUS "SQLITECPP_BUILD_TESTS OFF")
 endif (SQLITECPP_BUILD_TESTS)
+ENDIF()

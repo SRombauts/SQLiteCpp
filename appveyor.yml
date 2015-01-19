@@ -1,0 +1,41 @@
+version: 1.0.{build}
+
+install:
+  - ps: wget https://s3.amazonaws.com/biibinaries/thirdparty/cmake-3.0.2-win32-x86.zip -OutFile cmake.zip
+  - cmd: 7z x cmake.zip -o"C:\Program Files (x86)\" -y
+  - cmd: set PATH=%PATH:CMake 2.8\bin=%;C:\Program Files (x86)\cmake-3.0.2-win32-x86\bin
+  - cmd: cmake --version
+  - ps: wget https://s3.amazonaws.com/biibinaries/release/2.1.1/bii-win_2_1_1.exe -OutFile bii-win.exe
+  - cmd: bii-win.exe /VERYSILENT
+  - cmd: set PATH=%PATH%;C:\Program Files (x86)\BiiCode\bii
+  - cmd: bii -v
+  - ps: wget https://s3.amazonaws.com/biibinaries/thirdparty/MinGW.zip -OutFile mingw.zip
+  - cmd: 7z x mingw.zip -oC:\MinGW -y
+  - cmd: set PATH=%PATH:Git\bin=%;C:\MinGW\bin
+  - cmd: del bii-win.exe
+  - cmd: del cmake.zip  
+
+before_build:
+  - cmd: bii init %project_name%
+  - cmd: cd %project_name%
+  - cmd: bii new %block_user%/%block_name%
+  # move files
+  - cmd: for %%i in (../*) do if %%i NEQ "%project_name%" move "..\%%i" blocks\%block_user%\%block_name%\
+  # move directories
+  - cmd: for /d %%i in (../*) do if %%i NEQ "%project_name%" move "..\%%i" blocks\%block_user%\%block_name%\
+
+build_script:
+  - cmd: bii cpp:build
+  - cmd: move bin\sqlite\sqlite\examples bin\
+
+test_script:
+  - cmd: cd bin
+  - cmd: sqlite_sqlite_examples_example1_main.exe
+
+environment:
+  project_name:
+    "myproject"
+  block_user:
+    "sqlite"
+  block_name:
+    "sqlite"

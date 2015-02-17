@@ -5,7 +5,7 @@ install:
   - cmd: 7z x cmake.zip -o"C:\Program Files (x86)\" -y
   - cmd: set PATH=%PATH:CMake 2.8\bin=%;C:\Program Files (x86)\cmake-3.0.2-win32-x86\bin
   - cmd: cmake --version
-  - ps: wget https://s3.amazonaws.com/biibinaries/release/2.1.1/bii-win_2_1_1.exe -OutFile bii-win.exe
+  - ps: wget http://www.biicode.com/downloads/latest/win -OutFile bii-win.exe
   - cmd: bii-win.exe /VERYSILENT
   - cmd: set PATH=%PATH%;C:\Program Files (x86)\BiiCode\bii
   - cmd: bii -v
@@ -16,13 +16,13 @@ install:
   - cmd: del cmake.zip  
 
 before_build:
+  - cmd: cd \
   - cmd: bii init %project_name%
   - cmd: cd %project_name%
   - cmd: bii new %block_user%/%block_name%
-  # move files
-  - cmd: for %%i in (../*) do if %%i NEQ "%project_name%" move "..\%%i" blocks\%block_user%\%block_name%\
-  # move directories
-  - cmd: for /d %%i in (../*) do if %%i NEQ "%project_name%" move "..\%%i" blocks\%block_user%\%block_name%\
+    # copy files and folders
+  - cmd: xcopy "%APPVEYOR_BUILD_FOLDER%" blocks\%block_user%\%block_name%\ /e /h
+  - cmd: bii cpp:configure -G "Visual Studio 12"
 
 build_script:
   - cmd: bii cpp:build

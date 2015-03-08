@@ -239,17 +239,25 @@ public:
         return sqlite3_total_changes(mpSQLite);
     }
 
-    /**
-     * @brief Return the filename used to open the database
-     */
+    /// @brief Return the filename used to open the database.
     inline const std::string& getFilename() const noexcept // nothrow
     {
         return mFilename;
     }
 
-    /**
-     * @brief Return UTF-8 encoded English language explanation of the most recent error.
-     */
+    /// @brief Return the numeric result code for the most recent failed API call (if any).
+    inline int getErrorCode() const noexcept // nothrow
+    {
+        return sqlite3_errcode(mpSQLite);
+    }
+
+    /// @brief Return the extended numeric result code for the most recent failed API call (if any).
+    inline int getExtendedErrorCode() const noexcept // nothrow
+    {
+        return sqlite3_extended_errcode(mpSQLite);
+    }
+
+    /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
     inline const char* errmsg() const noexcept // nothrow
     {
         return sqlite3_errmsg(mpSQLite);

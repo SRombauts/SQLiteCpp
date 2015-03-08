@@ -22,12 +22,18 @@ TEST(Statement, invalid) {
     {
         // Create a new database
         SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+        EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+        EXPECT_EQ(SQLITE_OK, db.getExtendedErrorCode());
 
         // Compile a SQL query, but without any table in the database
         EXPECT_THROW(SQLite::Statement query(db, "SELECT * FROM test"), SQLite::Exception);
+        EXPECT_EQ(SQLITE_ERROR, db.getErrorCode());
+        EXPECT_EQ(SQLITE_ERROR, db.getExtendedErrorCode());
 
         EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
-        
+        EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+        EXPECT_EQ(SQLITE_OK, db.getExtendedErrorCode());
+
         // Compile a SQL query with no parameter
         SQLite::Statement   query(db, "SELECT * FROM test");
         EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
@@ -61,6 +67,8 @@ TEST(Statement, invalid) {
         EXPECT_THROW(query.bind(2, 123), SQLite::Exception);
         EXPECT_THROW(query.bind(0, "abc"), SQLite::Exception);
         EXPECT_THROW(query.bind(0), SQLite::Exception);
+        EXPECT_EQ(SQLITE_RANGE, db.getErrorCode());
+        EXPECT_EQ(SQLITE_RANGE, db.getExtendedErrorCode());
 
         query.exec();
         EXPECT_THROW(query.isColumnNull(0), SQLite::Exception);

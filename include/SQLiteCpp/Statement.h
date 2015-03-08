@@ -326,8 +326,18 @@ public:
     {
         return mbDone;
     }
-    /// @brief Return UTF-8 encoded English language explanation of the most recent error.
-    inline const char* errmsg() const
+    /// @brief Return the numeric result code for the most recent failed API call (if any).
+    inline int getErrorCode() const noexcept // nothrow
+    {
+        return sqlite3_errcode(mStmtPtr);
+    }
+    /// @brief Return the extended numeric result code for the most recent failed API call (if any).
+    inline int getExtendedErrorCode() const noexcept // nothrow
+    {
+        return sqlite3_extended_errcode(mStmtPtr);
+    }
+    /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
+    inline const char* errmsg() const noexcept // nothrow
     {
         return sqlite3_errmsg(mStmtPtr);
     }

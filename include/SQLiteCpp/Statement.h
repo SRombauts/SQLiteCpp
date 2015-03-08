@@ -372,16 +372,6 @@ public:
             return mpStmt;
         }
 
-        int getLastStatus() const
-        {
-          return mLastStatus;
-        }
-
-        void setLastStatus(int status)
-        {
-          mLastStatus = status;
-        }
-
     private:
         /// @{ Unused/forbidden copy operator
         Ptr& operator=(const Ptr& aPtr);
@@ -392,7 +382,6 @@ public:
         sqlite3_stmt*   mpStmt;      //!< Pointer to SQLite Statement Object
         unsigned int*   mpRefCount;  //!< Pointer to the heap allocated reference counter of the sqlite3_stmt
                                      //!< (to share it with Column objects)
-        int             mLastStatus; //!< The return status of the last statement evaluation
     };
 
 private:

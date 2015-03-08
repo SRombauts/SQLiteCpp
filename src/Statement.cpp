@@ -182,7 +182,6 @@ bool Statement::executeStep()
     if (false == mbDone)
     {
         int ret = sqlite3_step(mStmtPtr);
-        mStmtPtr.setLastStatus(ret);
         if (SQLITE_ROW == ret) // one row is ready : call getColumn(N) to access it
         {
             mbOk = true;
@@ -213,7 +212,6 @@ int Statement::exec()
     if (false == mbDone)
     {
         int ret = sqlite3_step(mStmtPtr);
-        mStmtPtr.setLastStatus(ret);
         if (SQLITE_DONE == ret) // the statement has finished executing successfully
         {
             mbOk = false;
@@ -276,7 +274,6 @@ bool Statement::isColumnNull(const int aIndex) const
 // Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
 void Statement::check(const int aRet)
 {
-    mStmtPtr.setLastStatus(aRet);
     if (SQLITE_OK != aRet)
     {
         throw SQLite::Exception(sqlite3_errmsg(mStmtPtr));
@@ -297,11 +294,10 @@ void Statement::check(const int aRet)
 Statement::Ptr::Ptr(sqlite3* apSQLite, std::string& aQuery) :
     mpSQLite(apSQLite),
     mpStmt(NULL),
-    mpRefCount(NULL),
-    mLastStatus(SQLITE_OK)
+    mpRefCount(NULL)
 {
-    mLastStatus = sqlite3_prepare_v2(apSQLite, aQuery.c_str(), static_cast<int>(aQuery.size()), &mpStmt, NULL);
-    if (SQLITE_OK != mLastStatus)
+    int ret = sqlite3_prepare_v2(apSQLite, aQuery.c_str(), static_cast<int>(aQuery.size()), &mpStmt, NULL);
+    if (SQLITE_OK != ret)
     {
         throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
     }
@@ -319,8 +315,7 @@ Statement::Ptr::Ptr(sqlite3* apSQLite, std::string& aQuery) :
 Statement::Ptr::Ptr(const Statement::Ptr& aPtr) :
     mpSQLite(aPtr.mpSQLite),
     mpStmt(aPtr.mpStmt),
-    mpRefCount(aPtr.mpRefCount),
-    mLastStatus(SQLITE_OK)
+    mpRefCount(aPtr.mpRefCount)
 {
     assert(NULL != mpRefCount);
     assert(0 != *mpRefCount);
@@ -342,12 +337,9 @@ Statement::Ptr::~Ptr() noexcept // nothrow
     --(*mpRefCount);
     if (0 == *mpRefCount)
     {
-        // If count reaches zero, finalize the sqlite3_stmt,
-        // as no Statement not Column objet use it anymore
-        int ret = sqlite3_finalize(mpStmt);
-        // Never throw an exception in a destructor
-        SQLITECPP_ASSERT((SQLITE_OK == ret || mLastStatus == ret),
-          sqlite3_errmsg(mpSQLite));  // See SQLITECPP_ENABLE_ASSERT_HANDLER
+        // If count reaches zero, finalize the sqlite3_stmt, as no Statement nor Column objet use it anymore.
+        // No need to check the return code, as it is the same as the last statement evaluation.
+        sqlite3_finalize(mpStmt);
 
         // and delete the reference counter
         delete mpRefCount;

@@ -139,7 +139,7 @@ in a custom shared pointer (See the inner class "Statement::Ptr").
 
 ### License
 
-Copyright (c) 2012-2014 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+Copyright (c) 2012-2015 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 
 Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 or copy at http://opensource.org/licenses/MIT)

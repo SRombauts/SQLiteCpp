@@ -1,5 +1,8 @@
+# Copyright (c) 2012-2015 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+
 language: cpp
 
+# compilers to add to build matrix
 compiler:
   - gcc
   - clang
@@ -8,6 +11,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq cppcheck
  
+# scripts to run before build
 # using a symbolic link to get the "make test" to work as if launched from the root directorys
 before_script:
   - mkdir build
@@ -15,5 +19,6 @@ before_script:
   - cmake -DSQLITECPP_RUN_CPPLINT=ON -DSQLITECPP_RUN_CPPCHECK=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
   - ln -s ../examples examples
 
+# build and run tests
 script: make && ctest --output-on-failure
 

@@ -37,8 +37,6 @@ namespace SQLite
  * 2) the SQLite "Serialized" mode is not supported by SQLiteC++,
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
- *
- * @todo inline all simple getters
  */
 class Column
 {

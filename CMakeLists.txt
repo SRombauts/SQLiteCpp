@@ -16,7 +16,7 @@ IF(BIICODE)
 ELSE()
   # Main CMake file for compiling the library itself, examples and tests.
 #
-# Copyright (c) 2012-2014 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+# Copyright (c) 2012-2015 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT) 
@@ -113,15 +113,27 @@ set(SQLITECPP_DOC
  README.md
  WRAPPERS.md
  LICENSE.txt
+ CHANGELOG.txt
  TODO.txt
 )
 source_group(doc FILES ${SQLITECPP_DOC})
+
+# list of script files of the library
+set(SQLITECPP_SCRIPT
+ .travis.yml
+ build.bat
+ build.sh
+ cpplint.py
+ Doxyfile
+ FindSQLiteCpp.cmake
+)
+source_group(scripts FILES ${SQLITECPP_SCRIPT})
 
 # All includes are relative to the "include" directory 
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
 # add sources of the wrapper as a "SQLiteCpp" static library
-add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC})
+add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")

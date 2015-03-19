@@ -1,0 +1,28 @@
+# Copyright (c) 2012-2015 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+
+# build format
+version: "{build}"
+
+# scripts that run after cloning repository
+install:
+  - git submodule update --init --recursive
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq cppcheck
+
+# configurations to add to build matrix
+configuration:
+  - Debug
+  - Release
+ 
+# scripts to run before build
+# using a symbolic link to get the "make test" to work as if launched from the root directorys
+before_build:
+  - mkdir build
+  - cd build
+  - cmake -DSQLITECPP_RUN_CPPLINT=ON -DSQLITECPP_RUN_CPPCHECK=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
+  - ln -s ../examples examples
+
+# build examples, and run tests (ie make & make test)
+build_script:
+  - cmake --build .
+  - ctest --output-on-failure

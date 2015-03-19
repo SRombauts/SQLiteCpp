@@ -3,6 +3,10 @@ SQLiteC++
 
 ![SQLiteCpp build status](https://api.travis-ci.org/SRombauts/SQLiteCpp.png "SQLiteCpp build status")
 
+[![Build status](https://ci.appveyor.com/api/projects/status/f59svj535areev0j/branch/upstream?svg=true)](https://ci.appveyor.com/project/MariadeAnton/sqlitecpp-147/branch/upstream)
+
+[![Build Status](https://webapi.biicode.com/v1/badges/sqlite/sqlite/sqlite/master)](https://www.biicode.com/sqlite/sqlite) 
+
 SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
 
 See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.

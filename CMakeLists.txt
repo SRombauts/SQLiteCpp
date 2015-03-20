@@ -1,4 +1,5 @@
-IF(BIICODE)
+if (BIICODE)
+
   include(${CMAKE_HOME_DIRECTORY}/biicode.cmake)
   # Initializes block variables
   INIT_BIICODE_BLOCK()
@@ -13,8 +14,9 @@ IF(BIICODE)
    ENDIF()
   ENDIF()  
 
-ELSE()
-  # Main CMake file for compiling the library itself, examples and tests.
+else (BIICODE)
+
+# Main CMake file for compiling the library itself, examples and tests.
 #
 # Copyright (c) 2012-2015 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 #
@@ -121,6 +123,8 @@ source_group(doc FILES ${SQLITECPP_DOC})
 # list of script files of the library
 set(SQLITECPP_SCRIPT
  .travis.yml
+ appveyor.yml
+ biicode.conf
  build.bat
  build.sh
  cpplint.py
@@ -154,7 +158,7 @@ endif (WIN32)
 
 # Optional additional targets:
 
-option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." OFF)
+option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." ON)
 if (SQLITECPP_RUN_CPPLINT)
     # add a cpplint target to the "all" target
     add_custom_target(SQLiteCpp_cpplint
@@ -165,7 +169,7 @@ else (SQLITECPP_RUN_CPPLINT)
     message(STATUS "SQLITECPP_RUN_CPPLINT OFF")
 endif (SQLITECPP_RUN_CPPLINT)
 
-option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." OFF)
+option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." ON)
 if (SQLITECPP_RUN_CPPCHECK)
     find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
     if (CPPCHECK_EXECUTABLE)
@@ -181,7 +185,7 @@ else (SQLITECPP_RUN_CPPCHECK)
     message(STATUS "SQLITECPP_RUN_CPPCHECK OFF")
 endif (SQLITECPP_RUN_CPPCHECK)
 
-option(SQLITECPP_RUN_DOXYGEN "Run Doxygen C++ documentation tool." OFF)
+option(SQLITECPP_RUN_DOXYGEN "Run Doxygen C++ documentation tool." ON)
 if (SQLITECPP_RUN_DOXYGEN)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
@@ -234,4 +238,5 @@ if (SQLITECPP_BUILD_TESTS)
 else (SQLITECPP_BUILD_TESTS)
     message(STATUS "SQLITECPP_BUILD_TESTS OFF")
 endif (SQLITECPP_BUILD_TESTS)
-ENDIF()
+
+endif (BIICODE)

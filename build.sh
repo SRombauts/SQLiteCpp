@@ -2,14 +2,15 @@
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
-
 mkdir -p build
 cd build
-# generate solution for GCC
-cmake -DSQLITECPP_RUN_CPPLINT=ON -DSQLITECPP_RUN_CPPCHECK=ON -DSQLITECPP_RUN_DOXYGEN=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
+
+# Generate a Makefile for GCC (or Clang, depanding on CC/CXX envvar)
+cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
+# Build (ie 'make')
 cmake --build .
 
-# prepare and launch tests
+# Prepare and run unit-tests (ie 'make test')
 mkdir -p examples/example1
 cp ../examples/example1/example.db3 examples/example1
 cp ../examples/example1/logo.png    examples/example1

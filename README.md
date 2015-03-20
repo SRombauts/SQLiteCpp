@@ -1,7 +1,8 @@
 SQLiteC++
 ---------
 
-![SQLiteCpp build status](https://api.travis-ci.org/SRombauts/SQLiteCpp.png "SQLiteCpp build status")
+[![Travis CI Linux Build Status](https://travis-ci.org/SRombauts/SQLiteCpp.svg)](https://travis-ci.org/SRombauts/SQLiteCpp "Travis CI Linux Build Status")
+[![AppVeyor Windows Build status](https://ci.appveyor.com/api/projects/status/github/SRombauts/SQLiteCpp?svg=true)](https://ci.appveyor.com/project/SbastienRombauts/SQLiteCpp "AppVeyor Windows Build status")
 
 SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
 
@@ -118,8 +119,12 @@ You can either recompile it yourself (seek help online) or you can comment out t
 
 This project is continuously tested under Ubuntu Linux with the gcc and clang compilers
 using the Travis CI community service with the above CMake building and testing procedure.
+It is also tested in the same way under Windows Server 2012 R2 with Visual Studio 2013 compiler
+using the AppVeyor countinuous integration service.
 
-Detailed results can be seen online: https://travis-ci.org/SRombauts/SQLiteCpp
+Detailed results can be seen online:
+ - https://travis-ci.org/SRombauts/SQLiteCpp
+ - https://ci.appveyor.com/project/SbastienRombauts/SQLiteCpp
 
 ### Thread-safety
 

@@ -6,9 +6,7 @@ version: "{build}"
 # scripts that run after cloning repository
 # NOTE : not updating submodule as cloning googletest does not work on AppVeyor
 install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq cppcheck
-# - git submodule update --init --recursive
+# - git submodule update --init googletest
 
 # configurations to add to build matrix
 configuration:
@@ -16,13 +14,11 @@ configuration:
   - Release
  
 # scripts to run before build
-# using a symbolic link to get the "make test" to work as if launched from the root directorys
 # NOTE : no unit tests as cloning googletest does not work on AppVeyor
 before_build:
   - mkdir build
   - cd build
-  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=OFF -DSQLITECPP_RUN_DOXYGEN=OFF ..
-  - ln -s ../examples examples
+  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=OFF -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_DOXYGEN=OFF ..
 
 # build examples, and run tests (ie make & make test)
 build_script:

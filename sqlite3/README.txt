@@ -1,4 +1,4 @@
-"sqlite3.c" and "sqlite3.h" files from sqlite-amalgamation-3071401.zip (SQLite 3.7.14.1)
+"sqlite3.c" and "sqlite3.h" files from sqlite-amalgamation-3080803.zip (SQLite 3.8.8.3)
 
 Those files are provided for easy setup under Windows ; they are used by the Visual Studio example solution.
 

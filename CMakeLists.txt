@@ -160,11 +160,14 @@ endif (WIN32)
 
 option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." ON)
 if (SQLITECPP_RUN_CPPLINT)
-    # add a cpplint target to the "all" target
-    add_custom_target(SQLiteCpp_cpplint
-     ALL
-     COMMAND python ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
-    )
+    find_package(PythonLibs)
+    if (PYTHONLIBS_FOUND)
+        # add a cpplint target to the "all" target
+        add_custom_target(SQLiteCpp_cpplint
+         ALL
+         COMMAND python ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
+        )
+    endif (PYTHONLIBS_FOUND)
 else (SQLITECPP_RUN_CPPLINT)
     message(STATUS "SQLITECPP_RUN_CPPLINT OFF")
 endif (SQLITECPP_RUN_CPPLINT)
@@ -179,7 +182,7 @@ if (SQLITECPP_RUN_CPPCHECK)
         COMMAND cppcheck -j 4 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
        )
     else (CPPCHECK_EXECUTABLE)
-        message(STATUS "cppcheck not found")
+        message(STATUS "Could NOT find cppcheck")
     endif (CPPCHECK_EXECUTABLE)
 else (SQLITECPP_RUN_CPPCHECK)
     message(STATUS "SQLITECPP_RUN_CPPCHECK OFF")
@@ -195,8 +198,6 @@ if (SQLITECPP_RUN_DOXYGEN)
          COMMAND doxygen Doxyfile > ${DEV_NULL}
          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         )
-    else (DOXYGEN_FOUND)
-        message(STATUS "Doxygen not found")
     endif (DOXYGEN_FOUND)
 else (SQLITECPP_RUN_DOXYGEN)
     message(STATUS "SQLITECPP_RUN_DOXYGEN OFF")

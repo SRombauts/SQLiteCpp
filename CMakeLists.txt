@@ -1,19 +1,17 @@
 if (BIICODE)
 
-  include(${CMAKE_HOME_DIRECTORY}/biicode.cmake)
-  # Initializes block variables
-  INIT_BIICODE_BLOCK()
-
+  # biicode doesn't process files bigger than 5Mb
+  list(APPEND BII_LIB_SRC sqlite3/sqlite3.c)
   # Include base block dir
   ADD_BIICODE_TARGETS()
-  
-  # Link target with dl for linux
-  IF (UNIX)
-   IF(NOT APPLE)
-     TARGET_LINK_LIBRARIES(${BII_BLOCK_TARGET} INTERFACE dl)
-   ENDIF()
-  ENDIF()  
 
+  # Link target with dl for linux
+  if (UNIX)
+   TARGET_LINK_LIBRARIES(${BII_BLOCK_TARGET} INTERFACE pthread)
+   if(NOT APPLE)
+     TARGET_LINK_LIBRARIES(${BII_BLOCK_TARGET} INTERFACE dl)
+   endif()
+  endif()  
 else (BIICODE)
 
 # Main CMake file for compiling the library itself, examples and tests.

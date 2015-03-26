@@ -12,12 +12,10 @@ before_install:
   - sudo apt-get install -qq cppcheck
 
 # scripts to run before build
-# using a symbolic link to get the "make test" to work as if launched from the root directorys
 before_script:
   - mkdir build
   - cd build
   - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_DOXYGEN=OFF ..
-  - ln -s ../examples examples
 
 # build examples, and run tests (ie make & make test)
 script:

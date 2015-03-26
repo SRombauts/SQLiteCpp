@@ -13,8 +13,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
-#include <cstdlib>
-
+#include <string>
 
 #include <SQLiteCpp/SQLiteCpp.h>
 
@@ -31,10 +30,17 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 }
 #endif
 
+/// Get example path
+static inline std::string getExamplePath()
+{
+    std::string filePath(__FILE__);
+    return filePath.substr( 0, filePath.length() - std::string("main.cpp").length());
+}
+
 /// Example Database
-static const char* filename_example_db3 = "examples/example1/example.db3";
+static const std::string filename_example_db3 = getExamplePath() + "/example.db3";
 /// Image
-static const char* filename_logo_png    = "examples/example1/logo.png";
+static const std::string filename_logo_png    = getExamplePath() + "/logo.png";
 
 
 /// Object Oriented Basic example
@@ -307,7 +313,7 @@ int main ()
         db.exec("DROP TABLE IF EXISTS test");
         db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value BLOB)");
 
-        FILE* fp = fopen(filename_logo_png, "rb");
+        FILE* fp = fopen(filename_logo_png.c_str(), "rb");
         if (NULL != fp)
         {
             char  buffer[16*1024];

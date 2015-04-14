@@ -250,10 +250,10 @@ See also http://www.appinf.com/download/CppCodingStyleGuide.pdf for good guideli
 
 ## See also - Some other simple C++ SQLite wrappers:
 
-See also the file WRAPPERS.md offering a more complete comparison of other wrappers.
+See bellow a short comparison of other wrappers done at the time of the writting:
  - [sqdbcpp](http://code.google.com/p/sqdbcpp/): RAII design, simple, no dependencies, UTF-8/UTF-16, new BSD license
  - [sqlite3cc](http://ed.am/dev/sqlite3cc): uses boost, modern design, LPGPL
- - [sqlite3pp](http://code.google.com/p/sqlite3pp/): uses boost, but never updated since initial publication in may 2012, MIT License
+ - [sqlite3pp](https://github.com/iwongu/sqlite3pp): modern design inspired by boost, MIT License
  - [SQLite++](http://sqlitepp.berlios.de/): uses boost build system, Boost License 1.0 
  - [CppSQLite](http://www.codeproject.com/Articles/6343/CppSQLite-C-Wrapper-for-SQLite/): famous Code Project but old design, BSD License 
  - [easySQLite](http://code.google.com/p/easysqlite/): manages table as structured objects, complex 

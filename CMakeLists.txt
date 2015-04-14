@@ -111,7 +111,6 @@ source_group(example1 FILES ${SQLITECPP_EXAMPLES})
 # list of doc files of the library
 set(SQLITECPP_DOC
  README.md
- WRAPPERS.md
  LICENSE.txt
  CHANGELOG.txt
  TODO.txt

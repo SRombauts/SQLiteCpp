@@ -261,24 +261,23 @@ Column Statement::getColumn(const int aIndex)
 Column  Statement::getColumn(const char* aName)
 {
     int aIndex = -1;
-    
+
     if (false == mbOk)
     {
         throw SQLite::Exception("No row to get a column from");
     }
     else
     {
-        for (int i = 0; i < mColumnCount; i++) {
+        for (int i = 0; i < mColumnCount; ++i) {
             if (sqlite3_column_name(mStmtPtr, i) == aName)
                 break;
         }
-        
+
         if ((aIndex < 0) || (aIndex >= mColumnCount)) {
             throw SQLite::Exception("Column index out of range");
         }
-        
     }
-        
+
     // Share the Statement Object handle with the new Column created
     return Column(mStmtPtr, aIndex);
 }

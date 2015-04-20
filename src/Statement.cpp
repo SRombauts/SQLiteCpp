@@ -256,6 +256,33 @@ Column Statement::getColumn(const int aIndex)
     return Column(mStmtPtr, aIndex);
 }
 
+// Return a copy of the column data specified by its column name starting at 0
+// (use the Column copy-constructor)
+Column  Statement::getColumn(const char* aName)
+{
+    int aIndex = -1;
+    
+    if (false == mbOk)
+    {
+        throw SQLite::Exception("No row to get a column from");
+    }
+    else
+    {
+        for (int i = 0; i < mColumnCount; i++) {
+            if (sqlite3_column_name(mStmtPtr, i) == aName)
+                break;
+        }
+        
+        if ((aIndex < 0) || (aIndex >= mColumnCount)) {
+            throw SQLite::Exception("Column index out of range");
+        }
+        
+    }
+        
+    // Share the Statement Object handle with the new Column created
+    return Column(mStmtPtr, aIndex);
+}
+
 // Test if the column is NULL
 bool Statement::isColumnNull(const int aIndex) const
 {

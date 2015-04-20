@@ -296,6 +296,33 @@ public:
     Column  getColumn(const int aIndex);
 
     /**
+     * @brief Return a copy of the column data specified by its column name
+     *
+     *  Can be used to access the data of the current row of result when applicable,
+     * while the executeStep() method returns true.
+     *
+     *  Throw an exception if there is no row to return a Column from :
+     * - before any executeStep() call
+     * - after the last executeStep() returned false
+     * - after a reset() call
+     *
+     *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
+     *
+     * @param[in] aName    Name of the column, starting at index 0
+     *
+     * @note    This method is no more const, starting in v0.5,
+     *          which reflects the fact that the returned Column object will
+     *          share the ownership of the underlying sqlite3_stmt.
+     *
+     * @warning The resulting Column object must not be memorized "as-is".
+     *          Is is only a wrapper around the current result row, so it is only valid
+     *          while the row from the Statement remains valid, that is only until next executeStep() call.
+     *          Thus, you should instead extract immediately its data (getInt(), getText()...)
+     *          and use or copy this data for any later usage.
+     */
+    Column  getColumn(const char* aName);
+    
+    /**
      * @brief Test if the column value is NULL
      *
      * @param[in] aIndex    Index of the column, starting at 0

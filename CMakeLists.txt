@@ -157,14 +157,15 @@ endif (WIN32)
 
 option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." ON)
 if (SQLITECPP_RUN_CPPLINT)
-    find_package(PythonLibs)
-    if (PYTHONLIBS_FOUND)
+    find_package(PythonInterp)
+    if (PYTHONINTERP_FOUND)
         # add a cpplint target to the "all" target
         add_custom_target(SQLiteCpp_cpplint
          ALL
-         COMMAND python ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
+         COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
         )
-    endif (PYTHONLIBS_FOUND)
+        message(STATUS "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}")
+    endif (PYTHONINTERP_FOUND)
 else (SQLITECPP_RUN_CPPLINT)
     message(STATUS "SQLITECPP_RUN_CPPLINT OFF")
 endif (SQLITECPP_RUN_CPPLINT)

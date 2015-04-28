@@ -2,7 +2,7 @@
  * @file  main.cpp
  * @brief A few short examples in a row.
  *
- *  Demonstrate how-to use the SQLite++ wrapper
+ *  Demonstrates how-to use the SQLite++ wrapper
  *
  * Copyright (c) 2012-2014 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
@@ -91,7 +91,7 @@ int main ()
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
         // Test if the 'test' table exists
-        bool bExists = db.tableExists("test");
+        const bool bExists = db.tableExists("test");
         std::cout << "SQLite table 'test' exists=" << bExists << "\n";
 
         // Get a single value result with an easy to use shortcut
@@ -105,36 +105,38 @@ int main ()
         query.bind(1, 2);
         std::cout << "binded with integer value '2' :\n";
 
+        // Execute the first step of the query, to get the fist row of results, and name of columns
+        if (query.executeStep())
+        {
+            // Show how to get the aliased names of the result columns.
+            const std::string name0 = query.getColumn(0).getName();
+            const std::string name1 = query.getColumn(1).getName();
+            const std::string name2 = query.getColumn(2).getName();
+            std::cout << "aliased result [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
+#ifdef SQLITE_ENABLE_COLUMN_METADATA
+            // Show how to get origin names of the table columns from which theses result columns come from.
+            // Requires the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be
+            // also defined at compile times of the SQLite library itself.
+            const std::string oname0 = query.getColumn(0).getOriginName();
+            const std::string oname1 = query.getColumn(1).getOriginName();
+            const std::string oname2 = query.getColumn(2).getOriginName();
+            std::cout << "origin table 'test' [\"" << oname0.c_str() << "\", \"" << oname1.c_str() << "\", \"" << oname2.c_str() << "\"]\n";
+#endif
+            // Demonstrates how to get some typed column value (and the equivalent explicit call)
+            const int         id     = query.getColumn(0); // = query.getColumn(0).getInt()
+          //const char*       pvalue = query.getColumn(1); // = query.getColumn(1).getText()
+            const std::string value2 = query.getColumn(1); // = query.getColumn(1).getText()
+            const int         bytes  = query.getColumn(1).getBytes();
+            const double      weight = query.getColumn(2); // = query.getColumn(2).getInt()
+
+            std::cout << "row (" << id << ", \"" << value2.c_str() << "\" " << bytes << " bytes, " << weight << ")\n";
+        }
+
         // Loop to execute the query step by step, to get one a row of results at a time
         while (query.executeStep())
         {
-            // Demonstrate how to get some typed column value (and the equivalent explicit call)
-            int         id      = query.getColumn(0); // = query.getColumn(0).getInt()
-          //const char* pvalue  = query.getColumn(1); // = query.getColumn(1).getText()
-            std::string value2  = query.getColumn(1); // = query.getColumn(1).getText()
-            int         bytes   = query.getColumn(1).getBytes();
-            double      weight  = query.getColumn(2); // = query.getColumn(2).getInt()
-
-            static bool bFirst = true;
-            if (bFirst)
-            {
-                // Show how to get the aliased names of the result columns.
-                std::string name0 = query.getColumn(0).getName();
-                std::string name1 = query.getColumn(1).getName();
-                std::string name2 = query.getColumn(2).getName();
-                std::cout << "aliased result [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
-#ifdef SQLITE_ENABLE_COLUMN_METADATA
-                // Show how to get origin names of the table columns from which theses result columns come from.
-                // Requires the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be
-                // also defined at compile times of the SQLite library itself.
-                name0 = query.getColumn(0).getOriginName();
-                name1 = query.getColumn(1).getOriginName();
-                name2 = query.getColumn(2).getOriginName();
-                std::cout << "origin table 'test' [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
-#endif
-                bFirst = false;
-            }
-            std::cout << "row (" << id << ", \"" << value2.c_str() << "\" "  << bytes << " bytes, " << weight << ")\n";
+            // Demonstrates that inserting column value in a std:ostream is natural
+            std::cout << "row (" << query.getColumn(0) << ", \"" << query.getColumn(1) << "\", " << query.getColumn(2) << ")\n";
         }
 
         // Reset the query to use it again
@@ -143,11 +145,16 @@ int main ()
         // Bind the string value "6" to the first parameter of the SQL query
         query.bind(1, "6");
         std::cout << "binded with string value \"6\" :\n";
-
+        // Reuses variables: uses assignement operator in the loop instead of constructor with initialization
+        int         id = 0;
+        std::string value2;
+        double      weight = 0.0;
         while (query.executeStep())
         {
-            // Demonstrate that inserting column value in a std:ostream is natural
-            std::cout << "row (" << query.getColumn(0) << ", \"" << query.getColumn(1) << "\", " << query.getColumn(2) << ")\n";
+            id        = query.getColumn(0); // = query.getColumn(0).getInt()
+            value2    = query.getColumn(1); // = query.getColumn(1).getText()
+            weight    = query.getColumn(2); // = query.getColumn(1).getInt()
+            std::cout << "row (" << id << ", \"" << value2 << "\", " << weight << ")\n";
         }
     }
     catch (std::exception& e)
@@ -163,7 +170,7 @@ int main ()
         // Open the database and compile the query
         Example example;
 
-        // Demonstrate the way to use the same query with different parameter values
+        // Demonstrates the way to use the same query with different parameter values
         example.ListGreaterThan(8);
         example.ListGreaterThan(6);
         example.ListGreaterThan(2);

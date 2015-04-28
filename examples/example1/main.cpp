@@ -114,7 +114,16 @@ int main ()
             std::string value2  = query.getColumn(1); // = query.getColumn(1).getText()
             int         bytes   = query.getColumn(1).getBytes();
             double      weight  = query.getColumn(2); // = query.getColumn(2).getInt()
-
+            // Output what we get
+            std::cout << "id: " << id << ", value: " << value2 << ", weight: " << weight << "." << std::endl;
+            
+            // Show how to get column value by name
+            int         nId     = query.getColumn("test_id");
+            std::string nValue  = query.getColumn("test_val");
+            double      nWeight = query.getColumn("test_weight");
+            // Same output with line 118
+            std::cout << "id: " << nId << ", value: " << nValue << ", weight: " << nWeight << "." << std::endl;
+            
             static bool bFirst = true;
             if (bFirst)
             {

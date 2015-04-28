@@ -269,8 +269,10 @@ Column  Statement::getColumn(const char* aName)
     else
     {
         for (int i = 0; i < mColumnCount; ++i) {
-            if (sqlite3_column_name(mStmtPtr, i) == aName)
+            if (strcmp(sqlite3_column_name(mStmtPtr, i), aName) == 0) {
+                aIndex = i;
                 break;
+            }
         }
 
         if ((aIndex < 0) || (aIndex >= mColumnCount)) {

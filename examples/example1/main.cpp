@@ -123,11 +123,11 @@ int main ()
             std::cout << "origin table 'test' [\"" << oname0.c_str() << "\", \"" << oname1.c_str() << "\", \"" << oname2.c_str() << "\"]\n";
 #endif
             // Demonstrates how to get some typed column value (and the equivalent explicit call)
-            const int         id     = query.getColumn(0); // = query.getColumn(0).getInt()
-          //const char*       pvalue = query.getColumn(1); // = query.getColumn(1).getText()
-            const std::string value2 = query.getColumn(1); // = query.getColumn(1).getText()
+            const int         id     = query.getColumn(0); // = query.getColumn(0).getInt();
+          //const char*       pvalue = query.getColumn(1); // = query.getColumn(1).getText();
+            const std::string value2 = query.getColumn(1); // = query.getColumn(1).getText();
             const int         bytes  = query.getColumn(1).getBytes();
-            const double      weight = query.getColumn(2); // = query.getColumn(2).getInt()
+            const double      weight = query.getColumn(2); // = query.getColumn(2).getInt();
 
             std::cout << "row (" << id << ", \"" << value2.c_str() << "\" " << bytes << " bytes, " << weight << ")\n";
         }
@@ -151,9 +151,9 @@ int main ()
         double      weight = 0.0;
         while (query.executeStep())
         {
-            id        = query.getColumn(0); // = query.getColumn(0).getInt()
-            value2    = query.getColumn(1); // = query.getColumn(1).getText()
-            weight    = query.getColumn(2); // = query.getColumn(1).getInt()
+            id        = query.getColumn(0).getInt();
+            value2    = query.getColumn(1).getText();
+            weight    = query.getColumn(2).getInt();
             std::cout << "row (" << id << ", \"" << value2 << "\", " << weight << ")\n";
         }
     }

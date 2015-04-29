@@ -66,7 +66,7 @@ public:
      */
     const char*     getName() const noexcept; // nothrow
 
-    #ifdef SQLITE_ENABLE_COLUMN_METADATA
+#ifdef SQLITE_ENABLE_COLUMN_METADATA
     /**
      * @brief Return a pointer to the table column name that is the origin of this result column
      * 
@@ -184,8 +184,9 @@ public:
     {
         return getBlob();
     }
+
 #ifdef __GNUC__
-    // NOTE : the following is required by GCC to cast a Column result in a std::string
+    // NOTE : the following is required by GCC and Clang to cast a Column result in a std::string
     // (error: conversion from ‘SQLite::Column’ to non-scalar type ‘std::string {aka std::basic_string<char>}’)
     // but is not working under Microsoft Visual Studio 2010 and 2012
     // (error C2440: 'initializing' : cannot convert from 'SQLite::Column' to 'std::basic_string<_Elem,_Traits,_Ax>'

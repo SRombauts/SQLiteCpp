@@ -93,6 +93,7 @@ source_group(inc FILES ${SQLITECPP_INC})
 
 # list of test files of the library
 set(SQLITECPP_TESTS
+ tests/Column_test.cpp
  tests/Database_test.cpp
  tests/Statement_test.cpp
 )

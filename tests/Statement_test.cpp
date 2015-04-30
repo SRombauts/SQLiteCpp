@@ -53,7 +53,7 @@ TEST(Statement, invalid) {
         EXPECT_FALSE(query.isOk());
         EXPECT_FALSE(query.isDone());
 
-        query.exec();
+        query.executeStep();
         EXPECT_FALSE(query.isOk());
         EXPECT_TRUE( query.isDone());
         query.reset();
@@ -70,9 +70,20 @@ TEST(Statement, invalid) {
         EXPECT_EQ(SQLITE_RANGE, db.getErrorCode());
         EXPECT_EQ(SQLITE_RANGE, db.getExtendedErrorCode());
 
-        query.exec();
+        query.exec(); // exec() instead of executeStep() as there is no result
         EXPECT_THROW(query.isColumnNull(0), SQLite::Exception);
         EXPECT_THROW(query.getColumn(0), SQLite::Exception);
+
+        // Add a first row
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\")"));
+        EXPECT_EQ(1, db.getLastInsertRowid());
+        EXPECT_EQ(1, db.getTotalChanges());
+
+        query.reset();
+        EXPECT_FALSE(query.isOk());
+        EXPECT_FALSE(query.isDone());
+
+        EXPECT_THROW(query.exec(), SQLite::Exception); // exec() shall throw as it does not expect a result
 
     } // Close DB test.db3
     remove("test.db3");

@@ -31,14 +31,14 @@ Column::~Column() noexcept // nothrow
 }
 
 // Return the named assigned to this result column (potentially aliased)
-const char * Column::getName() const noexcept // nothrow
+const char* Column::getName() const noexcept // nothrow
 {
     return sqlite3_column_name(mStmtPtr, mIndex);
 }
 
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
 // Return the name of the table column that is the origin of this result column
-const char * Column::getOriginName() const noexcept // nothrow
+const char* Column::getOriginName() const noexcept // nothrow
 {
     return sqlite3_column_origin_name(mStmtPtr, mIndex);
 }

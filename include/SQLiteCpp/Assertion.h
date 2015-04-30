@@ -40,7 +40,7 @@ namespace SQLite
 #else
 
 // if no assert handler provided by user code, use standard assert()
-// (note: in debug mode, assert() does nothing)
+// (note: in release mode assert() does nothing)
 #define SQLITECPP_ASSERT(expression, message)   assert(expression && message)
 
 #endif

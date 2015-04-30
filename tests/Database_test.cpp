@@ -115,6 +115,9 @@ TEST(Database, exec) {
         EXPECT_EQ(9, db.getTotalChanges());
 #endif
 
+        // Add a row with too many values (more than rows in the table)
+        EXPECT_THROW(db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"), SQLite::Exception);
+
     } // Close DB test.db3
     remove("test.db3");
 }

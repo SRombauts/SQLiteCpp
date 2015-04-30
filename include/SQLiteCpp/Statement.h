@@ -12,6 +12,7 @@
 
 #include <sqlite3.h>
 #include <string>
+#include <map>
 
 #include <SQLiteCpp/Exception.h>
 
@@ -274,7 +275,8 @@ public:
      *  Can be used to access the data of the current row of result when applicable,
      * while the executeStep() method returns true.
      *
-     *  Throw an exception if there is no row to return a Column from :
+     *  Throw an exception if there is no row to return a Column from:
+     * - if provided index is out of bound
      * - before any executeStep() call
      * - after the last executeStep() returned false
      * - after a reset() call
@@ -283,8 +285,7 @@ public:
      *
      * @param[in] aIndex    Index of the column, starting at 0
      *
-     * @note    This method is no more const, starting in v0.5,
-     *          which reflects the fact that the returned Column object will
+     * @note    This method is not const, reflecting the fact that the returned Column object will
      *          share the ownership of the underlying sqlite3_stmt.
      *
      * @warning The resulting Column object must not be memorized "as-is".
@@ -302,16 +303,16 @@ public:
      * while the executeStep() method returns true.
      *
      *  Throw an exception if there is no row to return a Column from :
+     * - if provided name is not one of the aliased column names
      * - before any executeStep() call
      * - after the last executeStep() returned false
      * - after a reset() call
      *
      *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
      *
-     * @param[in] aName    Name of the column, starting at index 0
+     * @param[in] apName   Name of the column, starting at index 0
      *
-     * @note    This method is no more const, starting in v0.5,
-     *          which reflects the fact that the returned Column object will
+     * @note    This method is not const, reflecting the fact that the returned Column object will
      *          share the ownership of the underlying sqlite3_stmt.
      *
      * @warning The resulting Column object must not be memorized "as-is".
@@ -320,8 +321,8 @@ public:
      *          Thus, you should instead extract immediately its data (getInt(), getText()...)
      *          and use or copy this data for any later usage.
      */
-    Column  getColumn(const char* aName);
-    
+    Column  getColumn(const char* apName);
+
     /**
      * @brief Test if the column value is NULL
      *
@@ -425,9 +426,13 @@ private:
     void check(const int aRet);
 
 private:
+    typedef std::map<std::string, int> TColumnNames;
+
+private:
     std::string     mQuery;         //!< UTF-8 SQL Query
     Ptr             mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
     int             mColumnCount;   //!< Number of columns in the result of the prepared statement
+    TColumnNames    mColumnNames;   //!< Map of columns index by name
     bool            mbOk;           //!< true when a row has been fetched with executeStep()
     bool            mbDone;         //!< true when the last executeStep() had no more row to fetch
 };

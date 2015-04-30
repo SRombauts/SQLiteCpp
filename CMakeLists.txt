@@ -1,47 +1,27 @@
-if (BIICODE)
-
-  # biicode doesn't process files bigger than 5Mb
-  list(APPEND BII_LIB_SRC sqlite3/sqlite3.c)
-  # Include base block dir
-  ADD_BIICODE_TARGETS()
-
-  # Link target with dl for linux
-  if (UNIX)
-   TARGET_LINK_LIBRARIES(${BII_BLOCK_TARGET} INTERFACE pthread)
-   if(NOT APPLE)
-     TARGET_LINK_LIBRARIES(${BII_BLOCK_TARGET} INTERFACE dl)
-   endif()
-  endif()  
-else (BIICODE)
-
 # Main CMake file for compiling the library itself, examples and tests.
 #
 # Copyright (c) 2012-2015 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT) 
+if (NOT BIICODE)
+
 cmake_minimum_required(VERSION 2.6)
 project(SQLiteCpp)
-
-option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getName(). Require support from sqlite3 library." OFF)
-if (SQLITE_ENABLE_COLUMN_METADATA) 
-    # Enable the use of SQLite column metadata and Column::getName() method,
-    # Require that the sqlite3 library is also compiled with this flag (default under Debian/Ubuntu, but not on Mac OS X).
-    add_definitions(-DSQLITE_ENABLE_COLUMN_METADATA)
-endif (SQLITE_ENABLE_COLUMN_METADATA)
-
-option(SQLITE_ENABLE_ASSERT_HANDLER "Enable the user defintion of a assertion_failed() handler." OFF)
-if (SQLITE_ENABLE_ASSERT_HANDLER) 
-    # Enable the user defintion of a assertion_failed() handler (default to false, easier to handler for begginers).
-    add_definitions(-DSQLITECPP_ENABLE_ASSERT_HANDLER)
-endif (SQLITE_ENABLE_ASSERT_HANDLER)
 
 # Define useful variables to handle OS differences:
 if (WIN32)
     set(DEV_NULL                "NUL")
+    # build the SQLite3 C library for Windows (for ease of use)
+    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT ON)
+    set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT OFF)
 else (WIN32)
     set(DEV_NULL                "/dev/null")
+    # do not build the SQLite3 C library, but uses the Linux/Mac OS X sqlite3-dev package
+    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT OFF)
+    set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT ON)
 endif (WIN32)
+
 # then Compiler/IDE differences:
 if (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=vs7")
@@ -67,6 +47,22 @@ endif (MSVC)
 # and then common variables
 set(CPPLINT_ARG_VERBOSE "--verbose=3")
 set(CPPLINT_ARG_LINELENGTH "--linelength=120")
+
+
+# Options relative to SQLite and SQLiteC++ functions
+
+option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getName(). Require support from sqlite3 library." ${SQLITE_ENABLE_COLUMN_METADATA_DEFAULT})
+if (SQLITE_ENABLE_COLUMN_METADATA) 
+    # Enable the use of SQLite column metadata and Column::getName() method,
+    # Require that the sqlite3 library is also compiled with this flag (default under Debian/Ubuntu, but not on Mac OS X).
+    add_definitions(-DSQLITE_ENABLE_COLUMN_METADATA)
+endif (SQLITE_ENABLE_COLUMN_METADATA)
+
+option(SQLITE_ENABLE_ASSERT_HANDLER "Enable the user defintion of a assertion_failed() handler." OFF)
+if (SQLITE_ENABLE_ASSERT_HANDLER) 
+    # Enable the user defintion of a assertion_failed() handler (default to false, easier to handler for begginers).
+    add_definitions(-DSQLITECPP_ENABLE_ASSERT_HANDLER)
+endif (SQLITE_ENABLE_ASSERT_HANDLER)
 
 
 ## Core source code ##
@@ -141,16 +137,14 @@ if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Cla
 endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
 
 
-# SQLite3 library (Windows only)
+# SQLite3 library (mostly usefull under Windows)
 
-option (SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
-if (WIN32)
-    if (SQLITECPP_INTERNAL_SQLITE)
-        # build the SQLite3 C library for Windows (for ease of use) versus Linux sqlite3-dev package
-        add_subdirectory(sqlite3)
-        include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
-    endif (SQLITECPP_INTERNAL_SQLITE)
-endif (WIN32)
+option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ${SQLITECPP_INTERNAL_SQLITE_DEFAULT})
+if (SQLITECPP_INTERNAL_SQLITE)
+    # build the SQLite3 C library for Windows (for ease of use) versus Linux sqlite3-dev package
+    add_subdirectory(sqlite3)
+    include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
+endif (SQLITECPP_INTERNAL_SQLITE)
 
 
 # Optional additional targets:
@@ -206,9 +200,9 @@ if (SQLITECPP_BUILD_EXAMPLES)
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
     target_link_libraries(SQLiteCpp_example1 SQLiteCpp sqlite3)
-else(SQLITECPP_BUILD_EXAMPLES)
+else (SQLITECPP_BUILD_EXAMPLES)
     message(STATUS "SQLITECPP_BUILD_EXAMPLES OFF")
-endif(SQLITECPP_BUILD_EXAMPLES)
+endif (SQLITECPP_BUILD_EXAMPLES)
 
 option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 if (SQLITECPP_BUILD_TESTS)
@@ -233,9 +227,25 @@ if (SQLITECPP_BUILD_TESTS)
     if (SQLITECPP_BUILD_EXAMPLES)
         # does the example1 runs successfully?
         add_test(Example1Run SQLiteCpp_example1)
-    endif(SQLITECPP_BUILD_EXAMPLES)
+    endif (SQLITECPP_BUILD_EXAMPLES)
 else (SQLITECPP_BUILD_TESTS)
     message(STATUS "SQLITECPP_BUILD_TESTS OFF")
 endif (SQLITECPP_BUILD_TESTS)
 
-endif (BIICODE)
+
+else (NOT BIICODE)
+
+    # biicode doesn't process files bigger than 5Mb
+    list(APPEND BII_LIB_SRC sqlite3/sqlite3.c)
+    # Include base block dir
+    ADD_BIICODE_TARGETS()
+
+    # Link target with dl for linux
+    if (UNIX)
+      target_link_libraries(${BII_BLOCK_TARGET} INTERFACE pthread)
+      if (NOT APPLE)
+        target_link_libraries(${BII_BLOCK_TARGET} INTERFACE dl)
+      endif ()
+    endif ()
+
+endif (NOT BIICODE)

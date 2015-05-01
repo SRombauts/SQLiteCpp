@@ -63,6 +63,8 @@ public:
 
     /**
      * @brief Return a pointer to the named assigned to a result column (potentially aliased)
+     *
+     * @see getOriginName() to get original column name (not aliased)
      */
     const char*     getName() const noexcept; // nothrow
 

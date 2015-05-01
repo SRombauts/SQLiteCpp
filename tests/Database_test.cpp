@@ -72,6 +72,7 @@ TEST(Database, inMemory) {
     } // Close an destroy DB
 }
 
+#if SQLITE_VERSION_NUMBER >= 3007015 // first version with PRAGMA busy_timeout
 TEST(Database, busyTimeout) {
     // Create a new database
     SQLite::Database db(":memory:");
@@ -86,6 +87,7 @@ TEST(Database, busyTimeout) {
     db.setBusyTimeout(0);
     EXPECT_EQ(0, db.execAndGet("PRAGMA busy_timeout").getInt());
 }
+#endif // SQLITE_VERSION_NUMBER >= 3007015
 
 TEST(Database, exec) {
     // Create a new database

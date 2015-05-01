@@ -30,7 +30,7 @@ Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READ
     mpSQLite(NULL),
     mFilename(apFilename)
 {
-    int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
+    const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
     if (SQLITE_OK != ret)
     {
         std::string strerr = sqlite3_errmsg(mpSQLite);
@@ -44,7 +44,7 @@ Database::Database(const std::string& aFilename, const int aFlags /*= SQLITE_OPE
     mpSQLite(NULL),
     mFilename(aFilename)
 {
-    int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? NULL : aVfs.c_str());
+    const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? NULL : aVfs.c_str());
     if (SQLITE_OK != ret)
     {
         std::string strerr = sqlite3_errmsg(mpSQLite);
@@ -56,15 +56,34 @@ Database::Database(const std::string& aFilename, const int aFlags /*= SQLITE_OPE
 // Close the SQLite database connection.
 Database::~Database() noexcept // nothrow
 {
-    int ret = sqlite3_close(mpSQLite);
+    const int ret = sqlite3_close(mpSQLite);
     // Never throw an exception in a destructor
     SQLITECPP_ASSERT(SQLITE_OK == ret, sqlite3_errmsg(mpSQLite));  // See SQLITECPP_ENABLE_ASSERT_HANDLER
+}
+
+/**
+ * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
+ *
+ *  This is usefull in multithreaded program to handle case where a table is locked for writting by a thread.
+ * Any other thread cannot access the table and will receive a SQLITE_BUSY error:
+ * setting a timeout will wait and retry up to the time specified before returning this SQLITE_BUSY error.
+ *  Reading the value of timeout for current connection can be done with SQL query "PRAGMA busy_timeout;".
+ *  Default busy timeout is 0ms.
+ *
+ * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
+ *
+ * @throw SQLite::Exception in case of error
+ */
+void Database::setBusyTimeout(int aTimeoutMs) noexcept // nothrow
+{
+    const int ret = sqlite3_busy_timeout(mpSQLite, aTimeoutMs);
+    check(ret);
 }
 
 // Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT, CREATE...).
 int Database::exec(const char* apQueries)
 {
-    int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);
+    const int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);
     check(ret);
 
     // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE only)
@@ -90,7 +109,7 @@ bool Database::tableExists(const char* apTableName)
     Statement query(*this, "SELECT count(*) FROM sqlite_master WHERE type='table' AND name=?");
     query.bind(1, apTableName);
     (void)query.executeStep(); // Cannot return false, as the above query always return a result
-    int Nb = query.getColumn(0);
+    const int Nb = query.getColumn(0);
     return (1 == Nb);
 }
 
@@ -119,8 +138,8 @@ void Database::createFunction(const char*   apFuncName,
     if (abDeterministic) {
         TextRep = TextRep|SQLITE_DETERMINISTIC;
     }
-    int ret = sqlite3_create_function_v2(mpSQLite, apFuncName, aNbArg, TextRep,
-                                         apApp, apFunc, apStep, apFinal, apDestroy);
+    const int ret = sqlite3_create_function_v2(mpSQLite, apFuncName, aNbArg, TextRep,
+                                               apApp, apFunc, apStep, apFinal, apDestroy);
 
     check(ret);
 }

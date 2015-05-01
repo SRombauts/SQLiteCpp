@@ -59,7 +59,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    Database(const char* apFilename, const int aFlags = SQLITE_OPEN_READONLY, const char * apVfs = NULL);
+    Database(const char* apFilename, const int aFlags = SQLITE_OPEN_READONLY, const char* apVfs = NULL);
 
     /**
      * @brief Open the provided database UTF-8 filename.
@@ -88,6 +88,21 @@ public:
      * @warning assert in case of error
      */
     virtual ~Database() noexcept; // nothrow
+
+    /**
+     * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
+     *
+     *  This is usefull in multithreaded program to handle case where a table is locked for writting by a thread.
+     * Any other thread cannot access the table and will receive a SQLITE_BUSY error:
+     * setting a timeout will wait and retry up to the time specified before returning this SQLITE_BUSY error.
+     *  Reading the value of timeout for current connection can be done with SQL query "PRAGMA busy_timeout;".
+     *  Default busy timeout is 0ms.
+     *
+     * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    void setBusyTimeout(int aTimeoutMs) noexcept; // nothrow
 
     /**
      * @brief Shortcut to execute one or multiple statements without results.
@@ -204,16 +219,6 @@ public:
     inline bool tableExists(const std::string& aTableName)
     {
         return tableExists(aTableName.c_str());
-    }
-
-    /**
-     * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
-     *
-     * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
-     */
-    inline int setBusyTimeout(int aTimeoutMs) noexcept // nothrow
-    {
-        return sqlite3_busy_timeout(mpSQLite, aTimeoutMs);
     }
 
     /**

@@ -13,13 +13,17 @@ project(SQLiteCpp)
 if (WIN32)
     set(DEV_NULL                "NUL")
     # build the SQLite3 C library for Windows (for ease of use)
-    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT ON)
-    set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT OFF)
-else (WIN32)
+    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT     ON)
+    set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT ON)
+else (WIN32) # UNIX
     set(DEV_NULL                "/dev/null")
     # do not build the SQLite3 C library, but uses the Linux/Mac OS X sqlite3-dev package
-    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT OFF)
-    set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT ON)
+    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT     OFF)
+    if (APPLE)
+        set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT OFF)
+    else (APPLE)
+        set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT ON)
+    endif (APPLE)
 endif (WIN32)
 
 # then Compiler/IDE differences:
@@ -243,10 +247,10 @@ else (NOT BIICODE)
 
     # Link target with dl for linux
     if (UNIX)
-      target_link_libraries(${BII_BLOCK_TARGET} INTERFACE pthread)
-      if (NOT APPLE)
-        target_link_libraries(${BII_BLOCK_TARGET} INTERFACE dl)
-      endif ()
+        target_link_libraries(${BII_BLOCK_TARGET} INTERFACE pthread)
+        if (NOT APPLE)
+            target_link_libraries(${BII_BLOCK_TARGET} INTERFACE dl)
+        endif ()
     endif ()
 
 endif (NOT BIICODE)

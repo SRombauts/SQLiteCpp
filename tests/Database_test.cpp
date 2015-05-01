@@ -54,6 +54,26 @@ TEST(Database, ctorExecCreateDropExist) {
     remove("test.db3");
 }
 
+TEST(Database, createCloseReopen) {
+    remove("test.db3");
+    {
+        // Try to open the unexisting database
+        EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
+
+        // Create a new database
+        SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+        EXPECT_FALSE(db.tableExists("test"));
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+        EXPECT_TRUE(db.tableExists("test"));
+    } // Close DB test.db3
+    {
+        // Reopen the database file
+        SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+        EXPECT_TRUE(db.tableExists("test"));
+    } // Close DB test.db3
+    remove("test.db3");
+}
+
 TEST(Database, inMemory) {
     {
         // Create a new database
@@ -147,9 +167,6 @@ TEST(Database, exec) {
     EXPECT_EQ(4, db.getLastInsertRowid());
     EXPECT_EQ(9, db.getTotalChanges());
 #endif
-
-    // Add a row with too many values (more than rows in the table)
-    EXPECT_THROW(db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"), SQLite::Exception);
 }
 
 TEST(Database, execAndGet) {
@@ -197,4 +214,11 @@ TEST(Database, execException) {
     EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\",  3)"));
     // exception with SQL error: "No row to get a column from"
     EXPECT_THROW(db.execAndGet("SELECT weight FROM test WHERE value=\"second\""), SQLite::Exception);
+
+    // Add a row with more values than columns in the table: "table test has 3 columns but 4 values were supplied"
+    EXPECT_THROW(db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"), SQLite::Exception);
+    EXPECT_EQ(SQLITE_ERROR, db.getErrorCode());
+    EXPECT_EQ(SQLITE_ERROR, db.getExtendedErrorCode());
 }
+
+// TODO: test Database::createFunction()

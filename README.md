@@ -1,9 +1,10 @@
 SQLiteC++
 ---------
 
+[![release](https://img.shields.io/github/release/SRombauts/SQLiteCpp.svg?style=flat-square)](https://github.com/SRombauts/SQLiteCpp/releases)
 [![Travis CI Linux Build Status](https://travis-ci.org/SRombauts/SQLiteCpp.svg)](https://travis-ci.org/SRombauts/SQLiteCpp "Travis CI Linux Build Status")
 [![AppVeyor Windows Build status](https://ci.appveyor.com/api/projects/status/github/SRombauts/SQLiteCpp?svg=true)](https://ci.appveyor.com/project/SbastienRombauts/SQLiteCpp "AppVeyor Windows Build status")
-[![Build Status](https://webapi.biicode.com/v1/badges/sqlite/sqlite/sqlite/master)](https://www.biicode.com/sqlite/sqlite) 
+[![Biicode Build Status](https://webapi.biicode.com/v1/badges/sqlite/sqlite/sqlite/master)](https://www.biicode.com/sqlite/sqlite) 
 
 
 SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.

@@ -297,7 +297,7 @@ public:
     Column  getColumn(const int aIndex);
 
     /**
-     * @brief Return a copy of the column data specified by its column name
+     * @brief Return a copy of the column data specified by its column name (less efficient than using an index)
      *
      *  Can be used to access the data of the current row of result when applicable,
      * while the executeStep() method returns true.
@@ -308,9 +308,11 @@ public:
      * - after the last executeStep() returned false
      * - after a reset() call
      *
-     *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
+     *  Throw an exception if the specified name is not an on of the aliased name of the columns in the result.
      *
-     * @param[in] apName   Name of the column, starting at index 0
+     * @param[in] apName   Aliased name of the column, that is, the named specified in the query (not the original name)
+     *
+     * @note    Uses a map of column names to indexes, build on first call.
      *
      * @note    This method is not const, reflecting the fact that the returned Column object will
      *          share the ownership of the underlying sqlite3_stmt.
@@ -329,8 +331,32 @@ public:
      * @param[in] aIndex    Index of the column, starting at 0
      *
      * @return true if the column value is NULL
+     *
+     *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
      */
     bool    isColumnNull(const int aIndex) const;
+
+    /**
+     * @brief Return a pointer to the named assigned to the specified result column (potentially aliased)
+     *
+     * @see getColumnOriginName() to get original column name (not aliased)
+     *
+     *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
+     */
+    const char* getColumnName(const int aIndex) const;
+
+#ifdef SQLITE_ENABLE_COLUMN_METADATA
+    /**
+    * @brief Return a pointer to the table column name that is the origin of the specified result column
+    *
+    *  Require definition of the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro :
+    * - when building the SQLite library itself (which is the case for the Debian libsqlite3 binary for instance),
+    * - and also when compiling this wrapper.
+    *
+    *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
+    */
+    const char* getColumnOriginName(const int aIndex) const;
+#endif
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -423,7 +449,35 @@ private:
      *
      * @param[in] SQLite return code to test against the SQLITE_OK expected value
      */
-    void check(const int aRet);
+    inline void Statement::check(const int aRet) const
+    {
+        if (SQLITE_OK != aRet)
+        {
+            throw SQLite::Exception(sqlite3_errmsg(mStmtPtr));
+        }
+    }
+
+    /**
+     * @brief Check if there is a row of result returnes by executeStep(), else throw a SQLite::Exception.
+     */
+    inline void Statement::checkRow() const
+    {
+        if (false == mbOk)
+        {
+            throw SQLite::Exception("No row to get a column from. executeStep() was not called or did not returned true.");
+        }
+    }
+
+    /**
+    * @brief Check if there is a Column index is in the range of columns in the result.
+    */
+    inline void Statement::checkIndex(const int aIndex) const
+    {
+        if ((aIndex < 0) || (aIndex >= mColumnCount))
+        {
+            throw SQLite::Exception("Column index out of range.");
+        }
+    }
 
 private:
     typedef std::map<std::string, int> TColumnNames;

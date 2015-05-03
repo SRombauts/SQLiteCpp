@@ -140,28 +140,22 @@ int main ()
         query.reset();
         std::cout << "SQLite statement '" << query.getQuery().c_str() << "' reseted (" << query.getColumnCount() << " columns in the result)\n";
 
-        // Execute the first step of the query, to get the fist row of results, and name of columns
-        if (query.executeStep())
-        {
-            // Show how to get the aliased names of the result columns.
-            const std::string name0 = query.getColumn(0).getName();
-            const std::string name1 = query.getColumn(1).getName();
-            const std::string name2 = query.getColumn(2).getName();
-            std::cout << "aliased result [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
+        // Show how to get the aliased names of the result columns.
+        const std::string name0 = query.getColumnName(0);
+        const std::string name1 = query.getColumnName(1);
+        const std::string name2 = query.getColumnName(2);
+        std::cout << "aliased result [\"" << name0.c_str() << "\", \"" << name1.c_str() << "\", \"" << name2.c_str() << "\"]\n";
 
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
-            // Show how to get origin names of the table columns from which theses result columns come from.
-            // Requires the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be
-            // also defined at compile times of the SQLite library itself.
-            const std::string oname0 = query.getColumn(0).getOriginName();
-            const std::string oname1 = query.getColumn(1).getOriginName();
-            const std::string oname2 = query.getColumn(2).getOriginName();
-            std::cout << "origin table 'test' [\"" << oname0.c_str() << "\", \"" << oname1.c_str() << "\", \"" << oname2.c_str() << "\"]\n";
+        // Show how to get origin names of the table columns from which theses result columns come from.
+        // Requires the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro to be
+        // also defined at compile times of the SQLite library itself.
+        const std::string oname0 = query.getColumnOriginName(0);
+        const std::string oname1 = query.getColumnOriginName(1);
+        const std::string oname2 = query.getColumnOriginName(2);
+        std::cout << "origin table 'test' [\"" << oname0.c_str() << "\", \"" << oname1.c_str() << "\", \"" << oname2.c_str() << "\"]\n";
 #endif
-            // Demonstrates that inserting column value in a std:ostream is natural
-            std::cout << "row (" << query.getColumn(0) << ", \"" << query.getColumn(1) << "\", " << query.getColumn(2) << ")\n";
-        }
-        // Loop to execute the rest of the query step by step, to get one a row of results at a time
+        // Loop to execute the query step by step, to get one a row of results at a time
         while (query.executeStep())
         {
             // Demonstrates that inserting column value in a std:ostream is natural

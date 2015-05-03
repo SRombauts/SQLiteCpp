@@ -21,7 +21,7 @@ namespace SQLite
 /// definition of the assertion handler enabled when SQLITECPP_ENABLE_ASSERT_HANDLER is defined in the project (CMakeList.txt)
 void assertion_failed(const char* apFile, const long apLine, const char* apFunc, const char* apExpr, const char* apMsg)
 {
-    // TODO test that this assertion callback get called
+    // TODO: test that this assertion callback get called
     std::cout << "assertion_failed(" << apFile << ", " << apLine << ", " << apFunc << ", " << apExpr << ", " << apMsg << ")\n";
 }
 }

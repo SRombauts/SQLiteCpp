@@ -83,6 +83,9 @@ private:
 
 int main ()
 {
+    std::cout << "SQlite3 version " << SQLITE_VERSION << std::endl;
+    std::cout << "SQliteC++ version " << SQLITECPP_VERSION << std::endl;
+
     ////////////////////////////////////////////////////////////////////////////
     // Very basic first example (1/7) :
     try

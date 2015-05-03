@@ -337,7 +337,7 @@ private:
     /**
      * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      */
-    inline void Database::check(const int aRet) const
+    inline void check(const int aRet) const
     {
         if (SQLITE_OK != aRet)
         {

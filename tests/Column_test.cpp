@@ -16,7 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdio>
-#include <cstdint>
+#include <stdint.h>
 
 
 TEST(Column, basis) {
@@ -54,7 +54,9 @@ TEST(Column, basis) {
 
     // validates every variant of cast operators, and conversions of types
     {
-        int64_t             id      = query.getColumn(0); // operator sqlite3_int64()
+        sqlite3_int64       id      = query.getColumn(0); // operator sqlite3_int64()
+        int64_t             id2     = query.getColumn(0); // operator sqlite3_int64() (or long() with GCC 64bits)
+        long                id3     = query.getColumn(0); // operator sqlite3_int64() (or long() with GCC 64bits)
         const char*         ptxt    = query.getColumn(1); // operator const char*()
         const std::string   msg     = query.getColumn(1); // operator std::string() (or const char* with MSVC)
         const int           integer = query.getColumn(2); // operator int()
@@ -62,6 +64,8 @@ TEST(Column, basis) {
         const void*         pblob   = query.getColumn(4); // operator void*()
         const void*         pempty  = query.getColumn(5); // operator void*()
         EXPECT_EQ(1,            id);
+        EXPECT_EQ(1,            id2);
+        EXPECT_EQ(1,            id3);
         EXPECT_STREQ("first",   ptxt);
         EXPECT_EQ("first",      msg);
         EXPECT_EQ(123,          integer);

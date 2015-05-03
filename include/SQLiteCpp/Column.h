@@ -199,6 +199,16 @@ public:
         return getText();
     }
 #endif
+    // NOTE : the following is required by GCC and Clang to cast a Column result in a long/int64_t
+    /// @brief Inline cast operator to long as 64bits integer
+    inline operator long() const
+    {
+#ifdef __x86_64__
+        return getInt64();
+#else
+        return getInt();
+#endif
+    }
 
     /// @brief Return UTF-8 encoded English language explanation of the most recent error.
     inline const char* errmsg() const

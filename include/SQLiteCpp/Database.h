@@ -53,17 +53,17 @@ public:
      *
      * Exception is thrown in case of error, then the Database object is NOT constructed.
      *
-     * @param[in] apFilename    UTF-8 path/uri to the database file ("filename" sqlite3 parameter)
-     * @param[in] aFlags        SQLITE_OPEN_READONLY/SQLITE_OPEN_READWRITE/SQLITE_OPEN_CREATE...
-     * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
-     * @param[in] apVfs         UTF-8 name of custom VFS to use, or nullptr for sqlite3 default
+     * @param[in] apFilename        UTF-8 path/uri to the database file ("filename" sqlite3 parameter)
+     * @param[in] aFlags            SQLITE_OPEN_READONLY/SQLITE_OPEN_READWRITE/SQLITE_OPEN_CREATE...
+     * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
+     * @param[in] apVfs             UTF-8 name of custom VFS to use, or nullptr for sqlite3 default
      *
      * @throw SQLite::Exception in case of error
      */
     Database(const char* apFilename,
-             const int   aFlags     = SQLITE_OPEN_READONLY,
-             const int   aTimeoutMs = 0,
-             const char* apVfs      = NULL);
+             const int   aFlags         = SQLITE_OPEN_READONLY,
+             const int   aBusyTimeoutMs = 0,
+             const char* apVfs          = NULL);
 
     /**
      * @brief Open the provided database UTF-8 filename.
@@ -75,17 +75,17 @@ public:
      *
      * Exception is thrown in case of error, then the Database object is NOT constructed.
      *
-     * @param[in] aFilename     UTF-8 path/uri to the database file ("filename" sqlite3 parameter)
-     * @param[in] aFlags        SQLITE_OPEN_READONLY/SQLITE_OPEN_READWRITE/SQLITE_OPEN_CREATE...
-     * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
-     * @param[in] aVfs          UTF-8 name of custom VFS to use, or empty string for sqlite3 default
+     * @param[in] aFilename         UTF-8 path/uri to the database file ("filename" sqlite3 parameter)
+     * @param[in] aFlags            SQLITE_OPEN_READONLY/SQLITE_OPEN_READWRITE/SQLITE_OPEN_CREATE...
+     * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
+     * @param[in] aVfs              UTF-8 name of custom VFS to use, or empty string for sqlite3 default
      *
      * @throw SQLite::Exception in case of error
      */
     Database(const std::string& aFilename,
-             const int          aFlags      = SQLITE_OPEN_READONLY,
-             const int          aTimeoutMs  = 0,
-             const std::string& aVfs        = "");
+             const int          aFlags          = SQLITE_OPEN_READONLY,
+             const int          aBusyTimeoutMs  = 0,
+             const std::string& aVfs            = "");
 
     /**
      * @brief Close the SQLite database connection.
@@ -106,11 +106,11 @@ public:
      *  Reading the value of timeout for current connection can be done with SQL query "PRAGMA busy_timeout;".
      *  Default busy timeout is 0ms.
      *
-     * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
+     * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
      *
      * @throw SQLite::Exception in case of error
      */
-    void setBusyTimeout(const int aTimeoutMs) noexcept; // nothrow
+    void setBusyTimeout(const int aBusyTimeoutMs) noexcept; // nothrow
 
     /**
      * @brief Shortcut to execute one or multiple statements without results.

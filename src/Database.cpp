@@ -27,9 +27,9 @@ namespace SQLite
 
 // Open the provided database UTF-8 filename with SQLITE_OPEN_xxx provided flags.
 Database::Database(const char* apFilename,
-                   const int   aFlags     /* = SQLITE_OPEN_READONLY*/,
-                   const int   aTimeoutMs /* = 0 */,
-                   const char* apVfs      /* = NULL*/) :
+                   const int   aFlags         /* = SQLITE_OPEN_READONLY*/,
+                   const int   aBusyTimeoutMs /* = 0 */,
+                   const char* apVfs          /* = NULL*/) :
     mpSQLite(NULL),
     mFilename(apFilename)
 {
@@ -41,17 +41,17 @@ Database::Database(const char* apFilename,
         throw SQLite::Exception(strerr);
     }
 
-    if (aTimeoutMs > 0)
+    if (aBusyTimeoutMs > 0)
     {
-        setBusyTimeout(aTimeoutMs);
+        setBusyTimeout(aBusyTimeoutMs);
     }
 }
 
 // Open the provided database UTF-8 filename with SQLITE_OPEN_xxx provided flags.
 Database::Database(const std::string& aFilename,
-                   const int          aFlags     /* = SQLITE_OPEN_READONLY*/,
-                   const int          aTimeoutMs /* = 0 */,
-                   const std::string& aVfs       /* = "" */) :
+                   const int          aFlags         /* = SQLITE_OPEN_READONLY*/,
+                   const int          aBusyTimeoutMs /* = 0 */,
+                   const std::string& aVfs           /* = "" */) :
     mpSQLite(NULL),
     mFilename(aFilename)
 {
@@ -63,9 +63,9 @@ Database::Database(const std::string& aFilename,
         throw SQLite::Exception(strerr);
     }
 
-    if (aTimeoutMs > 0)
+    if (aBusyTimeoutMs > 0)
     {
-        setBusyTimeout(aTimeoutMs);
+        setBusyTimeout(aBusyTimeoutMs);
     }
 }
 
@@ -86,13 +86,13 @@ Database::~Database() noexcept // nothrow
  *  Reading the value of timeout for current connection can be done with SQL query "PRAGMA busy_timeout;".
  *  Default busy timeout is 0ms.
  *
- * @param[in] aTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
+ * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY
  *
  * @throw SQLite::Exception in case of error
  */
-void Database::setBusyTimeout(const int aTimeoutMs) noexcept // nothrow
+void Database::setBusyTimeout(const int aBusyTimeoutMs) noexcept // nothrow
 {
-    const int ret = sqlite3_busy_timeout(mpSQLite, aTimeoutMs);
+    const int ret = sqlite3_busy_timeout(mpSQLite, aBusyTimeoutMs);
     check(ret);
 }
 

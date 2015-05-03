@@ -84,7 +84,7 @@ TEST(Statement, invalid) {
     EXPECT_THROW(query.exec(), SQLite::Exception); // exec() shall throw as it does not expect a result
 }
 
-// TODO: test every kind of binding
+// TODO: test every kind of binding + clearBindings()
 
 TEST(Statement, getColumnByName) {
     // Create a new database

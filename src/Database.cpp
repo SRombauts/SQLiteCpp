@@ -26,7 +26,10 @@ namespace SQLite
 
 
 // Open the provided database UTF-8 filename with SQLITE_OPEN_xxx provided flags.
-Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READONLY*/, const char* apVfs /*= NULL*/) :
+Database::Database(const char* apFilename,
+                   const int   aFlags     /* = SQLITE_OPEN_READONLY*/,
+                   const int   aTimeoutMs /* = 0 */,
+                   const char* apVfs      /* = NULL*/) :
     mpSQLite(NULL),
     mFilename(apFilename)
 {
@@ -37,10 +40,18 @@ Database::Database(const char* apFilename, const int aFlags /*= SQLITE_OPEN_READ
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw SQLite::Exception(strerr);
     }
+
+    if (aTimeoutMs > 0)
+    {
+        setBusyTimeout(aTimeoutMs);
+    }
 }
 
 // Open the provided database UTF-8 filename with SQLITE_OPEN_xxx provided flags.
-Database::Database(const std::string& aFilename, const int aFlags /*= SQLITE_OPEN_READONLY*/, const std::string& aVfs) :
+Database::Database(const std::string& aFilename,
+                   const int          aFlags     /* = SQLITE_OPEN_READONLY*/,
+                   const int          aTimeoutMs /* = 0 */,
+                   const std::string& aVfs       /* = "" */) :
     mpSQLite(NULL),
     mFilename(aFilename)
 {
@@ -50,6 +61,11 @@ Database::Database(const std::string& aFilename, const int aFlags /*= SQLITE_OPE
         std::string strerr = sqlite3_errmsg(mpSQLite);
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw SQLite::Exception(strerr);
+    }
+
+    if (aTimeoutMs > 0)
+    {
+        setBusyTimeout(aTimeoutMs);
     }
 }
 

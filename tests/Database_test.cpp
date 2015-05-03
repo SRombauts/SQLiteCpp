@@ -32,7 +32,8 @@ TEST(Database, ctorExecCreateDropExist) {
     remove("test.db3");
     {
         // Try to open an unexisting database
-        EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
+        std::string filename = "test.db3";
+        EXPECT_THROW(SQLite::Database not_found(filename), SQLite::Exception);
 
         // Create a new database
         SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
@@ -92,20 +93,31 @@ TEST(Database, inMemory) {
     } // Close an destroy DB
 }
 
-#if SQLITE_VERSION_NUMBER >= 3007015 // first version with PRAGMA busy_timeout
+#if SQLITE_VERSION_NUMBER >= 3007015 // SQLite v3.7.15 is first version with PRAGMA busy_timeout
 TEST(Database, busyTimeout) {
-    // Create a new database
-    SQLite::Database db(":memory:");
-    // Busy timeout default to 0ms: any contention between threads or process leads to SQLITE_BUSY error
-    EXPECT_EQ(0, db.execAndGet("PRAGMA busy_timeout").getInt());
+    {
+        // Create a new database with default timeout of 0ms
+        SQLite::Database db(":memory:");
+        // Busy timeout default to 0ms: any contention between threads or process leads to SQLITE_BUSY error
+        EXPECT_EQ(0, db.execAndGet("PRAGMA busy_timeout").getInt());
 
-    // Set a non null busy timeout: any contention between threads will leads to as much retry as possible during the time
-    db.setBusyTimeout(5000);
-    EXPECT_EQ(5000, db.execAndGet("PRAGMA busy_timeout").getInt());
+        // Set a non null busy timeout: any contention between threads will leads to as much retry as possible during the time
+        db.setBusyTimeout(5000);
+        EXPECT_EQ(5000, db.execAndGet("PRAGMA busy_timeout").getInt());
 
-    // Reset timeout to null
-    db.setBusyTimeout(0);
-    EXPECT_EQ(0, db.execAndGet("PRAGMA busy_timeout").getInt());
+        // Reset timeout to 0
+        db.setBusyTimeout(0);
+        EXPECT_EQ(0, db.execAndGet("PRAGMA busy_timeout").getInt());
+    }
+    {
+        // Create a new database with a non null busy timeout
+        SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE, 5000);
+        EXPECT_EQ(5000, db.execAndGet("PRAGMA busy_timeout").getInt());
+
+        // Reset timeout to null
+        db.setBusyTimeout(0);
+        EXPECT_EQ(0, db.execAndGet("PRAGMA busy_timeout").getInt());
+    }
 }
 #endif // SQLITE_VERSION_NUMBER >= 3007015
 

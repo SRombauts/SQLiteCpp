@@ -59,9 +59,7 @@ void Statement::reset()
 }
 
 // Clears away all the bindings of a prepared statement.
-// "Contrary to the intuition of many, [sqlite3_reset()] does not reset
-//    ** the [sqlite3_bind_blob | bindings] on a [prepared statement]."
-void Statement::clearBindings(void)
+void Statement::clearBindings()
 {
     mbOk = false;
     mbDone = false;

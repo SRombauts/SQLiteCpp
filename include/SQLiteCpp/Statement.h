@@ -79,8 +79,12 @@ public:
 
     /**
      * @brief Clears away all the bindings of a prepared statement.
+     *
+     *  Contrary to the intuition of many, reset() does not reset
+     * the bindings on a prepared statement.
+     *  Use this routine to reset all parameters to NULL.
      */
-    void clearBindings(void); // throw(SQLite::Exception)
+    void clearBindings(); // throw(SQLite::Exception)
 
     ////////////////////////////////////////////////////////////////////////////
     // Bind a value to a parameter of the SQL statement,
@@ -449,7 +453,7 @@ private:
      *
      * @param[in] SQLite return code to test against the SQLITE_OK expected value
      */
-    inline void Statement::check(const int aRet) const
+    inline void check(const int aRet) const
     {
         if (SQLITE_OK != aRet)
         {
@@ -460,7 +464,7 @@ private:
     /**
      * @brief Check if there is a row of result returnes by executeStep(), else throw a SQLite::Exception.
      */
-    inline void Statement::checkRow() const
+    inline void checkRow() const
     {
         if (false == mbOk)
         {
@@ -471,7 +475,7 @@ private:
     /**
     * @brief Check if there is a Column index is in the range of columns in the result.
     */
-    inline void Statement::checkIndex(const int aIndex) const
+    inline void checkIndex(const int aIndex) const
     {
         if ((aIndex < 0) || (aIndex >= mColumnCount))
         {

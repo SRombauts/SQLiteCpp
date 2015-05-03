@@ -468,7 +468,7 @@ private:
     {
         if (false == mbOk)
         {
-            throw SQLite::Exception("No row to get a column from. executeStep() was not called or did not returned true.");
+            throw SQLite::Exception("No row to get a column from. executeStep() was not called, or returned false.");
         }
     }
 

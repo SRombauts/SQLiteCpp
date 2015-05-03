@@ -91,7 +91,8 @@ void Statement::bind(const int aIndex, const double& aValue)
 // Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const std::string& aValue)
 {
-    const int ret = sqlite3_bind_text(mStmtPtr, aIndex, aValue.c_str(), static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
+    const int ret = sqlite3_bind_text(mStmtPtr, aIndex, aValue.c_str(),
+                                      static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
     check(ret);
 }
 
@@ -145,7 +146,8 @@ void Statement::bind(const char* apName, const double& aValue)
 void Statement::bind(const char* apName, const std::string& aValue)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_text(mStmtPtr, index, aValue.c_str(), static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
+    const int ret = sqlite3_bind_text(mStmtPtr, index, aValue.c_str(),
+                                      static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
     check(ret);
 }
 

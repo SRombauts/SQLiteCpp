@@ -74,7 +74,7 @@ Database::~Database() noexcept // nothrow
  *
  * @throw SQLite::Exception in case of error
  */
-void Database::setBusyTimeout(int aTimeoutMs) noexcept // nothrow
+void Database::setBusyTimeout(const int aTimeoutMs) noexcept // nothrow
 {
     const int ret = sqlite3_busy_timeout(mpSQLite, aTimeoutMs);
     check(ret);
@@ -113,15 +113,6 @@ bool Database::tableExists(const char* apTableName)
     return (1 == Nb);
 }
 
-// Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
-void Database::check(const int aRet) const
-{
-    if (SQLITE_OK != aRet)
-    {
-        throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
-    }
-}
-
 // Attach a custom function to your sqlite database. Assumes UTF8 text representation.
 // Parameter details can be found here: http://www.sqlite.org/c3ref/create_function.html
 void Database::createFunction(const char*   apFuncName,
@@ -140,7 +131,6 @@ void Database::createFunction(const char*   apFuncName,
     }
     const int ret = sqlite3_create_function_v2(mpSQLite, apFuncName, aNbArg, TextRep,
                                                apApp, apFunc, apStep, apFinal, apDestroy);
-
     check(ret);
 }
 

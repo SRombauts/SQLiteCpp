@@ -62,7 +62,7 @@ public:
     // they copy the Statement::Ptr which in turn increments the reference counter.
 
     /**
-     * @brief Return a pointer to the named assigned to a result column (potentially aliased)
+     * @brief Return a pointer to the named assigned to this result column (potentially aliased)
      *
      * @see getOriginName() to get original column name (not aliased)
      */

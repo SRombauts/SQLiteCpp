@@ -102,7 +102,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    void setBusyTimeout(int aTimeoutMs) noexcept; // nothrow
+    void setBusyTimeout(const int aTimeoutMs) noexcept; // nothrow
 
     /**
      * @brief Shortcut to execute one or multiple statements without results.
@@ -337,7 +337,13 @@ private:
     /**
      * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      */
-    void check(const int aRet) const;
+    inline void Database::check(const int aRet) const
+    {
+        if (SQLITE_OK != aRet)
+        {
+            throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
+        }
+    }
 
 private:
     sqlite3*    mpSQLite;   //!< Pointer to SQLite Database Connection Handle

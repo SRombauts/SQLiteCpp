@@ -151,5 +151,18 @@ void Database::createFunction(const char*   apFuncName,
     check(ret);
 }
 
+// Load an extension into the sqlite database. Only affects the current connection.
+// Parameter details can be found here: http://www.sqlite.org/c3ref/load_extension.html
+void Database::loadExtension(const char* apExtensionName,
+         const char *apEntryPointName)
+{
+    int ret = sqlite3_enable_load_extension(mpSQLite, 1);
+
+    check(ret);
+
+    ret = sqlite3_load_extension(mpSQLite, apExtensionName, apEntryPointName, 0);
+
+    check(ret);
+}
 
 }  // namespace SQLite

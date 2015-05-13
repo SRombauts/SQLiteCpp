@@ -336,6 +336,25 @@ public:
                               apApp, apFunc, apStep, apFinal, apDestroy);
     }
 
+
+    /**
+     * @brief Load a module into the current sqlite database instance. 
+     *
+     *  This is the equivalent of the sqlite3_load_extension call, but additionally enables
+     *  module loading support prior to loading the requested module.
+     *
+     * @see http://www.sqlite.org/c3ref/load_extension.html
+     *
+     * @note UTF-8 text encoding assumed.
+     *
+     * @param[in] apExtensionName   Name of the shared library containing extension
+     * @param[in] apEntryPointName  Name of the entry point (NULL to let sqlite work it out)
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    void loadExtension(const char* apExtensionName,
+         const char *apEntryPointName);
+
 private:
     /// @{ Database must be non-copyable
     Database(const Database&);

@@ -156,6 +156,12 @@ void Database::createFunction(const char*   apFuncName,
 void Database::loadExtension(const char* apExtensionName,
          const char *apEntryPointName)
 {
+#ifdef SQLITE_OMIT_LOAD_EXTENSION
+#
+    throw std::runtime_error("sqlite extensions are disabled");
+#
+#else
+#
     int ret = sqlite3_enable_load_extension(mpSQLite, 1);
 
     check(ret);
@@ -163,6 +169,8 @@ void Database::loadExtension(const char* apExtensionName,
     ret = sqlite3_load_extension(mpSQLite, apExtensionName, apEntryPointName, 0);
 
     check(ret);
+#
+#endif
 }
 
 }  // namespace SQLite

@@ -1,27 +1,34 @@
-Add a Tutorial: for SQLite newbies
-Improve Github Wiki pages with the FAQ: Installation, Examples, Tutorial, How to contribute
+Add a Tutorial for SQLite newbies
+Add a real example (rework current example?)
 
+Improve Github Wiki pages with the FAQ: Installation, Examples, Tutorial, How to contribute
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
 
-Missing features in v1.0.0:
+Missing features in v1.1.0:
 - bind a SQLITE_STATIC value (string/blob)
 - bind a dynamic value with zerocopy (unlike SQLITE_TRANSIENT) with custom deleter
+- #24: executemany() like in Python https://docs.python.org/2/library/sqlite3.html#sqlite3.Connection.executemany
+- #34: Better type for getColumn
 
-Missing documentation in v1.0.0:
+Missing documentation in v1.1.0:
 - explain the noncopyable property for RAII design
-- comment on returning error code instead of exception that shall not be thrown when exepected (!?)
+- comment on returning error code instead of exception that shall not be thrown when expected (!?)
 
 Missing unit tests in v1.0.0:
+- Binding variants
 - Create Function
 - Assert Handler
-- Binding variants
+- Load Extension (not practicable, and easy to verify by code review)
 
 Advanced missing features:
+- #39: SAVEPOINT https://www.sqlite.org/lang_savepoint.html
+
 - backup support to/from file/:memory:
+- Add optional usage of experimental sqlite3_trace() function to enable statistics 
 - Agregate ?
+
 - support for different transaction mode ? NO: too specific
 - operator<< binding ? NO: redundant with bind()
 - ATTACH Database ? NO: can already be done by "ATTACH" Statement
-- Add optional usage of experimental sqlite3_trace() function to enable statistics 
 
 Post an article to CodeProject: Is there a license issue ?

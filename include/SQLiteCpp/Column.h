@@ -12,6 +12,7 @@
 
 #include <sqlite3.h>
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Exception.h>
 
@@ -38,7 +39,7 @@ namespace SQLite
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Column
+class SQLITECPP_DLL Column
 {
 public:
     // Make clang happy by explicitly implementing the copy-constructor:

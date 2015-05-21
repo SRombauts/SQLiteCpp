@@ -12,6 +12,7 @@
 
 #include <sqlite3.h>
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Column.h>
 
 #include <string>
@@ -38,7 +39,7 @@ namespace SQLite
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Database
+class SQLITECPP_DLL Database
 {
     friend class Statement; // Give Statement constructor access to the mpSQLite Connection Handle
 

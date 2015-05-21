@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <string>
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 
 namespace SQLite
 {
@@ -21,7 +22,7 @@ namespace SQLite
 /**
  * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
  */
-class Exception : public std::runtime_error
+class SQLITECPP_DLL Exception : public std::runtime_error
 {
 public:
     /**

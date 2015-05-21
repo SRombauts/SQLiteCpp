@@ -12,6 +12,7 @@
 
 #include <cassert>
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 
 /**
  * SQLITECPP_ASSERT SQLITECPP_ASSERT() is used in destructors, where exceptions shall not be thrown
@@ -26,8 +27,8 @@
 namespace SQLite
 {
     // declaration of the assert handler to define in user code
-    void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
-                          const char* apExpr, const char* apMsg);
+    SQLITECPP_DLL void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
+                                        const char* apExpr, const char* apMsg);
 
 #ifdef _MSC_VER
     #define __func__ __FUNCTION__

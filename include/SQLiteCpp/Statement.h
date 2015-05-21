@@ -14,6 +14,7 @@
 #include <string>
 #include <map>
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Exception.h>
 
 
@@ -42,10 +43,10 @@ class Column;
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Statement
+class SQLITECPP_DLL Statement
 {
 public:
-    class Ptr;
+    class SQLITECPP_DLL Ptr;
 
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection

@@ -10,6 +10,7 @@
  */
 #pragma once
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Exception.h>
 
 
@@ -40,7 +41,7 @@ class Database;
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Transaction
+class SQLITECPP_DLL Transaction
 {
 public:
     /**

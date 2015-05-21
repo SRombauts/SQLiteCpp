@@ -231,7 +231,7 @@ private:
  *
  * @return  Reference to the stream used
  */
-std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
+SQLITECPP_DLL std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
 
 
 }  // namespace SQLite

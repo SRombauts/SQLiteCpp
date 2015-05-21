@@ -13,12 +13,16 @@ project(SQLiteCpp)
 if (WIN32)
     set(DEV_NULL                "NUL")
     # build the SQLite3 C library for Windows (for ease of use)
-    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT     ON)
-    set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT ON)
+    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT           ON)
+    set(SQLITECPP_BUILD_DYNAMIC_LIBRARY_DEFAULT     OFF)
+    set(SQLITECPP_DISABLE_MSVC_DLL_WARNINGS_DEFAULT ON)
+    set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT       ON)
 else (WIN32) # UNIX
     set(DEV_NULL                "/dev/null")
     # do not build the SQLite3 C library, but uses the Linux/Mac OS X sqlite3-dev package
-    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT     OFF)
+    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT           OFF)
+    set(SQLITECPP_BUILD_DYNAMIC_LIBRARY_DEFAULT     OFF)
+    set(SQLITECPP_DISABLE_MSVC_DLL_WARNINGS_DEFAULT OFF)
     if (APPLE)
         set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT OFF)
     else (APPLE)
@@ -26,17 +30,41 @@ else (WIN32) # UNIX
     endif (APPLE)
 endif (WIN32)
 
+# Options relative to SQLiteC++ build
+
+option(SQLITECPP_BUILD_DYNAMIC_LIBRARY "Build SQLiteC++ as a dynamic library." ${SQLITECPP_BUILD_DYNAMIC_LIBRARY_DEFAULT})
+if (SQLITECPP_BUILD_DYNAMIC_LIBRARY) 
+    # Define symbols to export DLL symbols with Visual Studio
+    add_definitions(-DSQLITECPP_DYNAMIC)
+	add_definitions(-DSQLITECPP_EXPORT)
+endif (SQLITECPP_BUILD_DYNAMIC_LIBRARY)
+
+option(SQLITECPP_DISABLE_MSVC_DLL_WARNINGS "Disable Visual Studio warning about std::classes DLL export." ${SQLITECPP_DISABLE_MSVC_DLL_WARNINGS_DEFAULT})
+if (SQLITECPP_DISABLE_MSVC_DLL_WARNINGS) 
+    # Disable Visual Studio warning about std::classes DLL export.
+    # These warnings can be ignored if the same runtime library is used for all libraries in your solution.
+    add_definitions(-DSQLITECPP_DISABLE_MSVC_DLL_WARNINGS)
+endif (SQLITECPP_DISABLE_MSVC_DLL_WARNINGS)
+
 # then Compiler/IDE differences:
 if (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=vs7")
     set(CPPCHECK_ARG_TEMPLATE   "--template=vs")
     # disable Visual Studio warnings for fopen() used in the example
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    # Flags for linking with multithread static C++ runtime
-    set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MT")
-    set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MTd")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-    set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+    if (SQLITECPP_BUILD_DYNAMIC_LIBRARY) 
+        # Flags for linking with multithread dynamic C++ runtime
+        set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MD")
+        set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MDd")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+        set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    else (SQLITECPP_BUILD_DYNAMIC_LIBRARY)
+        # Flags for linking with multithread static C++ runtime
+        set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MT")
+        set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MTd")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+        set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+    endif (SQLITECPP_BUILD_DYNAMIC_LIBRARY)
 else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
@@ -86,6 +114,7 @@ source_group(src FILES ${SQLITECPP_SRC})
 # list of header files of the library
 set(SQLITECPP_INC
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/SQLiteCpp.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/SQLiteCppExport.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Assertion.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Column.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Database.h
@@ -134,8 +163,14 @@ source_group(scripts FILES ${SQLITECPP_SCRIPT})
 # All includes are relative to the "include" directory 
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
-# add sources of the wrapper as a "SQLiteCpp" static library
-add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
+if (SQLITECPP_BUILD_DYNAMIC_LIBRARY) 
+    # add sources of the wrapper as a "SQLiteCpp" static library
+    add_library(SQLiteCpp SHARED ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
+    target_link_libraries(SQLiteCpp sqlite3)
+else (SQLITECPP_BUILD_DYNAMIC_LIBRARY)
+    # add sources of the wrapper as a "SQLiteCpp" dynamic library
+    add_library(SQLiteCpp STATIC ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
+endif (SQLITECPP_BUILD_DYNAMIC_LIBRARY)
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")

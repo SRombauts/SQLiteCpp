@@ -24,7 +24,7 @@
 #	define SQLITECPP_DLL	
 #endif
 // Disable VisualStudio warnings about DLL exports
-#if defined(_MSC_VER) && defined(SQLITECPP_DYNAMIC) && defined(SQLITECPP_DISABLE_MSVC_WARNINGS)
+#if defined(_MSC_VER) && defined(SQLITECPP_DYNAMIC) && defined(SQLITECPP_DISABLE_MSVC_DLL_WARNINGS)
     #pragma warning( disable : 4251 )
     #pragma warning( disable : 4275 )
 #endif

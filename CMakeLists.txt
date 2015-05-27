@@ -42,6 +42,7 @@ else (MSVC)
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
     if (CMAKE_COMPILER_IS_GNUCXX)
         # GCC flags
+       #add_compile_options() is not supported with CMake 2.8.7 of Ubuntu 12.04 on Travis-CI
         add_definitions(-rdynamic -fstack-protector-all -Wall -Wextra -pedantic -Wformat-security -Winit-self -Wswitch-default -Wswitch-enum -Wfloat-equal -Wshadow -Wcast-qual -Wconversion -Wlogical-op -Winline)
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         # Clang flags
@@ -211,11 +212,12 @@ endif (SQLITECPP_BUILD_EXAMPLES)
 
 option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 if (SQLITECPP_BUILD_TESTS)
-    # add the subdirectory containing the CMakeLists.txt for the gtest library
+    # deactivate some warnings for compiling the gtest library
     if (NOT MSVC)
-        add_definitions(-Wno-variadic-macros -Wno-long-long -Wno-conversion -Wno-switch-enum)
+        add_definitions(-Wno-variadic-macros -Wno-long-long -Wno-switch-enum -Wno-float-equal -Wno-conversion-null -Wno-switch-default -Wno-pedantic)
     endif (NOT MSVC)
 
+    # add the subdirectory containing the CMakeLists.txt for the gtest library
     add_subdirectory(googletest) 
     include_directories("${PROJECT_SOURCE_DIR}/googletest/include")
 

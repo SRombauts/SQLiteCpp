@@ -104,6 +104,10 @@ ln -s ../examples examples
 ctest .         # make test
 ```
 
+#### CMake options
+
+  * For more options on customizing the build, see the [CMakeLists.txt](https://github.com/SRombauts/SQLiteCpp/blob/master/CMakeLists.txt) file.
+
 #### Troubleshooting
 
 Under Linux, if you get muliple linker errors like "undefined reference to sqlite3_xxx",

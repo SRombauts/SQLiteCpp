@@ -45,10 +45,14 @@ public:
 #endif
 
 // Detect whether the compiler supports C++11 noexcept exception specifications.
-#if (defined(__GNUC__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ > 4)) && defined(__GXX_EXPERIMENTAL_CXX0X__))
+#if (  defined(__GNUC__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ > 4)) \
+    && defined(__GXX_EXPERIMENTAL_CXX0X__))
 // GCC 4.7 and following have noexcept
 #elif defined(__clang__) && __has_feature(cxx_noexcept)
 // Clang 3.0 and above have noexcept
+#elif defined(_MSC_VER) && _MSC_VER > 1800
+// Visual Studio 2015 and above have noexcept
 #else
-    #define noexcept    throw()
+    // Visual Studio 2013 does not support noexcept, and "throw()" is deprecated by C++11
+    #define noexcept
 #endif

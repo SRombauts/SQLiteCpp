@@ -65,7 +65,7 @@ double Column::getDouble() const noexcept // nothrow
 // Return a pointer to the text value (NULL terminated string) of the column specified by its index starting at 0
 const char* Column::getText(const char* apDefaultValue /* = "" */) const noexcept // nothrow
 {
-    const char* pText = (const char*)sqlite3_column_text(mStmtPtr, mIndex);
+    const char* pText = reinterpret_cast<const char*>(sqlite3_column_text(mStmtPtr, mIndex));
     return (pText?pText:apDefaultValue);
 }
 

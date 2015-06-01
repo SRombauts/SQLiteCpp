@@ -44,9 +44,9 @@ class Column;
  */
 class Statement
 {
-public:
-    class Ptr;
+    friend class Column; // For access to Statement::Ptr inner class
 
+public:
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
      *
@@ -400,7 +400,7 @@ public:
         return sqlite3_errmsg(mStmtPtr);
     }
 
-public:
+private:
     /**
      * @brief Shared pointer to the sqlite3_stmt SQLite Statement Object.
      *

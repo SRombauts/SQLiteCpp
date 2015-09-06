@@ -80,30 +80,51 @@ Thus this SQLiteCpp repository can directly be used as a Git submoldule.
 
 Under Debian/Ubuntu/Mint Linux, install the libsqlite3-dev package.
 
-### Building the examples:
+### Building examples and unit-tests:
 
-#### CMake and test
-A CMake configuration file is also provided for multiplatform support and testing.
+Use git to clone the repository. Then init and update submodule "googletest".
 
-Typical generic build (see also "build.bat" or "./build.sh"):
-
-```bash
-mkdir build
-cd build
-cmake ..        # cmake .. -G "Visual Studio 10"    # for Visual Studio 2010
-cmake --build . # make
-ctest .         # make test
+```Shell
+git clone https://github.com/SRombauts/SQLiteCpp.git
+cd SQLiteCpp
+git submodule init
+git submodule update
 ```
 
-Generating the Linux Makefile, building in Debug and executing the tests:
+#### CMake and tests
+A CMake configuration file is also provided for multiplatform support and testing.
 
-```bash
+Typical generic build for MS Visual Studio under Windows (from [build.bat](build.bat)):
+
+```Batchfile
+mkdir build
+cd build
+
+cmake ..        # cmake .. -G "Visual Studio 10"    # for Visual Studio 2010
+@REM Generate a Visual Studio solution for latest version found
+cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
+
+@REM Build default configuration (ie 'Debug')
+cmake --build .
+
+@REM Build and run tests
+ctest --output-on-failure
+```
+
+Generating the Linux Makefile, building in Debug and executing the tests (from [build.sh](build.sh)):
+
+```Shell
 mkdir Debug
 cd Debug
-cmake .. -DCMAKE_BUILD_TYPE=Debug
-cmake --build . # make
-ln -s ../examples examples
-ctest .         # make test
+
+# Generate a Makefile for GCC (or Clang, depanding on CC/CXX envvar)
+cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
+
+# Build (ie 'make')
+cmake --build .
+
+# Build and run unit-tests (ie 'make test')
+ctest --output-on-failure
 ```
 
 #### CMake options

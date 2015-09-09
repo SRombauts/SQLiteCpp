@@ -276,6 +276,12 @@ public:
         return sqlite3_errmsg(mpSQLite);
     }
 
+    /// Return raw pointer to SQLite Database Connection Handle (often needed to mix with other libraries or advance usage).
+    inline sqlite3* getHandle() const noexcept // nothrow
+    {
+        return mpSQLite;
+    }
+
     /**
      * @brief Create or redefine a SQL function or aggregate in the sqlite database. 
      *

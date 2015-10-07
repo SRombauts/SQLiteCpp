@@ -44,6 +44,15 @@ else (MSVC)
         # GCC flags
        #add_compile_options() is not supported with CMake 2.8.7 of Ubuntu 12.04 on Travis-CI
         add_definitions(-rdynamic -fstack-protector-all -Wall -Wextra -pedantic -Wformat-security -Winit-self -Wswitch-default -Wswitch-enum -Wfloat-equal -Wshadow -Wcast-qual -Wconversion -Wlogical-op -Winline)
+        if (SQLITECPP_USE_GCOV AND CMAKE_COMPILER_IS_GNUCXX)
+            if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+                message (STATUS "Using GCov instrumentation")
+            else ()
+                message (WARNING "GCov instrumentation works best in Debug mode")
+            endif ()
+            add_definitions (-fprofile-arcs -ftest-coverage)
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+        endif ()
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         # Clang flags
         add_definitions(-fstack-protector-all -Wall -Wextra -pedantic -Wformat-security -Winit-self -Wswitch-default -Wswitch-enum -Wfloat-equal -Wshadow -Wcast-qual -Wconversion -Winline)
@@ -218,6 +227,8 @@ if (SQLITECPP_BUILD_TESTS)
     endif (NOT MSVC)
 
     # add the subdirectory containing the CMakeLists.txt for the gtest library
+    # TODO: under Linux, uses libgtest-dev if found
+    # TODO: move to the new googletest Github repository
     add_subdirectory(googletest) 
     include_directories("${PROJECT_SOURCE_DIR}/googletest/include")
 

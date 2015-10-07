@@ -270,13 +270,17 @@ public:
         return sqlite3_extended_errcode(mpSQLite);
     }
 
-    /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
+    /// @brief Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
     inline const char* errmsg() const noexcept // nothrow
     {
         return sqlite3_errmsg(mpSQLite);
     }
 
-    /// Return raw pointer to SQLite Database Connection Handle (often needed to mix with other libraries or advance usage).
+    /**
+     * @brief Return raw pointer to SQLite Database Connection Handle.
+     *
+     * This is often needed to mix this wrapper with other libraries or for advance usage not supported by SQLiteCpp.
+    */
     inline sqlite3* getHandle() const noexcept // nothrow
     {
         return mpSQLite;

@@ -14,18 +14,24 @@ See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.
 
 Keywords: sqlite, sqlite3, C, library, wrapper C++
 
+## About SQLiteC++:
 
-### About SQLite:
+SQLiteC++ offers an encapsulation arround the native C APIs of SQLite,
+with a few intuitive and well documented C++ class.
+
+### License:
+
+Copyright (c) 2012-2015 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+
+Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
+or copy at http://opensource.org/licenses/MIT)
+
+### About SQLite underlying library:
 
 SQLite is a library that implements a serverless transactional SQL database engine.
 It is the most widely deployed SQL database engine in the world.
 The source code for SQLite is in the public domain.
 http://www.sqlite.org/about.html
-
-### About SQLiteC++:
-
-SQLiteC++ offers an encapsulation arround the native C APIs of sqlite,
-with a few intuitive and well documented C++ class.
 
 ### The goals of SQLiteC++ are:
 
@@ -51,13 +57,13 @@ and then is always valid until destroyed.
 ### Supported platforms:
 
 Developements and tests are done under the following OSs:
+- Ubuntu 12.04 (Travis CI) and 14.04
 - Debian 7
-- Ubuntu 12.10
-- Windows XP/7/8
+- Windows XP/10
 And following IDEs/Compilers
-- GCC 4.7.2 with a provided Makefile
-- Eclipse CDT under Linux, using the provided Makefile
-- Visual Studio Express 2008/2010/2012/2013 for testing compatibility purpose
+- GCC 4.7.2 and GCC 4.8.2
+- Eclipse CDT under Linux
+- Visual Studio Express 2008/2010/2012/2013/2015 for testing compatibility purpose
 
 ### Dependencies
 
@@ -67,6 +73,7 @@ And following IDEs/Compilers
   or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows),
   with the SQLITE_ENABLE_COLUMN_METADATA macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).
 
+## Getting started
 ### Installation
 
 To use this wrappers, you need to add the 10 SQLiteC++ source files from the src/ directory
@@ -172,14 +179,7 @@ But SQLiteC++ does not support the fully thread-safe "Serialized" mode of SQLite
 because of the way it shares the underling SQLite precompiled statement
 in a custom shared pointer (See the inner class "Statement::Ptr").
 
-### License
-
-Copyright (c) 2012-2015 Sébastien Rombauts (sebastien.rombauts@gmail.com)
-
-Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
-or copy at http://opensource.org/licenses/MIT)
-
-## Getting started
+## Examples
 ### First sample demonstrates how to query a database and get results: 
 
 ```C++
@@ -237,7 +237,7 @@ catch (std::exception& e)
 }
 ```
 
-### How to handle in assertion in SQLiteC++:
+### How to handle assertion in SQLiteC++:
 Exceptions shall not be used in destructors, so SQLiteC++ use SQLITECPP_ASSERT() to check for errors in destructors.
 If you don't want assert() to be called, you have to enable and define an assert handler as shown below,
 and by setting the flag SQLITECPP_ENABLE_ASSERT_HANDLER when compiling the lib.

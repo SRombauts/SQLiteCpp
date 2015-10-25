@@ -90,6 +90,7 @@ set(SQLITECPP_SRC
  ${PROJECT_SOURCE_DIR}/src/Database.cpp
  ${PROJECT_SOURCE_DIR}/src/Statement.cpp
  ${PROJECT_SOURCE_DIR}/src/Transaction.cpp
+ ${PROJECT_SOURCE_DIR}/src/Backup.cpp
 )
 source_group(src FILES ${SQLITECPP_SRC})
 
@@ -102,6 +103,7 @@ set(SQLITECPP_INC
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Exception.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Statement.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Transaction.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Backup.h
 )
 source_group(inc FILES ${SQLITECPP_INC})
 

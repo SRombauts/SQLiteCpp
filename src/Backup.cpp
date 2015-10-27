@@ -18,6 +18,7 @@
 namespace SQLite
 {
 
+// Initialize resource for SQLite database backup
 Backup::Backup(Database&  aDestDatabase,
                const char *apDestDatabaseName,
                Database&  aSrcDatabase,
@@ -35,6 +36,7 @@ Backup::Backup(Database&  aDestDatabase,
     }
 }
 
+// Initialize resource for SQLite database backup
 Backup::Backup(Database &aDestDatabase,
                const std::string &aDestDatabaseName,
                Database &aSrcDatabase,
@@ -52,6 +54,7 @@ Backup::Backup(Database &aDestDatabase,
     }
 }
 
+// Initialize resource for SQLite database backup
 Backup::Backup(Database &aDestDatabase, Database &aSrcDatabase) :
     mpSQLiteBackup(NULL)
 {
@@ -66,6 +69,7 @@ Backup::Backup(Database &aDestDatabase, Database &aSrcDatabase) :
     }
 }
 
+// Release resource for SQLite database backup
 Backup::~Backup() noexcept
 {
     if (NULL != mpSQLiteBackup)
@@ -74,6 +78,7 @@ Backup::~Backup() noexcept
     }
 }
 
+// Execute backup step with a given number of source pages to be copied
 int Backup::executeStep(const int aNumPage /* = -1 */)
 {
     const int res = sqlite3_backup_step(mpSQLiteBackup, aNumPage);
@@ -87,11 +92,13 @@ int Backup::executeStep(const int aNumPage /* = -1 */)
     return res;
 }
 
+// Get the number of remaining source pages to be copied in this backup process
 int Backup::remainingPageCount()
 {
     return sqlite3_backup_remaining(mpSQLiteBackup);
 }
 
+// Get the number of total source pages to be copied in this backup process
 int Backup::totalPageCount()
 {
     return sqlite3_backup_pagecount(mpSQLiteBackup);

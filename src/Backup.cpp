@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Backup is used to backup a database file in a safe and online way.
  *
- * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
+ * Copyright (c) 2015-2015 Shibao HONG (shibaohong@outlook.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -85,8 +85,11 @@ int Backup::executeStep(const int aNumPage /* = -1 */)
     if (SQLITE_OK != res && SQLITE_DONE != res &&
             SQLITE_BUSY != res && SQLITE_LOCKED != res)
     {
-        std::string strerr("Backup executeStep error with message ");
+        std::string strerr("Backup executeStep error");
+#if SQLITE_VERSION_NUMBER >= 3007015  // SQLite v3.7.15 is the first version with sqlite3_errstr() interface
+        strerr += "with error message ";
         strerr += sqlite3_errstr(res);
+#endif
         throw SQLite::Exception(strerr);
     }
     return res;

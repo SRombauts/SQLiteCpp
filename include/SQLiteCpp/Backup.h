@@ -131,18 +131,6 @@ public:
      */
     int totalPageCount();
 
-    /**
-     * @brief Return raw pointer to SQLite Database Backup Handle.
-     *
-     * This is often needed to mix this wrapper with other libraries or for advance usage not supported by SQLiteCpp.
-     *
-     * @return Raw pointer to SQLite Backup Handle
-    */
-    inline sqlite3_backup* getHandle() const noexcept // nothrow
-    {
-        return mpSQLiteBackup;
-    }
-
 private:
     /// @{ Backup must be non-copyable
     Backup(const Backup&);

@@ -63,7 +63,7 @@ Developements and tests are done under the following OSs:
 And following IDEs/Compilers
 - GCC 4.7.2 and GCC 4.8.2
 - Eclipse CDT under Linux
-- Visual Studio Express 2008/2010/2012/2013/2015 for testing compatibility purpose
+- Visual Studio Express 2008/2013/2015 for testing compatibility purpose
 
 ### Dependencies
 

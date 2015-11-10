@@ -1,5 +1,6 @@
-"sqlite3.c" and "sqlite3.h" files from sqlite-amalgamation-3080803.zip (SQLite 3.8.8.3)
+"sqlite3.c" and "sqlite3.h" files from sqlite-amalgamation-3090200.zip (SQLite 3.9.2)
 
-Those files are provided for easy setup under Windows ; they are used by the Visual Studio example solution.
+Those files are provided for easy setup and compatibility under Windows/Linux/MacOS.
+They are used by default by the CMake build.
 
-They are not used by the Linux Makefile, which thus requires the Linux "libsqlite3-dev" package.
+Use -DSQLITECPP_INTERNAL_SQLITE=OFF to link against the Linux "libsqlite3-dev" package instead.

@@ -73,3 +73,8 @@ Version 1.3.0 - November 1 2015
     Fixed build with Visual Studio 2015
     Further improvements to README
     Added Backup class
+    
+Version 1.3.1 - ? 2015
+    Swith Linux/Mac build to the provided SQLite3 C library
+    Update SQLite3 from 3.8.8.3 to latest 3.9.2 (2015-11-02)
+    Remove warnings

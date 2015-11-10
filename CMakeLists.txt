@@ -12,18 +12,8 @@ project(SQLiteCpp)
 # Define useful variables to handle OS differences:
 if (WIN32)
     set(DEV_NULL                "NUL")
-    # build the SQLite3 C library for Windows (for ease of use)
-    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT     ON)
-    set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT ON)
 else (WIN32) # UNIX
     set(DEV_NULL                "/dev/null")
-    # do not build the SQLite3 C library, but uses the Linux/Mac OS X sqlite3-dev package
-    set(SQLITECPP_INTERNAL_SQLITE_DEFAULT     OFF)
-    if (APPLE)
-        set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT OFF)
-    else (APPLE)
-        set(SQLITE_ENABLE_COLUMN_METADATA_DEFAULT ON)
-    endif (APPLE)
 endif (WIN32)
 
 # then Compiler/IDE differences:
@@ -40,10 +30,11 @@ if (MSVC)
 else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
+    # Useful compile flags and extra warnings 
+   #add_compile_options() is not supported with CMake 2.8.7 of Ubuntu 12.04 on Travis-CI    
+    add_definitions(-fstack-protector -Wall -Winit-self -Wswitch-enum -Wshadow -Winline)
     if (CMAKE_COMPILER_IS_GNUCXX)
         # GCC flags
-       #add_compile_options() is not supported with CMake 2.8.7 of Ubuntu 12.04 on Travis-CI
-        add_definitions(-rdynamic -fstack-protector-all -Wall -Wextra -pedantic -Wformat-security -Winit-self -Wswitch-default -Wswitch-enum -Wfloat-equal -Wshadow -Wcast-qual -Wconversion -Wlogical-op -Winline)
         if (SQLITECPP_USE_GCOV AND CMAKE_COMPILER_IS_GNUCXX)
             if (CMAKE_BUILD_TYPE STREQUAL "Debug")
                 message (STATUS "Using GCov instrumentation")
@@ -53,9 +44,6 @@ else (MSVC)
             add_definitions (-fprofile-arcs -ftest-coverage)
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
         endif ()
-    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-        # Clang flags
-        add_definitions(-fstack-protector-all -Wall -Wextra -pedantic -Wformat-security -Winit-self -Wswitch-default -Wswitch-enum -Wfloat-equal -Wshadow -Wcast-qual -Wconversion -Winline)
     endif (CMAKE_COMPILER_IS_GNUCXX)
 endif (MSVC)
 # and then common variables
@@ -65,7 +53,7 @@ set(CPPLINT_ARG_LINELENGTH "--linelength=120")
 
 # Options relative to SQLite and SQLiteC++ functions
 
-option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getName(). Require support from sqlite3 library." ${SQLITE_ENABLE_COLUMN_METADATA_DEFAULT})
+option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getName(). Require support from sqlite3 library." ON)
 if (SQLITE_ENABLE_COLUMN_METADATA) 
     # Enable the use of SQLite column metadata and Column::getName() method,
     # Require that the sqlite3 library is also compiled with this flag (default under Debian/Ubuntu, but not on Mac OS X).
@@ -79,7 +67,7 @@ if (SQLITE_ENABLE_ASSERT_HANDLER)
 endif (SQLITE_ENABLE_ASSERT_HANDLER)
 
 
-## Core source code ##
+## Build the C++ Wrapper ##
 
 # adding a new file require explicittly modifing the CMakeLists.txt
 # so that CMake knows that it should rebuild the project (it is best practice)
@@ -155,11 +143,11 @@ if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Cla
 endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
 
 
-# SQLite3 library (mostly usefull under Windows)
+## Build provided copy of SQLite3 C library ##
 
-option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ${SQLITECPP_INTERNAL_SQLITE_DEFAULT})
+option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
 if (SQLITECPP_INTERNAL_SQLITE)
-    # build the SQLite3 C library for Windows (for ease of use) versus Linux sqlite3-dev package
+    # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
     include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
 endif (SQLITECPP_INTERNAL_SQLITE)
@@ -218,6 +206,13 @@ if (SQLITECPP_BUILD_EXAMPLES)
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
     target_link_libraries(SQLiteCpp_example1 SQLiteCpp sqlite3)
+    # Link target with pthread and dl for linux
+    if (UNIX)
+        target_link_libraries(SQLiteCpp_example1 pthread)
+        if (NOT APPLE)
+            target_link_libraries(SQLiteCpp_example1 dl)
+        endif ()
+    endif ()    
 else (SQLITECPP_BUILD_EXAMPLES)
     message(STATUS "SQLITECPP_BUILD_EXAMPLES OFF")
 endif (SQLITECPP_BUILD_EXAMPLES)
@@ -238,6 +233,10 @@ if (SQLITECPP_BUILD_TESTS)
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
     target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp sqlite3)
+    # Link target with dl for linux
+    if (UNIX AND NOT APPLE)
+        target_link_libraries(SQLiteCpp_tests dl)
+    endif ()    
 
     # add a "test" target:
     enable_testing()
@@ -261,7 +260,7 @@ else (NOT BIICODE)
     # Include base block dir
     ADD_BIICODE_TARGETS()
 
-    # Link target with dl for linux
+    # Link target with pthread and dl for linux
     if (UNIX)
         target_link_libraries(${BII_BLOCK_TARGET} INTERFACE pthread)
         if (NOT APPLE)

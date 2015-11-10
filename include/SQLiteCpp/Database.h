@@ -378,7 +378,7 @@ private:
     {
         if (SQLITE_OK != aRet)
         {
-            throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
+            throw SQLite::Exception(sqlite3_errstr(aRet));
         }
     }
 

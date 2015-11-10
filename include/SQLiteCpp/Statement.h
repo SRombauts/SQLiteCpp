@@ -457,7 +457,7 @@ private:
     {
         if (SQLITE_OK != aRet)
         {
-            throw SQLite::Exception(sqlite3_errmsg(mStmtPtr));
+            throw SQLite::Exception(sqlite3_errstr(aRet));
         }
     }
 

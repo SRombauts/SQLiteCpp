@@ -36,7 +36,7 @@ Database::Database(const char* apFilename,
     const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
     if (SQLITE_OK != ret)
     {
-        std::string strerr = sqlite3_errmsg(mpSQLite);
+        std::string strerr = sqlite3_errstr(ret);
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw SQLite::Exception(strerr);
     }
@@ -58,7 +58,7 @@ Database::Database(const std::string& aFilename,
     const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? NULL : aVfs.c_str());
     if (SQLITE_OK != ret)
     {
-        std::string strerr = sqlite3_errmsg(mpSQLite);
+        std::string strerr = sqlite3_errstr(ret);
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw SQLite::Exception(strerr);
     }
@@ -85,7 +85,7 @@ Database::~Database() noexcept // nothrow
 /**
  * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
  *
- *  This is usefull in multithreaded program to handle case where a table is locked for writting by a thread.
+ *  This is useful in multithreaded program to handle case where a table is locked for writting by a thread.
  * Any other thread cannot access the table and will receive a SQLITE_BUSY error:
  * setting a timeout will wait and retry up to the time specified before returning this SQLITE_BUSY error.
  *  Reading the value of timeout for current connection can be done with SQL query "PRAGMA busy_timeout;".

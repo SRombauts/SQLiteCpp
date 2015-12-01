@@ -18,7 +18,7 @@ configuration:
 before_build:
   - mkdir build
   - cd build
-  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=OFF -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_DOXYGEN=OFF ..
+  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=OFF -DSQLITECPP_RUN_CPPCHECK=OFF ..
 
 # build examples, and run tests (ie make & make test)
 build_script:

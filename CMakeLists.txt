@@ -186,7 +186,7 @@ else (SQLITECPP_RUN_CPPCHECK)
     message(STATUS "SQLITECPP_RUN_CPPCHECK OFF")
 endif (SQLITECPP_RUN_CPPCHECK)
 
-option(SQLITECPP_RUN_DOXYGEN "Run Doxygen C++ documentation tool." ON)
+option(SQLITECPP_RUN_DOXYGEN "Run Doxygen C++ documentation tool." OFF)
 if (SQLITECPP_RUN_DOXYGEN)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)

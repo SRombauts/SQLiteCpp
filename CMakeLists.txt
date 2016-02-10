@@ -1,11 +1,9 @@
 # Main CMake file for compiling the library itself, examples and tests.
 #
-# Copyright (c) 2012-2015 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+# Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT) 
-if (NOT BIICODE)
-
 cmake_minimum_required(VERSION 2.6)
 project(SQLiteCpp)
 
@@ -123,7 +121,6 @@ source_group(doc FILES ${SQLITECPP_DOC})
 set(SQLITECPP_SCRIPT
  .travis.yml
  appveyor.yml
- biicode.conf
  build.bat
  build.sh
  cpplint.py
@@ -252,20 +249,3 @@ else (SQLITECPP_BUILD_TESTS)
     message(STATUS "SQLITECPP_BUILD_TESTS OFF")
 endif (SQLITECPP_BUILD_TESTS)
 
-
-else (NOT BIICODE)
-
-    # biicode doesn't process files bigger than 5Mb
-    list(APPEND BII_LIB_SRC sqlite3/sqlite3.c)
-    # Include base block dir
-    ADD_BIICODE_TARGETS()
-
-    # Link target with pthread and dl for linux
-    if (UNIX)
-        target_link_libraries(${BII_BLOCK_TARGET} INTERFACE pthread)
-        if (NOT APPLE)
-            target_link_libraries(${BII_BLOCK_TARGET} INTERFACE dl)
-        endif ()
-    endif ()
-
-endif (NOT BIICODE)

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2015 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+# Copyright (c) 2012-2016 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)

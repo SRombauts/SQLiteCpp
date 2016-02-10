@@ -29,7 +29,7 @@ or copy at http://opensource.org/licenses/MIT)
 
 SQLite is a library that implements a serverless transactional SQL database engine.
 It is the most widely deployed SQL database engine in the world.
-The source code for SQLite is in the public domain.
+All of the code and documentation in SQLite has been dedicated to the public domain by the authors.
 http://www.sqlite.org/about.html
 
 ### The goals of SQLiteC++ are:

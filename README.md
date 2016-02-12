@@ -63,7 +63,7 @@ And following IDEs/Compilers
 - GCC 4.6.3, 4.7.2 and GCC 4.8.2
 - Clang 3.4
 - Eclipse CDT under Linux
-- Visual Studio Express 2008/2013/2015 for testing compatibility purpose
+- Visual Studio Express 2008 and Community 2015
 
 ### Dependencies
 

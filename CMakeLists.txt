@@ -161,7 +161,7 @@ if (SQLITECPP_RUN_CPPLINT)
          ALL
          COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
         )
-        message(STATUS "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}")
+        message(STATUS "Found Python: ${PYTHON_EXECUTABLE}")
     endif (PYTHONINTERP_FOUND)
 else (SQLITECPP_RUN_CPPLINT)
     message(STATUS "SQLITECPP_RUN_CPPLINT OFF")
@@ -171,11 +171,12 @@ option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." ON)
 if (SQLITECPP_RUN_CPPCHECK)
     find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
     if (CPPCHECK_EXECUTABLE)
-       # add a cppcheck target to the "all" target
-       add_custom_target(SQLiteCpp_cppcheck
-        ALL
-        COMMAND cppcheck -j 4 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
-       )
+        # add a cppcheck target to the "all" target
+        add_custom_target(SQLiteCpp_cppcheck
+         ALL
+         COMMAND cppcheck -j 8 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
+        )
+        message(STATUS "Found Cppcheck: ${CPPCHECK_EXECUTABLE}")
     else (CPPCHECK_EXECUTABLE)
         message(STATUS "Could NOT find cppcheck")
     endif (CPPCHECK_EXECUTABLE)

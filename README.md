@@ -25,6 +25,14 @@ Copyright (c) 2012-2016 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 or copy at http://opensource.org/licenses/MIT)
 
+#### Note on redistribution of SQLite source files
+
+As stated by the MIT License, you are welcome to reuse, modify, and redistribute the SQLiteCpp source code
+the way you want it to, be it a git submodule, a subdirectory, or a selection of some source files.
+
+I would love a mention in your README, a web link to the SQLite repository, and a mention of the author,
+but none of those are mandatory.
+
 ### About SQLite underlying library:
 
 SQLite is a library that implements a serverless transactional SQL database engine.

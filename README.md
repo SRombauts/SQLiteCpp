@@ -15,8 +15,8 @@ Keywords: sqlite, sqlite3, C, library, wrapper C++
 
 ## About SQLiteC++:
 
-SQLiteC++ offers an encapsulation arround the native C APIs of SQLite,
-with a few intuitive and well documented C++ class.
+SQLiteC++ offers an encapsulation around the native C APIs of SQLite,
+with a few intuitive and well documented C++ classes.
 
 ### License:
 
@@ -42,7 +42,7 @@ http://www.sqlite.org/about.html
 
 ### The goals of SQLiteC++ are:
 
-- to offer the best of existing simple C++ SQLite wrappers
+- to offer the best of the existing simple C++ SQLite wrappers
 - to be elegantly written with good C++ design, STL, exceptions and RAII idiom
 - to keep dependencies to a minimum (STL and SQLite3)
 - to be portable
@@ -54,7 +54,7 @@ http://www.sqlite.org/about.html
 - to be well maintained
 - to use a permissive MIT license, similar to BSD or Boost, for proprietary/commercial usage
 
-It is designed using the Resource Acquisition Is Initialization (RAII) idom
+It is designed using the Resource Acquisition Is Initialization (RAII) idiom
 (see http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization),
 and throwing exceptions in case of SQLite errors (exept in destructors,
 where assert() are used instead).
@@ -67,7 +67,7 @@ Developements and tests are done under the following OSs:
 - Ubuntu 12.04 (Travis CI) and 14.04
 - Debian 7
 - Windows XP/10
-And following IDEs/Compilers
+And the following IDEs/Compilers
 - GCC 4.6.3, 4.7.2 and GCC 4.8.2
 - Clang 3.4
 - Eclipse CDT under Linux
@@ -75,16 +75,16 @@ And following IDEs/Compilers
 
 ### Dependencies
 
-- a STL implementation (even an old one, like the one provided with VC6 should work)
-- exception support (the class Exception inherit from std::runtime_error)
-- the SQLite library, either by linking to it dynamicaly or staticaly (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),
+- an STL implementation (even an old one, like the one provided with VC6 should work)
+- exception support (the class Exception inherits from std::runtime_error)
+- the SQLite library, either by linking to it dynamicaly or statically (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),
   or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows),
   with the SQLITE_ENABLE_COLUMN_METADATA macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).
 
 ## Getting started
 ### Installation
 
-To use this wrappers, you need to add the 10 SQLiteC++ source files from the src/ directory
+To use this wrapper, you need to add the 10 SQLiteC++ source files from the src/ directory
 in your project code base, and compile/link against the sqlite library.
 
 The easiest way to do this is to add the wrapper as a library.
@@ -173,22 +173,22 @@ Detailed results can be seen online:
 
 ### Thread-safety
 
-SQLite supports three mode of thread safety, as describe in "SQLite And Multiple Threads" :
+SQLite supports three modes of thread safety, as describe in "SQLite And Multiple Threads":
 see http://www.sqlite.org/threadsafe.html
 
-This SQLiteC++ wrapper does no add any lock (no mutexes) nor any other thread-safety mecanism
+This SQLiteC++ wrapper does no add any locks (no mutexes) nor any other thread-safety mechanism
 above the SQLite library itself, by design, for lightness and speed.
 
-Thus, SQLiteC++ naturally supports the "Multi Thread" mode of SQLite ;
+Thus, SQLiteC++ naturally supports the "Multi Thread" mode of SQLite:
 "In this mode, SQLite can be safely used by multiple threads
 provided that no single database connection is used simultaneously in two or more threads."
 
 But SQLiteC++ does not support the fully thread-safe "Serialized" mode of SQLite,
-because of the way it shares the underling SQLite precompiled statement
+because of the way it shares the underlying SQLite precompiled statement
 in a custom shared pointer (See the inner class "Statement::Ptr").
 
 ## Examples
-### First sample demonstrates how to query a database and get results: 
+### The first sample demonstrates how to query a database and get results: 
 
 ```C++
 try
@@ -219,7 +219,7 @@ catch (std::exception& e)
 }
 ```
 
-### Second sample shows how to manage a transaction:
+### The second sample shows how to manage a transaction:
 
 ```C++
 try
@@ -246,7 +246,7 @@ catch (std::exception& e)
 ```
 
 ### How to handle assertion in SQLiteC++:
-Exceptions shall not be used in destructors, so SQLiteC++ use SQLITECPP_ASSERT() to check for errors in destructors.
+Exceptions shall not be used in destructors, so SQLiteC++ uses SQLITECPP_ASSERT() to check for errors in destructors.
 If you don't want assert() to be called, you have to enable and define an assert handler as shown below,
 and by setting the flag SQLITECPP_ENABLE_ASSERT_HANDLER when compiling the lib.
 
@@ -276,17 +276,17 @@ use the tools provided by GitHub:
 You can also email me directly, I will answer any questions and requests.
 
 ### Coding Style Guidelines
-The source code use the CamelCase naming style variant where :
-- type names (class, struct, typedef, enums...) begins with a capital letter
-- files (.cpp/.h) are named like the class they contains
-- function and variable names begins with a lower case letter
-- member variables begins with a 'm', function arguments begins with a 'a', boolean with a 'b', pointers with a 'p'
+The source code use the CamelCase naming style variant where:
+- type names (class, struct, typedef, enums...) begin with a capital letter
+- files (.cpp/.h) are named like the class they contain
+- function and variable names begin with a lower case letter
+- member variables begin with a 'm', function arguments begin with a 'a', booleans with a 'b', pointers with a 'p'
 - each file, class, method and member variable is documented using Doxygen tags
 See also http://www.appinf.com/download/CppCodingStyleGuide.pdf for good guidelines
 
 ## See also - Some other simple C++ SQLite wrappers:
 
-See bellow a short comparison of other wrappers done at the time of the writting:
+See bellow a short comparison of other wrappers done at the time of writing:
  - [sqdbcpp](http://code.google.com/p/sqdbcpp/): RAII design, simple, no dependencies, UTF-8/UTF-16, new BSD license
  - [sqlite3cc](http://ed.am/dev/sqlite3cc): uses boost, modern design, LPGPL
  - [sqlite3pp](https://github.com/iwongu/sqlite3pp): modern design inspired by boost, MIT License

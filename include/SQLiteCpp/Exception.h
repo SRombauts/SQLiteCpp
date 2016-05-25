@@ -12,6 +12,8 @@
 
 #include <stdexcept>
 #include <string>
+#include <sstream>
+#include <sqlite3.h>
 
 
 namespace SQLite
@@ -30,9 +32,38 @@ public:
      * @param[in] aErrorMessage The string message describing the SQLite error
      */
     explicit Exception(const std::string& aErrorMessage) :
-        std::runtime_error(aErrorMessage)
+        std::runtime_error(aErrorMessage),
+        errcode(0),
+        extendedErrcode(0),
+        errstr(),
+        errmsg()
     {
     }
+    
+    /**
+     * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
+     *
+     * @param[in] apSQLite The SQLite object, to obtain detailed error messages from.
+     * @param[in] ret Return value from function call that failed.
+     */
+    explicit Exception(sqlite3* apSQLite, int ret) :
+        errcode(ret),
+        extendedErrcode(sqlite3_extended_errcode(apSQLite)),
+        errstr(sqlite3_errstr(ret)),
+        errmsg(sqlite3_errmsg(apSQLite)),
+        
+        std::runtime_error([apSQLite, ret](){
+            std::ostringstream message;
+            message << sqlite3_errstr(ret) << ": " << sqlite3_errmsg(apSQLite);
+            return message.str();
+        }())
+    {
+    }
+    
+    const int errcode;
+    const int extendedErrcode;
+    const std::string errstr;
+    const std::string errmsg;
 };
 
 

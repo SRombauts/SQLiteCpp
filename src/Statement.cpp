@@ -195,7 +195,7 @@ bool Statement::executeStep()
         {
             mbOk = false;
             mbDone = false;
-            throw SQLite::Exception(sqlite3_errstr(ret));
+            throw SQLite::Exception(mStmtPtr, ret);
         }
     }
     else
@@ -227,7 +227,7 @@ int Statement::exec()
         {
             mbOk = false;
             mbDone = false;
-            throw SQLite::Exception(sqlite3_errstr(ret));
+            throw SQLite::Exception(mStmtPtr, ret);
         }
     }
     else
@@ -317,7 +317,7 @@ Statement::Ptr::Ptr(sqlite3* apSQLite, std::string& aQuery) :
     const int ret = sqlite3_prepare_v2(apSQLite, aQuery.c_str(), static_cast<int>(aQuery.size()), &mpStmt, NULL);
     if (SQLITE_OK != ret)
     {
-        throw SQLite::Exception(sqlite3_errstr(ret));
+        throw SQLite::Exception(apSQLite, ret);
     }
     // Initialize the reference counter of the sqlite3_stmt :
     // used to share the mStmtPtr between Statement and Column objects;

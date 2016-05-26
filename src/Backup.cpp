@@ -31,8 +31,7 @@ Backup::Backup(Database&  aDestDatabase,
                                          apSrcDatabaseName);
     if (NULL == mpSQLiteBackup)
     {
-        std::string strerr = sqlite3_errmsg(aDestDatabase.getHandle());
-        throw SQLite::Exception(strerr);
+        throw SQLite::Exception(aDestDatabase.getHandle());
     }
 }
 

@@ -36,9 +36,9 @@ Database::Database(const char* apFilename,
     const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
     if (SQLITE_OK != ret)
     {
-        std::string strerr = sqlite3_errstr(ret);
+        const SQLite::Exception exception(mpSQLite, ret); // must create before closing
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
-        throw SQLite::Exception(strerr);
+        throw exception;
     }
 
     if (aBusyTimeoutMs > 0)
@@ -58,9 +58,9 @@ Database::Database(const std::string& aFilename,
     const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? NULL : aVfs.c_str());
     if (SQLITE_OK != ret)
     {
-        std::string strerr = sqlite3_errstr(ret);
+        const SQLite::Exception exception(mpSQLite, ret); // must create before closing
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
-        throw SQLite::Exception(strerr);
+        throw exception;
     }
 
     if (aBusyTimeoutMs > 0)

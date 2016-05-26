@@ -195,7 +195,7 @@ bool Statement::executeStep()
         {
             mbOk = false;
             mbDone = false;
-            throw SQLite::Exception(sqlite3_errstr(ret));
+            throw SQLite::Exception(mStmtPtr, ret);
         }
     }
     else

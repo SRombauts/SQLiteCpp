@@ -16,6 +16,8 @@
 #include <string>
 
 #include <SQLiteCpp/SQLiteCpp.h>
+#include <SQLiteCpp/VariadicBind.h>
+
 
 #ifdef SQLITECPP_ENABLE_ASSERT_HANDLER
 namespace SQLite
@@ -80,6 +82,34 @@ private:
     SQLite::Statement   mQuery; ///< Database prepared SQL query
 };
 
+void demonstrateVariadicBind() {
+#if ( __cplusplus>= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) )
+	// Open a database file in create/write mode
+	SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+
+	db.exec("DROP TABLE IF EXISTS test");
+	db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+
+	{
+	SQLite::Statement query(db, "INSERT INTO test VALUES (?, ?)");
+
+	SQLite::bind(query, 42, "fortytwo");
+	// Execute the one-step query to insert the blob
+	int nb = query.exec();
+	std::cout << "INSERT INTO test VALUES (NULL, ?)\", returned " << nb
+			<< std::endl;
+	}
+
+	SQLite::Statement query(db, "SELECT * FROM test");
+	std::cout << "SELECT * FROM test :\n";
+	if (query.executeStep()) {
+		std::cout << query.getColumn(0).getInt() << "\t\""
+				<< query.getColumn(1).getText() << "\"\n";
+	}
+#else
+	throw std::runtime_error("demonstrateVariadicBind(): sorry, no c++14 support in this build.");
+#endif
+}
 
 int main ()
 {
@@ -421,6 +451,15 @@ int main ()
         return EXIT_FAILURE; // unexpected error : exit the example program
     }
     remove("out.png");
+
+	//example with variadic bind (requires c++14)
+	try {
+		std::cout<<"cplusplus version is "<<__cplusplus<<'\n';
+		demonstrateVariadicBind();
+	} catch (std::exception& e) {
+		std::cout << "SQLite exception: " << e.what() << std::endl;
+		return EXIT_FAILURE; // unexpected error : exit the example program
+	}
 
     std::cout << "everything ok, quitting\n";
 

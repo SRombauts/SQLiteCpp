@@ -12,8 +12,7 @@
 
 #include <SQLiteCpp/Statement.h>
 
-namespace SQLite
-{
+
 
 
 //this requires c++14. seems like visual studio 2015 should work (yet untested).
@@ -21,6 +20,9 @@ namespace SQLite
 /// @cond
 #include <utility>
 #include <initializer_list>
+
+namespace SQLite
+{
 
 /// implementation detail for variadic bind.
 namespace detail {
@@ -67,8 +69,10 @@ void bind(SQLite::Statement& s,const Args& ... args) {
   };
   detail::invoke_with_index(f, args...);
 }
+
+}  // namespace SQLite
+
 #else
 //not supported in older c++. provide a fallback?
 #endif // c++14
 
-}  // namespace SQLite

@@ -454,7 +454,6 @@ int main ()
 
 	//example with variadic bind (requires c++14)
 	try {
-		std::cout<<"cplusplus version is "<<__cplusplus<<'\n';
 		demonstrateVariadicBind();
 	} catch (std::exception& e) {
 		std::cout << "SQLite exception: " << e.what() << std::endl;

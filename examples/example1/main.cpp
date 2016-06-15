@@ -453,12 +453,14 @@ int main ()
     remove("out.png");
 
 	//example with variadic bind (requires c++14)
+#if ( __cplusplus>= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) )
 	try {
 		demonstrateVariadicBind();
 	} catch (std::exception& e) {
 		std::cout << "SQLite exception: " << e.what() << std::endl;
 		return EXIT_FAILURE; // unexpected error : exit the example program
 	}
+#endif
 
     std::cout << "everything ok, quitting\n";
 

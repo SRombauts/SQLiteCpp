@@ -32,4 +32,4 @@ script:
 
 # publish GCov coveralls results
 after_success:
-  - coveralls -e build/CMakeFiles -e examples -e googletest -e sqlite3 -e tests
+  - if [[ "$CXX" == "g++" ]]; then coveralls --root .. -e examples -e googletest -e sqlite3 -e tests -E ".*feature_tests.*" -E ".*CompilerId.*" ; fi

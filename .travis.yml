@@ -7,7 +7,9 @@ compiler:
   - gcc
   - clang
 
-sudo: false
+# request for Ubuntu 14.04 Trusty VM
+sudo: true
+dist: trusty
 
 addons:
   apt:

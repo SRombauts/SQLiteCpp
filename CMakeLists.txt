@@ -4,7 +4,7 @@
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT) 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.12) # first version with add_compile_options()
 project(SQLiteCpp)
 
 # Define useful variables to handle OS differences:
@@ -29,8 +29,7 @@ else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
     # Useful compile flags and extra warnings 
-   #add_compile_options() is not supported with CMake 2.8.7 of Ubuntu 12.04 on Travis-CI    
-    add_definitions(-fstack-protector -Wall -Winit-self -Wswitch-enum -Wshadow -Winline)
+    add_compile_options(-fstack-protector -Wall -Winit-self -Wswitch-enum -Wshadow -Winline)
     if (CMAKE_COMPILER_IS_GNUCXX)
         # GCC flags
         if (SQLITECPP_USE_GCOV AND CMAKE_COMPILER_IS_GNUCXX)
@@ -39,7 +38,7 @@ else (MSVC)
             else ()
                 message (WARNING "GCov instrumentation works best in Debug mode")
             endif ()
-            add_definitions (-fprofile-arcs -ftest-coverage)
+            add_compile_options (-fprofile-arcs -ftest-coverage)
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
         endif ()
     endif (CMAKE_COMPILER_IS_GNUCXX)
@@ -220,7 +219,7 @@ option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 if (SQLITECPP_BUILD_TESTS)
     # deactivate some warnings for compiling the gtest library
     if (NOT MSVC)
-        add_definitions(-Wno-variadic-macros -Wno-long-long -Wno-switch-enum -Wno-float-equal -Wno-conversion-null -Wno-switch-default -Wno-pedantic)
+        add_compile_options(-Wno-variadic-macros -Wno-long-long -Wno-switch-enum -Wno-float-equal -Wno-conversion-null -Wno-switch-default -Wno-pedantic)
     endif (NOT MSVC)
 
     # add the subdirectory containing the CMakeLists.txt for the gtest library

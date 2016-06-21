@@ -38,14 +38,33 @@ else (MSVC)
             else ()
                 message (WARNING "GCov instrumentation works best in Debug mode")
             endif ()
-            add_compile_options (-fprofile-arcs -ftest-coverage)
-            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+            add_compile_options (-coverage) # NOTE would be usefull but not working with current google test and gcc 4.8 -fkeep-inline-functions
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -coverage")
         endif ()
     endif (CMAKE_COMPILER_IS_GNUCXX)
 endif (MSVC)
 # and then common variables
 set(CPPLINT_ARG_VERBOSE "--verbose=3")
 set(CPPLINT_ARG_LINELENGTH "--linelength=120")
+
+# Print CXX FLAGS
+message (STATUS "CMAKE_CXX_FLAGS                '${CMAKE_CXX_FLAGS}'")
+if (MSVC)
+    message (STATUS "CMAKE_CXX_FLAGS_DEBUG          '${CMAKE_CXX_FLAGS_DEBUG}'")
+    message (STATUS "CMAKE_CXX_FLAGS_RELEASE        '${CMAKE_CXX_FLAGS_RELEASE}'")
+    message (STATUS "CMAKE_CXX_FLAGS_RELWITHDEBINFO '${CMAKE_CXX_FLAGS_RELWITHDEBINFO}'")
+    message (STATUS "CMAKE_CXX_FLAGS_MINSIZEREL     '${CMAKE_CXX_FLAGS_MINSIZEREL}'")
+else (NOT MSVC)
+    if     (CMAKE_BUILD_TYPE STREQUAL Debug)
+        message (STATUS "CMAKE_CXX_FLAGS_DEBUG          '${CMAKE_CXX_FLAGS_DEBUG}'")
+    elseif (CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
+        message (STATUS "CMAKE_CXX_FLAGS_RELWITHDEBINFO '${CMAKE_CXX_FLAGS_RELWITHDEBINFO}'")
+    elseif (CMAKE_BUILD_TYPE STREQUAL MinSizeRel)
+        message (STATUS "CMAKE_CXX_FLAGS_MINSIZEREL     '${CMAKE_CXX_FLAGS_MINSIZEREL}'")
+    else ()
+        message (STATUS "CMAKE_CXX_FLAGS_RELEASE        '${CMAKE_CXX_FLAGS_RELEASE}'")
+    endif ()
+endif ()
 
 
 # Options relative to SQLite and SQLiteC++ functions

@@ -17,7 +17,7 @@ addons:
     - cppcheck
 
 before_install:
-  - pip install --user cpp-coveralls
+  - if [[ "$CXX" == "g++" ]]; then pip install --user cpp-coveralls ; fi
 
 # scripts to run before build
 before_script:
@@ -28,8 +28,8 @@ before_script:
 # build examples, and run tests (ie make & make test)
 script:
   - cmake --build .
-  - ctest --output-on-failure
+  - ctest --verbose --output-on-failure
 
-# publish GCov coveralls results
+# generate and publish GCov coveralls results
 after_success:
-  - if [[ "$CXX" == "g++" ]]; then coveralls --root .. -e examples -e googletest -e sqlite3 -e tests -E ".*feature_tests.*" -E ".*CompilerId.*" ; fi
+  - if [[ "$CXX" == "g++" ]]; then coveralls --root .. -e examples -e googletest -e sqlite3 -e tests -E ".*feature_tests.*" -E ".*CompilerId.*" --gcov-options '\-lp' ; fi

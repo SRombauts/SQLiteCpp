@@ -43,6 +43,23 @@ Statement::Statement(Database &aDatabase, const std::string& aQuery) :
     mColumnCount = sqlite3_column_count(mStmtPtr);
 }
 
+#ifdef Statement_CAN_MOVE
+// Move Constructor
+Statement::Statement(Statement &&other):
+mQuery(std::move(other.mQuery)),
+mStmtPtr(other.mStmtPtr),
+mColumnCount(other.mColumnCount),
+mColumnNames(std::move(other.mColumnNames)),
+mbOk(other.mbOk),
+mbDone(other.mbDone)
+{
+    //other.mStmtPtr = nullptr; // doesn't support reassigning
+    other.mColumnCount = 0;
+    other.mbOk = false;
+    other.mbDone = false;
+}
+#endif
+
 // Finalize and unregister the SQL query from the SQLite Database Connection.
 Statement::~Statement() noexcept // nothrow
 {
@@ -66,21 +83,28 @@ void Statement::clearBindings()
 }
 
 // Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const int& aValue)
+void Statement::bind(const int aIndex, const int aValue)
 {
     const int ret = sqlite3_bind_int(mStmtPtr, aIndex, aValue);
     check(ret);
 }
 
 // Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const sqlite3_int64& aValue)
+void Statement::bind(const int aIndex, const sqlite3_int64 aValue)
+{
+    const int ret = sqlite3_bind_int64(mStmtPtr, aIndex, aValue);
+    check(ret);
+}
+
+// Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const int aIndex, const uint32_t aValue)
 {
     const int ret = sqlite3_bind_int64(mStmtPtr, aIndex, aValue);
     check(ret);
 }
 
 // Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const double& aValue)
+void Statement::bind(const int aIndex, const double aValue)
 {
     const int ret = sqlite3_bind_double(mStmtPtr, aIndex, aValue);
     check(ret);
@@ -91,6 +115,14 @@ void Statement::bind(const int aIndex, const std::string& aValue)
 {
     const int ret = sqlite3_bind_text(mStmtPtr, aIndex, aValue.c_str(),
                                       static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
+    check(ret);
+}
+    
+// Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bindNoCopy(const int aIndex, const std::string& aValue)
+{
+    const int ret = sqlite3_bind_text(mStmtPtr, aIndex, aValue.c_str(),
+                                      static_cast<int>(aValue.size()), SQLITE_STATIC);
     check(ret);
 }
 
@@ -108,6 +140,13 @@ void Statement::bind(const int aIndex, const void* apValue, const int aSize)
     check(ret);
 }
 
+// Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bindNoCopy(const int aIndex, const void* apValue, const int aSize)
+{
+    const int ret = sqlite3_bind_blob(mStmtPtr, aIndex, apValue, aSize, SQLITE_STATIC);
+    check(ret);
+}
+
 // Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex)
 {
@@ -117,7 +156,7 @@ void Statement::bind(const int aIndex)
 
 
 // Bind an int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const char* apName, const int& aValue)
+void Statement::bind(const char* apName, const int aValue)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
     const int ret = sqlite3_bind_int(mStmtPtr, index, aValue);
@@ -125,7 +164,15 @@ void Statement::bind(const char* apName, const int& aValue)
 }
 
 // Bind a 64bits int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const char* apName, const sqlite3_int64& aValue)
+void Statement::bind(const char* apName, const sqlite3_int64 aValue)
+{
+    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
+    const int ret = sqlite3_bind_int64(mStmtPtr, index, aValue);
+    check(ret);
+}
+
+// Bind a 32bits unsigned int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const char* apName, const uint32_t aValue)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
     const int ret = sqlite3_bind_int64(mStmtPtr, index, aValue);
@@ -133,7 +180,7 @@ void Statement::bind(const char* apName, const sqlite3_int64& aValue)
 }
 
 // Bind a double (64bits float) value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const char* apName, const double& aValue)
+void Statement::bind(const char* apName, const double aValue)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
     const int ret = sqlite3_bind_double(mStmtPtr, index, aValue);
@@ -146,6 +193,15 @@ void Statement::bind(const char* apName, const std::string& aValue)
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
     const int ret = sqlite3_bind_text(mStmtPtr, index, aValue.c_str(),
                                       static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
+    check(ret);
+}
+
+// Bind a string value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bindNoCopy(const char* apName, const std::string& aValue)
+{
+    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
+    const int ret = sqlite3_bind_text(mStmtPtr, index, aValue.c_str(),
+                                      static_cast<int>(aValue.size()), SQLITE_STATIC);
     check(ret);
 }
 
@@ -162,6 +218,14 @@ void Statement::bind(const char* apName, const void* apValue, const int aSize)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
     const int ret = sqlite3_bind_blob(mStmtPtr, index, apValue, aSize, SQLITE_TRANSIENT);
+    check(ret);
+}
+
+// Bind a binary blob value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bindNoCopy(const char* apName, const void* apValue, const int aSize)
+{
+    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
+    const int ret = sqlite3_bind_blob(mStmtPtr, index, apValue, aSize, SQLITE_STATIC);
     check(ret);
 }
 

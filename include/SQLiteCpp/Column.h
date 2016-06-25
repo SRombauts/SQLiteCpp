@@ -106,7 +106,7 @@ public:
      *
      */
     std::string     getString() const noexcept; // nothrow
-    
+
     /**
      * @brief Return the type of the value of the column
      *
@@ -198,7 +198,7 @@ public:
     {
         return getBlob();
     }
-    
+
 #if !(defined(_MSC_VER) && _MSC_VER < 1900)
     // NOTE : the following is required by GCC and Clang to cast a Column result in a std::string
     // (error: conversion from ‘SQLite::Column’ to non-scalar type ‘std::string {aka std::basic_string<char>}’)
@@ -217,7 +217,7 @@ public:
         return getString();
     }
 #endif
-    
+
     // NOTE : the following is required by GCC and Clang to cast a Column result in a long/int64_t
     /// @brief Inline cast operator to long as 64bits integer
     inline operator long() const

@@ -13,6 +13,7 @@
 #include <sqlite3.h>
 #include <string>
 #include <map>
+#include <stdint.h>
 
 #include <SQLiteCpp/Exception.h>
 
@@ -135,14 +136,14 @@ public:
      * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const int aIndex, const std::string&   aValue);
-    
+
     /**
      * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * @note This uses the SQLITE_STATIC flag, NOT making a copy of the data. It must exist while executing the statement.
      */
     void bindNoCopy(const int aIndex, const std::string&   aValue);
-    
+
     /**
      * @brief Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
@@ -155,14 +156,14 @@ public:
      * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const int aIndex, const void*          apValue, const int aSize);
-    
+
     /**
      * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * @note This uses the SQLITE_STATIC flag, NOT making a copy of the data. It must exist while executing the statement.
      */
     void bindNoCopy(const int aIndex, const void*          apValue, const int aSize);
-    
+
     /**
      * @brief Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */

@@ -53,7 +53,7 @@ mColumnNames(std::move(other.mColumnNames)),
 mbOk(other.mbOk),
 mbDone(other.mbDone)
 {
-    //other.mStmtPtr = nullptr; // doesn't support reassigning
+    // other.mStmtPtr = nullptr; // doesn't support reassigning
     other.mColumnCount = 0;
     other.mbOk = false;
     other.mbDone = false;
@@ -117,7 +117,7 @@ void Statement::bind(const int aIndex, const std::string& aValue)
                                       static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
     check(ret);
 }
-    
+
 // Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bindNoCopy(const int aIndex, const std::string& aValue)
 {

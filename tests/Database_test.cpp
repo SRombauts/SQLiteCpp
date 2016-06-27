@@ -118,6 +118,16 @@ TEST(Database, busyTimeout) {
         db.setBusyTimeout(0);
         EXPECT_EQ(0, db.execAndGet("PRAGMA busy_timeout").getInt());
     }
+    {
+        // Create a new database with a non null busy timeout
+        const std::string memory = ":memory:";
+        SQLite::Database db(memory, SQLITE_OPEN_READWRITE, 5000);
+        EXPECT_EQ(5000, db.execAndGet("PRAGMA busy_timeout").getInt());
+
+        // Reset timeout to null
+        db.setBusyTimeout(0);
+        EXPECT_EQ(0, db.execAndGet("PRAGMA busy_timeout").getInt());
+    }
 }
 #endif // SQLITE_VERSION_NUMBER >= 3007015
 
@@ -234,3 +244,4 @@ TEST(Database, execException) {
 }
 
 // TODO: test Database::createFunction()
+// TODO: test Database::loadExtension()

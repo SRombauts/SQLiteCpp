@@ -18,6 +18,16 @@
 
 #include <cstdio>
 
+TEST(Backup, initException) {
+    remove("backup_test.db3");
+    SQLite::Database srcDB("backup_test.db3", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
+    ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, \"first\")"));
+    ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, \"second\")"));
+    EXPECT_THROW(SQLite::Backup backup(srcDB, "src", srcDB, "src"), SQLite::Exception);
+    remove("backup_test.db3");
+}
+
 TEST(Backup, executeStep) {
     remove("backup_test.db3");
     remove("backup_test.db3.backup");

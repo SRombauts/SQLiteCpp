@@ -31,6 +31,7 @@ Backup::Backup(Database&    aDestDatabase,
                                          apSrcDatabaseName);
     if (NULL == mpSQLiteBackup)
     {
+        // If an error occurs, the error code and message are attached to the destination database connection.
         throw SQLite::Exception(aDestDatabase.getHandle());
     }
 }
@@ -48,6 +49,7 @@ Backup::Backup(Database&            aDestDatabase,
                                          aSrcDatabaseName.c_str());
     if (NULL == mpSQLiteBackup)
     {
+        // If an error occurs, the error code and message are attached to the destination database connection.
         throw SQLite::Exception(aDestDatabase.getHandle());
     }
 }
@@ -62,6 +64,7 @@ Backup::Backup(Database &aDestDatabase, Database &aSrcDatabase) :
                                          "main");
     if (NULL == mpSQLiteBackup)
     {
+        // If an error occurs, the error code and message are attached to the destination database connection.
         throw SQLite::Exception(aDestDatabase.getHandle());
     }
 }

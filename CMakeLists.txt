@@ -47,6 +47,10 @@ endif (MSVC)
 set(CPPLINT_ARG_VERBOSE "--verbose=3")
 set(CPPLINT_ARG_LINELENGTH "--linelength=120")
 
+# Print CXX compiler information
+message (STATUS "CMAKE_CXX_COMPILER_ID          '${CMAKE_CXX_COMPILER_ID}'")
+message (STATUS "CMAKE_CXX_COMPILER_VERSION     '${CMAKE_CXX_COMPILER_VERSION}'")
+
 # Print CXX FLAGS
 message (STATUS "CMAKE_CXX_FLAGS                '${CMAKE_CXX_FLAGS}'")
 if (MSVC)
@@ -65,7 +69,6 @@ else (NOT MSVC)
         message (STATUS "CMAKE_CXX_FLAGS_RELEASE        '${CMAKE_CXX_FLAGS_RELEASE}'")
     endif ()
 endif ()
-
 
 # Options relative to SQLite and SQLiteC++ functions
 

@@ -1,11 +1,10 @@
 # Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 
-
+language: cpp
 
 # request for Ubuntu 14.04 Trusty VM
 sudo: true
 dist: trusty
-language: cpp
 
 cache:
   apt: true
@@ -129,8 +128,6 @@ before_script:
   - mkdir build
   - cd build
   - export CXX=$COMPILERXX
-  - echo CXX is $CXX CXXFLAGS is $CXXFLAGS CPPFLAGS is $CPPFLAGS
-  - $CXX --version
   - cmake -DCMAKE_BUILD_TYPE=Debug -DSQLITECPP_USE_GCOV=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
 
 # build examples, and run tests (ie make & make test)

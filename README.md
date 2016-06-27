@@ -66,14 +66,15 @@ and then is always valid until destroyed.
 ### Supported platforms:
 
 Developements and tests are done under the following OSs:
-- Ubuntu 12.04 (Travis CI) and 14.04
-- Debian 7
+- Ubuntu 14.04 (Travis CI)
 - Windows XP/10
+- OS X 10.11 (Travis CI)
 And the following IDEs/Compilers
-- GCC 4.6.3, 4.7.2 and GCC 4.8.2
-- Clang 3.4
+- GCC 4.8.4, 4.9.3, 5.3.0 and 6.1.1 (C++03, C++11, C++14, C++1z)
+- Clang 3.5 and 3.8
+- Xcode 8
+- Visual Studio Community 2015
 - Eclipse CDT under Linux
-- Visual Studio Express 2008 and Community 2015
 
 ### Dependencies
 

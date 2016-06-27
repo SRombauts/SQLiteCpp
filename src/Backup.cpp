@@ -19,10 +19,10 @@ namespace SQLite
 {
 
 // Initialize resource for SQLite database backup
-Backup::Backup(Database&  aDestDatabase,
-               const char *apDestDatabaseName,
-               Database&  aSrcDatabase,
-               const char *apSrcDatabaseName) :
+Backup::Backup(Database&    aDestDatabase,
+               const char*  apDestDatabaseName,
+               Database&    aSrcDatabase,
+               const char*  apSrcDatabaseName) :
     mpSQLiteBackup(NULL)
 {
     mpSQLiteBackup = sqlite3_backup_init(aDestDatabase.getHandle(),
@@ -36,10 +36,10 @@ Backup::Backup(Database&  aDestDatabase,
 }
 
 // Initialize resource for SQLite database backup
-Backup::Backup(Database &aDestDatabase,
-               const std::string &aDestDatabaseName,
-               Database &aSrcDatabase,
-               const std::string &aSrcDatabaseName) :
+Backup::Backup(Database&            aDestDatabase,
+               const std::string&   aDestDatabaseName,
+               Database&            aSrcDatabase,
+               const std::string&   aSrcDatabaseName) :
     mpSQLiteBackup(NULL)
 {
     mpSQLiteBackup = sqlite3_backup_init(aDestDatabase.getHandle(),
@@ -48,8 +48,7 @@ Backup::Backup(Database &aDestDatabase,
                                          aSrcDatabaseName.c_str());
     if (NULL == mpSQLiteBackup)
     {
-        std::string strerr = sqlite3_errmsg(aDestDatabase.getHandle());
-        throw SQLite::Exception(strerr);
+        throw SQLite::Exception(aDestDatabase.getHandle());
     }
 }
 
@@ -63,8 +62,7 @@ Backup::Backup(Database &aDestDatabase, Database &aSrcDatabase) :
                                          "main");
     if (NULL == mpSQLiteBackup)
     {
-        std::string strerr = sqlite3_errmsg(aDestDatabase.getHandle());
-        throw SQLite::Exception(strerr);
+        throw SQLite::Exception(aDestDatabase.getHandle());
     }
 }
 
@@ -81,11 +79,9 @@ Backup::~Backup() noexcept
 int Backup::executeStep(const int aNumPage /* = -1 */)
 {
     const int res = sqlite3_backup_step(mpSQLiteBackup, aNumPage);
-    if (SQLITE_OK != res && SQLITE_DONE != res &&
-            SQLITE_BUSY != res && SQLITE_LOCKED != res)
+    if (SQLITE_OK != res && SQLITE_DONE != res && SQLITE_BUSY != res && SQLITE_LOCKED != res)
     {
-        std::string strerr = sqlite3_errstr(res);
-        throw SQLite::Exception(strerr);
+        throw SQLite::Exception(sqlite3_errstr(res), res);
     }
     return res;
 }

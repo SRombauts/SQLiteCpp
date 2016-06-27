@@ -60,6 +60,18 @@ public:
     /**
      * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
      *
+     * @param[in] aErrorMessage The string message describing the SQLite error
+     */
+    explicit Exception(const std::string& aErrorMessage, int ret) :
+        std::runtime_error(aErrorMessage),
+        mErrcode(ret),
+        mExtendedErrcode(-1)
+    {
+    }
+
+   /**
+     * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
+     *
      * @param[in] apSQLite The SQLite object, to obtain detailed error messages from.
      */
     explicit Exception(sqlite3* apSQLite) :

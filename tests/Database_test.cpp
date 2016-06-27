@@ -31,7 +31,7 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 TEST(Database, ctorExecCreateDropExist) {
     remove("test.db3");
     {
-        // Try to open an unexisting database
+        // Try to open a non-existing database
         std::string filename = "test.db3";
         EXPECT_THROW(SQLite::Database not_found(filename), SQLite::Exception);
 
@@ -58,7 +58,7 @@ TEST(Database, ctorExecCreateDropExist) {
 TEST(Database, createCloseReopen) {
     remove("test.db3");
     {
-        // Try to open the unexisting database
+        // Try to open the non-existing database
         EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
 
         // Create a new database
@@ -153,7 +153,8 @@ TEST(Database, exec) {
     EXPECT_EQ(2, db.getTotalChanges());
 
     // third row : insert the "third" text value into new row of id 3
-    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"third\")"));
+    const std::string insert("INSERT INTO test VALUES (NULL, \"third\")");
+    EXPECT_EQ(1, db.exec(insert));
     EXPECT_EQ(3, db.getLastInsertRowid());
     EXPECT_EQ(3, db.getTotalChanges());
 

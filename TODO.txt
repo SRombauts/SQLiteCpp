@@ -23,7 +23,6 @@ Missing unit tests in v1.0.0:
 Advanced missing features:
 - #39: SAVEPOINT https://www.sqlite.org/lang_savepoint.html
 
-- backup support to/from file/:memory:
 - Add optional usage of experimental sqlite3_trace() function to enable statistics 
 - Agregate ?
 

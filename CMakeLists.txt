@@ -120,6 +120,7 @@ set(SQLITECPP_TESTS
  tests/Database_test.cpp
  tests/Statement_test.cpp
  tests/Backup_test.cpp
+ tests/Transaction_test.cpp
  tests/VariadicBind_test.cpp
 )
 source_group(tests FILES ${SQLITECPP_TESTS})

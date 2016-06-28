@@ -100,7 +100,7 @@ public:
     /**
      * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
      *
-     *  This is usefull in multithreaded program to handle case where a table is locked for writting by a thread.
+     *  This is useful in multithreaded program to handle case where a table is locked for writing by a thread.
      * Any other thread cannot access the table and will receive a SQLITE_BUSY error:
      * setting a timeout will wait and retry up to the time specified before returning this SQLITE_BUSY error.
      *  Reading the value of timeout for current connection can be done with SQL query "PRAGMA busy_timeout;".

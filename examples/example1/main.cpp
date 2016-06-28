@@ -357,7 +357,7 @@ int main ()
             nb = db.exec("INSERT INTO test ObviousError");
             std::cout << "INSERT INTO test \"error\", returned " << nb << std::endl;
 
-            return EXIT_FAILURE; // unexpected success : exit the example program
+            return EXIT_FAILURE; // we should never get there : exit the example program
 
             // Commit transaction
             transaction.commit();

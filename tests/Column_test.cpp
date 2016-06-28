@@ -40,9 +40,10 @@ TEST(Column, basis) {
     insert.bind(1, blob, size);
     // Execute the one-step query to insert the row
     EXPECT_EQ(1, insert.exec());
-
     EXPECT_EQ(1, db.getLastInsertRowid());
     EXPECT_EQ(1, db.getTotalChanges());
+
+    EXPECT_THROW(insert.exec(), SQLite::Exception); // exec() shall throw as it needs to be reseted
 
     // Compile a SQL query
     SQLite::Statement   query(db, "SELECT * FROM test");

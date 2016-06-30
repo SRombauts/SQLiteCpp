@@ -130,8 +130,7 @@ bool Database::tableExists(const char* apTableName)
     Statement query(*this, "SELECT count(*) FROM sqlite_master WHERE type='table' AND name=?");
     query.bind(1, apTableName);
     (void)query.executeStep(); // Cannot return false, as the above query always return a result
-    const int Nb = query.getColumn(0);
-    return (1 == Nb);
+    return (1 == query.getColumn(0).getInt());
 }
 
 // Attach a custom function to your sqlite database. Assumes UTF8 text representation.

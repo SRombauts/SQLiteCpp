@@ -49,7 +49,7 @@ Statement::~Statement() noexcept // nothrow
     // the finalization will be done by the destructor of the last shared pointer
 }
 
-// Reset the statement to make it ready for a new execution
+// Reset the statement to make it ready for a new execution (see also #clearBindings() bellow)
 void Statement::reset()
 {
     mbOk = false;
@@ -58,11 +58,9 @@ void Statement::reset()
     check(ret);
 }
 
-// Clears away all the bindings of a prepared statement.
+// Clears away all the bindings of a prepared statement (can be associated with #reset() above).
 void Statement::clearBindings()
 {
-    mbOk = false;
-    mbDone = false;
     const int ret = sqlite3_clear_bindings(mStmtPtr);
     check(ret);
 }

@@ -35,11 +35,9 @@ Transaction::~Transaction() noexcept // nothrow
         {
             mDatabase.exec("ROLLBACK");
         }
-        catch (SQLite::Exception& e)
+        catch (SQLite::Exception&)
         {
-            // Never throw an exception in a destructor
-            (void)e; // warning proof
-            SQLITECPP_ASSERT(false, e.what());  // See SQLITECPP_ENABLE_ASSERT_HANDLER
+            // Never throw an exception in a destructor: error if already rollbacked, but no harm is caused by this.
         }
     }
 }

@@ -52,7 +52,7 @@ TEST(Transaction, commitRollback) {
         EXPECT_EQ(2, db.getLastInsertRowid());
 
         // Execute with an error to rollback
-        db.exec("Obvious syntax error to raise an exception");
+        db.exec("DesiredSyntaxError to raise an exception to rollback the transaction");
         GTEST_FATAL_FAILURE_("we should never get there");
 
         // Commit transaction

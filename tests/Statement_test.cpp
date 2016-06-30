@@ -86,8 +86,6 @@ TEST(Statement, invalid) {
     EXPECT_THROW(query.exec(), SQLite::Exception); // exec() shall throw as it does not expect a result
 }
 
-// TODO: test every kind of binding + clearBindings()
-
 TEST(Statement, executeStep) {
     // Create a new database
     SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -126,6 +124,99 @@ TEST(Statement, executeStep) {
 
     // Step after "the end" throw an exception
     EXPECT_THROW(query.executeStep(), SQLite::Exception);
+}
+
+TEST(Statement, bindings) {
+    // Create a new database
+    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+
+    // Create a new table
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
+    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+
+    // Insertion with binded values
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?)");
+
+    // First row with text/int/double
+    insert.bind(1, "first");
+    insert.bind(2, 123);
+    insert.bind(3, 0.123);
+    EXPECT_EQ(1, insert.exec());
+    EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+    // Compile a SQL query to check the result
+    SQLite::Statement query(db, "SELECT * FROM test");
+    EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
+    EXPECT_EQ(4, query.getColumnCount());
+
+    // Check the first row
+    query.executeStep();
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_EQ   (1,         query.getColumn(0).getInt64());
+    EXPECT_STREQ("first",   query.getColumn(1).getText());
+    EXPECT_EQ   (123,       query.getColumn(2).getInt());
+    EXPECT_EQ   (0.123,     query.getColumn(3).getDouble());
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Second row with the same exact values because clearbindings() was not called
+    EXPECT_EQ(1, insert.exec());
+    EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+    // Check the second row
+    query.executeStep();
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_EQ   (2,         query.getColumn(0).getInt64());
+    EXPECT_STREQ("first",   query.getColumn(1).getText());
+    EXPECT_EQ   (123,       query.getColumn(2).getInt());
+    EXPECT_EQ   (0.123,     query.getColumn(3).getDouble());
+
+    // reset() with clearbindings() and no more bindings
+    insert.reset();
+    insert.clearBindings();
+
+    // Third row with the all null values because clearbindings() was called
+    EXPECT_EQ(1, insert.exec());
+    EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+    // Check the third row
+    query.executeStep();
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_EQ   (3,     query.getColumn(0).getInt64());
+    EXPECT_TRUE (query.isColumnNull(1));
+    EXPECT_STREQ("",    query.getColumn(1).getText());
+    EXPECT_TRUE (query.isColumnNull(2));
+    EXPECT_EQ   (0,     query.getColumn(2).getInt());
+    EXPECT_TRUE (query.isColumnNull(3));
+    EXPECT_EQ   (0.0,   query.getColumn(3).getDouble());
+
+    // reset() with clearbindings() and new bindings
+    insert.reset();
+    insert.clearBindings();
+
+    // Fourth row with string/int64/float
+    const std::string   second("second");
+    const sqlite_int64  int64 = 12345678900000LL;
+    const float         fl32 = 0.123f;
+    insert.bind(1, second);
+    insert.bind(2, int64);
+    insert.bind(3, fl32);
+    EXPECT_EQ(1, insert.exec());
+    EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+    // Check the fourth row
+    query.executeStep();
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_EQ(4,                query.getColumn(0).getInt64());
+    EXPECT_EQ(second,           query.getColumn(1).getText());
+    EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
+    EXPECT_EQ(0.123f,           query.getColumn(3).getDouble());
 }
 
 TEST(Statement, isColumnNull) {

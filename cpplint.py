@@ -3795,7 +3795,7 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
   # probably a member operator declaration or default constructor.
   match = Search(
       r'(\bnew\s+)?\b'  # Grab 'new' operator, if it's there
-      r'(int|float|double|bool|char|int32|uint32|int64|uint64)'
+      r'(int|short|long|float|double|bool|char|const char*|int8_t|int16_t|int32_t|int64_t|uint8_t|uint16_t|uint32_t|uint64_t)'
       r'(\([^)].*)', line)
   if match:
     matched_new = match.group(1)

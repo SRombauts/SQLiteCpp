@@ -124,6 +124,16 @@ TEST(Statement, executeStep) {
 
     // Step after "the end" throw an exception
     EXPECT_THROW(query.executeStep(), SQLite::Exception);
+
+    // Try to insert a new row with the same PRIMARY KEY: "UNIQUE constraint failed: test.id"
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (1, \"impossible\", 456, 0.456)");
+    EXPECT_THROW(insert.executeStep(), SQLite::Exception);
+    // in this case, reset() do throw again the same error
+    EXPECT_THROW(insert.reset(), SQLite::Exception);
+
+    // Try again to insert a new row with the same PRIMARY KEY (with an alternative method): "UNIQUE constraint failed: test.id"
+    SQLite::Statement insert2(db, "INSERT INTO test VALUES (1, \"impossible\", 456, 0.456)");
+    EXPECT_THROW(insert2.exec(), SQLite::Exception);
 }
 
 TEST(Statement, bindings) {
@@ -366,9 +376,9 @@ TEST(Statement, getColumnByName) {
     EXPECT_THROW(query.getColumn("unknown"), SQLite::Exception);
     EXPECT_THROW(query.getColumn(""), SQLite::Exception);
 
-	const std::string   msg     = query.getColumn("msg");
-	const int           integer = query.getColumn("int");
-	const double        real    = query.getColumn("double");
+    const std::string   msg     = query.getColumn("msg");
+    const int           integer = query.getColumn("int");
+    const double        real    = query.getColumn("double");
     EXPECT_EQ("first",  msg);
     EXPECT_EQ(123,      integer);
     EXPECT_EQ(0.123,    real);

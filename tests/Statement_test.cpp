@@ -212,10 +212,10 @@ TEST(Statement, bindings) {
     // Fourth row with string/int64/float
     const std::string   second("second");
     const sqlite_int64  int64 = 12345678900000LL;
-    const float         fl32 = 0.123f;
+    const float         float32 = 0.234f;
     insert.bind(1, second);
     insert.bind(2, int64);
-    insert.bind(3, fl32);
+    insert.bind(3, float32);
     EXPECT_EQ(1, insert.exec());
     EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
@@ -226,7 +226,27 @@ TEST(Statement, bindings) {
     EXPECT_EQ(4,                query.getColumn(0).getInt64());
     EXPECT_EQ(second,           query.getColumn(1).getText());
     EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
-    EXPECT_EQ(0.123f,           query.getColumn(3).getDouble());
+    EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Fourth row with binary buffer and a null parameter
+    const char buffer[] = "binary";
+    insert.bind(1, buffer, sizeof(buffer));
+    insert.bind(2);
+    EXPECT_EQ(1, insert.exec());
+
+    // Check the fifth row
+    query.executeStep();
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_EQ(5,                query.getColumn(0).getInt64());
+    EXPECT_STREQ(buffer,        query.getColumn(1).getText());
+    EXPECT_TRUE (query.isColumnNull(2));
+    EXPECT_EQ(0,                query.getColumn(2).getInt());
+    EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+
 }
 
 TEST(Statement, bindByName) {
@@ -269,10 +289,10 @@ TEST(Statement, bindByName) {
     // Second row with string/int64/float
     const std::string   second("second");
     const sqlite_int64  int64 = 12345678900000LL;
-    const float         fl32 = 0.123f;
+    const float         float32 = 0.234f;
     insert.bind("@msg",      second);
     insert.bind("@int",      int64);
-    insert.bind("@double",   fl32);
+    insert.bind("@double",   float32);
     EXPECT_EQ(1, insert.exec());
     EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
@@ -283,7 +303,26 @@ TEST(Statement, bindByName) {
     EXPECT_EQ(2,                query.getColumn(0).getInt64());
     EXPECT_EQ(second,           query.getColumn(1).getText());
     EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
-    EXPECT_EQ(0.123f,           query.getColumn(3).getDouble());
+    EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Third row with binary buffer and a null parameter
+    const char buffer[] = "binary";
+    insert.bind("@msg", buffer, sizeof(buffer));
+    insert.bind("@int");
+    EXPECT_EQ(1, insert.exec());
+
+    // Check the third row
+    query.executeStep();
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_EQ(3,                query.getColumn(0).getInt64());
+    EXPECT_STREQ(buffer,        query.getColumn(1).getText());
+    EXPECT_TRUE (query.isColumnNull(2));
+    EXPECT_EQ(0,                query.getColumn(2).getInt());
+    EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
 }
 
 TEST(Statement, isColumnNull) {

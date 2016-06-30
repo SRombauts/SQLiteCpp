@@ -41,7 +41,19 @@ TEST(Transaction, commitRollback) {
         EXPECT_THROW(transaction.commit(), SQLite::Exception);
     }
 
-    // Auto rollback of a transaction on error
+    // Auto rollback if no commit() before the end of scope
+    {
+        // Begin transaction
+        SQLite::Transaction transaction(db);
+
+        // Insert a second value (that will be rollbacked)
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"third\")"));
+        EXPECT_EQ(2, db.getLastInsertRowid());
+
+        // end of scope: automatic rollback
+    }
+
+    // Auto rollback of a transaction on error/exception
     try
     {
         // Begin transaction
@@ -51,12 +63,11 @@ TEST(Transaction, commitRollback) {
         EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"second\")"));
         EXPECT_EQ(2, db.getLastInsertRowid());
 
-        // Execute with an error to rollback
+        // Execute with an error => exception with auto-rollback
         db.exec("DesiredSyntaxError to raise an exception to rollback the transaction");
-        GTEST_FATAL_FAILURE_("we should never get there");
 
-        // Commit transaction
-        transaction.commit();
+        GTEST_FATAL_FAILURE_("we should never get there");
+        transaction.commit(); // We should never get there
     }
     catch (std::exception& e)
     {
@@ -64,7 +75,22 @@ TEST(Transaction, commitRollback) {
         // expected error, see above
     }
 
-    // Check the results (expect only one row of result, as the second one has been rollbacked by the error)
+    // Double rollback with a manual command before the end of scope
+    {
+        // Begin transaction
+        SQLite::Transaction transaction(db);
+
+        // Insert a second value (that will be rollbacked)
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"third\")"));
+        EXPECT_EQ(2, db.getLastInsertRowid());
+
+        // Execute a manual rollback (no real use case I can think of, so no rollback() method)
+        db.exec("ROLLBACK");
+
+        // end of scope: the automatic rollback should not raise an error because it is harmless
+    }
+
+    // Check the results (expect only one row of result, as all other one have been rollbacked)
     SQLite::Statement query(db, "SELECT * FROM test");
     int nbRows = 0;
     while (query.executeStep())

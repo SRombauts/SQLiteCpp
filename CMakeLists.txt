@@ -196,9 +196,10 @@ if (SQLITECPP_RUN_CPPCHECK)
         # add a cppcheck target to the "all" target
         add_custom_target(SQLiteCpp_cppcheck
          ALL
-         COMMAND cppcheck -j 8 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
+         COMMAND ${CPPCHECK_EXECUTABLE} -j 8 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
         )
-        message(STATUS "Found Cppcheck: ${CPPCHECK_EXECUTABLE}")
+        execute_process(COMMAND "${CPPCHECK_EXECUTABLE}" --version OUTPUT_VARIABLE CPPCHECK_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+        message(STATUS "Found Cppcheck: ${CPPCHECK_EXECUTABLE} ${CPPCHECK_VERSION}")
     else (CPPCHECK_EXECUTABLE)
         message(STATUS "Could NOT find cppcheck")
     endif (CPPCHECK_EXECUTABLE)

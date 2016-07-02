@@ -104,12 +104,13 @@ source_group(src FILES ${SQLITECPP_SRC})
 set(SQLITECPP_INC
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/SQLiteCpp.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Assertion.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Backup.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Column.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Database.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Exception.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Statement.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Transaction.h
- ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Backup.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/VariadicBind.h
 )
 source_group(inc FILES ${SQLITECPP_INC})
 

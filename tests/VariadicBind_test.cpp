@@ -17,9 +17,7 @@
 
 #include <cstdio>
 
-// this requires c++14. visual studio 2015 is working
-#if ( __cplusplus>= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) )
-
+#if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
 TEST(VariadicBind, invalid) {
     // Create a new database
     SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);

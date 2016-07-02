@@ -68,17 +68,6 @@ public:
      */
     Statement(Database& aDatabase, const std::string& aQuery);
 
-#if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && (_MSC_VER >= 1600) ) // C++11: Visual Studio 2010
-    /**
-     * @brief Move Constructor
-     *
-     * Allows inserting into STL containers that may need to move memory when growing.
-     *
-     * @param aOther Statement to move to
-     */
-    Statement(Statement&& aOther);
-#endif
-
     /**
      * @brief Finalize and unregister the SQL query from the SQLite Database Connection.
      */

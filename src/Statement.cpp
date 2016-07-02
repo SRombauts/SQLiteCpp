@@ -43,22 +43,6 @@ Statement::Statement(Database &aDatabase, const std::string& aQuery) :
     mColumnCount = sqlite3_column_count(mStmtPtr);
 }
 
-#if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && (_MSC_VER >= 1600) ) // C++11: Visual Studio 2010
-// Move Constructor
-Statement::Statement(Statement&& aOther):
-    mQuery(std::move(aOther.mQuery)),
-    mStmtPtr(aOther.mStmtPtr), // TODO: need a move operator
-    mColumnCount(aOther.mColumnCount),
-    mColumnNames(std::move(aOther.mColumnNames)),
-    mbOk(aOther.mbOk),
-    mbDone(aOther.mbDone)
-{
-    // other.mStmtPtr = nullptr; // doesn't support reassigning
-    other.mColumnCount = 0;
-    other.mbOk = false;
-    other.mbDone = false;
-}
-#endif
 
 // Finalize and unregister the SQL query from the SQLite Database Connection.
 Statement::~Statement() noexcept // nothrow

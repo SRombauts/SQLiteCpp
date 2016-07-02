@@ -99,6 +99,13 @@ public:
      *          thus you must copy it before using it beyond its scope (to a std::string for instance).
      */
     const void*     getBlob() const noexcept; // nothrow
+    /**
+     * @brief Return a std::string for a TEXT or BLOB column.
+     *
+     * Note this correctly handles strings that contain null bytes.
+     *
+     */
+    std::string     getString() const noexcept; // nothrow
 
     /**
      * @brief Return the type of the value of the column
@@ -158,6 +165,11 @@ public:
     {
         return getInt();
     }
+    /// @brief Inline cast operator to 32bits unsigned integer
+    inline operator uint32_t() const
+    {
+        return static_cast<uint32_t>(getInt64());
+    }
     /// @brief Inline cast operator to 64bits integer
     inline operator sqlite3_int64() const
     {
@@ -193,12 +205,19 @@ public:
     // but is not working under Microsoft Visual Studio 2010, 2012 and 2013
     // (error C2440: 'initializing' : cannot convert from 'SQLite::Column' to 'std::basic_string<_Elem,_Traits,_Ax>'
     //  [...] constructor overload resolution was ambiguous)
-    /// Inline cast operator to std::string
-    inline operator const std::string() const
+    /**
+     * @brief Inline cast operator to std::string
+     *
+     * Handles BLOB or TEXT, which may contain null bytes within
+     *
+     * @see getString
+     */
+    inline operator std::string() const
     {
-        return getText();
+        return getString();
     }
 #endif
+
     // NOTE : the following is required by GCC and Clang to cast a Column result in a long/int64_t
     /// @brief Inline cast operator to long as 64bits integer
     inline operator long() const

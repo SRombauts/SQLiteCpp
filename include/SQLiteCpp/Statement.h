@@ -81,8 +81,7 @@ public:
     /**
      * @brief Clears away all the bindings of a prepared statement.
      *
-     *  Contrary to the intuition of many, reset() does not reset
-     * the bindings on a prepared statement.
+     *  Contrary to the intuition of many, reset() does not reset the bindings on a prepared statement.
      *  Use this routine to reset all parameters to NULL.
      */
     void clearBindings(); // throw(SQLite::Exception)
@@ -102,7 +101,7 @@ public:
     // This is under-optimized for static data (a static text define in code)
     // as well as for dynamic allocated buffer which could be transfer to sqlite
     // instead of being copied.
-    // => if you now what you are doing, use bindNoCopy()
+    // => if you know what you are doing, use bindNoCopy() instead of bind()
 
     /**
      * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
@@ -123,39 +122,43 @@ public:
     /**
      * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const int aIndex, const std::string&  aValue);
-
-    /**
-     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @note This uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
-     */
-    void bindNoCopy(const int aIndex, const std::string& aValue);
-
     /**
      * @brief Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const int aIndex, const char*         apValue);
     /**
      * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const int aIndex, const void*         apValue, const int aSize);
-
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1).
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    void bindNoCopy(const int aIndex, const std::string&    aValue);
+    /**
+     * @brief Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    void bindNoCopy(const int aIndex, const char*           apValue);
     /**
      * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_STATIC flag, NOT making a copy of the data. It must exist while executing the statement.
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
      */
-    void bindNoCopy(const int aIndex, const void*   apValue, const int aSize);
-
+    void bindNoCopy(const int aIndex, const void*           apValue, const int aSize);
     /**
      * @brief Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @see clearBindings() to set all bound parameters to NULL.
      */
     void bind(const int aIndex);
 
@@ -178,35 +181,43 @@ public:
     /**
      * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const char* apName, const std::string&    aValue);
     /**
-     * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @note This uses the SQLITE_STATIC flag, NOT making a copy of the data.
-     */
-    void bindNoCopy(const char* apName, const std::string& aValue);
-    /**
      * @brief Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const char* apName, const char*           apValue);
     /**
      * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const char* apName, const void*           apValue, const int aSize);
     /**
+     * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    void bindNoCopy(const char* apName, const std::string&  aValue);
+    /**
+     * @brief Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    void bindNoCopy(const char* apName, const char*         apValue);
+    /**
      * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_STATIC flag, making a copy of the data.
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
      */
-    void bindNoCopy(const char* apName, const void*     apValue, const int aSize);
+    void bindNoCopy(const char* apName, const void*         apValue, const int aSize);
     /**
      * @brief Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @see clearBindings() to set all bound parameters to NULL.
      */
     void bind(const char* apName); // bind NULL value
 
@@ -242,25 +253,16 @@ public:
     /**
      * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     inline void bind(const std::string& aName, const std::string&    aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
-     * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @note This uses the SQLITE_STATIC flag, NOT making a copy of the data.
-     */
-    inline void bindNoCopy(const std::string& aName, const std::string& aValue)
-    {
-        bindNoCopy(aName.c_str(), aValue);
-    }
-    /**
      * @brief Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     inline void bind(const std::string& aName, const char*           apValue)
     {
@@ -269,23 +271,43 @@ public:
     /**
      * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     inline void bind(const std::string& aName, const void*           apValue, const int aSize)
     {
         bind(aName.c_str(), apValue, aSize);
     }
     /**
+     * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    inline void bindNoCopy(const std::string& aName, const std::string& aValue)
+    {
+        bindNoCopy(aName.c_str(), aValue);
+    }
+    /**
+     * @brief Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    inline void bindNoCopy(const std::string& aName, const char*        apValue)
+    {
+        bindNoCopy(aName.c_str(), apValue);
+    }
+    /**
      * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
-     * @note This uses the SQLITE_STATIC flag, NOT making a copy of the data.
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
      */
-    inline void bindNoCopy(const std::string& aName, const void*     apValue, const int aSize)
+    inline void bindNoCopy(const std::string& aName, const void*        apValue, const int aSize)
     {
         bindNoCopy(aName.c_str(), apValue, aSize);
     }
     /**
      * @brief Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @see clearBindings() to set all bound parameters to NULL.
      */
     inline void bind(const std::string& aName) // bind NULL value
     {

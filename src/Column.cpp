@@ -11,6 +11,7 @@
 #include <SQLiteCpp/Column.h>
 
 #include <iostream>
+#include <string>
 
 
 namespace SQLite
@@ -69,10 +70,22 @@ const char* Column::getText(const char* apDefaultValue /* = "" */) const noexcep
     return (pText?pText:apDefaultValue);
 }
 
-// Return a pointer to the text value (NULL terminated string) of the column specified by its index starting at 0
+// Return a pointer to the blob value (*not* NULL terminated) of the column specified by its index starting at 0
 const void* Column::getBlob() const noexcept // nothrow
 {
     return sqlite3_column_blob(mStmtPtr, mIndex);
+}
+
+// Return a std::string to a TEXT or BLOB column
+std::string Column::getString() const noexcept // nothrow
+{
+    // Note: using sqlite3_column_blob and not sqlite3_column_text
+    // - no need for sqlite3_column_text to add a \0 on the end, as we're getting the bytes length directly
+    const char *data = static_cast<const char *>(sqlite3_column_blob(mStmtPtr, mIndex));
+
+    // SQLite docs: "The safest policy is to invoke… sqlite3_column_blob() followed by sqlite3_column_bytes()"
+    // Note: std::string is ok to pass nullptr as first arg, if length is 0
+    return std::string(data, sqlite3_column_bytes(mStmtPtr, mIndex));
 }
 
 // Return the type of the value of the column

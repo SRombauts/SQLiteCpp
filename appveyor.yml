@@ -6,12 +6,20 @@ version: "{build}"
 # scripts that run after cloning repository
 # NOTE : not updating submodule as cloning googletest does not work on AppVeyor
 install:
+# TODO: retry withou new googletest repository
 # - git submodule update --init googletest
 
 # configurations to add to build matrix
-configuration:
-  - Debug
-  - Release
+environment:
+  matrix:
+  - Compiler: msvc
+    Config: Release
+  - Compiler: msvc
+    Config: Debug
+  - Compiler: mingw
+    Build: static
+  - Compiler: mingw
+    Build: shared
  
 # scripts to run before build
 # NOTE : no unit tests as cloning googletest does not work on AppVeyor

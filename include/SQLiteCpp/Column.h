@@ -16,6 +16,7 @@
 #include <SQLiteCpp/Exception.h>
 
 #include <string>
+#include <stdint.h>
 
 
 namespace SQLite
@@ -41,13 +42,6 @@ namespace SQLite
 class Column
 {
 public:
-    // Make clang happy by explicitly implementing the copy-constructor:
-    Column(const Column & aOther) :
-        mStmtPtr(aOther.mStmtPtr),
-        mIndex(aOther.mIndex)
-    {
-    }
-
     /**
      * @brief Encapsulation of a Column in a Row of the result.
      *
@@ -55,18 +49,25 @@ public:
      * @param[in] aIndex    Index of the column in the row of result
      */
     Column(Statement::Ptr& aStmtPtr, int aIndex)    noexcept; // nothrow
-    /// @brief Simple destructor
+    /// Simple destructor
     virtual ~Column()                               noexcept; // nothrow
 
     // default copy constructor and assignment operator are perfectly suited :
     // they copy the Statement::Ptr which in turn increments the reference counter.
+
+    /// Make clang happy by explicitly implementing the copy-constructor:
+    Column(const Column & aOther) :
+        mStmtPtr(aOther.mStmtPtr),
+        mIndex(aOther.mIndex)
+    {
+    }
 
     /**
      * @brief Return a pointer to the named assigned to this result column (potentially aliased)
      *
      * @see getOriginName() to get original column name (not aliased)
      */
-    const char*     getName() const noexcept; // nothrow
+    const char* getName() const noexcept; // nothrow
 
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
     /**
@@ -76,36 +77,36 @@ public:
      * - when building the SQLite library itself (which is the case for the Debian libsqlite3 binary for instance),
      * - and also when compiling this wrapper.
      */
-    const char*     getOriginName() const noexcept; // nothrow
+    const char* getOriginName() const noexcept; // nothrow
 #endif
 
-    /// @brief Return the integer value of the column.
-    int             getInt() const noexcept; // nothrow
-    /// @brief Return the 64bits integer value of the column.
-    sqlite3_int64   getInt64() const noexcept; // nothrow
-    /// @brief Return the double (64bits float) value of the column.
-    double          getDouble() const noexcept; // nothrow
+    /// Return the integer value of the column.
+    int         getInt() const noexcept; // nothrow
+    /// Return the 64bits integer value of the column.
+    int64_t     getInt64() const noexcept; // nothrow
+    /// Return the double (64bits float) value of the column.
+    double      getDouble() const noexcept; // nothrow
     /**
      * @brief Return a pointer to the text value (NULL terminated string) of the column.
      *
      * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
      *          thus you must copy it before using it beyond its scope (to a std::string for instance).
      */
-    const char*     getText(const char* apDefaultValue = "") const noexcept; // nothrow
+    const char* getText(const char* apDefaultValue = "") const noexcept; // nothrow
     /**
      * @brief Return a pointer to the binary blob value of the column.
      *
      * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
      *          thus you must copy it before using it beyond its scope (to a std::string for instance).
      */
-    const void*     getBlob() const noexcept; // nothrow
+    const void* getBlob() const noexcept; // nothrow
     /**
      * @brief Return a std::string for a TEXT or BLOB column.
      *
      * Note this correctly handles strings that contain null bytes.
      *
      */
-    std::string     getString() const noexcept; // nothrow
+    std::string getString() const noexcept; // nothrow
 
     /**
      * @brief Return the type of the value of the column
@@ -117,27 +118,27 @@ public:
      */
     int getType() const noexcept; // nothrow
 
-    /// @brief Test if the column is an integer type value (meaningful only before any conversion)
+    /// Test if the column is an integer type value (meaningful only before any conversion)
     inline bool isInteger() const noexcept // nothrow
     {
         return (SQLITE_INTEGER == getType());
     }
-    /// @brief Test if the column is a floating point type value (meaningful only before any conversion)
+    /// Test if the column is a floating point type value (meaningful only before any conversion)
     inline bool isFloat() const noexcept // nothrow
     {
         return (SQLITE_FLOAT == getType());
     }
-    /// @brief Test if the column is a text type value (meaningful only before any conversion)
+    /// Test if the column is a text type value (meaningful only before any conversion)
     inline bool isText() const noexcept // nothrow
     {
         return (SQLITE_TEXT == getType());
     }
-    /// @brief Test if the column is a binary blob type value (meaningful only before any conversion)
+    /// Test if the column is a binary blob type value (meaningful only before any conversion)
     inline bool isBlob() const noexcept // nothrow
     {
         return (SQLITE_BLOB == getType());
     }
-    /// @brief Test if the column is NULL (meaningful only before any conversion)
+    /// Test if the column is NULL (meaningful only before any conversion)
     inline bool isNull() const noexcept // nothrow
     {
         return (SQLITE_NULL == getType());
@@ -154,28 +155,42 @@ public:
      */
     int getBytes() const noexcept;
 
-    /// @brief Alias returning the number of bytes used by the text (or blob) value of the column
+    /// Alias returning the number of bytes used by the text (or blob) value of the column
     inline int size() const noexcept
     {
         return getBytes ();
     }
 
-    /// @brief Inline cast operator to int
+    /// Inline cast operator to int
     inline operator int() const
     {
         return getInt();
     }
-    /// @brief Inline cast operator to 32bits unsigned integer
+#if !defined(__x86_64__) || defined(__APPLE__)
+    /// Inline cast operator to long as 32bits integer for 32bit systems
+    inline operator long() const
+    {
+        return getInt();
+    }
+#endif // __x86_64__
+#if defined(__GNUC__) && !defined(__APPLE__)
+    /// Inline cast operator to long long for GCC and Clang
+    inline operator long long() const
+    {
+        return getInt64();
+    }
+#endif // __GNUC__
+    /// Inline cast operator to 64bits integer
+    inline operator int64_t() const
+    {
+        return getInt64();
+    }
+    /// Inline cast operator to 32bits unsigned integer
     inline operator uint32_t() const
     {
         return static_cast<uint32_t>(getInt64());
     }
-    /// @brief Inline cast operator to 64bits integer
-    inline operator sqlite3_int64() const
-    {
-        return getInt64();
-    }
-    /// @brief Inline cast operator to double
+    /// Inline cast operator to double
     inline operator double() const
     {
         return getDouble();
@@ -218,18 +233,7 @@ public:
     }
 #endif
 
-    // NOTE : the following is required by GCC and Clang to cast a Column result in a long/int64_t
-    /// @brief Inline cast operator to long as 64bits integer
-    inline operator long() const
-    {
-#ifdef __x86_64__
-        return getInt64();
-#else
-        return getInt();
-#endif
-    }
-
-    /// @brief Return UTF-8 encoded English language explanation of the most recent error.
+    /// Return UTF-8 encoded English language explanation of the most recent error.
     inline const char* errmsg() const
     {
         return sqlite3_errmsg(mStmtPtr);

@@ -15,8 +15,6 @@
 #include <SQLiteCpp/Assertion.h>
 #include <SQLiteCpp/Exception.h>
 
-#include <string>
-
 
 namespace SQLite
 {
@@ -74,7 +72,7 @@ void Statement::bind(const int aIndex, const int aValue)
 }
 
 // Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const sqlite3_int64 aValue)
+void Statement::bind(const int aIndex, const int64_t aValue)
 {
     const int ret = sqlite3_bind_int64(mStmtPtr, aIndex, aValue);
     check(ret);
@@ -155,7 +153,7 @@ void Statement::bind(const char* apName, const int aValue)
 }
 
 // Bind a 64bits int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const char* apName, const sqlite3_int64 aValue)
+void Statement::bind(const char* apName, const int64_t aValue)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
     const int ret = sqlite3_bind_int64(mStmtPtr, index, aValue);

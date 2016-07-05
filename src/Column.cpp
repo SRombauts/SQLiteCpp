@@ -11,12 +11,10 @@
 #include <SQLiteCpp/Column.h>
 
 #include <iostream>
-#include <string>
 
 
 namespace SQLite
 {
-
 
 // Encapsulation of a Column in a row of the result pointed by the prepared Statement.
 Column::Column(Statement::Ptr& aStmtPtr, int aIndex) noexcept : // nothrow
@@ -52,7 +50,7 @@ int Column::getInt() const noexcept // nothrow
 }
 
 // Return the 64bits integer value of the column specified by its index starting at 0
-sqlite3_int64 Column::getInt64() const noexcept // nothrow
+int64_t Column::getInt64() const noexcept // nothrow
 {
     return sqlite3_column_int64(mStmtPtr, mIndex);
 }

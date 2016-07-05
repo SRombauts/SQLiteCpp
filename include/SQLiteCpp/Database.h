@@ -237,7 +237,7 @@ public:
      *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */
-    inline sqlite3_int64 getLastInsertRowid() const noexcept // nothrow
+    inline int64_t getLastInsertRowid() const noexcept // nothrow
     {
         return sqlite3_last_insert_rowid(mpSQLite);
     }
@@ -252,25 +252,25 @@ public:
         return sqlite3_total_changes(mpSQLite);
     }
 
-    /// @brief Return the filename used to open the database.
+    /// Return the filename used to open the database.
     inline const std::string& getFilename() const noexcept // nothrow
     {
         return mFilename;
     }
 
-    /// @brief Return the numeric result code for the most recent failed API call (if any).
+    /// Return the numeric result code for the most recent failed API call (if any).
     inline int getErrorCode() const noexcept // nothrow
     {
         return sqlite3_errcode(mpSQLite);
     }
 
-    /// @brief Return the extended numeric result code for the most recent failed API call (if any).
+    /// Return the extended numeric result code for the most recent failed API call (if any).
     inline int getExtendedErrorCode() const noexcept // nothrow
     {
         return sqlite3_extended_errcode(mpSQLite);
     }
 
-    /// @brief Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
+    /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
     inline const char* errmsg() const noexcept // nothrow
     {
         return sqlite3_errmsg(mpSQLite);

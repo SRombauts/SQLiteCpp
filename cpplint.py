@@ -4499,7 +4499,7 @@ def CheckForIncludeWhatYouUse(filename, clean_lines, include_state, error,
     template = required[required_header_unstripped][1]
     if required_header_unstripped.strip('<>"') not in include_state:
       error(filename, required[required_header_unstripped][0],
-            'build/include_what_you_use', 4,
+            'build/include_what_you_use', 2,
             'Add #include ' + required_header_unstripped + ' for ' + template)
 
 

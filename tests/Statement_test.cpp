@@ -108,13 +108,15 @@ TEST(Statement, executeStep) {
     query.executeStep();
     EXPECT_TRUE (query.isOk());
     EXPECT_FALSE(query.isDone());
-    const sqlite3_int64 id      = query.getColumn(0);
+    const int64_t       id      = query.getColumn(0);
     const std::string   msg     = query.getColumn(1);
     const int           integer = query.getColumn(2);
+    const long          integer2= query.getColumn(2);
     const double        real    = query.getColumn(3);
     EXPECT_EQ(1,        id);
     EXPECT_EQ("first",  msg);
     EXPECT_EQ(123,      integer);
+    EXPECT_EQ(123,      integer2);
     EXPECT_EQ(0.123,    real);
 
     // Step one more time to discover there is nothing more
@@ -210,10 +212,10 @@ TEST(Statement, bindings) {
     insert.clearBindings();
 
     // Fourth row with string/int64/float
-    const std::string   second("second");
-    const sqlite_int64  int64 = 12345678900000LL;
+    const std::string   fourth("fourth");
+    const int64_t       int64 = 12345678900000LL;
     const float         float32 = 0.234f;
-    insert.bind(1, second);
+    insert.bind(1, fourth);
     insert.bind(2, int64);
     insert.bind(3, float32);
     EXPECT_EQ(1, insert.exec());
@@ -224,14 +226,14 @@ TEST(Statement, bindings) {
     EXPECT_TRUE (query.isOk());
     EXPECT_FALSE(query.isDone());
     EXPECT_EQ(4,                query.getColumn(0).getInt64());
-    EXPECT_EQ(second,           query.getColumn(1).getText());
+    EXPECT_EQ(fourth,           query.getColumn(1).getText());
     EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
     EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
 
     // reset() without clearbindings()
     insert.reset();
 
-    // Fourth row with binary buffer and a null parameter
+    // Fifth row with binary buffer and a null parameter
     const char buffer[] = "binary";
     insert.bind(1, buffer, sizeof(buffer));
     insert.bind(2);
@@ -288,7 +290,7 @@ TEST(Statement, bindByName) {
 
     // Second row with string/int64/float
     const std::string   second("second");
-    const sqlite_int64  int64 = 12345678900000LL;
+    const int64_t       int64 = 12345678900000LL;
     const float         float32 = 0.234f;
     insert.bind("@msg",      second);
     insert.bind("@int",      int64);

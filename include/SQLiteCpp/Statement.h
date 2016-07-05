@@ -68,14 +68,10 @@ public:
      */
     Statement(Database& aDatabase, const std::string& aQuery);
 
-    /**
-     * @brief Finalize and unregister the SQL query from the SQLite Database Connection.
-     */
+    /// Finalize and unregister the SQL query from the SQLite Database Connection.
     virtual ~Statement() noexcept; // nothrow
 
-    /**
-     * @brief Reset the statement to make it ready for a new execution.
-     */
+    /// Reset the statement to make it ready for a new execution.
     void reset();
 
     /**
@@ -110,7 +106,7 @@ public:
     /**
      * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const sqlite3_int64 aValue);
+    void bind(const int aIndex, const int64_t       aValue);
     /**
      * @brief Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -169,7 +165,7 @@ public:
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const sqlite3_int64   aValue);
+    void bind(const char* apName, const int64_t         aValue);
     /**
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -232,7 +228,7 @@ public:
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    inline void bind(const std::string& aName, const sqlite3_int64  aValue)
+    inline void bind(const std::string& aName, const int64_t        aValue)
     {
         bind(aName.c_str(), aValue);
     }
@@ -313,7 +309,6 @@ public:
     {
         bind(aName.c_str());
     }
-
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -449,32 +444,32 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////
 
-    /// @brief Return the UTF-8 SQL Query.
+    /// Return the UTF-8 SQL Query.
     inline const std::string& getQuery() const
     {
         return mQuery;
     }
-    /// @brief Return the number of columns in the result set returned by the prepared statement
+    /// Return the number of columns in the result set returned by the prepared statement
     inline int getColumnCount() const
     {
         return mColumnCount;
     }
-    /// @brief true when a row has been fetched with executeStep()
+    /// true when a row has been fetched with executeStep()
     inline bool isOk() const
     {
         return mbOk;
     }
-    /// @brief true when the last executeStep() had no more row to fetch
+    /// true when the last executeStep() had no more row to fetch
     inline bool isDone() const
     {
         return mbDone;
     }
-    /// @brief Return the numeric result code for the most recent failed API call (if any).
+    /// Return the numeric result code for the most recent failed API call (if any).
     inline int getErrorCode() const noexcept // nothrow
     {
         return sqlite3_errcode(mStmtPtr);
     }
-    /// @brief Return the extended numeric result code for the most recent failed API call (if any).
+    /// Return the extended numeric result code for the most recent failed API call (if any).
     inline int getExtendedErrorCode() const noexcept // nothrow
     {
         return sqlite3_extended_errcode(mStmtPtr);
@@ -503,13 +498,13 @@ private:
         // Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
         ~Ptr() noexcept; // nothrow (no virtual destructor needed here)
 
-        /// @brief Inline cast operator returning the pointer to SQLite Database Connection Handle
+        /// Inline cast operator returning the pointer to SQLite Database Connection Handle
         inline operator sqlite3*() const
         {
             return mpSQLite;
         }
 
-        /// @brief Inline cast operator returning the pointer to SQLite Statement Object
+        /// Inline cast operator returning the pointer to SQLite Statement Object
         inline operator sqlite3_stmt*() const
         {
             return mpStmt;

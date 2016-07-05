@@ -44,13 +44,13 @@ TEST(Backup, executeStepOne) {
     SQLite::Backup backup(destDB, "main", srcDB, "main");
     int res = backup.executeStep(1); // backup only one page at a time
     ASSERT_EQ(SQLITE_OK, res);
-    const int total = backup.totalPageCount();
+    const int total = backup.getTotalPageCount();
     ASSERT_EQ(2, total);
-    int remaining = backup.remainingPageCount();
+    int remaining = backup.getRemainingPageCount();
     ASSERT_EQ(1, remaining);
     res = backup.executeStep(1); // backup the second and last page
     ASSERT_EQ(SQLITE_DONE, res);
-    remaining = backup.remainingPageCount();
+    remaining = backup.getRemainingPageCount();
     ASSERT_EQ(0, remaining);
 
     SQLite::Statement query(destDB, "SELECT * FROM backup_test ORDER BY id ASC");
@@ -76,9 +76,9 @@ TEST(Backup, executeStepAll) {
     SQLite::Backup backup(destDB, srcDB);
     const int res = backup.executeStep(); // uses default argument "-1" => execute all steps at once
     ASSERT_EQ(res, SQLITE_DONE);
-    const int total = backup.totalPageCount();
+    const int total = backup.getTotalPageCount();
     ASSERT_EQ(2, total);
-    const int remaining = backup.remainingPageCount();
+    const int remaining = backup.getRemainingPageCount();
     ASSERT_EQ(0, remaining);
 
     SQLite::Statement query(destDB, "SELECT * FROM backup_test ORDER BY id ASC");

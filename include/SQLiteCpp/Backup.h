@@ -10,11 +10,12 @@
  */
 #pragma once
 
-#include <sqlite3.h>
-
 #include <SQLiteCpp/Database.h>
 
 #include <string>
+
+// Forward declaration to avoid including the sqlite3.h header
+struct sqlite3_backup;
 
 namespace SQLite
 {
@@ -97,9 +98,7 @@ public:
     Backup(Database& aDestDatabase,
            Database& aSrcDatabase);
 
-    /**
-     * @brief Release the SQLite Backup resource.
-     */
+    /// Release the SQLite Backup resource.
     virtual ~Backup() noexcept;
 
     /**
@@ -117,19 +116,11 @@ public:
      */
     int executeStep(const int aNumPage = -1);
 
-    /**
-     * @brief Get the remaining number of source pages to be copied.
-     *
-     * @return the remaining number of source pages to be copied
-     */
-    int remainingPageCount();
+    /// Return the number of source pages still to be backed up as of the most recent call to executeStep().
+    int getRemainingPageCount();
 
-    /**
-     * @brief Get the total number of source pages.
-     *
-     * @return the total number of source pages
-     */
-    int totalPageCount();
+    /// Return the total number of pages in the source database as of the most recent call to executeStep().
+    int getTotalPageCount();
 
 private:
     /// @{ Backup must be non-copyable

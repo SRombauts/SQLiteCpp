@@ -13,6 +13,8 @@
 
 #include <SQLiteCpp/Exception.h>
 
+#include <sqlite3.h>
+
 #include <string>
 
 namespace SQLite
@@ -90,13 +92,13 @@ int Backup::executeStep(const int aNumPage /* = -1 */)
 }
 
 // Get the number of remaining source pages to be copied in this backup process
-int Backup::remainingPageCount()
+int Backup::getRemainingPageCount()
 {
     return sqlite3_backup_remaining(mpSQLiteBackup);
 }
 
 // Get the number of total source pages to be copied in this backup process
-int Backup::totalPageCount()
+int Backup::getTotalPageCount()
 {
     return sqlite3_backup_pagecount(mpSQLiteBackup);
 }

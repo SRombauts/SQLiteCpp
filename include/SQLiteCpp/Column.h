@@ -233,9 +233,6 @@ public:
     }
 #endif
 
-    /// Return UTF-8 encoded English language explanation of the most recent error.
-    const char* errmsg() const;
-
 private:
     Statement::Ptr  mStmtPtr;   //!< Shared Pointer to the prepared SQLite Statement Object
     int             mIndex;     //!< Index of the column in the row of result, starting at 0

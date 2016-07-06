@@ -106,12 +106,6 @@ int Column::getBytes() const noexcept // nothrow
     return sqlite3_column_bytes(mStmtPtr, mIndex);
 }
 
-// Return UTF-8 encoded English language explanation of the most recent error.
-const char* Column::errmsg() const
-{
-    return sqlite3_errmsg(mStmtPtr);
-}
-
 // Standard std::ostream inserter
 std::ostream& operator<<(std::ostream& aStream, const Column& aColumn)
 {

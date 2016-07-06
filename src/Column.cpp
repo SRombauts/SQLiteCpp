@@ -10,6 +10,8 @@
  */
 #include <SQLiteCpp/Column.h>
 
+#include <sqlite3.h>
+
 #include <iostream>
 
 
@@ -102,6 +104,12 @@ int Column::getType() const noexcept // nothrow
 int Column::getBytes() const noexcept // nothrow
 {
     return sqlite3_column_bytes(mStmtPtr, mIndex);
+}
+
+// Return UTF-8 encoded English language explanation of the most recent error.
+const char* Column::errmsg() const
+{
+    return sqlite3_errmsg(mStmtPtr);
 }
 
 // Standard std::ostream inserter

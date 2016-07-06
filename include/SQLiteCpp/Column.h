@@ -10,8 +10,6 @@
  */
 #pragma once
 
-#include <sqlite3.h>
-
 #include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Exception.h>
 
@@ -236,10 +234,8 @@ public:
 #endif
 
     /// Return UTF-8 encoded English language explanation of the most recent error.
-    inline const char* errmsg() const
-    {
-        return sqlite3_errmsg(mStmtPtr);
-    }
+    const char* errmsg() const;
+
 private:
     Statement::Ptr  mStmtPtr;   //!< Shared Pointer to the prepared SQLite Statement Object
     int             mIndex;     //!< Index of the column in the row of result, starting at 0

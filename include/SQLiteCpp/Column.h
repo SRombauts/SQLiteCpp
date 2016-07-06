@@ -46,7 +46,7 @@ public:
      * @brief Encapsulation of a Column in a Row of the result.
      *
      * @param[in] aStmtPtr  Shared pointer to the prepared SQLite Statement Object.
-     * @param[in] aIndex    Index of the column in the row of result
+     * @param[in] aIndex    Index of the column in the row of result, starting at 0
      */
     Column(Statement::Ptr& aStmtPtr, int aIndex)    noexcept; // nothrow
     /// Simple destructor
@@ -82,9 +82,11 @@ public:
 
     /// Return the integer value of the column.
     int         getInt() const noexcept; // nothrow
-    /// Return the 64bits integer value of the column.
+    /// Return the 32bits unsigned integer value of the column (note that SQLite3 does not support uint64_t).
+    uint32_t    getUInt() const noexcept; // nothrow
+    /// Return the 64bits integer value of the column (note that SQLite3 does not support uint64_t).
     int64_t     getInt64() const noexcept; // nothrow
-    /// Return the double (64bits float) value of the column.
+    /// Return the double (64bits float) value of the column
     double      getDouble() const noexcept; // nothrow
     /**
      * @brief Return a pointer to the text value (NULL terminated string) of the column.
@@ -188,7 +190,7 @@ public:
     /// Inline cast operator to 32bits unsigned integer
     inline operator uint32_t() const
     {
-        return static_cast<uint32_t>(getInt64());
+        return getUInt();
     }
     /// Inline cast operator to double
     inline operator double() const
@@ -198,7 +200,7 @@ public:
     /**
      * @brief Inline cast operator to char*
      *
-     * @see getText 
+     * @see getText
      */
     inline operator const char*() const
     {
@@ -240,7 +242,7 @@ public:
     }
 private:
     Statement::Ptr  mStmtPtr;   //!< Shared Pointer to the prepared SQLite Statement Object
-    int             mIndex;     //!< Index of the column in the row of result
+    int             mIndex;     //!< Index of the column in the row of result, starting at 0
 };
 
 /**

@@ -31,7 +31,7 @@ TEST(Column, basis) {
     EXPECT_EQ(0, db.getLastInsertRowid());
 
     // Create a first row (autoid: 1) with all kind of data and a null value
-    SQLite::Statement   insert(db, "INSERT INTO test VALUES (NULL, \"first\", 123, 0.123, ?, NULL)");
+    SQLite::Statement   insert(db, "INSERT INTO test VALUES (NULL, \"first\", -123, 0.123, ?, NULL)");
     // Bind the blob value to the first parameter of the SQL query
     char  buffer[] = "blob";
     void* blob = &buffer;
@@ -58,6 +58,8 @@ TEST(Column, basis) {
         const int64_t       id2     = query.getColumn(0); // operator int64_t()
         const long long     id3     = query.getColumn(0); // operator int64_t()
         const long          id4     = query.getColumn(0); // operator int64_t() or long() depending on compiler/architecture
+        const unsigned int  uint1   = query.getColumn(0); // operator uint32_t()
+        const uint32_t      uint2   = query.getColumn(0); // operator uint32_t()
         const char*         ptxt    = query.getColumn(1); // operator const char*()
         const std::string   msg     = query.getColumn(1); // operator std::string() (or const char* with MSVC)
         const int           integer = query.getColumn(2); // operator int()
@@ -68,9 +70,11 @@ TEST(Column, basis) {
         EXPECT_EQ(1,            id2);
         EXPECT_EQ(1,            id3);
         EXPECT_EQ(1,            id4);
+        EXPECT_EQ(1,            uint1);
+        EXPECT_EQ(1,            uint2);
         EXPECT_STREQ("first",   ptxt);
         EXPECT_EQ("first",      msg);
-        EXPECT_EQ(123,          integer);
+        EXPECT_EQ(-123,         integer);
         EXPECT_EQ(0.123,        real);
         EXPECT_EQ(0,            memcmp("blob", pblob, size));
         EXPECT_EQ(NULL,         pempty);
@@ -79,15 +83,21 @@ TEST(Column, basis) {
     // validates every variant of explicit getters
     {
         int64_t             id      = query.getColumn(0).getInt64();
+        const unsigned int  uint1   = query.getColumn(0).getUInt();
+        const uint32_t      uint2   = query.getColumn(0).getUInt();
         const char*         ptxt    = query.getColumn(1).getText();
-        const std::string   msg     = query.getColumn(1).getText();
+        const std::string   msg1    = query.getColumn(1).getText();
+        const std::string   msg2    = query.getColumn(1).getString();
         const int           integer = query.getColumn(2).getInt();
         const double        real    = query.getColumn(3).getDouble();
         const void*         pblob   = query.getColumn(1).getBlob();
         EXPECT_EQ(1,            id);
+        EXPECT_EQ(1,            uint1);
+        EXPECT_EQ(1,            uint2);
         EXPECT_STREQ("first",   ptxt);
-        EXPECT_EQ("first",      msg);
-        EXPECT_EQ(123,          integer);
+        EXPECT_EQ("first",      msg1);
+        EXPECT_EQ("first",      msg2);
+        EXPECT_EQ(-123,         integer);
         EXPECT_EQ(0.123,        real);
         EXPECT_EQ(0,            memcmp("first", pblob, 5));
     }
@@ -115,8 +125,8 @@ TEST(Column, basis) {
     EXPECT_EQ(false,            query.getColumn(2).isText());
     EXPECT_EQ(false,            query.getColumn(2).isBlob());
     EXPECT_EQ(false,            query.getColumn(2).isNull());
-    EXPECT_STREQ("123",         query.getColumn(2).getText());  // convert to string
-    EXPECT_EQ(3,                query.getColumn(2).getBytes()); // size of the string "123"
+    EXPECT_STREQ("-123",        query.getColumn(2).getText());  // convert to string
+    EXPECT_EQ(4,                query.getColumn(2).getBytes()); // size of the string "-123"
     EXPECT_EQ(SQLITE_FLOAT,     query.getColumn(3).getType());
     EXPECT_EQ(false,            query.getColumn(3).isInteger());
     EXPECT_EQ(true,             query.getColumn(3).isFloat());

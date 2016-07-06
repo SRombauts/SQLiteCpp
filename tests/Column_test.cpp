@@ -33,9 +33,9 @@ TEST(Column, basis) {
     // Create a first row (autoid: 1) with all kind of data and a null value
     SQLite::Statement   insert(db, "INSERT INTO test VALUES (NULL, \"first\", -123, 0.123, ?, NULL)");
     // Bind the blob value to the first parameter of the SQL query
-    char  buffer[] = "blob";
-    void* blob = &buffer;
-    int size = sizeof(buffer);
+    const char  buffer[] = {'b', 'l', '\0', 'b'}; // "bl\0b" : 4 char, with a null byte inside
+    const int   size = sizeof(buffer); // size = 4
+    const void* blob = &buffer;
     insert.bind(1, blob, size);
     // Execute the one-step query to insert the row
     EXPECT_EQ(1, insert.exec());
@@ -65,6 +65,7 @@ TEST(Column, basis) {
         const int           integer = query.getColumn(2); // operator int()
         const double        real    = query.getColumn(3); // operator double()
         const void*         pblob   = query.getColumn(4); // operator void*()
+        const std::string   sblob   = query.getColumn(4); // operator std::string() (or const char* with MSVC)
         const void*         pempty  = query.getColumn(5); // operator void*()
         EXPECT_EQ(1,            id1);
         EXPECT_EQ(1,            id2);
@@ -76,7 +77,9 @@ TEST(Column, basis) {
         EXPECT_EQ("first",      msg);
         EXPECT_EQ(-123,         integer);
         EXPECT_EQ(0.123,        real);
-        EXPECT_EQ(0,            memcmp("blob", pblob, size));
+        EXPECT_EQ(0,            memcmp("bl\0b", pblob, size));
+        EXPECT_EQ(size,         sblob.size());
+        EXPECT_EQ(0,            memcmp("bl\0b", &sblob[0], size));
         EXPECT_EQ(NULL,         pempty);
     }
 
@@ -90,7 +93,8 @@ TEST(Column, basis) {
         const std::string   msg2    = query.getColumn(1).getString();
         const int           integer = query.getColumn(2).getInt();
         const double        real    = query.getColumn(3).getDouble();
-        const void*         pblob   = query.getColumn(1).getBlob();
+        const void*         pblob   = query.getColumn(4).getBlob();
+        const std::string   sblob   = query.getColumn(4).getString();
         EXPECT_EQ(1,            id);
         EXPECT_EQ(1,            uint1);
         EXPECT_EQ(1,            uint2);
@@ -99,7 +103,8 @@ TEST(Column, basis) {
         EXPECT_EQ("first",      msg2);
         EXPECT_EQ(-123,         integer);
         EXPECT_EQ(0.123,        real);
-        EXPECT_EQ(0,            memcmp("first", pblob, 5));
+        EXPECT_EQ(0,            memcmp("bl\0b", pblob, 4));
+        EXPECT_EQ(0,            memcmp("bl\0b", &sblob[0], 4));
     }
 
     // Validate getBytes(), getType(), isInteger(), isNull()...
@@ -141,8 +146,8 @@ TEST(Column, basis) {
     EXPECT_EQ(false,            query.getColumn(4).isText());
     EXPECT_EQ(true,             query.getColumn(4).isBlob());
     EXPECT_EQ(false,            query.getColumn(4).isNull());
-    EXPECT_STREQ("blob",        query.getColumn(4).getText());  // convert to string
-    EXPECT_EQ(5,                query.getColumn(4).getBytes()); // size of the string "blob" WITH the null terminator (blob)
+    EXPECT_STREQ("bl\0b",       query.getColumn(4).getText());  // convert to string
+    EXPECT_EQ(4,                query.getColumn(4).getBytes()); // size of the blob "bl\0b" with the null char
     EXPECT_EQ(SQLITE_NULL,      query.getColumn(5).getType());
     EXPECT_EQ(false,            query.getColumn(5).isInteger());
     EXPECT_EQ(false,            query.getColumn(5).isFloat());
@@ -151,6 +156,18 @@ TEST(Column, basis) {
     EXPECT_EQ(true,             query.getColumn(5).isNull());
     EXPECT_STREQ("",            query.getColumn(5).getText());  // convert to string
     EXPECT_EQ(0,                query.getColumn(5).getBytes()); // size of the string "" without the null terminator
+
+    // Use intermediate Column objects (this is not the recommended way to use the API)
+    {
+        const SQLite::Column id = query.getColumn(0);
+        EXPECT_EQ(1, id.getInt64());
+        const SQLite::Column msg = query.getColumn(1);
+        EXPECT_EQ("first", msg.getString());
+        const SQLite::Column integer = query.getColumn(2);
+        EXPECT_EQ(-123, integer.getInt());
+        const SQLite::Column dbl = query.getColumn(3);
+        EXPECT_EQ(0.123, dbl.getDouble());
+    }
 }
 
 TEST(Column, getName) {

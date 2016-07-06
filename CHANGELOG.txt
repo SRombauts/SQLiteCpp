@@ -80,7 +80,13 @@ Version 1.3.1 - February 10 2016
     Remove warnings
     Remove biicode support (defunct service, servers will shutdown the 16th of February 2016)
 
-Version 1.3.x ?
+Version 1.4.0 - 2016 ?
     Update SQLite3 from 3.10.2 to latest 3.13 (2016-05-18)
-    Better exception messages when statements fail #84
-    Variadic templates for bind() (C++14) #85
+    Better exception messages when Statements fail PR #84
+    Variadic templates for bind() (C++14) PR #85
+    Add Statement::bindNoCopy() methods for strings, using SQLITE_STATIC to avoid internal copy by SQLite3 PR #86
+    Add Statement::bind() overload for uint32_t, and Column::getUint() and cast operator to uint32_t PR #86
+    Use the new SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION from SQLite 3.13 for security reason
+    Rename Backup::remainingPageCount()/totalPageCount() to Backup::getRemainingPageCount()/getTotalPageCount() 
+    Remove Column::errmsg() method : use Database or Statement equivalents
+    More unit tests, with code coverage status on the GitHub page

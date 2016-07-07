@@ -147,108 +147,139 @@ TEST(Statement, bindings) {
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
     EXPECT_EQ(SQLITE_OK, db.getErrorCode());
 
-    // Insertion with binded values
+    // Insertion with bindable parameters
     SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?)");
 
-    // First row with text/int/double
-    insert.bind(1, "first");
-    insert.bind(2, 123);
-    insert.bind(3, 0.123);
-    EXPECT_EQ(1, insert.exec());
-    EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
-
-    // Compile a SQL query to check the result
+    // Compile a SQL query to check the results
     SQLite::Statement query(db, "SELECT * FROM test");
     EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
     EXPECT_EQ(4, query.getColumnCount());
 
-    // Check the first row
-    query.executeStep();
-    EXPECT_TRUE (query.isOk());
-    EXPECT_FALSE(query.isDone());
-    EXPECT_EQ   (1,         query.getColumn(0).getInt64());
-    EXPECT_STREQ("first",   query.getColumn(1).getText());
-    EXPECT_EQ   (123,       query.getColumn(2).getInt());
-    EXPECT_EQ   (0.123,     query.getColumn(3).getDouble());
+    // First row with text/int/double
+    {
+        const char* text = "first";
+        const int integer = -123;
+        const double dbl = 0.123;
+        insert.bind(1, text);
+        insert.bind(2, integer);
+        insert.bind(3, dbl);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the first row
+        query.executeStep();
+        EXPECT_TRUE (query.isOk());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ   (1,         query.getColumn(0).getInt64());
+        EXPECT_STREQ("first",   query.getColumn(1).getText());
+        EXPECT_EQ   (-123,      query.getColumn(2).getInt());
+        EXPECT_EQ   (0.123,     query.getColumn(3).getDouble());
+    }
 
     // reset() without clearbindings()
     insert.reset();
 
     // Second row with the same exact values because clearbindings() was not called
-    EXPECT_EQ(1, insert.exec());
-    EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+    {
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-    // Check the second row
-    query.executeStep();
-    EXPECT_TRUE (query.isOk());
-    EXPECT_FALSE(query.isDone());
-    EXPECT_EQ   (2,         query.getColumn(0).getInt64());
-    EXPECT_STREQ("first",   query.getColumn(1).getText());
-    EXPECT_EQ   (123,       query.getColumn(2).getInt());
-    EXPECT_EQ   (0.123,     query.getColumn(3).getDouble());
+        // Check the second row
+        query.executeStep();
+        EXPECT_TRUE (query.isOk());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ   (2,         query.getColumn(0).getInt64());
+        EXPECT_STREQ("first",   query.getColumn(1).getText());
+        EXPECT_EQ   (-123,      query.getColumn(2).getInt());
+        EXPECT_EQ   (0.123,     query.getColumn(3).getDouble());
+    }
 
     // reset() with clearbindings() and no more bindings
     insert.reset();
     insert.clearBindings();
 
     // Third row with the all null values because clearbindings() was called
-    EXPECT_EQ(1, insert.exec());
-    EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+    {
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-    // Check the third row
-    query.executeStep();
-    EXPECT_TRUE (query.isOk());
-    EXPECT_FALSE(query.isDone());
-    EXPECT_EQ   (3,     query.getColumn(0).getInt64());
-    EXPECT_TRUE (query.isColumnNull(1));
-    EXPECT_STREQ("",    query.getColumn(1).getText());
-    EXPECT_TRUE (query.isColumnNull(2));
-    EXPECT_EQ   (0,     query.getColumn(2).getInt());
-    EXPECT_TRUE (query.isColumnNull(3));
-    EXPECT_EQ   (0.0,   query.getColumn(3).getDouble());
+        // Check the third row
+        query.executeStep();
+        EXPECT_TRUE (query.isOk());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ   (3,     query.getColumn(0).getInt64());
+        EXPECT_TRUE (query.isColumnNull(1));
+        EXPECT_STREQ("",    query.getColumn(1).getText());
+        EXPECT_TRUE (query.isColumnNull(2));
+        EXPECT_EQ   (0,     query.getColumn(2).getInt());
+        EXPECT_TRUE (query.isColumnNull(3));
+        EXPECT_EQ   (0.0,   query.getColumn(3).getDouble());
+    }
 
     // reset() with clearbindings() and new bindings
     insert.reset();
     insert.clearBindings();
 
     // Fourth row with string/int64/float
-    const std::string   fourth("fourth");
-    const int64_t       int64 = 12345678900000LL;
-    const float         float32 = 0.234f;
-    insert.bind(1, fourth);
-    insert.bind(2, int64);
-    insert.bind(3, float32);
-    EXPECT_EQ(1, insert.exec());
-    EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+    {
+        const std::string   fourth("fourth");
+        const int64_t       int64 = 12345678900000LL;
+        const float         float32 = 0.234f;
+        insert.bind(1, fourth);
+        insert.bind(2, int64);
+        insert.bind(3, float32);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-    // Check the fourth row
-    query.executeStep();
-    EXPECT_TRUE (query.isOk());
-    EXPECT_FALSE(query.isDone());
-    EXPECT_EQ(4,                query.getColumn(0).getInt64());
-    EXPECT_EQ(fourth,           query.getColumn(1).getText());
-    EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
-    EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+        // Check the fourth row
+        query.executeStep();
+        EXPECT_TRUE (query.isOk());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(4,                query.getColumn(0).getInt64());
+        EXPECT_EQ(fourth,           query.getColumn(1).getText());
+        EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
+        EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+    }
 
     // reset() without clearbindings()
     insert.reset();
 
     // Fifth row with binary buffer and a null parameter
-    const char buffer[] = "binary";
-    insert.bind(1, buffer, sizeof(buffer));
-    insert.bind(2);
-    EXPECT_EQ(1, insert.exec());
+    {
+        const char buffer[] = "binary";
+        insert.bind(1, buffer, sizeof(buffer));
+        insert.bind(2);
+        EXPECT_EQ(1, insert.exec());
 
-    // Check the fifth row
-    query.executeStep();
-    EXPECT_TRUE (query.isOk());
-    EXPECT_FALSE(query.isDone());
-    EXPECT_EQ(5,                query.getColumn(0).getInt64());
-    EXPECT_STREQ(buffer,        query.getColumn(1).getText());
-    EXPECT_TRUE (query.isColumnNull(2));
-    EXPECT_EQ(0,                query.getColumn(2).getInt());
-    EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+        // Check the fifth row
+        query.executeStep();
+        EXPECT_TRUE (query.isOk());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(5,                query.getColumn(0).getInt64());
+        EXPECT_STREQ(buffer,        query.getColumn(1).getText());
+        EXPECT_TRUE (query.isColumnNull(2));
+        EXPECT_EQ(0,                query.getColumn(2).getInt());
+        EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+    }
 
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Sixth row with uint32_t unsigned value
+    {
+        const uint32_t  uint32 = 4294967295U;
+        insert.bind(2, uint32);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the sixth row
+        query.executeStep();
+        EXPECT_TRUE(query.isOk());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(6, query.getColumn(0).getInt64());
+        EXPECT_EQ(4294967295U, query.getColumn(2).getUInt());
+    }
 }
 
 TEST(Statement, bindByName) {
@@ -260,7 +291,7 @@ TEST(Statement, bindByName) {
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
     EXPECT_EQ(SQLITE_OK, db.getErrorCode());
 
-    // Insertion with binded values
+    // Insertion with bindable parameters
     SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, @msg, @int, @double)");
 
     // First row with text/int/double

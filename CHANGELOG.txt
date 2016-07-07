@@ -90,3 +90,4 @@ Version 1.4.0 - 2016 ?
     Rename Backup::remainingPageCount()/totalPageCount() to Backup::getRemainingPageCount()/getTotalPageCount() 
     Remove Column::errmsg() method : use Database or Statement equivalents
     More unit tests, with code coverage status on the GitHub page
+    Move #include <sqlite3.h> from headers to .cpp files only using forward declarations

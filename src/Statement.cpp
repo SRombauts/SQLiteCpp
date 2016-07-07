@@ -15,6 +15,7 @@
 #include <SQLiteCpp/Assertion.h>
 #include <SQLiteCpp/Exception.h>
 
+#include <sqlite3.h>
 
 namespace SQLite
 {
@@ -357,6 +358,22 @@ const char* Statement::getColumnOriginName(const int aIndex) const
     return sqlite3_column_origin_name(mStmtPtr, aIndex);
 }
 #endif
+
+/// Return the numeric result code for the most recent failed API call (if any).
+int Statement::getErrorCode() const noexcept // nothrow
+{
+    return sqlite3_errcode(mStmtPtr);
+}
+/// Return the extended numeric result code for the most recent failed API call (if any).
+int Statement::getExtendedErrorCode() const noexcept // nothrow
+{
+    return sqlite3_extended_errcode(mStmtPtr);
+}
+/// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
+const char* Statement::errmsg() const noexcept // nothrow
+{
+    return sqlite3_errmsg(mStmtPtr);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Internal class : shared pointer to the sqlite3_stmt SQLite Statement Object

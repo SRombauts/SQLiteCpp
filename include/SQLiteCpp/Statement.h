@@ -10,12 +10,15 @@
  */
 #pragma once
 
-#include <sqlite3.h>
 #include <string>
 #include <map>
 #include <stdint.h>
 
 #include <SQLiteCpp/Exception.h>
+
+// Forward declaration to avoid including the <sqlite3.h> header
+struct sqlite3;
+struct sqlite3_stmt;
 
 
 namespace SQLite
@@ -465,20 +468,11 @@ public:
         return mbDone;
     }
     /// Return the numeric result code for the most recent failed API call (if any).
-    inline int getErrorCode() const noexcept // nothrow
-    {
-        return sqlite3_errcode(mStmtPtr);
-    }
+    int getErrorCode() const noexcept; // nothrow
     /// Return the extended numeric result code for the most recent failed API call (if any).
-    inline int getExtendedErrorCode() const noexcept // nothrow
-    {
-        return sqlite3_extended_errcode(mStmtPtr);
-    }
+    int getExtendedErrorCode() const noexcept; // nothrow
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-    inline const char* errmsg() const noexcept // nothrow
-    {
-        return sqlite3_errmsg(mStmtPtr);
-    }
+    const char* errmsg() const noexcept; // nothrow
 
 private:
     /**

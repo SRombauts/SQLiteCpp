@@ -38,6 +38,8 @@ TEST(Statement, invalid) {
     EXPECT_EQ(2, query.getColumnCount ());
     EXPECT_FALSE(query.isOk());
     EXPECT_FALSE(query.isDone());
+    EXPECT_EQ(SQLITE_OK, query.getErrorCode());
+    EXPECT_EQ(SQLITE_OK, query.getExtendedErrorCode());
     EXPECT_THROW(query.isColumnNull(-1), SQLite::Exception);
     EXPECT_THROW(query.isColumnNull(0), SQLite::Exception);
     EXPECT_THROW(query.isColumnNull(1), SQLite::Exception);
@@ -67,6 +69,10 @@ TEST(Statement, invalid) {
     EXPECT_THROW(query.bind(0), SQLite::Exception);
     EXPECT_EQ(SQLITE_RANGE, db.getErrorCode());
     EXPECT_EQ(SQLITE_RANGE, db.getExtendedErrorCode());
+    EXPECT_STREQ("bind or column index out of range", db.errmsg());
+    EXPECT_EQ(SQLITE_RANGE, query.getErrorCode());
+    EXPECT_EQ(SQLITE_RANGE, query.getExtendedErrorCode());
+    EXPECT_STREQ("bind or column index out of range", query.errmsg());
 
     query.exec(); // exec() instead of executeStep() as there is no result
     EXPECT_THROW(query.isColumnNull(0), SQLite::Exception);
@@ -166,7 +172,7 @@ TEST(Statement, bindings) {
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-        // Check the first row
+        // Check the result
         query.executeStep();
         EXPECT_TRUE (query.isOk());
         EXPECT_FALSE(query.isDone());
@@ -184,7 +190,7 @@ TEST(Statement, bindings) {
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-        // Check the second row
+        // Check the result
         query.executeStep();
         EXPECT_TRUE (query.isOk());
         EXPECT_FALSE(query.isDone());
@@ -203,7 +209,7 @@ TEST(Statement, bindings) {
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-        // Check the third row
+        // Check the resultw
         query.executeStep();
         EXPECT_TRUE (query.isOk());
         EXPECT_FALSE(query.isDone());
@@ -231,7 +237,7 @@ TEST(Statement, bindings) {
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-        // Check the fourth row
+        // Check the result
         query.executeStep();
         EXPECT_TRUE (query.isOk());
         EXPECT_FALSE(query.isDone());
@@ -251,7 +257,7 @@ TEST(Statement, bindings) {
         insert.bind(2);
         EXPECT_EQ(1, insert.exec());
 
-        // Check the fifth row
+        // Check the result
         query.executeStep();
         EXPECT_TRUE (query.isOk());
         EXPECT_FALSE(query.isDone());
@@ -273,7 +279,7 @@ TEST(Statement, bindings) {
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-        // Check the sixth row
+        // Check the result
         query.executeStep();
         EXPECT_TRUE(query.isOk());
         EXPECT_FALSE(query.isDone());
@@ -310,7 +316,7 @@ TEST(Statement, bindNoCopy) {
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-        // Check the first row
+        // Check the result
         query.executeStep();
         EXPECT_TRUE(query.isOk());
         EXPECT_FALSE(query.isDone());
@@ -345,7 +351,7 @@ TEST(Statement, bindByName) {
     EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
     EXPECT_EQ(4, query.getColumnCount());
 
-    // Check the first row
+    // Check the result
     query.executeStep();
     EXPECT_TRUE (query.isOk());
     EXPECT_FALSE(query.isDone());
@@ -359,42 +365,64 @@ TEST(Statement, bindByName) {
     insert.clearBindings();
 
     // Second row with string/int64/float
-    const std::string   second("second");
-    const int64_t       int64 = 12345678900000LL;
-    const float         float32 = 0.234f;
-    insert.bind("@msg",      second);
-    insert.bind("@int",      int64);
-    insert.bind("@double",   float32);
-    EXPECT_EQ(1, insert.exec());
-    EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+    {
+        const std::string   second("second");
+        const int64_t       int64 = 12345678900000LL;
+        const float         float32 = 0.234f;
+        insert.bind("@msg",      second);
+        insert.bind("@int",      int64);
+        insert.bind("@double",   float32);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-    // Check the second row
-    query.executeStep();
-    EXPECT_TRUE (query.isOk());
-    EXPECT_FALSE(query.isDone());
-    EXPECT_EQ(2,                query.getColumn(0).getInt64());
-    EXPECT_EQ(second,           query.getColumn(1).getText());
-    EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
-    EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE (query.isOk());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(2,                query.getColumn(0).getInt64());
+        EXPECT_EQ(second,           query.getColumn(1).getText());
+        EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
+        EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+    }
 
     // reset() without clearbindings()
     insert.reset();
 
     // Third row with binary buffer and a null parameter
-    const char buffer[] = "binary";
-    insert.bind("@msg", buffer, sizeof(buffer));
-    insert.bind("@int");
-    EXPECT_EQ(1, insert.exec());
+    {
+        const char buffer[] = "binary";
+        insert.bind("@msg", buffer, sizeof(buffer));
+        insert.bind("@int");
+        EXPECT_EQ(1, insert.exec());
 
-    // Check the third row
-    query.executeStep();
-    EXPECT_TRUE (query.isOk());
-    EXPECT_FALSE(query.isDone());
-    EXPECT_EQ(3,                query.getColumn(0).getInt64());
-    EXPECT_STREQ(buffer,        query.getColumn(1).getText());
-    EXPECT_TRUE (query.isColumnNull(2));
-    EXPECT_EQ(0,                query.getColumn(2).getInt());
-    EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE (query.isOk());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(3,                query.getColumn(0).getInt64());
+        EXPECT_STREQ(buffer,        query.getColumn(1).getText());
+        EXPECT_TRUE (query.isColumnNull(2));
+        EXPECT_EQ(0,                query.getColumn(2).getInt());
+        EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+    }
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Fourth row with uint32_t unsigned value
+    {
+        const uint32_t  uint32 = 4294967295U;
+        insert.bind("@int", uint32);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.isOk());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(4, query.getColumn(0).getInt64());
+        EXPECT_EQ(4294967295U, query.getColumn(2).getUInt());
+    }
 }
 
 TEST(Statement, isColumnNull) {

@@ -104,7 +104,6 @@ public:
      * @brief Return a std::string for a TEXT or BLOB column.
      *
      * Note this correctly handles strings that contain null bytes.
-     *
      */
     std::string getString() const noexcept; // nothrow
 

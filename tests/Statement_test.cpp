@@ -282,6 +282,45 @@ TEST(Statement, bindings) {
     }
 }
 
+TEST(Statement, bindNoCopy) {
+    // Create a new database
+    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+
+    // Create a new table
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, txt1 TEXT, txt2 TEXT, binary BLOB)"));
+    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+
+    // Insertion with bindable parameters
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?)");
+
+    // Compile a SQL query to check the results
+    SQLite::Statement query(db, "SELECT * FROM test");
+    EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
+    EXPECT_EQ(4, query.getColumnCount());
+
+    // Insert one row with all variants of bindNoCopy()
+    {
+        const char*         txt1   = "first";
+        const std::string   txt2   = "sec\0nd";
+        const char          blob[] = {'b','l','\0','b'};
+        insert.bindNoCopy(1, txt1);
+        insert.bindNoCopy(2, txt2);
+        insert.bindNoCopy(3, blob, sizeof(blob));
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the first row
+        query.executeStep();
+        EXPECT_TRUE(query.isOk());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(1, query.getColumn(0).getInt64());
+        EXPECT_STREQ(txt1, query.getColumn(1).getText());
+        EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
+        EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
+    }
+}
+
 TEST(Statement, bindByName) {
     // Create a new database
     SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);

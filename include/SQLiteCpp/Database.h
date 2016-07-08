@@ -247,10 +247,8 @@ public:
 
     /// Return the numeric result code for the most recent failed API call (if any).
     int getErrorCode() const noexcept; // nothrow
-
     /// Return the extended numeric result code for the most recent failed API call (if any).
     int getExtendedErrorCode() const noexcept; // nothrow
-
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
     const char* errmsg() const noexcept; // nothrow
 

@@ -16,7 +16,7 @@
 
 #include <SQLiteCpp/Exception.h>
 
-// Forward declaration to avoid including the <sqlite3.h> header
+// Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
 struct sqlite3_stmt;
 

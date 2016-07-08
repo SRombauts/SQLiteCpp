@@ -14,6 +14,7 @@
 #include <SQLiteCpp/Assertion.h>
 #include <SQLiteCpp/Exception.h>
 
+#include <sqlite3.h>
 
 #ifndef SQLITE_DETERMINISTIC
 #define SQLITE_DETERMINISTIC 0x800
@@ -130,6 +131,36 @@ bool Database::tableExists(const char* apTableName)
     query.bind(1, apTableName);
     (void)query.executeStep(); // Cannot return false, as the above query always return a result
     return (1 == query.getColumn(0).getInt());
+}
+
+// Get the rowid of the most recent successful INSERT into the database from the current connection.
+int64_t Database::getLastInsertRowid() const noexcept // nothrow
+{
+    return sqlite3_last_insert_rowid(mpSQLite);
+}
+
+// Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection.
+int Database::getTotalChanges() const noexcept // nothrow
+{
+    return sqlite3_total_changes(mpSQLite);
+}
+
+// Return the numeric result code for the most recent failed API call (if any).
+int Database::getErrorCode() const noexcept // nothrow
+{
+    return sqlite3_errcode(mpSQLite);
+}
+
+// Return the extended numeric result code for the most recent failed API call (if any).
+int Database::getExtendedErrorCode() const noexcept // nothrow
+{
+    return sqlite3_extended_errcode(mpSQLite);
+}
+
+// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
+const char* Database::errmsg() const noexcept // nothrow
+{
+    return sqlite3_errmsg(mpSQLite);
 }
 
 // Attach a custom function to your sqlite database. Assumes UTF8 text representation.

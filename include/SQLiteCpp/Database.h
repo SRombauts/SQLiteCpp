@@ -10,12 +10,15 @@
  */
 #pragma once
 
-#include <sqlite3.h>
-
 #include <SQLiteCpp/Column.h>
 
 #include <string>
 
+// Forward declarations to avoid inclusion of <sqlite3.h> in a header
+struct sqlite3;
+struct sqlite3_context;
+struct Mem;
+typedef struct Mem sqlite3_value;
 
 namespace SQLite
 {
@@ -237,43 +240,24 @@ public:
      *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */
-    inline int64_t getLastInsertRowid() const noexcept // nothrow
-    {
-        return sqlite3_last_insert_rowid(mpSQLite);
-    }
+    int64_t getLastInsertRowid() const noexcept; // nothrow
 
-    /**
-     * @brief Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection.
-     *
-     * @return Total number of rows modified since connection to the database. DROP tables does not count.
-     */
-    inline int getTotalChanges() const noexcept // nothrow
-    {
-        return sqlite3_total_changes(mpSQLite);
-    }
-
-    /// Return the filename used to open the database.
-    inline const std::string& getFilename() const noexcept // nothrow
-    {
-        return mFilename;
-    }
+    /// Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection (not DROP table).
+    int getTotalChanges() const noexcept; // nothrow
 
     /// Return the numeric result code for the most recent failed API call (if any).
-    inline int getErrorCode() const noexcept // nothrow
-    {
-        return sqlite3_errcode(mpSQLite);
-    }
+    int getErrorCode() const noexcept; // nothrow
 
     /// Return the extended numeric result code for the most recent failed API call (if any).
-    inline int getExtendedErrorCode() const noexcept // nothrow
-    {
-        return sqlite3_extended_errcode(mpSQLite);
-    }
+    int getExtendedErrorCode() const noexcept; // nothrow
 
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-    inline const char* errmsg() const noexcept // nothrow
+    const char* errmsg() const noexcept; // nothrow
+
+    /// Return the filename used to open the database.
+    const std::string& getFilename() const noexcept // nothrow
     {
-        return sqlite3_errmsg(mpSQLite);
+        return mFilename;
     }
 
     /**

@@ -14,7 +14,7 @@
 
 #include <string>
 
-// Forward declaration to avoid including the <sqlite3.h> header
+// Forward declaration to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3_backup;
 
 namespace SQLite

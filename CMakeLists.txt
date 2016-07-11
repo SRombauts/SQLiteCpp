@@ -157,6 +157,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
+target_include_directories(SQLiteCpp PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
@@ -170,6 +171,7 @@ if (SQLITECPP_INTERNAL_SQLITE)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
     include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
+    target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/sqlite3")
 endif (SQLITECPP_INTERNAL_SQLITE)
 
 

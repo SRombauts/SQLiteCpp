@@ -23,6 +23,22 @@ typedef struct Mem sqlite3_value;
 namespace SQLite
 {
 
+// Those public constants enable most usages of SQLiteCpp without including <sqlite3.h> in the client application.
+
+/// The database is opened in read-only mode. If the database does not already exist, an error is returned.
+extern const int OPEN_READONLY;     // SQLITE_OPEN_READONLY
+/// The database is opened for reading and writing if possible, or reading only if the file is write protected
+/// by the operating system. In either case the database must already exist, otherwise an error is returned.
+extern const int OPEN_READWRITE;    // SQLITE_OPEN_READWRITE
+/// With OPEN_READWRITE: The database is opened for reading and writing, and is created if it does not already exist.
+extern const int OPEN_CREATE;       // SQLITE_OPEN_CREATE
+
+/// Enable URI filename interpretation, parsed according to RFC 3986 (ex. "file:data.db?mode=ro&cache=private")
+extern const int OPEN_URI;          // SQLITE_OPEN_URI
+
+
+extern const int OK;                ///< SQLITE_OK (used by inline check() bellow)
+
 
 /**
  * @brief RAII management of a SQLite Database Connection.
@@ -57,14 +73,14 @@ public:
      * Exception is thrown in case of error, then the Database object is NOT constructed.
      *
      * @param[in] apFilename        UTF-8 path/uri to the database file ("filename" sqlite3 parameter)
-     * @param[in] aFlags            SQLITE_OPEN_READONLY/SQLITE_OPEN_READWRITE/SQLITE_OPEN_CREATE...
+     * @param[in] aFlags            SQLite::OPEN_READONLY/SQLite::OPEN_READWRITE/SQLite::OPEN_CREATE...
      * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
      * @param[in] apVfs             UTF-8 name of custom VFS to use, or nullptr for sqlite3 default
      *
      * @throw SQLite::Exception in case of error
      */
     Database(const char* apFilename,
-             const int   aFlags         = SQLITE_OPEN_READONLY,
+             const int   aFlags         = SQLite::OPEN_READONLY,
              const int   aBusyTimeoutMs = 0,
              const char* apVfs          = NULL);
 
@@ -79,14 +95,14 @@ public:
      * Exception is thrown in case of error, then the Database object is NOT constructed.
      *
      * @param[in] aFilename         UTF-8 path/uri to the database file ("filename" sqlite3 parameter)
-     * @param[in] aFlags            SQLITE_OPEN_READONLY/SQLITE_OPEN_READWRITE/SQLITE_OPEN_CREATE...
+     * @param[in] aFlags            SQLite::OPEN_READONLY/SQLite::OPEN_READWRITE/SQLite::OPEN_CREATE...
      * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
      * @param[in] aVfs              UTF-8 name of custom VFS to use, or empty string for sqlite3 default
      *
      * @throw SQLite::Exception in case of error
      */
     Database(const std::string& aFilename,
-             const int          aFlags          = SQLITE_OPEN_READONLY,
+             const int          aFlags          = SQLite::OPEN_READONLY,
              const int          aBusyTimeoutMs  = 0,
              const std::string& aVfs            = "");
 
@@ -250,6 +266,7 @@ public:
     /// Return the extended numeric result code for the most recent failed API call (if any).
     int getExtendedErrorCode() const noexcept; // nothrow
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
+    // TODO: rename getErrorMessage
     const char* errmsg() const noexcept; // nothrow
 
     /// Return the filename used to open the database.
@@ -358,7 +375,7 @@ private:
      */
     inline void check(const int aRet) const
     {
-        if (SQLITE_OK != aRet)
+        if (SQLite::OK != aRet)
         {
             throw SQLite::Exception(mpSQLite, aRet);
         }

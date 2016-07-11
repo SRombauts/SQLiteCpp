@@ -11,6 +11,8 @@
 
 #include <SQLiteCpp/Database.h>
 
+#include <sqlite3.h> // for SQLITE_ERROR and SQLITE_VERSION_NUMBER
+
 #include <gtest/gtest.h>
 
 #include <cstdio>
@@ -36,7 +38,7 @@ TEST(Database, ctorExecCreateDropExist) {
         EXPECT_THROW(SQLite::Database not_found(filename), SQLite::Exception);
 
         // Create a new database
-        SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         EXPECT_STREQ("test.db3", db.getFilename().c_str());
         EXPECT_FALSE(db.tableExists("test"));
         EXPECT_FALSE(db.tableExists(std::string("test")));
@@ -62,14 +64,14 @@ TEST(Database, createCloseReopen) {
         EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
 
         // Create a new database
-        SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         EXPECT_FALSE(db.tableExists("test"));
         db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
         EXPECT_TRUE(db.tableExists("test"));
     } // Close DB test.db3
     {
         // Reopen the database file
-        SQLite::Database db("test.db3", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         EXPECT_TRUE(db.tableExists("test"));
     } // Close DB test.db3
     remove("test.db3");
@@ -78,7 +80,7 @@ TEST(Database, createCloseReopen) {
 TEST(Database, inMemory) {
     {
         // Create a new database
-        SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE);
+        SQLite::Database db(":memory:", SQLite::OPEN_READWRITE);
         EXPECT_FALSE(db.tableExists("test"));
         db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
         EXPECT_TRUE(db.tableExists("test"));
@@ -111,7 +113,7 @@ TEST(Database, busyTimeout) {
     }
     {
         // Create a new database with a non null busy timeout
-        SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE, 5000);
+        SQLite::Database db(":memory:", SQLite::OPEN_READWRITE, 5000);
         EXPECT_EQ(5000, db.execAndGet("PRAGMA busy_timeout").getInt());
 
         // Reset timeout to null
@@ -121,7 +123,7 @@ TEST(Database, busyTimeout) {
     {
         // Create a new database with a non null busy timeout
         const std::string memory = ":memory:";
-        SQLite::Database db(memory, SQLITE_OPEN_READWRITE, 5000);
+        SQLite::Database db(memory, SQLite::OPEN_READWRITE, 5000);
         EXPECT_EQ(5000, db.execAndGet("PRAGMA busy_timeout").getInt());
 
         // Reset timeout to null
@@ -133,7 +135,7 @@ TEST(Database, busyTimeout) {
 
 TEST(Database, exec) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE);
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE);
 
     // Create a new table with an explicit "id" column aliasing the underlying rowid
     // NOTE: here exec() returns 0 only because it is the first statements since database connexion,
@@ -194,7 +196,7 @@ TEST(Database, exec) {
 
 TEST(Database, execAndGet) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE);
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE);
 
     // Create a new table with an explicit "id" column aliasing the underlying rowid
     db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT, weight INTEGER)");
@@ -212,9 +214,9 @@ TEST(Database, execAndGet) {
 
 TEST(Database, execException) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE);
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
-    EXPECT_EQ(SQLITE_OK, db.getExtendedErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
 
     // exception with SQL error: "no such table"
     EXPECT_THROW(db.exec("INSERT INTO test VALUES (NULL, \"first\",  3)"), SQLite::Exception);
@@ -224,8 +226,8 @@ TEST(Database, execException) {
 
     // Create a new table
     db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT, weight INTEGER)");
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
-    EXPECT_EQ(SQLITE_OK, db.getExtendedErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
     EXPECT_STREQ("not an error", db.errmsg());
 
     // exception with SQL error: "table test has 3 columns but 2 values were supplied"

@@ -13,6 +13,8 @@
 #include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Column.h>
 
+#include <sqlite3.h> // for sqlite3_int64
+
 #include <gtest/gtest.h>
 
 #include <cstdio>
@@ -20,9 +22,9 @@
 
 TEST(Column, basis) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
-    EXPECT_EQ(SQLITE_OK, db.getExtendedErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
 
     // Create a new table
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL, binary BLOB, empty TEXT)"));
@@ -108,7 +110,7 @@ TEST(Column, basis) {
     }
 
     // Validate getBytes(), getType(), isInteger(), isNull()...
-    EXPECT_EQ(SQLITE_INTEGER,   query.getColumn(0).getType());
+    EXPECT_EQ(SQLite::INTEGER,  query.getColumn(0).getType());
     EXPECT_EQ(true,             query.getColumn(0).isInteger());
     EXPECT_EQ(false,            query.getColumn(0).isFloat());
     EXPECT_EQ(false,            query.getColumn(0).isText());
@@ -116,7 +118,7 @@ TEST(Column, basis) {
     EXPECT_EQ(false,            query.getColumn(0).isNull());
     EXPECT_STREQ("1",           query.getColumn(0).getText());  // convert to string
     EXPECT_EQ(1,                query.getColumn(0).getBytes()); // size of the string "1" without the null terminator
-    EXPECT_EQ(SQLITE_TEXT,      query.getColumn(1).getType());
+    EXPECT_EQ(SQLite::TEXT,     query.getColumn(1).getType());
     EXPECT_EQ(false,            query.getColumn(1).isInteger());
     EXPECT_EQ(false,            query.getColumn(1).isFloat());
     EXPECT_EQ(true,             query.getColumn(1).isText());
@@ -124,7 +126,7 @@ TEST(Column, basis) {
     EXPECT_EQ(false,            query.getColumn(1).isNull());
     EXPECT_STREQ("first",       query.getColumn(1).getText());  // convert to string
     EXPECT_EQ(5,                query.getColumn(1).getBytes()); // size of the string "first"
-    EXPECT_EQ(SQLITE_INTEGER,   query.getColumn(2).getType());
+    EXPECT_EQ(SQLite::INTEGER,  query.getColumn(2).getType());
     EXPECT_EQ(true,             query.getColumn(2).isInteger());
     EXPECT_EQ(false,            query.getColumn(2).isFloat());
     EXPECT_EQ(false,            query.getColumn(2).isText());
@@ -132,7 +134,7 @@ TEST(Column, basis) {
     EXPECT_EQ(false,            query.getColumn(2).isNull());
     EXPECT_STREQ("-123",        query.getColumn(2).getText());  // convert to string
     EXPECT_EQ(4,                query.getColumn(2).getBytes()); // size of the string "-123"
-    EXPECT_EQ(SQLITE_FLOAT,     query.getColumn(3).getType());
+    EXPECT_EQ(SQLite::FLOAT,    query.getColumn(3).getType());
     EXPECT_EQ(false,            query.getColumn(3).isInteger());
     EXPECT_EQ(true,             query.getColumn(3).isFloat());
     EXPECT_EQ(false,            query.getColumn(3).isText());
@@ -140,7 +142,7 @@ TEST(Column, basis) {
     EXPECT_EQ(false,            query.getColumn(3).isNull());
     EXPECT_STREQ("0.123",       query.getColumn(3).getText());  // convert to string
     EXPECT_EQ(5,                query.getColumn(3).getBytes()); // size of the string "0.123"
-    EXPECT_EQ(SQLITE_BLOB,      query.getColumn(4).getType());
+    EXPECT_EQ(SQLite::BLOB,     query.getColumn(4).getType());
     EXPECT_EQ(false,            query.getColumn(4).isInteger());
     EXPECT_EQ(false,            query.getColumn(4).isFloat());
     EXPECT_EQ(false,            query.getColumn(4).isText());
@@ -148,7 +150,7 @@ TEST(Column, basis) {
     EXPECT_EQ(false,            query.getColumn(4).isNull());
     EXPECT_STREQ("bl\0b",       query.getColumn(4).getText());  // convert to string
     EXPECT_EQ(4,                query.getColumn(4).getBytes()); // size of the blob "bl\0b" with the null char
-    EXPECT_EQ(SQLITE_NULL,      query.getColumn(5).getType());
+    EXPECT_EQ(SQLite::Null,     query.getColumn(5).getType());
     EXPECT_EQ(false,            query.getColumn(5).isInteger());
     EXPECT_EQ(false,            query.getColumn(5).isFloat());
     EXPECT_EQ(false,            query.getColumn(5).isText());
@@ -172,7 +174,7 @@ TEST(Column, basis) {
 
 TEST(Column, getName) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT)"));
     EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\")"));
 

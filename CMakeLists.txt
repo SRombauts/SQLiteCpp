@@ -92,11 +92,12 @@ endif (SQLITE_ENABLE_ASSERT_HANDLER)
 
 # list of sources files of the library
 set(SQLITECPP_SRC
+ ${PROJECT_SOURCE_DIR}/src/Backup.cpp
  ${PROJECT_SOURCE_DIR}/src/Column.cpp
  ${PROJECT_SOURCE_DIR}/src/Database.cpp
+ ${PROJECT_SOURCE_DIR}/src/Exception.cpp
  ${PROJECT_SOURCE_DIR}/src/Statement.cpp
  ${PROJECT_SOURCE_DIR}/src/Transaction.cpp
- ${PROJECT_SOURCE_DIR}/src/Backup.cpp
 )
 source_group(src FILES ${SQLITECPP_SRC})
 

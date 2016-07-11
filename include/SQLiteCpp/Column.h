@@ -20,6 +20,12 @@
 namespace SQLite
 {
 
+extern const int INTEGER;   ///< SQLITE_INTEGER
+extern const int FLOAT;     ///< SQLITE_FLOAT
+extern const int TEXT;      ///< SQLITE_TEXT
+extern const int BLOB;      ///< SQLITE_BLOB
+extern const int Null;      ///< SQLITE_NULL
+
 
 /**
  * @brief Encapsulation of a Column in a row of the result pointed by the prepared Statement.
@@ -110,7 +116,7 @@ public:
     /**
      * @brief Return the type of the value of the column
      *
-     * Return either SQLITE_INTEGER, SQLITE_FLOAT, SQLITE_TEXT, SQLITE_BLOB, or SQLITE_NULL.
+     * Return either SQLite::INTEGER, SQLite::FLOAT, SQLite::TEXT, SQLite::BLOB, or SQLite::Null.
      *
      * @warning After a type conversion (by a call to a getXxx on a Column of a Yyy type),
      *          the value returned by sqlite3_column_type() is undefined.
@@ -120,27 +126,27 @@ public:
     /// Test if the column is an integer type value (meaningful only before any conversion)
     inline bool isInteger() const noexcept // nothrow
     {
-        return (SQLITE_INTEGER == getType());
+        return (SQLite::INTEGER == getType());
     }
     /// Test if the column is a floating point type value (meaningful only before any conversion)
     inline bool isFloat() const noexcept // nothrow
     {
-        return (SQLITE_FLOAT == getType());
+        return (SQLite::FLOAT == getType());
     }
     /// Test if the column is a text type value (meaningful only before any conversion)
     inline bool isText() const noexcept // nothrow
     {
-        return (SQLITE_TEXT == getType());
+        return (SQLite::TEXT == getType());
     }
     /// Test if the column is a binary blob type value (meaningful only before any conversion)
     inline bool isBlob() const noexcept // nothrow
     {
-        return (SQLITE_BLOB == getType());
+        return (SQLite::BLOB == getType());
     }
     /// Test if the column is NULL (meaningful only before any conversion)
     inline bool isNull() const noexcept // nothrow
     {
-        return (SQLITE_NULL == getType());
+        return (SQLite::Null == getType());
     }
 
     /**

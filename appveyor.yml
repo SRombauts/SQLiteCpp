@@ -9,9 +9,11 @@ install:
 # - git submodule update --init googletest
 
 # configurations to add to build matrix
+# TODO: VS2010->VS2015 and Win32/Win64 (see https://github.com/google/googletest/blob/master/appveyor.yml)
+# TODO: MinGW Makefiles and MSYS Makefiles
 configuration:
   - Debug
-  - Release
+#  - Release # CMake can only build the default configuration on Visual Studio
  
 # scripts to run before build
 # NOTE : no unit tests as cloning googletest does not work on AppVeyor

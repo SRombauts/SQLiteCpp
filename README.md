@@ -227,7 +227,7 @@ catch (std::exception& e)
 ```C++
 try
 {
-    SQLite::Database    db("transaction.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+    SQLite::Database    db("transaction.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
 
     db.exec("DROP TABLE IF EXISTS test");
 

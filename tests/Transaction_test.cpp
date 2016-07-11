@@ -20,15 +20,15 @@
 
 TEST(Transaction, commitRollback) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     {
         // Begin transaction
         SQLite::Transaction transaction(db);
 
         EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
-        EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+        EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
         // Insert a first value
         EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\")"));

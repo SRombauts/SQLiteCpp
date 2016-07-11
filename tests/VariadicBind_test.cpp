@@ -4,6 +4,7 @@
  * @brief   Test of variadic bind
  *
  * Copyright (c) 2016 Paul Dreik (github@pauldreik.se)
+ * Copyright (c) 2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -20,7 +21,7 @@
 #if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
 TEST(VariadicBind, invalid) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
 
     EXPECT_EQ(0, db.exec("DROP TABLE IF EXISTS test"));
     EXPECT_EQ(0,

@@ -3,12 +3,12 @@
  * @ingroup SQLiteCpp
  * @brief   Backup is used to backup a database file in a safe and online way.
  *
- * Copyright (c) 2015-2015 Shibao HONG (shibaohong@outlook.com)
+ * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
+ * Copyright (c) 2015-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
-
 #include <SQLiteCpp/Backup.h>
 
 #include <SQLiteCpp/Exception.h>

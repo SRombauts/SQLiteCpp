@@ -4,7 +4,7 @@
  * @brief   Test of a SQLite Backup.
  *
  * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
- * Copyright (c) 2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2015-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -15,13 +15,15 @@
 #include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Exception.h>
 
+#include <sqlite3.h> // for SQLITE_ERROR, SQLITE_RANGE and SQLITE_DONE
+
 #include <gtest/gtest.h>
 
 #include <cstdio>
 
 TEST(Backup, initException) {
     remove("backup_test.db3");
-    SQLite::Database srcDB("backup_test.db3", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
     ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, \"first\")"));
     ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, \"second\")"));
@@ -35,15 +37,15 @@ TEST(Backup, initException) {
 TEST(Backup, executeStepOne) {
     remove("backup_test.db3");
     remove("backup_test.db3.backup");
-    SQLite::Database srcDB("backup_test.db3", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
     ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, \"first\")"));
     ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, \"second\")"));
 
-    SQLite::Database destDB("backup_test.db3.backup", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    SQLite::Database destDB("backup_test.db3.backup", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     SQLite::Backup backup(destDB, "main", srcDB, "main");
     int res = backup.executeStep(1); // backup only one page at a time
-    ASSERT_EQ(SQLITE_OK, res);
+    ASSERT_EQ(SQLite::OK, res);
     const int total = backup.getTotalPageCount();
     ASSERT_EQ(2, total);
     int remaining = backup.getRemainingPageCount();
@@ -67,12 +69,12 @@ TEST(Backup, executeStepOne) {
 TEST(Backup, executeStepAll) {
     remove("backup_test.db3");
     remove("backup_test.db3.backup");
-    SQLite::Database srcDB("backup_test.db3", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
     ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, \"first\")"));
     ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, \"second\")"));
 
-    SQLite::Database destDB("backup_test.db3.backup", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    SQLite::Database destDB("backup_test.db3.backup", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     SQLite::Backup backup(destDB, srcDB);
     const int res = backup.executeStep(); // uses default argument "-1" => execute all steps at once
     ASSERT_EQ(res, SQLITE_DONE);
@@ -95,16 +97,16 @@ TEST(Backup, executeStepAll) {
 TEST(Backup, executeStepException) {
     remove("backup_test.db3");
     remove("backup_test.db3.backup");
-    SQLite::Database srcDB("backup_test.db3", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
     ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, \"first\")"));
     ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, \"second\")"));
     {
-        SQLite::Database destDB("backup_test.db3.backup", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+        SQLite::Database destDB("backup_test.db3.backup", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         (void)destDB;
     }
     {
-        SQLite::Database destDB("backup_test.db3.backup", SQLITE_OPEN_READONLY);
+        SQLite::Database destDB("backup_test.db3.backup", SQLite::OPEN_READONLY);
         SQLite::Backup backup(destDB, srcDB);
         EXPECT_THROW(backup.executeStep(), SQLite::Exception);
     }

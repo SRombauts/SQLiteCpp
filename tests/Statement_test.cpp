@@ -12,6 +12,8 @@
 #include <SQLiteCpp/Database.h>
 #include <SQLiteCpp/Statement.h>
 
+#include <sqlite3.h> // for SQLITE_DONE
+
 #include <gtest/gtest.h>
 
 #include <cstdio>
@@ -19,9 +21,9 @@
 
 TEST(Statement, invalid) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
-    EXPECT_EQ(SQLITE_OK, db.getExtendedErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
 
     // Compile a SQL query, but without any table in the database
     EXPECT_THROW(SQLite::Statement query(db, "SELECT * FROM test"), SQLite::Exception);
@@ -29,8 +31,8 @@ TEST(Statement, invalid) {
     EXPECT_EQ(SQLITE_ERROR, db.getExtendedErrorCode());
 
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
-    EXPECT_EQ(SQLITE_OK, db.getExtendedErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
 
     // Compile a SQL query with no parameter
     SQLite::Statement query(db, "SELECT * FROM test");
@@ -38,8 +40,8 @@ TEST(Statement, invalid) {
     EXPECT_EQ(2, query.getColumnCount ());
     EXPECT_FALSE(query.isOk());
     EXPECT_FALSE(query.isDone());
-    EXPECT_EQ(SQLITE_OK, query.getErrorCode());
-    EXPECT_EQ(SQLITE_OK, query.getExtendedErrorCode());
+    EXPECT_EQ(SQLite::OK, query.getErrorCode());
+    EXPECT_EQ(SQLite::OK, query.getExtendedErrorCode());
     EXPECT_THROW(query.isColumnNull(-1), SQLite::Exception);
     EXPECT_THROW(query.isColumnNull(0), SQLite::Exception);
     EXPECT_THROW(query.isColumnNull(1), SQLite::Exception);
@@ -94,12 +96,12 @@ TEST(Statement, invalid) {
 
 TEST(Statement, executeStep) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a new table
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a first row
     EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"));
@@ -146,12 +148,12 @@ TEST(Statement, executeStep) {
 
 TEST(Statement, bindings) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a new table
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Insertion with bindable parameters
     SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?)");
@@ -290,12 +292,12 @@ TEST(Statement, bindings) {
 
 TEST(Statement, bindNoCopy) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a new table
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, txt1 TEXT, txt2 TEXT, binary BLOB)"));
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Insertion with bindable parameters
     SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?)");
@@ -329,12 +331,12 @@ TEST(Statement, bindNoCopy) {
 
 TEST(Statement, bindByName) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a new table
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Insertion with bindable parameters
     SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, @msg, @int, @double)");
@@ -427,12 +429,12 @@ TEST(Statement, bindByName) {
 
 TEST(Statement, bindNoCopyByName) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a new table
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, txt1 TEXT, txt2 TEXT, binary BLOB)"));
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Insertion with bindable parameters
     SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, @txt1, @txt2, @blob)");
@@ -466,12 +468,12 @@ TEST(Statement, bindNoCopyByName) {
 
 TEST(Statement, isColumnNull) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
-    ASSERT_EQ(SQLITE_OK, db.getErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    ASSERT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a new table
     EXPECT_EQ(0, db.exec("CREATE TABLE test (msg TEXT, int INTEGER, double REAL)"));
-    ASSERT_EQ(SQLITE_OK, db.getErrorCode());
+    ASSERT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a first row with no null values, then other rows with each time a NULL value
     ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (\"first\", 123,  0.123)"));
@@ -528,14 +530,14 @@ TEST(Statement, isColumnNull) {
 
 TEST(Statement, getColumnByName) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
-    EXPECT_EQ(SQLITE_OK, db.getExtendedErrorCode());
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
 
     // Create a new table
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
-    EXPECT_EQ(SQLITE_OK, db.getErrorCode());
-    EXPECT_EQ(SQLITE_OK, db.getExtendedErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
 
     // Create a first row
     EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"));
@@ -564,7 +566,7 @@ TEST(Statement, getColumnByName) {
 
 TEST(Statement, getName) {
     // Create a new database
-    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT)"));
 
     // Compile a SQL query, using the "id" column name as-is, but aliasing the "msg" column with new name "value"

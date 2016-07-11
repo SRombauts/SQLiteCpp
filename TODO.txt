@@ -1,23 +1,20 @@
+Switch to C++11 for v2.0.0 with removal of include <sqlite.h> in headers
+
 Add a Tutorial for SQLite newbies
-Add a real example (rework current example?)
+Add a real example in the form of a small interactive console application
 
 Improve Github Wiki pages with the FAQ: Installation, Examples, Tutorial, How to contribute
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
 
-Missing features in v1.1.0:
-- bind a SQLITE_STATIC value (string/blob)
-- bind a dynamic value with zerocopy (unlike SQLITE_TRANSIENT) with custom deleter
+Missing features in v2.0.0:
 - #24: executemany() like in Python https://docs.python.org/2/library/sqlite3.html#sqlite3.Connection.executemany
 - #34: Better type for getColumn
 
-Missing documentation in v1.1.0:
+Missing documentation in v2.0.0:
 - explain the noncopyable property for RAII design
 - comment on returning error code instead of exception that shall not be thrown when expected (!?)
 
-Missing unit tests in v1.0.0:
-- Binding variants
-- Create Function
-- Assert Handler
+Missing unit tests in v2.0.0:
 - Load Extension (not practicable, and easy to verify by code review)
 
 Advanced missing features:

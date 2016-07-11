@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Management of a SQLite Database Connection.
  *
- * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -24,10 +24,18 @@
 namespace SQLite
 {
 
+extern const int OPEN_READONLY  = SQLITE_OPEN_READONLY;
+extern const int OPEN_READWRITE = SQLITE_OPEN_READWRITE;
+extern const int OPEN_CREATE    = SQLITE_OPEN_CREATE;
+extern const int OPEN_URI       = SQLITE_OPEN_URI;
+extern const int OPEN_MEMORY    = SQLITE_OPEN_MEMORY;
 
-// Open the provided database UTF-8 filename with SQLITE_OPEN_xxx provided flags.
+extern const int OK             = SQLITE_OK;
+
+
+// Open the provided database UTF-8 filename with SQLite::OPEN_xxx provided flags.
 Database::Database(const char* apFilename,
-                   const int   aFlags         /* = SQLITE_OPEN_READONLY*/,
+                   const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
                    const char* apVfs          /* = NULL*/) :
     mpSQLite(NULL),
@@ -47,9 +55,9 @@ Database::Database(const char* apFilename,
     }
 }
 
-// Open the provided database UTF-8 filename with SQLITE_OPEN_xxx provided flags.
+// Open the provided database UTF-8 filename with SQLite::OPEN_xxx provided flags.
 Database::Database(const std::string& aFilename,
-                   const int          aFlags         /* = SQLITE_OPEN_READONLY*/,
+                   const int          aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int          aBusyTimeoutMs /* = 0 */,
                    const std::string& aVfs           /* = "" */) :
     mpSQLite(NULL),

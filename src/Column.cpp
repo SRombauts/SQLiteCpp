@@ -18,6 +18,13 @@
 namespace SQLite
 {
 
+extern const int INTEGER    = SQLITE_INTEGER;
+extern const int FLOAT      = SQLITE_FLOAT;
+extern const int TEXT       = SQLITE_TEXT;
+extern const int BLOB       = SQLITE_BLOB;
+extern const int Null       = SQLITE_NULL;
+
+
 // Encapsulation of a Column in a row of the result pointed by the prepared Statement.
 Column::Column(Statement::Ptr& aStmtPtr, int aIndex) noexcept : // nothrow
     mStmtPtr(aStmtPtr),

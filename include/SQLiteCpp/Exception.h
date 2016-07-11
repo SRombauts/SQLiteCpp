@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Encapsulation of the error message from SQLite3 on a std::runtime_error.
  *
- * Copyright (c) 2012-2013 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -12,9 +12,9 @@
 
 #include <stdexcept>
 #include <string>
-#include <sstream>
-#include <sqlite3.h>
 
+// Forward declaration to avoid inclusion of <sqlite3.h> in a header
+struct sqlite3;
 
 /// Compatibility with non-clang compilers.
 #ifndef __has_feature
@@ -50,12 +50,7 @@ public:
      *
      * @param[in] aErrorMessage The string message describing the SQLite error
      */
-    explicit Exception(const std::string& aErrorMessage) :
-        std::runtime_error(aErrorMessage),
-        mErrcode(-1), // 0 would be SQLITE_OK, which doesn't make sense
-        mExtendedErrcode(-1)
-    {
-    }
+    explicit Exception(const std::string& aErrorMessage);
 
     /**
      * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
@@ -63,24 +58,14 @@ public:
      * @param[in] aErrorMessage The string message describing the SQLite error
      * @param[in] ret           Return value from function call that failed.
      */
-    explicit Exception(const std::string& aErrorMessage, int ret) :
-        std::runtime_error(aErrorMessage),
-        mErrcode(ret),
-        mExtendedErrcode(-1)
-    {
-    }
+    Exception(const std::string& aErrorMessage, int ret);
 
    /**
      * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
      *
      * @param[in] apSQLite The SQLite object, to obtain detailed error messages from.
      */
-    explicit Exception(sqlite3* apSQLite) :
-        std::runtime_error(sqlite3_errmsg(apSQLite)),
-        mErrcode(sqlite3_errcode(apSQLite)),
-        mExtendedErrcode(sqlite3_extended_errcode(apSQLite))
-    {
-    }
+    explicit Exception(sqlite3* apSQLite);
 
     /**
      * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
@@ -88,12 +73,7 @@ public:
      * @param[in] apSQLite  The SQLite object, to obtain detailed error messages from.
      * @param[in] ret       Return value from function call that failed.
      */
-    explicit Exception(sqlite3* apSQLite, int ret) :
-        std::runtime_error(sqlite3_errmsg(apSQLite)),
-        mErrcode(ret),
-        mExtendedErrcode(sqlite3_extended_errcode(apSQLite))
-    {
-    }
+    Exception(sqlite3* apSQLite, int ret);
 
     /**
      * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
@@ -102,30 +82,16 @@ public:
      * @param[in] ret Return value from function call that failed.
      * @param[in] aErrorMessage String providing more context, added to the SQLite errmsg
      */
-    explicit Exception(sqlite3* apSQLite, int ret, const std::string &aErrorMessage) :
-        std::runtime_error(aErrorMessage + ": " + sqlite3_errmsg(apSQLite)),
-        mErrcode(ret),
-        mExtendedErrcode(sqlite3_extended_errcode(apSQLite))
-    {
-    }
+    Exception(sqlite3* apSQLite, int ret, const std::string &aErrorMessage);
 
     /// Return the result code (if any, otherwise -1).
-    inline int getErrorCode() const noexcept // nothrow
-    {
-        return mErrcode;
-    }
+    int getErrorCode() const noexcept; // nothrow
 
     /// Return the extended numeric result code (if any, otherwise -1).
-    inline int getExtendedErrorCode() const noexcept // nothrow
-    {
-        return mExtendedErrcode;
-    }
+    inline int getExtendedErrorCode() const noexcept; // nothrow
 
     /// Return a string, solely based on the error code
-    inline const char *getErrStr() const noexcept // nothrow
-    {
-        return sqlite3_errstr(mErrcode);
-    }
+    inline const char *getErrStr() const noexcept; // nothrow
 
 private:
     const int mErrcode;         ///< Error code value

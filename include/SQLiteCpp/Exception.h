@@ -75,15 +75,6 @@ public:
      */
     Exception(sqlite3* apSQLite, int ret);
 
-    /**
-     * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
-     *
-     * @param[in] apSQLite The SQLite object, to obtain detailed error messages from.
-     * @param[in] ret Return value from function call that failed.
-     * @param[in] aErrorMessage String providing more context, added to the SQLite errmsg
-     */
-    Exception(sqlite3* apSQLite, int ret, const std::string &aErrorMessage);
-
     /// Return the result code (if any, otherwise -1).
     int getErrorCode() const noexcept; // nothrow
 

@@ -44,13 +44,6 @@ Exception::Exception(sqlite3* apSQLite, int ret) :
 {
 }
 
-Exception::Exception(sqlite3* apSQLite, int ret, const std::string &aErrorMessage) :
-    std::runtime_error(aErrorMessage + ": " + sqlite3_errmsg(apSQLite)),
-    mErrcode(ret),
-    mExtendedErrcode(sqlite3_extended_errcode(apSQLite))
-{
-}
-
 // Return the result code (if any, otherwise -1).
 inline int Exception::getErrorCode() const noexcept // nothrow
 {

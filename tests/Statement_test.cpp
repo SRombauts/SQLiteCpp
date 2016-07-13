@@ -71,10 +71,10 @@ TEST(Statement, invalid) {
     EXPECT_THROW(query.bind(0), SQLite::Exception);
     EXPECT_EQ(SQLITE_RANGE, db.getErrorCode());
     EXPECT_EQ(SQLITE_RANGE, db.getExtendedErrorCode());
-    EXPECT_STREQ("bind or column index out of range", db.errmsg());
+    EXPECT_STREQ("bind or column index out of range", db.getErrorMsg());
     EXPECT_EQ(SQLITE_RANGE, query.getErrorCode());
     EXPECT_EQ(SQLITE_RANGE, query.getExtendedErrorCode());
-    EXPECT_STREQ("bind or column index out of range", query.errmsg());
+    EXPECT_STREQ("bind or column index out of range", query.getErrorMsg());
 
     query.exec(); // exec() instead of executeStep() as there is no result
     EXPECT_THROW(query.isColumnNull(0), SQLite::Exception);

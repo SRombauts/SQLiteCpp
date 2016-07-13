@@ -266,8 +266,7 @@ public:
     /// Return the extended numeric result code for the most recent failed API call (if any).
     int getExtendedErrorCode() const noexcept; // nothrow
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-    // TODO: rename getErrorMessage
-    const char* errmsg() const noexcept; // nothrow
+    const char* getErrorMsg() const noexcept; // nothrow
 
     /// Return the filename used to open the database.
     const std::string& getFilename() const noexcept // nothrow
@@ -345,7 +344,6 @@ public:
                               apApp, apFunc, apStep, apFinal, apDestroy);
     }
 
-
     /**
      * @brief Load a module into the current sqlite database instance. 
      *
@@ -361,8 +359,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    void loadExtension(const char* apExtensionName,
-         const char *apEntryPointName);
+    void loadExtension(const char* apExtensionName, const char* apEntryPointName);
 
 private:
     /// @{ Database must be non-copyable

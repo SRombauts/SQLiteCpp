@@ -79,10 +79,10 @@ public:
     int getErrorCode() const noexcept; // nothrow
 
     /// Return the extended numeric result code (if any, otherwise -1).
-    inline int getExtendedErrorCode() const noexcept; // nothrow
+    int getExtendedErrorCode() const noexcept; // nothrow
 
     /// Return a string, solely based on the error code
-    inline const char *getErrStr() const noexcept; // nothrow
+    const char* getErrorStr() const noexcept; // nothrow
 
 private:
     const int mErrcode;         ///< Error code value

@@ -57,7 +57,7 @@ inline int Exception::getExtendedErrorCode() const noexcept // nothrow
 }
 
 // Return a string, solely based on the error code
-inline const char *Exception::getErrStr() const noexcept // nothrow
+inline const char* Exception::getErrorStr() const noexcept // nothrow
 {
     return sqlite3_errstr(mErrcode);
 }

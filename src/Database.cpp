@@ -166,7 +166,7 @@ int Database::getExtendedErrorCode() const noexcept // nothrow
 }
 
 // Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-const char* Database::errmsg() const noexcept // nothrow
+const char* Database::getErrorMsg() const noexcept // nothrow
 {
     return sqlite3_errmsg(mpSQLite);
 }
@@ -194,8 +194,7 @@ void Database::createFunction(const char*   apFuncName,
 
 // Load an extension into the sqlite database. Only affects the current connection.
 // Parameter details can be found here: http://www.sqlite.org/c3ref/load_extension.html
-void Database::loadExtension(const char* apExtensionName,
-         const char *apEntryPointName)
+void Database::loadExtension(const char* apExtensionName, const char *apEntryPointName)
 {
 #ifdef SQLITE_OMIT_LOAD_EXTENSION
     throw std::runtime_error("sqlite extensions are disabled");

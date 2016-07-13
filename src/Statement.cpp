@@ -370,7 +370,7 @@ int Statement::getExtendedErrorCode() const noexcept // nothrow
     return sqlite3_extended_errcode(mStmtPtr);
 }
 /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-const char* Statement::errmsg() const noexcept // nothrow
+const char* Statement::getErrorMsg() const noexcept // nothrow
 {
     return sqlite3_errmsg(mStmtPtr);
 }

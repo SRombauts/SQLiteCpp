@@ -528,6 +528,68 @@ TEST(Statement, isColumnNull) {
     EXPECT_THROW(query.isColumnNull(3), SQLite::Exception);
 }
 
+TEST(Statement, isColumnNullByName) {
+    // Create a new database
+    SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+    ASSERT_EQ(SQLITE_OK, db.getErrorCode());
+
+    // Create a new table
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (msg TEXT, int INTEGER, double REAL)"));
+    ASSERT_EQ(SQLITE_OK, db.getErrorCode());
+
+    // Create a first row with no null values, then other rows with each time a NULL value
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (\"first\", 123,  0.123)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (NULL,      123,  0.123)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (\"first\", NULL, 0.123)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (\"first\", 123,  NULL)"));
+
+    // Compile a SQL query
+    const std::string select("SELECT * FROM test");
+    SQLite::Statement query(db, select);
+    EXPECT_EQ(select, query.getQuery());
+    EXPECT_EQ(3, query.getColumnCount());
+
+    // Get the first non-null row
+    query.executeStep();
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_THROW(query.isColumnNull(""), SQLite::Exception);
+    EXPECT_EQ(false, query.isColumnNull("msg"));
+    EXPECT_EQ(false, query.isColumnNull("int"));
+    EXPECT_EQ(false, query.isColumnNull("double"));
+    EXPECT_THROW(query.isColumnNull(3), SQLite::Exception);
+
+    // Get the second row with null text
+    query.executeStep();
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_THROW(query.isColumnNull(""), SQLite::Exception);
+    EXPECT_EQ(true, query.isColumnNull("msg"));
+    EXPECT_EQ(false, query.isColumnNull(1));
+    EXPECT_EQ(false, query.isColumnNull("double"));
+    EXPECT_THROW(query.isColumnNull(3), SQLite::Exception);
+
+    // Get the second row with null integer
+    query.executeStep();
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_THROW(query.isColumnNull(""), SQLite::Exception);
+    EXPECT_EQ(false, query.isColumnNull("msg"));
+    EXPECT_EQ(true, query.isColumnNull("int"));
+    EXPECT_EQ(false, query.isColumnNull("double"));
+    EXPECT_THROW(query.isColumnNull(3), SQLite::Exception);
+
+    // Get the third row with null float
+    query.executeStep();
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_THROW(query.isColumnNull(""), SQLite::Exception);
+    EXPECT_EQ(false, query.isColumnNull("msg"));
+    EXPECT_EQ(false, query.isColumnNull("int"));
+    EXPECT_EQ(true, query.isColumnNull("double"));
+    EXPECT_THROW(query.isColumnNull(3), SQLite::Exception);
+}
+
 TEST(Statement, getColumnByName) {
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);

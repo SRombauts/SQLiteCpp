@@ -435,7 +435,18 @@ public:
      *
      *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
      */
-    bool    isColumnNull(const int aIndex) const;
+    bool    isColumnNull(const int aIndex);
+
+    /**
+     * @brief Test if the column value is NULL
+     *
+     * @param[in] apName   Aliased name of the column, that is, the named specified in the query (not the original name)
+     *
+     * @return true if the column value is NULL
+     *
+     *  Throw an exception if the specified name is not an on of the aliased name of the columns in the result.
+     */
+    bool    isColumnNull(const char* apName);
 
     /**
      * @brief Return a pointer to the named assigned to the specified result column (potentially aliased)

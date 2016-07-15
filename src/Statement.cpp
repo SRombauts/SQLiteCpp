@@ -336,11 +336,33 @@ Column  Statement::getColumn(const char* apName)
 }
 
 // Test if the column is NULL
-bool Statement::isColumnNull(const int aIndex) const
+bool Statement::isColumnNull(const int aIndex)
 {
     checkRow();
     checkIndex(aIndex);
     return (SQLITE_NULL == sqlite3_column_type(mStmtPtr, aIndex));
+}
+
+bool Statement::isColumnNull(const char* apName)
+{
+    checkRow();
+
+    if (mColumnNames.empty())
+    {
+        for (int i = 0; i < mColumnCount; ++i)
+        {
+            const char* pName = sqlite3_column_name(mStmtPtr, i);
+            mColumnNames[pName] = i;
+        }
+    }
+
+    const TColumnNames::const_iterator iIndex = mColumnNames.find(apName);
+    if (iIndex == mColumnNames.end())
+    {
+            throw SQLite::Exception("Unknown column name.");
+    }
+
+    return (SQLITE_NULL == sqlite3_column_type(mStmtPtr, (*iIndex).second));
 }
 
 // Return the named assigned to the specified result column (potentially aliased)

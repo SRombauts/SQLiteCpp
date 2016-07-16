@@ -315,54 +315,25 @@ Column Statement::getColumn(const int aIndex)
 Column  Statement::getColumn(const char* apName)
 {
     checkRow();
-
-    if (mColumnNames.empty())
-    {
-        for (int i = 0; i < mColumnCount; ++i)
-        {
-            const char* pName = sqlite3_column_name(mStmtPtr, i);
-            mColumnNames[pName] = i;
-        }
-    }
-
-    const TColumnNames::const_iterator iIndex = mColumnNames.find(apName);
-    if (iIndex == mColumnNames.end())
-    {
-        throw SQLite::Exception("Unknown column name.");
-    }
+    const int index = getColumnIndex(apName);
 
     // Share the Statement Object handle with the new Column created
-    return Column(mStmtPtr, (*iIndex).second);
+    return Column(mStmtPtr, index);
 }
 
 // Test if the column is NULL
-bool Statement::isColumnNull(const int aIndex)
+bool Statement::isColumnNull(const int aIndex) const
 {
     checkRow();
     checkIndex(aIndex);
     return (SQLITE_NULL == sqlite3_column_type(mStmtPtr, aIndex));
 }
 
-bool Statement::isColumnNull(const char* apName)
+bool Statement::isColumnNull(const char* apName) const
 {
     checkRow();
-
-    if (mColumnNames.empty())
-    {
-        for (int i = 0; i < mColumnCount; ++i)
-        {
-            const char* pName = sqlite3_column_name(mStmtPtr, i);
-            mColumnNames[pName] = i;
-        }
-    }
-
-    const TColumnNames::const_iterator iIndex = mColumnNames.find(apName);
-    if (iIndex == mColumnNames.end())
-    {
-            throw SQLite::Exception("Unknown column name.");
-    }
-
-    return (SQLITE_NULL == sqlite3_column_type(mStmtPtr, (*iIndex).second));
+    const int index = getColumnIndex(apName);
+    return (SQLITE_NULL == sqlite3_column_type(mStmtPtr, index));
 }
 
 // Return the named assigned to the specified result column (potentially aliased)
@@ -381,17 +352,39 @@ const char* Statement::getColumnOriginName(const int aIndex) const
 }
 #endif
 
-/// Return the numeric result code for the most recent failed API call (if any).
+// Return the index of the specified (potentially aliased) column name
+int Statement::getColumnIndex(const char* apName) const
+{
+    // Build the map of column index by name on first call
+    if (mColumnNames.empty())
+    {
+        for (int i = 0; i < mColumnCount; ++i)
+        {
+            const char* pName = sqlite3_column_name(mStmtPtr, i);
+            mColumnNames[pName] = i;
+        }
+    }
+
+    const TColumnNames::const_iterator iIndex = mColumnNames.find(apName);
+    if (iIndex == mColumnNames.end())
+    {
+        throw SQLite::Exception("Unknown column name.");
+    }
+
+    return (*iIndex).second;
+}
+
+// Return the numeric result code for the most recent failed API call (if any).
 int Statement::getErrorCode() const noexcept // nothrow
 {
     return sqlite3_errcode(mStmtPtr);
 }
-/// Return the extended numeric result code for the most recent failed API call (if any).
+// Return the extended numeric result code for the most recent failed API call (if any).
 int Statement::getExtendedErrorCode() const noexcept // nothrow
 {
     return sqlite3_extended_errcode(mStmtPtr);
 }
-/// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
+// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
 const char* Statement::getErrorMsg() const noexcept // nothrow
 {
     return sqlite3_errmsg(mStmtPtr);

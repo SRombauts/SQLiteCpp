@@ -423,6 +423,8 @@ public:
      *          while the row from the Statement remains valid, that is only until next executeStep() call.
      *          Thus, you should instead extract immediately its data (getInt(), getText()...)
      *          and use or copy this data for any later usage.
+     *
+     *  Throw an exception if the specified name is not one of the aliased name of the columns in the result.
      */
     Column  getColumn(const char* apName);
 
@@ -435,21 +437,23 @@ public:
      *
      *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
      */
-    bool    isColumnNull(const int aIndex);
+    bool    isColumnNull(const int aIndex) const;
 
     /**
      * @brief Test if the column value is NULL
      *
-     * @param[in] apName   Aliased name of the column, that is, the named specified in the query (not the original name)
+     * @param[in] apName    Aliased name of the column, that is, the named specified in the query (not the original name)
      *
      * @return true if the column value is NULL
      *
-     *  Throw an exception if the specified name is not an on of the aliased name of the columns in the result.
+     *  Throw an exception if the specified name is not one of the aliased name of the columns in the result.
      */
-    bool    isColumnNull(const char* apName);
+    bool    isColumnNull(const char* apName) const;
 
     /**
      * @brief Return a pointer to the named assigned to the specified result column (potentially aliased)
+     *
+     * @param[in] aIndex    Index of the column in the range [0, getColumnCount()).
      *
      * @see getColumnOriginName() to get original column name (not aliased)
      *
@@ -469,6 +473,17 @@ public:
     */
     const char* getColumnOriginName(const int aIndex) const;
 #endif
+
+    /**
+     * @brief Return the index of the specified (potentially aliased) column name
+     *
+     * @param[in] apName    Aliased name of the column, that is, the named specified in the query (not the original name)
+     *
+     * @note Uses a map of column names to indexes, build on first call.
+     *
+     *  Throw an exception if the specified name is not known.
+     */
+    int getColumnIndex(const char* apName) const;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -587,12 +602,12 @@ private:
     typedef std::map<std::string, int> TColumnNames;
 
 private:
-    std::string     mQuery;         //!< UTF-8 SQL Query
-    Ptr             mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
-    int             mColumnCount;   //!< Number of columns in the result of the prepared statement
-    TColumnNames    mColumnNames;   //!< Map of columns index by name
-    bool            mbOk;           //!< true when a row has been fetched with executeStep()
-    bool            mbDone;         //!< true when the last executeStep() had no more row to fetch
+    std::string             mQuery;         //!< UTF-8 SQL Query
+    Ptr                     mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
+    int                     mColumnCount;   //!< Number of columns in the result of the prepared statement
+    mutable TColumnNames    mColumnNames;   //!< Map of columns index by name (mutable so getColumnIndex can be const)
+    bool                    mbOk;           //!< true when a row has been fetched with executeStep()
+    bool                    mbDone;         //!< true when the last executeStep() had no more row to fetch
 };
 
 

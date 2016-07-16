@@ -4,25 +4,23 @@
 version: "{build}"
 
 # scripts that run after cloning repository
-# NOTE : not updating submodule as cloning googletest does not work on AppVeyor
 install:
-# - git submodule update --init googletest
+ - git submodule update --init googletest
 
 # configurations to add to build matrix
 # TODO: VS2010->VS2015 and Win32/Win64 (see https://github.com/google/googletest/blob/master/appveyor.yml)
 # TODO: MinGW Makefiles and MSYS Makefiles
 configuration:
   - Debug
-#  - Release # CMake can only build the default configuration on Visual Studio
+# - Release # CMake can only build the default configuration on Visual Studio
  
 # scripts to run before build
-# NOTE : no unit tests as cloning googletest does not work on AppVeyor
 before_build:
   - mkdir build
   - cd build
-  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=OFF -DSQLITECPP_RUN_CPPCHECK=OFF ..
+  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF ..
 
 # build examples, and run tests (ie make & make test)
 build_script:
   - cmake --build .
-# - ctest --output-on-failure
+  - ctest --output-on-failure

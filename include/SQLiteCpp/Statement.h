@@ -463,14 +463,14 @@ public:
 
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
     /**
-    * @brief Return a pointer to the table column name that is the origin of the specified result column
-    *
-    *  Require definition of the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro :
-    * - when building the SQLite library itself (which is the case for the Debian libsqlite3 binary for instance),
-    * - and also when compiling this wrapper.
-    *
-    *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
-    */
+     * @brief Return a pointer to the table column name that is the origin of the specified result column
+     *
+     *  Require definition of the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro :
+     * - when building the SQLite library itself (which is the case for the Debian libsqlite3 binary for instance),
+     * - and also when compiling this wrapper.
+     *
+     *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
+     */
     const char* getColumnOriginName(const int aIndex) const;
 #endif
 
@@ -546,7 +546,7 @@ private:
         }
 
     private:
-        /// @{ Unused/forbidden copy operator
+        /// @{ Unused/forbidden copy/assignment operator
         Ptr& operator=(const Ptr& aPtr);
         /// @}
 
@@ -588,8 +588,8 @@ private:
     }
 
     /**
-    * @brief Check if there is a Column index is in the range of columns in the result.
-    */
+     * @brief Check if there is a Column index is in the range of columns in the result.
+     */
     inline void checkIndex(const int aIndex) const
     {
         if ((aIndex < 0) || (aIndex >= mColumnCount))
@@ -599,6 +599,7 @@ private:
     }
 
 private:
+    /// Map of columns index by name (mutable so getColumnIndex can be const)
     typedef std::map<std::string, int> TColumnNames;
 
 private:

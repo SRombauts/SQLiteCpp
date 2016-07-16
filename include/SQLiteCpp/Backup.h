@@ -130,7 +130,7 @@ private:
     /// @}
 
 private:
-    sqlite3_backup* mpSQLiteBackup;   //!< Pointer to SQLite Database Backup Handle
+    sqlite3_backup* mpSQLiteBackup;   ///< Pointer to SQLite Database Backup Handle
 };
 
 }  // namespace SQLite

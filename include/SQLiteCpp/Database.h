@@ -278,7 +278,7 @@ public:
      * @brief Return raw pointer to SQLite Database Connection Handle.
      *
      * This is often needed to mix this wrapper with other libraries or for advance usage not supported by SQLiteCpp.
-    */
+     */
     inline sqlite3* getHandle() const noexcept // nothrow
     {
         return mpSQLite;
@@ -379,8 +379,8 @@ private:
     }
 
 private:
-    sqlite3*    mpSQLite;   //!< Pointer to SQLite Database Connection Handle
-    std::string mFilename;  //!< UTF-8 filename used to open the database
+    sqlite3*    mpSQLite;   ///< Pointer to SQLite Database Connection Handle
+    std::string mFilename;  ///< UTF-8 filename used to open the database
 };
 
 

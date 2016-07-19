@@ -142,7 +142,7 @@ bool Database::tableExists(const char* apTableName)
 }
 
 // Get the rowid of the most recent successful INSERT into the database from the current connection.
-int64_t Database::getLastInsertRowid() const noexcept // nothrow
+long long Database::getLastInsertRowid() const noexcept // nothrow
 {
     return sqlite3_last_insert_rowid(mpSQLite);
 }

@@ -59,13 +59,13 @@ int Column::getInt() const noexcept // nothrow
 }
 
 // Return the unsigned integer value of the column specified by its index starting at 0
-uint32_t Column::getUInt() const noexcept // nothrow
+unsigned Column::getUInt() const noexcept // nothrow
 {
-    return static_cast<uint32_t>(getInt64());
+    return static_cast<unsigned>(getInt64());
 }
 
 // Return the 64bits integer value of the column specified by its index starting at 0
-int64_t Column::getInt64() const noexcept // nothrow
+long long Column::getInt64() const noexcept // nothrow
 {
     return sqlite3_column_int64(mStmtPtr, mIndex);
 }

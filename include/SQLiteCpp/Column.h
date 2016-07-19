@@ -14,7 +14,7 @@
 #include <SQLiteCpp/Exception.h>
 
 #include <string>
-#include <stdint.h>
+#include <limits.h>
 
 
 namespace SQLite
@@ -86,10 +86,10 @@ public:
 
     /// Return the integer value of the column.
     int         getInt() const noexcept; // nothrow
-    /// Return the 32bits unsigned integer value of the column (note that SQLite3 does not support uint64_t).
-    uint32_t    getUInt() const noexcept; // nothrow
-    /// Return the 64bits integer value of the column (note that SQLite3 does not support uint64_t).
-    int64_t     getInt64() const noexcept; // nothrow
+    /// Return the 32bits unsigned integer value of the column (note that SQLite3 does not support unsigned 64bits).
+    unsigned    getUInt() const noexcept; // nothrow
+    /// Return the 64bits integer value of the column (note that SQLite3 does not support unsigned 64bits).
+    long long   getInt64() const noexcept; // nothrow
     /// Return the double (64bits float) value of the column
     double      getDouble() const noexcept; // nothrow
     /**
@@ -171,29 +171,34 @@ public:
     {
         return getInt();
     }
-#if !defined(__x86_64__) || defined(__APPLE__)
-    /// Inline cast operator to long as 32bits integer for 32bit systems
+    /// Inline cast operator to 32bits unsigned integer
+    inline operator unsigned int() const
+    {
+        return getUInt();
+    }
+#if (LONG_MAX == INT_MAX) // sizeof(long)==4 means the data model of the system is ILP32 (32bits OS or Windows 64bits)
+    /// Inline cast operator to 32bits long
     inline operator long() const
     {
         return getInt();
     }
-#endif // __x86_64__
-#if defined(__GNUC__) && !defined(__APPLE__)
-    /// Inline cast operator to long long for GCC and Clang
+    /// Inline cast operator to 32bits unsigned long
+    inline operator unsigned long() const
+    {
+        return getUInt();
+    }
+#else
+    /// Inline cast operator to 64bits long when the data model of the system is ILP64 (Linux 64 bits...)
+    inline operator long() const
+    {
+        return getInt64();
+    }
+#endif
+
+    /// Inline cast operator to 64bits integer
     inline operator long long() const
     {
         return getInt64();
-    }
-#endif // __GNUC__
-    /// Inline cast operator to 64bits integer
-    inline operator int64_t() const
-    {
-        return getInt64();
-    }
-    /// Inline cast operator to 32bits unsigned integer
-    inline operator uint32_t() const
-    {
-        return getUInt();
     }
     /// Inline cast operator to double
     inline operator double() const

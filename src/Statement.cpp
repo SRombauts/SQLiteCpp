@@ -72,15 +72,15 @@ void Statement::bind(const int aIndex, const int aValue)
     check(ret);
 }
 
-// Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const int64_t aValue)
+// Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const int aIndex, const unsigned aValue)
 {
     const int ret = sqlite3_bind_int64(mStmtPtr, aIndex, aValue);
     check(ret);
 }
 
-// Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const uint32_t aValue)
+// Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const int aIndex, const long long aValue)
 {
     const int ret = sqlite3_bind_int64(mStmtPtr, aIndex, aValue);
     check(ret);
@@ -153,16 +153,16 @@ void Statement::bind(const char* apName, const int aValue)
     check(ret);
 }
 
-// Bind a 64bits int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const char* apName, const int64_t aValue)
+// Bind a 32bits unsigned int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const char* apName, const unsigned aValue)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
     const int ret = sqlite3_bind_int64(mStmtPtr, index, aValue);
     check(ret);
 }
 
-// Bind a 32bits unsigned int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const char* apName, const uint32_t aValue)
+// Bind a 64bits int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const char* apName, const long long aValue)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
     const int ret = sqlite3_bind_int64(mStmtPtr, index, aValue);

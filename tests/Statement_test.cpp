@@ -17,6 +17,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdio>
+#include <stdint.h>
 
 
 TEST(Statement, invalid) {
@@ -231,7 +232,7 @@ TEST(Statement, bindings) {
     // Fourth row with string/int64/float
     {
         const std::string   fourth("fourth");
-        const int64_t       int64 = 12345678900000LL;
+        const long long     int64 = 12345678900000LL;
         const float         float32 = 0.234f;
         insert.bind(1, fourth);
         insert.bind(2, int64);
@@ -369,7 +370,7 @@ TEST(Statement, bindByName) {
     // Second row with string/int64/float
     {
         const std::string   second("second");
-        const int64_t       int64 = 12345678900000LL;
+        const long long     int64 = 12345678900000LL;
         const float         float32 = 0.234f;
         insert.bind("@msg",      second);
         insert.bind("@int",      int64);

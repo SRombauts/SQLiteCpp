@@ -20,6 +20,7 @@ struct sqlite3_context;
 struct Mem;
 typedef struct Mem sqlite3_value;
 
+
 namespace SQLite
 {
 
@@ -256,7 +257,7 @@ public:
      *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */
-    int64_t getLastInsertRowid() const noexcept; // nothrow
+    long long getLastInsertRowid() const noexcept; // nothrow
 
     /// Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection (not DROP table).
     int getTotalChanges() const noexcept; // nothrow

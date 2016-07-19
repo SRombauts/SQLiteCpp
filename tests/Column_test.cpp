@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdio>
+#include <stdint.h>
 
 
 TEST(Column, basis) {

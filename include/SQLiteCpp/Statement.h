@@ -10,11 +10,10 @@
  */
 #pragma once
 
+#include <SQLiteCpp/Exception.h>
+
 #include <string>
 #include <map>
-#include <stdint.h>
-
-#include <SQLiteCpp/Exception.h>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
@@ -109,13 +108,13 @@ public:
      */
     void bind(const int aIndex, const int           aValue);
     /**
-     * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const int aIndex, const int64_t       aValue);
-    /**
      * @brief Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const uint32_t      aValue);
+    void bind(const int aIndex, const unsigned      aValue);
+    /**
+     * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const int aIndex, const long long     aValue);
     /**
      * @brief Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -172,13 +171,13 @@ public:
      */
     void bind(const char* apName, const int             aValue);
     /**
-     * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const int64_t         aValue);
-    /**
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const uint32_t        aValue);
+    void bind(const char* apName, const unsigned        aValue);
+    /**
+     * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName, const long long       aValue);
     /**
      * @brief Bind a double (64bits float) value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -239,16 +238,16 @@ public:
         bind(aName.c_str(), aValue);
     }
     /**
-     * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    inline void bind(const std::string& aName, const int64_t        aValue)
+    inline void bind(const std::string& aName, const unsigned       aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
-     * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    inline void bind(const std::string& aName, const uint32_t       aValue)
+    inline void bind(const std::string& aName, const long long      aValue)
     {
         bind(aName.c_str(), aValue);
     }

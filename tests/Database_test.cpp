@@ -29,6 +29,12 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 }
 #endif
 
+TEST(SQLiteCpp, version) {
+    EXPECT_STREQ(SQLITE_VERSION,        SQLite::VERSION);
+    EXPECT_EQ   (SQLITE_VERSION_NUMBER, SQLite::VERSION_NUMBER);
+    EXPECT_STREQ(SQLITE_VERSION,        SQLite::getLibVersion());
+    EXPECT_EQ   (SQLITE_VERSION_NUMBER, SQLite::getLibVersionNumber());
+}
 
 TEST(Database, ctorExecCreateDropExist) {
     remove("test.db3");

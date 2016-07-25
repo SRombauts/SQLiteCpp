@@ -38,5 +38,5 @@
  * with the value (X*1000000 + Y*1000 + Z) where X, Y, and Z are the same
  * numbers used in [SQLITECPP_VERSION].
  */
-#define SQLITECPP_VERSION           "1.99.99"   // Pre-2.0.0
-#define SQLITECPP_VERSION_NUMBER     1099099    // Pre-2.0.0
+#define SQLITECPP_VERSION           "2.00.00"   // 2.0.0
+#define SQLITECPP_VERSION_NUMBER     2000000    // 2.0.0

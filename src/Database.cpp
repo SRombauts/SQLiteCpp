@@ -32,6 +32,21 @@ extern const int OPEN_MEMORY    = SQLITE_OPEN_MEMORY;
 
 extern const int OK             = SQLITE_OK;
 
+extern const char*  VERSION        = SQLITE_VERSION;
+extern const int    VERSION_NUMBER = SQLITE_VERSION_NUMBER;
+
+// Return SQLite version string using runtime call to the compiled library
+const char* getLibVersion() noexcept // nothrow
+{
+    return sqlite3_libversion();
+}
+
+// Return SQLite version number using runtime call to the compiled library
+const int getLibVersionNumber() noexcept // nothrow
+{
+    return sqlite3_libversion_number();
+}
+
 
 // Open the provided database UTF-8 filename with SQLite::OPEN_xxx provided flags.
 Database::Database(const char* apFilename,

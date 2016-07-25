@@ -85,8 +85,8 @@ private:
 int main ()
 {
     // Using SQLITE_VERSION would require #include <sqlite3.h> which we want to avoid
-    // TODO: replace by a SQLite::VERSION
- // std::cout << "SQlite3 version " << SQLITE_VERSION << std::endl;
+//  std::cout << "SQlite3 version " << SQLITE_VERSION << std::endl;
+    std::cout << "SQlite3 version " << SQLite::VERSION << " (" << SQLite::getLibVersion() << ")" << std::endl;
     std::cout << "SQliteC++ version " << SQLITECPP_VERSION << std::endl;
 
     ////////////////////////////////////////////////////////////////////////////

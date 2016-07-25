@@ -37,8 +37,15 @@ extern const int OPEN_CREATE;       // SQLITE_OPEN_CREATE
 /// Enable URI filename interpretation, parsed according to RFC 3986 (ex. "file:data.db?mode=ro&cache=private")
 extern const int OPEN_URI;          // SQLITE_OPEN_URI
 
-
 extern const int OK;                ///< SQLITE_OK (used by inline check() bellow)
+
+extern const char*  VERSION;        ///< SQLITE_VERSION string from the sqlite3.h used at compile time
+extern const int    VERSION_NUMBER; ///< SQLITE_VERSION_NUMBER from the sqlite3.h used at compile time
+
+/// Return SQLite version string using runtime call to the compiled library
+const char* getLibVersion() noexcept; // nothrow
+/// Return SQLite version number using runtime call to the compiled library
+const int   getLibVersionNumber() noexcept; // nothrow
 
 
 /**

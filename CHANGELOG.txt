@@ -80,8 +80,11 @@ Version 1.3.1 - February 10 2016
     Remove warnings
     Remove biicode support (defunct service, servers will shutdown the 16th of February 2016)
 
-Version 1.4.0 - 2016 ?
+Version 2.0.0 - July 25 2016
     Update SQLite3 from 3.10.2 to latest 3.13 (2016-05-18)
+    Move #include <sqlite3.h> from headers to .cpp files only using forward declarations
+    Add Database::VERSION to reach SQLITE_VERSION without including sqlite3.h in application code
+    Add getLibVersion() and getLibVersionNumber() to get runtime version of the library
     Better exception messages when Statements fail PR #84
     Variadic templates for bind() (C++14) PR #85
     Add Statement::bindNoCopy() methods for strings, using SQLITE_STATIC to avoid internal copy by SQLite3 PR #86
@@ -90,4 +93,4 @@ Version 1.4.0 - 2016 ?
     Rename Backup::remainingPageCount()/totalPageCount() to Backup::getRemainingPageCount()/getTotalPageCount() 
     Remove Column::errmsg() method : use Database or Statement equivalents
     More unit tests, with code coverage status on the GitHub page
-    Move #include <sqlite3.h> from headers to .cpp files only using forward declarations
+    Do not force MSVC to use static runtime if unit-tests are not build

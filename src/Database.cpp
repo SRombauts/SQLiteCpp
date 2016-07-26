@@ -24,16 +24,16 @@
 namespace SQLite
 {
 
-extern const int OPEN_READONLY  = SQLITE_OPEN_READONLY;
-extern const int OPEN_READWRITE = SQLITE_OPEN_READWRITE;
-extern const int OPEN_CREATE    = SQLITE_OPEN_CREATE;
-extern const int OPEN_URI       = SQLITE_OPEN_URI;
-extern const int OPEN_MEMORY    = SQLITE_OPEN_MEMORY;
+const int   OPEN_READONLY   = SQLITE_OPEN_READONLY;
+const int   OPEN_READWRITE  = SQLITE_OPEN_READWRITE;
+const int   OPEN_CREATE     = SQLITE_OPEN_CREATE;
+const int   OPEN_URI        = SQLITE_OPEN_URI;
+const int   OPEN_MEMORY     = SQLITE_OPEN_MEMORY;
 
-extern const int OK             = SQLITE_OK;
+const int   OK              = SQLITE_OK;
 
-extern const char*  VERSION        = SQLITE_VERSION;
-extern const int    VERSION_NUMBER = SQLITE_VERSION_NUMBER;
+const char* VERSION         = SQLITE_VERSION;
+const int   VERSION_NUMBER  = SQLITE_VERSION_NUMBER;
 
 // Return SQLite version string using runtime call to the compiled library
 const char* getLibVersion() noexcept // nothrow

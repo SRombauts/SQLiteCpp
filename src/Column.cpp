@@ -18,11 +18,11 @@
 namespace SQLite
 {
 
-extern const int INTEGER    = SQLITE_INTEGER;
-extern const int FLOAT      = SQLITE_FLOAT;
-extern const int TEXT       = SQLITE_TEXT;
-extern const int BLOB       = SQLITE_BLOB;
-extern const int Null       = SQLITE_NULL;
+const int INTEGER   = SQLITE_INTEGER;
+const int FLOAT     = SQLITE_FLOAT;
+const int TEXT      = SQLITE_TEXT;
+const int BLOB      = SQLITE_BLOB;
+const int Null      = SQLITE_NULL;
 
 
 // Encapsulation of a Column in a row of the result pointed by the prepared Statement.

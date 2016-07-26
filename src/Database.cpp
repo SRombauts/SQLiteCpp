@@ -28,7 +28,6 @@ const int   OPEN_READONLY   = SQLITE_OPEN_READONLY;
 const int   OPEN_READWRITE  = SQLITE_OPEN_READWRITE;
 const int   OPEN_CREATE     = SQLITE_OPEN_CREATE;
 const int   OPEN_URI        = SQLITE_OPEN_URI;
-const int   OPEN_MEMORY     = SQLITE_OPEN_MEMORY;
 
 const int   OK              = SQLITE_OK;
 

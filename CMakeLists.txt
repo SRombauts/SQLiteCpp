@@ -258,7 +258,7 @@ if (SQLITECPP_BUILD_TESTS)
         message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git init submodule' and 'git update submodule' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
     endif ()
     add_subdirectory(googletest) 
-    include_directories("${PROJECT_SOURCE_DIR}/googletest/include")
+    include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
 
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})

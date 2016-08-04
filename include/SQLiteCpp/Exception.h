@@ -76,10 +76,14 @@ public:
     Exception(sqlite3* apSQLite, int ret);
 
     /// Return the result code (if any, otherwise -1).
-    int getErrorCode() const noexcept; // nothrow
+    int getErrorCode() const noexcept { // nothrow
+        return mErrcode;
+    }
 
     /// Return the extended numeric result code (if any, otherwise -1).
-    int getExtendedErrorCode() const noexcept; // nothrow
+    int getExtendedErrorCode() const noexcept { // nothrow
+        return mExtendedErrcode;
+    }
 
     /// Return a string, solely based on the error code
     const char* getErrorStr() const noexcept; // nothrow

@@ -44,20 +44,8 @@ Exception::Exception(sqlite3* apSQLite, int ret) :
 {
 }
 
-// Return the result code (if any, otherwise -1).
-inline int Exception::getErrorCode() const noexcept // nothrow
-{
-    return mErrcode;
-}
-
-// Return the extended numeric result code (if any, otherwise -1).
-inline int Exception::getExtendedErrorCode() const noexcept // nothrow
-{
-    return mExtendedErrcode;
-}
-
 // Return a string, solely based on the error code
-inline const char* Exception::getErrorStr() const noexcept // nothrow
+const char* Exception::getErrorStr() const noexcept // nothrow
 {
     return sqlite3_errstr(mErrcode);
 }

@@ -87,18 +87,20 @@ And the following IDEs/Compilers
 ## Getting started
 ### Installation
 
-To use this wrapper, you need to add the 10 SQLiteC++ source files from the src/ directory
+To use this wrapper, you need to add the SQLiteC++ source files from the src/ directory
 in your project code base, and compile/link against the sqlite library.
 
 The easiest way to do this is to add the wrapper as a library.
 The "CMakeLists.txt" file defining the static library is provided in the root directory,
 so you simply have to add_subdirectory(SQLiteCpp) to you main CMakeLists.txt
 and link to the "SQLiteCpp" wrapper library.
-Thus this SQLiteCpp repository can directly be used as a Git submoldule.
 
-Under Debian/Ubuntu/Mint Linux, install the libsqlite3-dev package.
+Thus this SQLiteCpp repository can be directly used as a Git submoldule.
+See the [SQLiteCpp_Example](https://github.com/SRombauts/SQLiteCpp_Example) side repository for a standalone "from scratch" example.
 
-### Building examples and unit-tests:
+Under Debian/Ubuntu/Mint Linux, you can install the libsqlite3-dev package if you don't want to use the embedded sqlite3 library.
+
+### Building example and unit-tests:
 
 Use git to clone the repository. Then init and update submodule "googletest".
 
@@ -276,7 +278,7 @@ use the tools provided by GitHub:
 - fork the repository, make some small changes and submit them with pull-request
 
 ### Contact
-You can also email me directly, I will answer any questions and requests.
+You can also email me directly, I will try to answer questions and requests whenever I get the time for it.
 
 ### Coding Style Guidelines
 The source code use the CamelCase naming style variant where:
@@ -297,3 +299,4 @@ See bellow a short comparison of other wrappers done at the time of writing:
  - [CppSQLite](http://www.codeproject.com/Articles/6343/CppSQLite-C-Wrapper-for-SQLite/): famous Code Project but old design, BSD License 
  - [easySQLite](http://code.google.com/p/easysqlite/): manages table as structured objects, complex 
  - [sqlite_modern_cpp](https://github.com/keramer/sqlite_modern_cpp): modern C++11, all in one file, MIT license
+ 

@@ -41,7 +41,7 @@ const char* getLibVersion() noexcept // nothrow
 }
 
 // Return SQLite version number using runtime call to the compiled library
-const int getLibVersionNumber() noexcept // nothrow
+int getLibVersionNumber() noexcept // nothrow
 {
     return sqlite3_libversion_number();
 }

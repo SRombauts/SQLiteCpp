@@ -45,7 +45,7 @@ extern const int    VERSION_NUMBER; ///< SQLITE_VERSION_NUMBER from the sqlite3.
 /// Return SQLite version string using runtime call to the compiled library
 const char* getLibVersion() noexcept; // nothrow
 /// Return SQLite version number using runtime call to the compiled library
-const int   getLibVersionNumber() noexcept; // nothrow
+int   getLibVersionNumber() noexcept; // nothrow
 
 
 /**

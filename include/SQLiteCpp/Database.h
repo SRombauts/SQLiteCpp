@@ -84,13 +84,15 @@ public:
      * @param[in] aFlags            SQLite::OPEN_READONLY/SQLite::OPEN_READWRITE/SQLite::OPEN_CREATE...
      * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
      * @param[in] apVfs             UTF-8 name of custom VFS to use, or nullptr for sqlite3 default
+     * @param[in] apPass            Key to decrypt (end encrypt) the database, or nullptr for unencrypted databases
      *
      * @throw SQLite::Exception in case of error
      */
     Database(const char* apFilename,
              const int   aFlags         = SQLite::OPEN_READONLY,
              const int   aBusyTimeoutMs = 0,
-             const char* apVfs          = NULL);
+             const char* apVfs          = NULL,
+             const char* apPass         = NULL);
 
     /**
      * @brief Open the provided database UTF-8 filename.
@@ -106,13 +108,15 @@ public:
      * @param[in] aFlags            SQLite::OPEN_READONLY/SQLite::OPEN_READWRITE/SQLite::OPEN_CREATE...
      * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
      * @param[in] aVfs              UTF-8 name of custom VFS to use, or empty string for sqlite3 default
+     * @param[in] aPass             Key to decrypt (end encrypt) the database, or empty string for unencrypted databases
      *
      * @throw SQLite::Exception in case of error
      */
     Database(const std::string& aFilename,
              const int          aFlags          = SQLite::OPEN_READONLY,
              const int          aBusyTimeoutMs  = 0,
-             const std::string& aVfs            = "");
+             const std::string& aVfs            = "",
+             const std::string& aPass           = "");
 
     /**
      * @brief Close the SQLite database connection.

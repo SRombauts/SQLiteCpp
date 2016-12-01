@@ -51,18 +51,37 @@ int getLibVersionNumber() noexcept // nothrow
 Database::Database(const char* apFilename,
                    const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
-                   const char* apVfs          /* = NULL*/) :
+                   const char* apVfs          /* = NULL*/,
+                   const char* apPass         /* = NULL*/) :
     mpSQLite(NULL),
     mFilename(apFilename)
 {
-    const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
+    int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
     if (SQLITE_OK != ret)
     {
         const SQLite::Exception exception(mpSQLite, ret); // must create before closing
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw exception;
     }
-
+#ifdef SQLITE_HAS_CODEC
+    if (apPass != NULL)
+    {
+        ret = sqlite3_key(mpSQLite, apPass, strlen(apPass));
+        if (SQLITE_OK != ret)
+        {
+            const SQLite::Exception exception(mpSQLite, ret); // must create before closing
+            sqlite3_close(mpSQLite); // close is required even in case of error on opening
+            throw exception;
+        }
+    }
+#else
+    if (apPass != NULL)
+    {
+        const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC or remove the password from the constructor."); // must create before closing
+        sqlite3_close(mpSQLite); // close is required even in case of error on opening
+        throw exception;
+    }
+#endif
     if (aBusyTimeoutMs > 0)
     {
         setBusyTimeout(aBusyTimeoutMs);
@@ -73,18 +92,37 @@ Database::Database(const char* apFilename,
 Database::Database(const std::string& aFilename,
                    const int          aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int          aBusyTimeoutMs /* = 0 */,
-                   const std::string& aVfs           /* = "" */) :
+                   const std::string& aVfs           /* = "" */,
+                   const std::string& aPass          /* = "" */) :
     mpSQLite(NULL),
     mFilename(aFilename)
 {
-    const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? NULL : aVfs.c_str());
+    int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? NULL : aVfs.c_str());
     if (SQLITE_OK != ret)
     {
         const SQLite::Exception exception(mpSQLite, ret); // must create before closing
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw exception;
     }
-
+#ifdef SQLITE_HAS_CODEC
+    if (!aPass.empty()) 
+    {
+        ret = sqlite3_key(mpSQLite, aPass.data(), aPass.size());
+        if (SQLITE_OK != ret)
+        {
+            const SQLite::Exception exception(mpSQLite, ret); // must create before closing
+            sqlite3_close(mpSQLite); // close is required even in case of error on opening
+            throw exception;
+        }
+    }
+#else
+    if (!aPass.empty()) 
+    {
+        const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC or remove the password from the constructor."); // must create before closing
+        sqlite3_close(mpSQLite); // close is required even in case of error on opening
+        throw exception;
+    }
+#endif
     if (aBusyTimeoutMs > 0)
     {
         setBusyTimeout(aBusyTimeoutMs);

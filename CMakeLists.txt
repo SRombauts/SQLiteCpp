@@ -255,6 +255,7 @@ if (SQLITECPP_BUILD_TESTS)
     else ()
         add_compile_options(-Wno-variadic-macros -Wno-long-long -Wno-switch-enum -Wno-float-equal -Wno-conversion-null -Wno-switch-default -Wno-pedantic)
         set(PTHREAD "-pthread")
+        set(LIB_PREFIX "lib")
         set(LIB_SUFFIX ".a")
     endif (MSVC)
 
@@ -270,8 +271,8 @@ if (SQLITECPP_BUILD_TESTS)
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
     add_dependencies(SQLiteCpp_tests googletest)
-    set(GTEST_MAIN_OBJ ${PREFIX_DIR}/src/googletest-build/googlemock/gtest/libgtest_main${LIB_SUFFIX})
-    set(GTEST_OBJ ${PREFIX_DIR}/src/googletest-build/googlemock/gtest/libgtest${LIB_SUFFIX})
+    set(GTEST_MAIN_OBJ ${PREFIX_DIR}/src/googletest-build/googlemock/gtest/${LIB_PREFIX}gtest_main${LIB_SUFFIX})
+    set(GTEST_OBJ ${PREFIX_DIR}/src/googletest-build/googlemock/gtest/${LIB_PREFIX}gtest${LIB_SUFFIX})
     target_include_directories(SQLiteCpp_tests SYSTEM PRIVATE ${PREFIX_DIR}/src/googletest/googletest/include/)
     target_link_libraries(SQLiteCpp_tests ${PTHREAD} ${GTEST_OBJ} ${GTEST_MAIN_OBJ} SQLiteCpp sqlite3)
     # Link target with dl for linux

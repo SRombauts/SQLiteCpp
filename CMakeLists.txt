@@ -6,6 +6,7 @@
 # or copy at http://opensource.org/licenses/MIT) 
 cmake_minimum_required(VERSION 2.8.12) # first version with add_compile_options()
 project(SQLiteCpp)
+include(ExternalProject)
 
 # Define useful variables to handle OS differences:
 if (WIN32)
@@ -249,22 +250,30 @@ endif (SQLITECPP_BUILD_EXAMPLES)
 option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 if (SQLITECPP_BUILD_TESTS)
     # deactivate some warnings for compiling the gtest library
-    if (NOT MSVC)
+    if (MSVC)
+        set(LIB_SUFFIX ".lib")
+    else ()
         add_compile_options(-Wno-variadic-macros -Wno-long-long -Wno-switch-enum -Wno-float-equal -Wno-conversion-null -Wno-switch-default -Wno-pedantic)
-    endif (NOT MSVC)
+        set(PTHREAD "-pthread")
+        set(LIB_SUFFIX ".a")
+    endif (MSVC)
 
-    # add the subdirectory containing the CMakeLists.txt for the gtest library
-    # TODO: under Linux, uses libgtest-dev if found
-    # TODO: move to the new googletest Github repository
-    if (NOT EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
-        message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git init submodule' and 'git update submodule' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
-    endif ()
-    add_subdirectory(googletest) 
-    include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
+    # download googletest from the github repository
+    set(PREFIX_DIR ${CMAKE_CURRENT_BINARY_DIR}/tmp)
+    ExternalProject_Add(googletest
+        PREFIX ${PREFIX_DIR}
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        INSTALL_COMMAND ""
+        CMAKE_ARGS -DCMAKE_C_COMPILER=$ENV{CC} -DCMAKE_CXX_COMPILER=$ENV{CXX}
+    )
 
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
-    target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp sqlite3)
+    add_dependencies(SQLiteCpp_tests googletest)
+    set(GTEST_MAIN_OBJ ${PREFIX_DIR}/src/googletest-build/googlemock/gtest/libgtest_main${LIB_SUFFIX})
+    set(GTEST_OBJ ${PREFIX_DIR}/src/googletest-build/googlemock/gtest/libgtest${LIB_SUFFIX})
+    target_include_directories(SQLiteCpp_tests SYSTEM PRIVATE ${PREFIX_DIR}/src/googletest/googletest/include/)
+    target_link_libraries(SQLiteCpp_tests ${PTHREAD} ${GTEST_OBJ} ${GTEST_MAIN_OBJ} SQLiteCpp sqlite3)
     # Link target with dl for linux
     if (UNIX AND NOT APPLE)
         target_link_libraries(SQLiteCpp_tests dl)

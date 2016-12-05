@@ -160,4 +160,4 @@ script:
 
 # generate and publish GCov coveralls results
 after_success:
-  - if [[ "$CXX" == "g++" ]]; then coveralls --root .. -e examples -e googletest -e sqlite3 -e tests -E ".*feature_tests.*" -E ".*CompilerId.*" --gcov-options '\-lp' ; fi
+  - if [[ "$CXX" == "g++" ]]; then coveralls --root .. -e examples -e sqlite3 -e tests -E ".*feature_tests.*" -E ".*CompilerId.*" --gcov-options '\-lp' ; fi

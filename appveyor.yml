@@ -3,10 +3,6 @@
 # build format
 version: "{build}"
 
-# scripts that run after cloning repository
-install:
- - git submodule update --init googletest
-
 # configurations to add to build matrix
 # TODO: VS2010->VS2015 and Win32/Win64 (see https://github.com/google/googletest/blob/master/appveyor.yml)
 # TODO: MinGW Makefiles and MSYS Makefiles

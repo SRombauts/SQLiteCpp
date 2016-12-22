@@ -15,6 +15,7 @@
 #include <SQLiteCpp/Exception.h>
 
 #include <sqlite3.h>
+#include <fstream>
 
 #ifndef SQLITE_DETERMINISTIC
 #define SQLITE_DETERMINISTIC 0x800
@@ -51,8 +52,7 @@ int getLibVersionNumber() noexcept // nothrow
 Database::Database(const char* apFilename,
                    const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
-                   const char* apVfs          /* = NULL*/,
-                   const char* apPass         /* = NULL*/) :
+                   const char* apVfs          /* = NULL*/) :
     mpSQLite(NULL),
     mFilename(apFilename)
 {
@@ -63,25 +63,6 @@ Database::Database(const char* apFilename,
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw exception;
     }
-#ifdef SQLITE_HAS_CODEC
-    if (apPass != NULL)
-    {
-        ret = sqlite3_key(mpSQLite, apPass, strlen(apPass));
-        if (SQLITE_OK != ret)
-        {
-            const SQLite::Exception exception(mpSQLite, ret); // must create before closing
-            sqlite3_close(mpSQLite); // close is required even in case of error on opening
-            throw exception;
-        }
-    }
-#else
-    if (apPass != NULL)
-    {
-        const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC or remove the password from the constructor."); // must create before closing
-        sqlite3_close(mpSQLite); // close is required even in case of error on opening
-        throw exception;
-    }
-#endif
     if (aBusyTimeoutMs > 0)
     {
         setBusyTimeout(aBusyTimeoutMs);
@@ -92,8 +73,7 @@ Database::Database(const char* apFilename,
 Database::Database(const std::string& aFilename,
                    const int          aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int          aBusyTimeoutMs /* = 0 */,
-                   const std::string& aVfs           /* = "" */,
-                   const std::string& aPass          /* = "" */) :
+                   const std::string& aVfs           /* = "" */) :
     mpSQLite(NULL),
     mFilename(aFilename)
 {
@@ -104,25 +84,6 @@ Database::Database(const std::string& aFilename,
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw exception;
     }
-#ifdef SQLITE_HAS_CODEC
-    if (!aPass.empty()) 
-    {
-        ret = sqlite3_key(mpSQLite, aPass.data(), aPass.size());
-        if (SQLITE_OK != ret)
-        {
-            const SQLite::Exception exception(mpSQLite, ret); // must create before closing
-            sqlite3_close(mpSQLite); // close is required even in case of error on opening
-            throw exception;
-        }
-    }
-#else
-    if (!aPass.empty()) 
-    {
-        const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC or remove the password from the constructor."); // must create before closing
-        sqlite3_close(mpSQLite); // close is required even in case of error on opening
-        throw exception;
-    }
-#endif
     if (aBusyTimeoutMs > 0)
     {
         setBusyTimeout(aBusyTimeoutMs);
@@ -265,6 +226,58 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
     ret = sqlite3_load_extension(mpSQLite, apExtensionName, apEntryPointName, 0);
     check(ret);
 #endif
+}
+
+//Set the key for the current sqlite database instance.
+void Database::key(const std::string& aKey) const noexcept // nothrow 
+{
+    int pass_len = aKey.length();
+#ifdef SQLITE_HAS_CODEC
+    if (pass_len > 0) {
+        int ret = sqlite3_key(mpSQLite, aKey.c_str(), pass_len);
+        check(ret);
+    }
+#else
+    if (pass_len > 0) {
+        const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to use this function.");
+        throw exception;
+    }
+#endif // SQLITE_HAS_CODEC
+}
+
+// Reset the key for the current sqlite database instance.
+void Database::rekey(const std::string& aNewKey) const noexcept // nothrow
+{
+#ifdef SQLITE_HAS_CODEC
+    int pass_len = aNewKey.length();
+    if (pass_len > 0) {
+        int ret = sqlite3_rekey(mpSQLite, aNewKey.c_str(), pass_len);
+        check(ret);
+    } else {
+        int ret = sqlite3_rekey(mpSQLite, nullptr, 0);
+        check(ret);
+    }
+#else
+    const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to use this function.");
+    throw exception;
+#endif // SQLITE_HAS_CODEC
+}
+
+//Test if a file contains an unencrypted database.
+const bool Database::isUnencrypted(const std::string& aFilename) const noexcept // nothrow
+{
+    bool encrypted_db = false;
+    if (aFilename.length() > 0) {
+        std::ifstream fileBuffer(aFilename, std::ios::in | std::ios::binary);
+        char header[16];
+        if (fileBuffer.is_open()) {
+            fileBuffer.seekg(0, std::ios::beg);
+            fileBuffer.getline(header, 16);
+            fileBuffer.close();
+        }
+        encrypted_db = strncmp(header, "SQLite format 3\000", 16) != 0;
+    }
+    return encrypted_db;
 }
 
 }  // namespace SQLite

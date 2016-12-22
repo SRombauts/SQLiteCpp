@@ -84,15 +84,13 @@ public:
      * @param[in] aFlags            SQLite::OPEN_READONLY/SQLite::OPEN_READWRITE/SQLite::OPEN_CREATE...
      * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
      * @param[in] apVfs             UTF-8 name of custom VFS to use, or nullptr for sqlite3 default
-     * @param[in] apPass            Key to decrypt (end encrypt) the database, or nullptr for unencrypted databases
      *
      * @throw SQLite::Exception in case of error
      */
     Database(const char* apFilename,
              const int   aFlags         = SQLite::OPEN_READONLY,
              const int   aBusyTimeoutMs = 0,
-             const char* apVfs          = NULL,
-             const char* apPass         = NULL);
+             const char* apVfs          = NULL);
 
     /**
      * @brief Open the provided database UTF-8 filename.
@@ -108,15 +106,13 @@ public:
      * @param[in] aFlags            SQLite::OPEN_READONLY/SQLite::OPEN_READWRITE/SQLite::OPEN_CREATE...
      * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
      * @param[in] aVfs              UTF-8 name of custom VFS to use, or empty string for sqlite3 default
-     * @param[in] aPass             Key to decrypt (end encrypt) the database, or empty string for unencrypted databases
      *
      * @throw SQLite::Exception in case of error
      */
     Database(const std::string& aFilename,
              const int          aFlags          = SQLite::OPEN_READONLY,
              const int          aBusyTimeoutMs  = 0,
-             const std::string& aVfs            = "",
-             const std::string& aPass           = "");
+             const std::string& aVfs            = "");
 
     /**
      * @brief Close the SQLite database connection.
@@ -372,6 +368,46 @@ public:
      * @throw SQLite::Exception in case of error
      */
     void loadExtension(const char* apExtensionName, const char* apEntryPointName);
+
+    /**
+    * @brief Set the key for the current sqlite database instance.
+    *
+    *  This is the equivalent of the sqlite3_key call and should thus be called 
+    *  directly after opening the database. If the database is unencrypted, 
+    *  this methods encrypts it immediately.
+    *
+    * @param[in] key   Key to decode/encode the database
+    *
+    * @throw SQLite::Exception in case of error
+    */
+    void key(const std::string& aKey) const noexcept; // nothrow
+
+    /**
+    * @brief Reset the key for the current sqlite database instance.
+    *
+    *  This is the equivalent of the sqlite3_rekey call and should thus be called
+    *  after the database has been opened with a valid key. To decrypt a
+    *  database, call this method with a NULL pointer.
+    *
+    * @param[in] nkey   New key to encode the database
+    *
+    * @throw SQLite::Exception in case of error
+    */
+    void rekey(const std::string& aNewKey) const noexcept; // nothrow
+
+    /**
+    * @brief Test if a file contains an unencrypted database.
+    *
+    *  This is a simple test that reads the first bytes of a database file and 
+    *  compares them to the standard header for unencrypted databases. If the 
+    *  header does not match the standard string, we assume that we have an 
+    *  encrypted file. 
+    *
+    * @param[in] aFilename path/uri to a file
+    *
+    * @return true if the database has the standard header.
+    */
+    const bool isUnencrypted(const std::string& aFilename) const noexcept; // nothrow
 
 private:
     /// @{ Database must be non-copyable

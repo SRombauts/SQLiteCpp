@@ -229,7 +229,7 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
 #endif
 }
 
-//Set the key for the current sqlite database instance.
+// Set the key for the current sqlite database instance.
 void Database::key(const std::string& aKey) const
 {
     int pass_len = aKey.length();
@@ -240,7 +240,7 @@ void Database::key(const std::string& aKey) const
     }
 #else
     if (pass_len > 0) {
-        const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to use this function.");
+        const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
         throw exception;
     }
 #endif // SQLITE_HAS_CODEC
@@ -264,7 +264,7 @@ void Database::rekey(const std::string& aNewKey) const
 #endif // SQLITE_HAS_CODEC
 }
 
-//Test if a file contains an unencrypted database.
+// Test if a file contains an unencrypted database.
 const bool Database::isUnencrypted(const std::string& aFilename)
 {
     if (aFilename.length() > 0) {

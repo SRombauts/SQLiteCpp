@@ -303,7 +303,7 @@ TEST(Database, encryptAndDecrypt) {
     } // Close DB test.db3
     remove("test.db3");
 }
-#else SQLITE_HAS_CODEC
+#else // SQLITE_HAS_CODEC
 TEST(Database, encryptAndDecrypt) {
     remove("test.db3");
     {
@@ -326,4 +326,4 @@ TEST(Database, encryptAndDecrypt) {
     } // Close DB test.db3
     remove("test.db3");
 }
-#endif SQLITE_HAS_CODEC
+#endif // SQLITE_HAS_CODEC

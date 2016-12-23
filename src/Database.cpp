@@ -238,7 +238,7 @@ void Database::key(const std::string& aKey) const
         const int ret = sqlite3_key(mpSQLite, aKey.c_str(), pass_len);
         check(ret);
     }
-#else
+#else // SQLITE_HAS_CODEC
     if (pass_len > 0) {
         const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
         throw exception;
@@ -258,7 +258,7 @@ void Database::rekey(const std::string& aNewKey) const
         const int ret = sqlite3_rekey(mpSQLite, nullptr, 0);
         check(ret);
     }
-#else
+#else // SQLITE_HAS_CODEC
     const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
     throw exception;
 #endif // SQLITE_HAS_CODEC

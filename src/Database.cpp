@@ -16,6 +16,7 @@
 
 #include <sqlite3.h>
 #include <fstream>
+#include <string>
 
 #ifndef SQLITE_DETERMINISTIC
 #define SQLITE_DETERMINISTIC 0x800
@@ -267,7 +268,7 @@ void Database::rekey(const std::string& aNewKey) const
 const bool Database::isUnencrypted(const std::string& aFilename)
 {
     if (aFilename.length() > 0) {
-        std::ifstream fileBuffer(aFilename, std::ios::in | std::ios::binary);
+        std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
         char header[16];
         if (fileBuffer.is_open()) {
             fileBuffer.seekg(0, std::ios::beg);

@@ -373,10 +373,8 @@ public:
     * @brief Set the key for the current sqlite database instance.
     *
     *  This is the equivalent of the sqlite3_key call and should thus be called 
-    *  directly after opening the database. If the database is unencrypted, 
-    *  this methods encrypts it immediately.
-    *  Normal database -> call db.key("secret") -> encrypted database, database ready
-    *  Encrypted database -> call db.key("secret") -> database ready
+    *  directly after opening the database. 
+    *  Open encrypted database -> call db.key("secret") -> database ready
     *
     * @param[in] aKey   Key to decode/encode the database
     *
@@ -390,8 +388,9 @@ public:
     *  This is the equivalent of the sqlite3_rekey call and should thus be called
     *  after the database has been opened with a valid key. To decrypt a
     *  database, call this method with an empty string.
-    *  Encrypted database -> call db.key("secret") -> call db.rekey("newsecret") -> change key, database ready
-    *  Encrypted database -> call db.key("secret") -> call db.rekey("") -> decrypted database, database ready
+    *  Open normal database -> call db.rekey("secret") -> encrypted database, database ready
+    *  Open encrypted database -> call db.key("secret") -> call db.rekey("newsecret") -> change key, database ready
+    *  Open encrypted database -> call db.key("secret") -> call db.rekey("") -> decrypted database, database ready
     *
     * @param[in] aNewKey   New key to encode the database
     *
@@ -413,7 +412,7 @@ public:
     *
     * @throw SQLite::Exception in case of error
     */
-    const bool isUnencrypted(const std::string& aFilename) const;
+    static const bool isUnencrypted(const std::string& aFilename);
 
 private:
     /// @{ Database must be non-copyable

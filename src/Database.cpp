@@ -264,7 +264,7 @@ void Database::rekey(const std::string& aNewKey) const
 }
 
 //Test if a file contains an unencrypted database.
-const bool Database::isUnencrypted(const std::string& aFilename) const
+const bool Database::isUnencrypted(const std::string& aFilename)
 {
     if (aFilename.length() > 0) {
         std::ifstream fileBuffer(aFilename, std::ios::in | std::ios::binary);

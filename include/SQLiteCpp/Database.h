@@ -375,25 +375,29 @@ public:
     *  This is the equivalent of the sqlite3_key call and should thus be called 
     *  directly after opening the database. If the database is unencrypted, 
     *  this methods encrypts it immediately.
+    *  Normal database -> call db.key("secret") -> encrypted database, database ready
+    *  Encrypted database -> call db.key("secret") -> database ready
     *
-    * @param[in] key   Key to decode/encode the database
+    * @param[in] aKey   Key to decode/encode the database
     *
     * @throw SQLite::Exception in case of error
     */
-    void key(const std::string& aKey) const noexcept; // nothrow
+    void key(const std::string& aKey) const;
 
     /**
     * @brief Reset the key for the current sqlite database instance.
     *
     *  This is the equivalent of the sqlite3_rekey call and should thus be called
     *  after the database has been opened with a valid key. To decrypt a
-    *  database, call this method with a NULL pointer.
+    *  database, call this method with an empty string.
+    *  Encrypted database -> call db.key("secret") -> call db.rekey("newsecret") -> change key, database ready
+    *  Encrypted database -> call db.key("secret") -> call db.rekey("") -> decrypted database, database ready
     *
-    * @param[in] nkey   New key to encode the database
+    * @param[in] aNewKey   New key to encode the database
     *
     * @throw SQLite::Exception in case of error
     */
-    void rekey(const std::string& aNewKey) const noexcept; // nothrow
+    void rekey(const std::string& aNewKey) const;
 
     /**
     * @brief Test if a file contains an unencrypted database.
@@ -406,8 +410,10 @@ public:
     * @param[in] aFilename path/uri to a file
     *
     * @return true if the database has the standard header.
+    *
+    * @throw SQLite::Exception in case of error
     */
-    const bool isUnencrypted(const std::string& aFilename) const noexcept; // nothrow
+    const bool isUnencrypted(const std::string& aFilename) const;
 
 private:
     /// @{ Database must be non-copyable

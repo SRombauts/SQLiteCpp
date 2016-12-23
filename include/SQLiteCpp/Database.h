@@ -12,7 +12,7 @@
 
 #include <SQLiteCpp/Column.h>
 
-#include <string>
+#include <string.h>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;

@@ -16,7 +16,7 @@
 
 #include <sqlite3.h>
 #include <fstream>
-#include <string>
+#include <string.h>
 
 #ifndef SQLITE_DETERMINISTIC
 #define SQLITE_DETERMINISTIC 0x800

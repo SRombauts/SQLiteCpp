@@ -12,7 +12,7 @@
 
 #include <SQLiteCpp/Column.h>
 
-#include <string>
+#include <string.h>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
@@ -368,6 +368,51 @@ public:
      * @throw SQLite::Exception in case of error
      */
     void loadExtension(const char* apExtensionName, const char* apEntryPointName);
+
+    /**
+    * @brief Set the key for the current sqlite database instance.
+    *
+    *  This is the equivalent of the sqlite3_key call and should thus be called 
+    *  directly after opening the database. 
+    *  Open encrypted database -> call db.key("secret") -> database ready
+    *
+    * @param[in] aKey   Key to decode/encode the database
+    *
+    * @throw SQLite::Exception in case of error
+    */
+    void key(const std::string& aKey) const;
+
+    /**
+    * @brief Reset the key for the current sqlite database instance.
+    *
+    *  This is the equivalent of the sqlite3_rekey call and should thus be called
+    *  after the database has been opened with a valid key. To decrypt a
+    *  database, call this method with an empty string.
+    *  Open normal database -> call db.rekey("secret") -> encrypted database, database ready
+    *  Open encrypted database -> call db.key("secret") -> call db.rekey("newsecret") -> change key, database ready
+    *  Open encrypted database -> call db.key("secret") -> call db.rekey("") -> decrypted database, database ready
+    *
+    * @param[in] aNewKey   New key to encode the database
+    *
+    * @throw SQLite::Exception in case of error
+    */
+    void rekey(const std::string& aNewKey) const;
+
+    /**
+    * @brief Test if a file contains an unencrypted database.
+    *
+    *  This is a simple test that reads the first bytes of a database file and 
+    *  compares them to the standard header for unencrypted databases. If the 
+    *  header does not match the standard string, we assume that we have an 
+    *  encrypted file. 
+    *
+    * @param[in] aFilename path/uri to a file
+    *
+    * @return true if the database has the standard header.
+    *
+    * @throw SQLite::Exception in case of error
+    */
+    static const bool isUnencrypted(const std::string& aFilename);
 
 private:
     /// @{ Database must be non-copyable

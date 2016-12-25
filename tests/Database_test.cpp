@@ -258,3 +258,72 @@ TEST(Database, execException) {
 
 // TODO: test Database::createFunction()
 // TODO: test Database::loadExtension()
+
+#ifdef SQLITE_HAS_CODEC
+TEST(Database, encryptAndDecrypt) {
+    remove("test.db3");
+    {
+        // Try to open the non-existing database
+        EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
+
+        // Create a new database
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        EXPECT_FALSE(db.tableExists("test"));
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+        EXPECT_TRUE(db.tableExists("test"));
+    } // Close DB test.db3
+    {
+        // Reopen the database file and encrypt it
+        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
+        // Encrypt the database
+        db.rekey("123secret");
+    } // Close DB test.db3
+    {
+        // Reopen the database file and try to use it
+        EXPECT_FALSE(SQLite::Database::isUnencrypted("test.db3"));
+        SQLite::Database db("test.db3", SQLite::OPEN_READONLY);
+        EXPECT_THROW(db.tableExists("test"), SQLite::Exception);
+        db.key("123secret");
+        EXPECT_TRUE(db.tableExists("test"));
+    } // Close DB test.db3
+    {
+        // Reopen the database file and decrypt it
+        EXPECT_FALSE(SQLite::Database::isUnencrypted("test.db3"));
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
+        // Decrypt the database
+        db.key("123secret");
+        db.rekey("");
+    } // Close DB test.db3
+    {
+        // Reopen the database file and use it
+        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
+        EXPECT_TRUE(db.tableExists("test"));
+    } // Close DB test.db3
+    remove("test.db3");
+}
+#else // SQLITE_HAS_CODEC
+TEST(Database, encryptAndDecrypt) {
+    remove("test.db3");
+    {
+        // Try to open the non-existing database
+        EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
+
+        // Create a new database
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        EXPECT_FALSE(db.tableExists("test"));
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+        EXPECT_TRUE(db.tableExists("test"));
+    } // Close DB test.db3
+    {
+        // Reopen the database file and encrypt it
+        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
+        // Encrypt the database
+        EXPECT_THROW(db.key("123secret"), SQLite::Exception);
+        EXPECT_THROW(db.rekey("123secret"), SQLite::Exception);
+    } // Close DB test.db3
+    remove("test.db3");
+}
+#endif // SQLITE_HAS_CODEC

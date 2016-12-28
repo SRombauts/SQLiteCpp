@@ -161,6 +161,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
+target_link_libraries(SQLiteCpp sqlite3)
 target_include_directories(SQLiteCpp PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))

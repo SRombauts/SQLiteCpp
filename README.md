@@ -69,6 +69,7 @@ Developements and tests are done under the following OSs:
 - Ubuntu 14.04 (Travis CI)
 - Windows XP/10
 - OS X 10.11 (Travis CI)
+
 And the following IDEs/Compilers
 - GCC 4.8.4, 4.9.3, 5.3.0 and 6.1.1 (C++03, C++11, C++14, C++1z)
 - Clang 3.5 and 3.8

@@ -81,7 +81,7 @@ And the following IDEs/Compilers
 
 - an STL implementation (even an old one, like the one provided with VC6 should work)
 - exception support (the class Exception inherits from std::runtime_error)
-- the SQLite library, either by linking to it dynamicaly or statically (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),
+- the SQLite library (3.7.15 minimum from 2012-12-12) either by linking to it dynamicaly or statically (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),
   or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows),
   with the SQLITE_ENABLE_COLUMN_METADATA macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).
 

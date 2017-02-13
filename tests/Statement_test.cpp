@@ -651,3 +651,60 @@ TEST(Statement, getName) {
     EXPECT_EQ("msg", oname1);
 #endif
 }
+
+#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
+TEST(Statement, getColumns) {
+    struct GetRowTestStruct
+    {
+        int id;
+        std::string msg;
+        int integer;
+        double real;
+        GetRowTestStruct(int _id, std::string _msg, int _integer, double _real)
+        : id(_id), msg(_msg), integer(_integer), real(_real)
+        {}
+
+        GetRowTestStruct(int _id, const std::string& _msg)
+        : id(_id), msg(_msg), integer(-1), real(0.0)
+        {}
+    };
+
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
+
+    // Create a new table
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
+
+    // Create a first row
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"));
+    EXPECT_EQ(1, db.getLastInsertRowid());
+    EXPECT_EQ(1, db.getTotalChanges());
+
+    // Compile a SQL query
+    SQLite::Statement query(db, "SELECT * FROM test");
+    EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
+    EXPECT_EQ(4, query.getColumnCount());
+    query.executeStep();
+    EXPECT_TRUE(query.isOk());
+    EXPECT_FALSE(query.isDone());
+
+    // Get all columns
+    auto testStruct = query.getColumns<GetRowTestStruct, 4>();
+    EXPECT_EQ(1, testStruct.id);
+    EXPECT_EQ("first", testStruct.msg);
+    EXPECT_EQ(123, testStruct.integer);
+    EXPECT_EQ(0.123, testStruct.real);
+    
+    // Get only the first 2 columns
+    auto testStruct2 = query.getColumns<GetRowTestStruct, 2>();
+    EXPECT_EQ(1, testStruct2.id);
+    EXPECT_EQ("first", testStruct2.msg);
+    EXPECT_EQ(-1, testStruct2.integer);
+    EXPECT_EQ(0.0, testStruct2.real);
+}
+#endif
+

@@ -599,7 +599,7 @@ private:
     /**
      * @brief Check if a return code equals SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      *
-     * @param[in] SQLite return code to test against the SQLITE_OK expected value
+     * @param[in] aRet SQLite return code to test against the SQLITE_OK expected value
      */
     inline void check(const int aRet) const
     {

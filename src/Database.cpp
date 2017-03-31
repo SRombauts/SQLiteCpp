@@ -259,6 +259,7 @@ void Database::rekey(const std::string& aNewKey) const
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
+    static_cast<void>(aNewKey); // silence unused parameter warning
     const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
     throw exception;
 #endif // SQLITE_HAS_CODEC

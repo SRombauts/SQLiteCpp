@@ -53,6 +53,15 @@ import sys
 import unicodedata
 
 
+try:
+    xrange(0,1)
+    PY3 = False
+except NameError:
+    PY3 = True      # Python 3
+    xrange = range
+    unicode = str
+
+
 _USAGE = """
 Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                    [--counting=total|toplevel|detailed] [--root=subdir]
@@ -736,7 +745,7 @@ class _CppLintState(object):
   def PrintErrorCounts(self):
     """Print a summary of errors by category, and the total."""
     # SRombauts: "cpplint:" prefix
-    for category, count in self.errors_by_category.iteritems():
+    for category, count in self.errors_by_category.items():
       sys.stderr.write('cpplint: Category \'%s\' errors found: %d\n' %
                        (category, count))
     # SRombauts: "cpplint:" prefix and error message only when appropriate
@@ -3694,7 +3703,7 @@ def _GetTextInside(text, start_pattern):
 
   # Give opening punctuations to get the matching close-punctuations.
   matching_punctuation = {'(': ')', '{': '}', '[': ']'}
-  closing_punctuation = set(matching_punctuation.itervalues())
+  closing_punctuation = set(matching_punctuation.values())
 
   # Find the position to start extracting text.
   match = re.search(start_pattern, text, re.M)
@@ -4779,10 +4788,11 @@ def main():
 
   # Change stderr to write with replacement characters so we don't die
   # if we try to print something containing non-ASCII characters.
-  sys.stderr = codecs.StreamReaderWriter(sys.stderr,
-                                         codecs.getreader('utf8'),
-                                         codecs.getwriter('utf8'),
-                                         'replace')
+  if not PY3:
+    sys.stderr = codecs.StreamReaderWriter(sys.stderr,
+                                           codecs.getreader('utf8'),
+                                           codecs.getwriter('utf8'),
+                                           'replace')
 
   _cpplint_state.ResetErrorCounts()
   for filename in filenames:

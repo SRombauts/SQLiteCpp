@@ -8,7 +8,6 @@ SQLiteC++
 [![Coveralls](https://img.shields.io/coveralls/SRombauts/SQLiteCpp.svg)](https://coveralls.io/github/SRombauts/SQLiteCpp "Coveralls test coverage")
 [![Join the chat at https://gitter.im/SRombauts/SQLiteCpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/SRombauts/SQLiteCpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-
 SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
 
 See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.
@@ -22,7 +21,8 @@ with a few intuitive and well documented C++ classes.
 
 ### License:
 
-Copyright (c) 2012-2016 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+Copyright (c) 2012-2017 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+&nbsp;&nbsp;&nbsp; <a href="https://www.paypal.me/SRombauts" title="Pay Me a Beer! Donate with PayPal :)"><img src="https://www.paypalobjects.com/webstatic/paypalme/images/pp_logo_small.png" width="118"></a>
 
 Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 or copy at http://opensource.org/licenses/MIT)

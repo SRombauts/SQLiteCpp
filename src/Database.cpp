@@ -259,13 +259,14 @@ void Database::rekey(const std::string& aNewKey) const
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
+    static_cast<void>(aNewKey); // silence unused parameter warning
     const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
     throw exception;
 #endif // SQLITE_HAS_CODEC
 }
 
 // Test if a file contains an unencrypted database.
-const bool Database::isUnencrypted(const std::string& aFilename)
+bool Database::isUnencrypted(const std::string& aFilename)
 {
     if (aFilename.length() > 0) {
         std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);

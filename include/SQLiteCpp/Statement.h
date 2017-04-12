@@ -427,6 +427,40 @@ public:
      */
     Column  getColumn(const char* apName);
 
+#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
+     /**
+     * @brief Return an instance of T constructed from copies of the first N columns
+     *
+     *  Can be used to access the data of the current row of result when applicable,
+     * while the executeStep() method returns true.
+     *
+     *  Throw an exception if there is no row to return a Column from:
+     * - if provided column count is out of bound
+     * - before any executeStep() call
+     * - after the last executeStep() returned false
+     * - after a reset() call
+     *
+     *  Throw an exception if the specified column count is out of the [0, getColumnCount()) range.
+     *
+     * @tparam  T   Object type to construct
+     * @tparam  N   Number of columns
+     *
+     * @note Requires std=C++14
+     */
+    template<typename T, int N>
+    T       getColumns();
+
+private:
+    /**
+    * @brief Helper function used by getColumns<typename T, int N> to expand an integer_sequence used to generate
+    *        the required Column objects
+    */
+    template<typename T, const int... Is>
+    T       getColumns(const std::integer_sequence<int, Is...>);
+
+public:
+#endif
+
     /**
      * @brief Test if the column value is NULL
      *
@@ -565,7 +599,7 @@ private:
     /**
      * @brief Check if a return code equals SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      *
-     * @param[in] SQLite return code to test against the SQLITE_OK expected value
+     * @param[in] aRet SQLite return code to test against the SQLITE_OK expected value
      */
     inline void check(const int aRet) const
     {

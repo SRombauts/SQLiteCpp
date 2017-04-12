@@ -32,7 +32,7 @@ else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
     # Useful compile flags and extra warnings 
-    add_compile_options(-fstack-protector -Wall -Winit-self -Wswitch-enum -Wshadow -Winline)
+    add_compile_options(-fstack-protector -Wall -Wextra -Wpedantic -Wno-long-long -Wswitch-enum -Wshadow -Winline)
     if (CMAKE_COMPILER_IS_GNUCXX)
         # GCC flags
         if (SQLITECPP_USE_GCOV AND CMAKE_COMPILER_IS_GNUCXX)
@@ -161,13 +161,24 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
-target_link_libraries(SQLiteCpp sqlite3)
-target_include_directories(SQLiteCpp PUBLIC "${PROJECT_SOURCE_DIR}/include")
+# make the sqlite3 library part of the interface of the SQLiteCpp wrapper itself (the client app does not need to link to sqlite3)
+target_link_libraries(SQLiteCpp PUBLIC sqlite3)
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
 endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
 
+# Allow the library to be installed via "make install" and found with "find_package"
+install(TARGETS SQLiteCpp
+    EXPORT ${PROJECT_NAME}Config
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    COMPONENT libraries)
+target_include_directories(SQLiteCpp PUBLIC 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/>)
+install(DIRECTORY include/ DESTINATION include COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
+install(EXPORT ${PROJECT_NAME}Config DESTINATION lib/cmake/${PROJECT_NAME})
 
 ## Build provided copy of SQLite3 C library ##
 

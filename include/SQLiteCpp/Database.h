@@ -412,7 +412,7 @@ public:
     *
     * @throw SQLite::Exception in case of error
     */
-    static const bool isUnencrypted(const std::string& aFilename);
+    static bool isUnencrypted(const std::string& aFilename);
 
 private:
     /// @{ Database must be non-copyable

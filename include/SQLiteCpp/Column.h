@@ -260,5 +260,22 @@ private:
  */
 std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
 
+#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
+    // Create an instance of T from the first N columns, see declaration in Statement.h for full details
+    template<typename T, int N>
+    T Statement::getColumns()
+    {
+        checkRow();
+        checkIndex(N - 1);
+        return getColumns<T>(std::make_integer_sequence<int, N>{});
+    }
+
+    // Helper function called by getColums<typename T, int N>
+    template<typename T, const int... Is>
+    T Statement::getColumns(const std::integer_sequence<int, Is...>)
+    {
+        return T(Column(mStmtPtr, Is)...);
+    }
+#endif
 
 }  // namespace SQLite

@@ -8,10 +8,7 @@ SQLiteC++
 [![Coveralls](https://img.shields.io/coveralls/SRombauts/SQLiteCpp.svg)](https://coveralls.io/github/SRombauts/SQLiteCpp "Coveralls test coverage")
 [![Join the chat at https://gitter.im/SRombauts/SQLiteCpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/SRombauts/SQLiteCpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-
 SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
-
-See SQLiteC++ website http://srombauts.github.com/SQLiteCpp on GitHub.
 
 Keywords: sqlite, sqlite3, C, library, wrapper C++
 
@@ -22,7 +19,8 @@ with a few intuitive and well documented C++ classes.
 
 ### License:
 
-Copyright (c) 2012-2016 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+Copyright (c) 2012-2017 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+<a href="https://www.paypal.me/SRombauts" title="Pay Me a Beer! Donate with PayPal :)"><img src="https://www.paypalobjects.com/webstatic/paypalme/images/pp_logo_small.png" width="118"></a>
 
 Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 or copy at http://opensource.org/licenses/MIT)
@@ -69,6 +67,7 @@ Developements and tests are done under the following OSs:
 - Ubuntu 14.04 (Travis CI)
 - Windows XP/10
 - OS X 10.11 (Travis CI)
+
 And the following IDEs/Compilers
 - GCC 4.8.4, 4.9.3, 5.3.0 and 6.1.1 (C++03, C++11, C++14, C++1z)
 - Clang 3.5 and 3.8
@@ -80,7 +79,7 @@ And the following IDEs/Compilers
 
 - an STL implementation (even an old one, like the one provided with VC6 should work)
 - exception support (the class Exception inherits from std::runtime_error)
-- the SQLite library, either by linking to it dynamicaly or statically (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),
+- the SQLite library (3.7.15 minimum from 2012-12-12) either by linking to it dynamicaly or statically (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),
   or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows),
   with the SQLITE_ENABLE_COLUMN_METADATA macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).
 

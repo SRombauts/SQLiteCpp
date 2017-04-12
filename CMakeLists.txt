@@ -7,6 +7,8 @@
 cmake_minimum_required(VERSION 2.8.12) # first version with add_compile_options()
 project(SQLiteCpp)
 
+message (STATUS "CMake version: ${CMAKE_VERSION}")
+
 # Define useful variables to handle OS differences:
 if (WIN32)
     set(DEV_NULL                "NUL")

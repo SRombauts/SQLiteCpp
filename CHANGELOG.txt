@@ -97,4 +97,8 @@ Version 2.0.0 - July 25 2016
 
 Version 2.1.0 - July 18 2017
     Update SQLite3 from 3.13 to latest 3.19.3 (2017-06-08)
-    
+    Fixed link error (inline in cpp) and compiler warnings (unused variable...)
+    Added ability to open encrypted databases.
+    Added convenience functions for constructing objects from a row
+    Added CMake install step
+    Make cpplint.py Python-3 compatible

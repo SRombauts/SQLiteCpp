@@ -89,6 +89,12 @@ if (SQLITE_ENABLE_ASSERT_HANDLER)
     add_definitions(-DSQLITECPP_ENABLE_ASSERT_HANDLER)
 endif (SQLITE_ENABLE_ASSERT_HANDLER)
 
+option(SQLITE_USE_LEGACY_STRUCT "Fallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)" OFF)
+if (SQLITE_USE_LEGACY_STRUCT) 
+    # Force forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)
+    add_definitions(-DSQLITE_USE_LEGACY_STRUCT)
+endif (SQLITE_USE_LEGACY_STRUCT)
+
 
 ## Build the C++ Wrapper ##
 
@@ -184,6 +190,12 @@ install(DIRECTORY include/ DESTINATION include COMPONENT headers FILES_MATCHING 
 install(EXPORT ${PROJECT_NAME}Config DESTINATION lib/cmake/${PROJECT_NAME})
 
 ## Build provided copy of SQLite3 C library ##
+
+# TODO NOCOMMIT
+#find_package(sqlite3)
+#if(sqlite3_VERSION VERSION_LESS "3.19")
+#    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
+#endif()
 
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
 if (SQLITECPP_INTERNAL_SQLITE)

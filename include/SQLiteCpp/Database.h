@@ -17,8 +17,13 @@
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
 struct sqlite3_context;
+
+#ifndef SQLITE_USE_LEGACY_STRUCT // Since SQLITE 3.19 (used by default since SQLiteCpp 2.1.0)
+typedef struct sqlite3_value sqlite3_value;
+#else // Before SQLite 3.19 (legacy struct forward declaration can be activated with CMake SQLITECPP_LEGACY_STRUCT var)
 struct Mem;
 typedef struct Mem sqlite3_value;
+#endif
 
 
 namespace SQLite

@@ -94,3 +94,7 @@ Version 2.0.0 - July 25 2016
     Remove Column::errmsg() method : use Database or Statement equivalents
     More unit tests, with code coverage status on the GitHub page
     Do not force MSVC to use static runtime if unit-tests are not build
+
+Version 2.1.0 - July 18 2017
+    Update SQLite3 from 3.13 to latest 3.19.3 (2017-06-08)
+    

@@ -91,6 +91,9 @@ public:
     const char* getErrorStr() const noexcept; // nothrow
 
 private:
+    // due to constant members the auto-assignment operator can not be generated
+    Exception& operator=(const Exception&);
+
     const int mErrcode;         ///< Error code value
     const int mExtendedErrcode; ///< Detailed error code if any
 };

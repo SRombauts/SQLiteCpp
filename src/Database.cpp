@@ -211,6 +211,10 @@ void Database::createFunction(const char*   apFuncName,
 void Database::loadExtension(const char* apExtensionName, const char *apEntryPointName)
 {
 #ifdef SQLITE_OMIT_LOAD_EXTENSION
+	// Unused
+	(void)apExtensionName;
+	(void)apEntryPointName;
+
     throw std::runtime_error("sqlite extensions are disabled");
 #else
 #ifdef SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION // Since SQLite 3.13 (2016-05-18):

@@ -232,7 +232,7 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
 // Set the key for the current sqlite database instance.
 void Database::key(const std::string& aKey) const
 {
-    int pass_len = aKey.length();
+    int pass_len = static_cast<int>(aKey.length());
 #ifdef SQLITE_HAS_CODEC
     if (pass_len > 0) {
         const int ret = sqlite3_key(mpSQLite, aKey.c_str(), pass_len);

@@ -218,7 +218,6 @@ TEST(Column, stream) {
     SQLite::Statement query(db, "SELECT * FROM test");
     query.executeStep();
     std::stringstream ss;
-    auto col = query.getColumn(0);
     ss << query.getColumn(0);
     std::string content = ss.str();
     EXPECT_EQ(content, str);

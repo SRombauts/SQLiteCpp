@@ -116,7 +116,7 @@ int Column::getBytes() const noexcept // nothrow
 // Standard std::ostream inserter
 std::ostream& operator<<(std::ostream& aStream, const Column& aColumn)
 {
-    aStream << aColumn.getText();
+    aStream.write(aColumn.getText(), aColumn.getBytes());
     return aStream;
 }
 

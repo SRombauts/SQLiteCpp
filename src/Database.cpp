@@ -117,7 +117,7 @@ Database::~Database() noexcept // nothrow
  *
  * @throw SQLite::Exception in case of error
  */
-void Database::setBusyTimeout(const int aBusyTimeoutMs) noexcept // nothrow
+void Database::setBusyTimeout(const int aBusyTimeoutMs)
 {
     const int ret = sqlite3_busy_timeout(mpSQLite, aBusyTimeoutMs);
     check(ret);

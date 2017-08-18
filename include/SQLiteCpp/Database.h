@@ -142,7 +142,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    void setBusyTimeout(const int aBusyTimeoutMs) noexcept; // nothrow
+    void setBusyTimeout(const int aBusyTimeoutMs);
 
     /**
      * @brief Shortcut to execute one or multiple statements without results.

@@ -90,7 +90,7 @@ const void* Column::getBlob() const noexcept // nothrow
 }
 
 // Return a std::string to a TEXT or BLOB column
-std::string Column::getString() const noexcept // nothrow
+std::string Column::getString() const
 {
     // Note: using sqlite3_column_blob and not sqlite3_column_text
     // - no need for sqlite3_column_text to add a \0 on the end, as we're getting the bytes length directly

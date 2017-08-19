@@ -53,10 +53,14 @@ TEST(Exception, constructor) {
         const SQLite::Exception ex1(msg1);
         const SQLite::Exception ex2(msg2);
         EXPECT_STREQ(ex1.what(), ex2.what());
+        EXPECT_EQ(ex1.getErrorCode(), ex2.getErrorCode());
+        EXPECT_EQ(ex1.getExtendedErrorCode(), ex2.getExtendedErrorCode());
     }
     {
         const SQLite::Exception ex1(msg1, 1);
         const SQLite::Exception ex2(msg2, 1);
         EXPECT_STREQ(ex1.what(), ex2.what());
+        EXPECT_EQ(ex1.getErrorCode(), ex2.getErrorCode());
+        EXPECT_EQ(ex1.getExtendedErrorCode(), ex2.getExtendedErrorCode());
     }
 }

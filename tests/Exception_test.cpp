@@ -13,6 +13,8 @@
 
 #include <gtest/gtest.h>
 
+#include <string>
+
 TEST(Exception, copy) {
     const SQLite::Exception ex1("some error", 2);
     const SQLite::Exception ex2 = ex1;
@@ -40,5 +42,21 @@ TEST(Exception, throw_catch) {
         throw SQLite::Exception(message);
     } catch (const std::runtime_error& ex) {
         EXPECT_STREQ(ex.what(), message);
+    }
+}
+
+
+TEST(Exception, constructor) {
+    const char msg1[] = "error msg";
+    std::string msg2 = msg1;
+    {
+        const SQLite::Exception ex1(msg1);
+        const SQLite::Exception ex2(msg2);
+        EXPECT_STREQ(ex1.what(), ex2.what());
+    }
+    {
+        const SQLite::Exception ex1(msg1, 1);
+        const SQLite::Exception ex2(msg2, 1);
+        EXPECT_STREQ(ex1.what(), ex2.what());
     }
 }

@@ -91,8 +91,8 @@ public:
     const char* getErrorStr() const noexcept; // nothrow
 
 private:
-    const int mErrcode;         ///< Error code value
-    const int mExtendedErrcode; ///< Detailed error code if any
+    int mErrcode;         ///< Error code value
+    int mExtendedErrcode; ///< Detailed error code if any
 };
 
 

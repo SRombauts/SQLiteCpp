@@ -111,7 +111,7 @@ public:
      *
      * Note this correctly handles strings that contain null bytes.
      */
-    std::string getString() const noexcept; // nothrow
+    std::string getString() const;
 
     /**
      * @brief Return the type of the value of the column

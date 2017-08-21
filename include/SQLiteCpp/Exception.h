@@ -50,6 +50,7 @@ public:
      *
      * @param[in] aErrorMessage The string message describing the SQLite error
      */
+    explicit Exception(const char* aErrorMessage);
     explicit Exception(const std::string& aErrorMessage);
 
     /**
@@ -58,6 +59,7 @@ public:
      * @param[in] aErrorMessage The string message describing the SQLite error
      * @param[in] ret           Return value from function call that failed.
      */
+    Exception(const char* aErrorMessage, int ret);
     Exception(const std::string& aErrorMessage, int ret);
 
    /**
@@ -91,8 +93,8 @@ public:
     const char* getErrorStr() const noexcept; // nothrow
 
 private:
-    const int mErrcode;         ///< Error code value
-    const int mExtendedErrcode; ///< Detailed error code if any
+    int mErrcode;         ///< Error code value
+    int mExtendedErrcode; ///< Detailed error code if any
 };
 
 

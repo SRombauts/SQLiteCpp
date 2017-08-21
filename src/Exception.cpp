@@ -16,9 +16,22 @@
 namespace SQLite
 {
 
+Exception::Exception(const char* aErrorMessage) :
+    std::runtime_error(aErrorMessage),
+    mErrcode(-1), // 0 would be SQLITE_OK, which doesn't make sense
+    mExtendedErrcode(-1)
+{
+}
 Exception::Exception(const std::string& aErrorMessage) :
     std::runtime_error(aErrorMessage),
     mErrcode(-1), // 0 would be SQLITE_OK, which doesn't make sense
+    mExtendedErrcode(-1)
+{
+}
+
+Exception::Exception(const char* aErrorMessage, int ret) :
+    std::runtime_error(aErrorMessage),
+    mErrcode(ret),
     mExtendedErrcode(-1)
 {
 }

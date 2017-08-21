@@ -211,6 +211,10 @@ void Database::createFunction(const char*   apFuncName,
 void Database::loadExtension(const char* apExtensionName, const char *apEntryPointName)
 {
 #ifdef SQLITE_OMIT_LOAD_EXTENSION
+    // Unused
+    (void)apExtensionName;
+    (void)apEntryPointName;
+
     throw std::runtime_error("sqlite extensions are disabled");
 #else
 #ifdef SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION // Since SQLite 3.13 (2016-05-18):
@@ -232,7 +236,7 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
 // Set the key for the current sqlite database instance.
 void Database::key(const std::string& aKey) const
 {
-    int pass_len = aKey.length();
+    int pass_len = static_cast<int>(aKey.length());
 #ifdef SQLITE_HAS_CODEC
     if (pass_len > 0) {
         const int ret = sqlite3_key(mpSQLite, aKey.c_str(), pass_len);

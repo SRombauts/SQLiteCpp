@@ -199,3 +199,26 @@ TEST(Column, getName) {
     EXPECT_EQ("msg",    oname1);
 #endif
 }
+
+TEST(Column, stream) {
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (msg TEXT)"));
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (?)");
+
+    // content to test
+    const char str_[] = "stringwith\0embedded";
+    std::string str(str_, sizeof(str_)-1);
+
+    insert.bind(1, str);
+    // Execute the one-step query to insert the row
+    EXPECT_EQ(1, insert.exec());
+    EXPECT_EQ(1, db.getTotalChanges());
+
+    SQLite::Statement query(db, "SELECT * FROM test");
+    query.executeStep();
+    std::stringstream ss;
+    ss << query.getColumn(0);
+    std::string content = ss.str();
+    EXPECT_EQ(content, str);
+}

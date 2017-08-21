@@ -33,7 +33,7 @@ Column::Column(Statement::Ptr& aStmtPtr, int aIndex) noexcept : // nothrow
 }
 
 // Finalize and unregister the SQL query from the SQLite Database Connection.
-Column::~Column() noexcept // nothrow
+Column::~Column()
 {
     // the finalization will be done by the destructor of the last shared pointer
 }

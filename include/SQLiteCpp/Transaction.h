@@ -55,7 +55,7 @@ public:
     /**
      * @brief Safely rollback the transaction if it has not been committed.
      */
-    virtual ~Transaction() noexcept; // nothrow
+    virtual ~Transaction();
 
     /**
      * @brief Commit the transaction.

@@ -70,7 +70,7 @@ Backup::Backup(Database &aDestDatabase, Database &aSrcDatabase) :
 }
 
 // Release resource for SQLite database backup
-Backup::~Backup() noexcept
+Backup::~Backup()
 {
     if (NULL != mpSQLiteBackup)
     {

@@ -127,7 +127,7 @@ public:
      *
      * @warning assert in case of error
      */
-    virtual ~Database() noexcept; // nothrow
+    virtual ~Database();
 
     /**
      * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.

@@ -92,7 +92,7 @@ Database::Database(const std::string& aFilename,
 }
 
 // Close the SQLite database connection.
-Database::~Database() noexcept // nothrow
+Database::~Database()
 {
     const int ret = sqlite3_close(mpSQLite);
 

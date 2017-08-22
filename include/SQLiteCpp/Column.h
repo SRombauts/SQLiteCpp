@@ -54,7 +54,7 @@ public:
      */
     Column(Statement::Ptr& aStmtPtr, int aIndex)    noexcept; // nothrow
     /// Simple destructor
-    virtual ~Column()                               noexcept; // nothrow
+    virtual ~Column();
 
     // default copy constructor and assignment operator are perfectly suited :
     // they copy the Statement::Ptr which in turn increments the reference counter.

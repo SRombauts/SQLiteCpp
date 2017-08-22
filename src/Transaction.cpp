@@ -27,7 +27,7 @@ Transaction::Transaction(Database& aDatabase) :
 }
 
 // Safely rollback the transaction if it has not been committed.
-Transaction::~Transaction() noexcept // nothrow
+Transaction::~Transaction()
 {
     if (false == mbCommited)
     {

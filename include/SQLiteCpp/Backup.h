@@ -100,7 +100,7 @@ public:
            Database& aSrcDatabase);
 
     /// Release the SQLite Backup resource.
-    virtual ~Backup() noexcept;
+    virtual ~Backup();
 
     /**
      * @brief Execute a step of backup with a given number of source pages to be copied

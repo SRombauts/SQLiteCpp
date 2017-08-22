@@ -73,7 +73,7 @@ public:
     Statement(Database& aDatabase, const std::string& aQuery);
 
     /// Finalize and unregister the SQL query from the SQLite Database Connection.
-    virtual ~Statement();
+    ~Statement();
 
     /// Reset the statement to make it ready for a new execution.
     void reset();

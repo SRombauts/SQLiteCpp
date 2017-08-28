@@ -77,6 +77,10 @@ public:
 
     /// Reset the statement to make it ready for a new execution.
     void reset();
+    
+    /// Reset the statement to make it ready for a new execution. Returns the sqlite result code
+    /// instead of throwing an exception on error.
+    int tryReset() noexcept;
 
     /**
      * @brief Clears away all the bindings of a prepared statement.
@@ -335,6 +339,7 @@ public:
      * thru the getColumn() method
      *
      * @see exec() execute a one-step prepared statement with no expected result
+     * @see tryExecuteStep() try to execute a step of the prepared query to fetch one row of results, returning the sqlite result code.
      * @see Database::exec() is a shortcut to execute one or multiple statements without results
      *
      * @return - true  (SQLITE_ROW)  if there is another row ready : you can call getColumn(N) to get it
@@ -345,6 +350,19 @@ public:
      * @throw SQLite::Exception in case of error
      */
     bool executeStep();
+    
+    /**
+     * @brief Try to execute a step of the prepared query to fetch one row of results, returning the sqlite result code.
+     *
+     *  
+     *
+     * @see exec() execute a one-step prepared statement with no expected result
+     * @see executeStep() execute a step of the prepared query to fetch one row of results
+     * @see Database::exec() is a shortcut to execute one or multiple statements without results
+     *
+     * @return the sqlite result code.
+     */
+    int tryExecuteStep() noexcept;
 
     /**
      * @brief Execute a one-step query with no expected result.
@@ -359,6 +377,7 @@ public:
      * - reusing it allows for better performances (efficient for multiple insertion).
      *
      * @see executeStep() execute a step of the prepared query to fetch one row of results
+     * @see tryExecuteStep() try to execute a step of the prepared query to fetch one row of results, returning the sqlite result code.
      * @see Database::exec() is a shortcut to execute one or multiple statements without results
      *
      * @return number of row modified by this SQL statement (INSERT, UPDATE or DELETE)

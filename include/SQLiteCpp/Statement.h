@@ -628,7 +628,7 @@ private:
     }
 
     /**
-     * @brief Check if there is a row of result returnes by executeStep(), else throw a SQLite::Exception.
+     * @brief Check if there is a row of result returned by executeStep(), else throw a SQLite::Exception.
      */
     inline void checkRow() const
     {

@@ -52,7 +52,7 @@ TEST(Column, basis) {
     EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
     EXPECT_EQ(6, query.getColumnCount ());
     query.executeStep();
-    EXPECT_TRUE (query.isOk());
+    EXPECT_TRUE (query.hasRow());
     EXPECT_FALSE(query.isDone());
 
     // validates every variant of cast operators, and conversions of types

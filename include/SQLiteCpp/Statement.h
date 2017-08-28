@@ -549,9 +549,14 @@ public:
         return mColumnCount;
     }
     /// true when a row has been fetched with executeStep()
+    inline bool hasRow() const
+    {
+        return mbHasRow;
+    }
+    /// @deprecated, use #hasRow()
     inline bool isOk() const
     {
-        return mbOk;
+        return hasRow();
     }
     /// true when the last executeStep() had no more row to fetch
     inline bool isDone() const
@@ -632,7 +637,7 @@ private:
      */
     inline void checkRow() const
     {
-        if (false == mbOk)
+        if (false == mbHasRow)
         {
             throw SQLite::Exception("No row to get a column from. executeStep() was not called, or returned false.");
         }
@@ -658,7 +663,7 @@ private:
     Ptr                     mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
     int                     mColumnCount;   //!< Number of columns in the result of the prepared statement
     mutable TColumnNames    mColumnNames;   //!< Map of columns index by name (mutable so getColumnIndex can be const)
-    bool                    mbOk;           //!< true when a row has been fetched with executeStep()
+    bool                    mbHasRow;           //!< true when a row has been fetched with executeStep()
     bool                    mbDone;         //!< true when the last executeStep() had no more row to fetch
 };
 

@@ -25,7 +25,7 @@ Statement::Statement(Database &aDatabase, const char* apQuery) :
     mQuery(apQuery),
     mStmtPtr(aDatabase.mpSQLite, mQuery), // prepare the SQL query, and ref count (needs Database friendship)
     mColumnCount(0),
-    mbOk(false),
+    mbHasRow(false),
     mbDone(false)
 {
     mColumnCount = sqlite3_column_count(mStmtPtr);
@@ -36,7 +36,7 @@ Statement::Statement(Database &aDatabase, const std::string& aQuery) :
     mQuery(aQuery),
     mStmtPtr(aDatabase.mpSQLite, mQuery), // prepare the SQL query, and ref count (needs Database friendship)
     mColumnCount(0),
-    mbOk(false),
+    mbHasRow(false),
     mbDone(false)
 {
     mColumnCount = sqlite3_column_count(mStmtPtr);
@@ -58,7 +58,7 @@ void Statement::reset()
 
 int Statement::tryReset() noexcept
 {
-    mbOk = false;
+    mbHasRow = false;
     mbDone = false;
     return sqlite3_reset(mStmtPtr);
 }
@@ -250,7 +250,7 @@ bool Statement::executeStep()
         throw SQLite::Exception(mStmtPtr, ret);
     }
 
-    return mbOk; // true only if one row is accessible by getColumn(N)
+    return mbHasRow; // true only if one row is accessible by getColumn(N)
 }
 
 // Execute a one-step query with no expected result
@@ -280,16 +280,16 @@ int Statement::tryExecuteStep() noexcept
         const int ret = sqlite3_step(mStmtPtr);
         if (SQLITE_ROW == ret) // one row is ready : call getColumn(N) to access it
         {
-            mbOk = true;
+            mbHasRow = true;
         }
         else if (SQLITE_DONE == ret) // no (more) row ready : the query has finished executing
         {
-            mbOk = false;
+            mbHasRow = false;
             mbDone = true;
         }
         else
         {
-            mbOk = false;
+            mbHasRow = false;
             mbDone = false;
         }
 

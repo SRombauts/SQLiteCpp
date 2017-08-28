@@ -147,6 +147,51 @@ TEST(Statement, executeStep) {
     EXPECT_THROW(insert2.exec(), SQLite::Exception);
 }
 
+TEST(Statement, tryExecuteStep) {
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+
+    // Create a new table
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+
+    // Create a first row
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"));
+    EXPECT_EQ(1, db.getLastInsertRowid());
+
+    // Compile a SQL query
+    SQLite::Statement query(db, "SELECT * FROM test");
+    EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
+    EXPECT_EQ(4, query.getColumnCount());
+
+    // Get the first row
+    EXPECT_EQ(query.tryExecuteStep(), SQLITE_ROW);
+    EXPECT_TRUE (query.isOk());
+    EXPECT_FALSE(query.isDone());
+    const int64_t       id      = query.getColumn(0);
+    const std::string   msg     = query.getColumn(1);
+    const int           integer = query.getColumn(2);
+    const long          integer2= query.getColumn(2);
+    const double        real    = query.getColumn(3);
+    EXPECT_EQ(1,        id);
+    EXPECT_EQ("first",  msg);
+    EXPECT_EQ(123,      integer);
+    EXPECT_EQ(123,      integer2);
+    EXPECT_EQ(0.123,    real);
+
+    // Step one more time to discover there is nothing more
+    EXPECT_EQ(query.tryExecuteStep(), SQLITE_DONE);
+    EXPECT_FALSE(query.isOk());
+    EXPECT_TRUE (query.isDone()); // "done" is "the end"
+
+    // Try to insert a new row with the same PRIMARY KEY: "UNIQUE constraint failed: test.id"
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (1, \"impossible\", 456, 0.456)");
+    EXPECT_EQ(insert.tryExecuteStep(), SQLITE_CONSTRAINT);
+    // in this case, reset() do throw again the same error
+    EXPECT_EQ(insert.tryReset(), SQLITE_CONSTRAINT);
+}
+
 TEST(Statement, bindings) {
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);

@@ -52,10 +52,15 @@ Statement::~Statement()
 // Reset the statement to make it ready for a new execution (see also #clearBindings() bellow)
 void Statement::reset()
 {
+    const int ret = tryReset();
+    check(ret);
+}
+
+int Statement::tryReset() noexcept
+{
     mbOk = false;
     mbDone = false;
-    const int ret = sqlite3_reset(mStmtPtr);
-    check(ret);
+    return sqlite3_reset(mStmtPtr);
 }
 
 // Clears away all the bindings of a prepared statement (can be associated with #reset() above).
@@ -239,6 +244,37 @@ void Statement::bind(const char* apName)
 // Execute a step of the query to fetch one row of results
 bool Statement::executeStep()
 {
+    const int ret = tryExecuteStep();
+    if ((SQLITE_ROW != ret) && (SQLITE_DONE != ret)) // on row or no (more) row ready, else it's a problem
+    {
+        throw SQLite::Exception(mStmtPtr, ret);
+    }
+
+    return mbOk; // true only if one row is accessible by getColumn(N)
+}
+
+// Execute a one-step query with no expected result
+int Statement::exec()
+{
+    const int ret = tryExecuteStep();
+    if (SQLITE_DONE != ret) // the statement has finished executing successfully
+    {
+        if (SQLITE_ROW == ret)
+        {
+            throw SQLite::Exception("exec() does not expect results. Use executeStep.");
+        }
+        else
+        {
+            throw SQLite::Exception(mStmtPtr, ret);
+        }
+    }
+
+    // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
+    return sqlite3_changes(mStmtPtr);
+}
+
+int Statement::tryExecuteStep() noexcept
+{
     if (false == mbDone)
     {
         const int ret = sqlite3_step(mStmtPtr);
@@ -255,49 +291,17 @@ bool Statement::executeStep()
         {
             mbOk = false;
             mbDone = false;
-            throw SQLite::Exception(mStmtPtr, ret);
         }
+
+        return ret;
     }
     else
     {
-        throw SQLite::Exception("Statement needs to be reseted.");
+        // Statement needs to be reseted !
+        return SQLITE_MISUSE;
     }
-
-    return mbOk; // true only if one row is accessible by getColumn(N)
 }
 
-// Execute a one-step query with no expected result
-int Statement::exec()
-{
-    if (false == mbDone)
-    {
-        const int ret = sqlite3_step(mStmtPtr);
-        if (SQLITE_DONE == ret) // the statement has finished executing successfully
-        {
-            mbOk = false;
-            mbDone = true;
-        }
-        else if (SQLITE_ROW == ret)
-        {
-            mbOk = false;
-            mbDone = false;
-            throw SQLite::Exception("exec() does not expect results. Use executeStep.");
-        }
-        else
-        {
-            mbOk = false;
-            mbDone = false;
-            throw SQLite::Exception(mStmtPtr, ret);
-        }
-    }
-    else
-    {
-        throw SQLite::Exception("Statement need to be reseted.");
-    }
-
-    // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
-    return sqlite3_changes(mStmtPtr);
-}
 
 // Return a copy of the column data specified by its index starting at 0
 // (use the Column copy-constructor)

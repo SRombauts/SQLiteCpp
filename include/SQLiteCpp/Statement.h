@@ -75,11 +75,10 @@ public:
     /// Finalize and unregister the SQL query from the SQLite Database Connection.
     ~Statement();
 
-    /// Reset the statement to make it ready for a new execution.
+    /// Reset the statement to make it ready for a new execution. Throws an exception on error.
     void reset();
-    
-    /// Reset the statement to make it ready for a new execution. Returns the sqlite result code
-    /// instead of throwing an exception on error.
+
+    /// Reset the statement. Returns the sqlite result code instead of throwing an exception on error.
     int tryReset() noexcept;
 
     /**
@@ -350,7 +349,7 @@ public:
      * @throw SQLite::Exception in case of error
      */
     bool executeStep();
-    
+
     /**
      * @brief Try to execute a step of the prepared query to fetch one row of results, returning the sqlite result code.
      *

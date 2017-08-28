@@ -52,9 +52,7 @@ Statement::~Statement()
 // Reset the statement to make it ready for a new execution (see also #clearBindings() bellow)
 void Statement::reset()
 {
-    mbOk = false;
-    mbDone = false;
-    const int ret = sqlite3_reset(mStmtPtr);
+    const int ret = tryReset();
     check(ret);
 }
 
@@ -62,8 +60,7 @@ int Statement::tryReset() noexcept
 {
     mbOk = false;
     mbDone = false;
-    const int ret = sqlite3_reset(mStmtPtr);
-    return ret;
+    return sqlite3_reset(mStmtPtr);
 }
 
 // Clears away all the bindings of a prepared statement (can be associated with #reset() above).
@@ -274,7 +271,8 @@ bool Statement::executeStep()
     return mbOk; // true only if one row is accessible by getColumn(N)
 }
 
-int Statement::tryExecuteStep() noexcept {
+int Statement::tryExecuteStep() noexcept
+{
     const int ret = sqlite3_step(mStmtPtr);
     if (SQLITE_ROW == ret) // one row is ready : call getColumn(N) to access it
     {
@@ -290,7 +288,7 @@ int Statement::tryExecuteStep() noexcept {
         mbOk = false;
         mbDone = false;
     }
-    
+
     return ret;
 }
 

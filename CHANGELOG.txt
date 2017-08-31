@@ -102,3 +102,10 @@ Version 2.1.0 - July 18 2017
     Added convenience functions for constructing objects from a row
     Added CMake install step
     Make cpplint.py Python-3 compatible
+    
+Version X
+    Update SQLite3 from 3.19.3 to latest 3.20.1 (2017-08-24)
+    Removed virtual kewords from destructors
+    Removed misplaced noexcept keyword
+    Improved Exception class C++ conformance
+    Deprecated Statement::IsOk() to Statement::HasRow() 

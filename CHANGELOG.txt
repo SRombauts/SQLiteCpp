@@ -103,7 +103,7 @@ Version 2.1.0 - July 18 2017
     Added CMake install step
     Make cpplint.py Python-3 compatible
     
-Version X
+Version 2.2.0 - Sept 19 2017
     Update SQLite3 from 3.19.3 to latest 3.20.1 (2017-08-24)
     Removed virtual kewords from destructors
     Removed misplaced noexcept keyword

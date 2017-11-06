@@ -320,10 +320,12 @@ TEST(Statement, bindings) {
     // reset() without clearbindings()
     insert.reset();
 
-    // Sixth row with uint32_t unsigned value
+    // Sixth row with uint32_t unsigned value and a long value (which is either a 32b int or a 64b long long)
     {
         const uint32_t  uint32 = 4294967295U;
+        const long      integer = -123;
         insert.bind(2, uint32);
+        insert.bind(3, integer);
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
@@ -333,6 +335,7 @@ TEST(Statement, bindings) {
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(6, query.getColumn(0).getInt64());
         EXPECT_EQ(4294967295U, query.getColumn(2).getUInt());
+        EXPECT_EQ(-123, query.getColumn(3).getInt());
     }
 }
 

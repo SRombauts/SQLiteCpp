@@ -3,7 +3,7 @@
 # Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
-# or copy at http://opensource.org/licenses/MIT) 
+# or copy at http://opensource.org/licenses/MIT)
 cmake_minimum_required(VERSION 2.8.12) # first version with add_compile_options()
 project(SQLiteCpp)
 
@@ -33,7 +33,7 @@ if (MSVC)
 else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
-    # Useful compile flags and extra warnings 
+    # Useful compile flags and extra warnings
     add_compile_options(-fstack-protector -Wall -Wextra -Wpedantic -Wno-long-long -Wswitch-enum -Wshadow -Winline)
     if (CMAKE_COMPILER_IS_GNUCXX)
         # GCC flags
@@ -77,20 +77,20 @@ endif ()
 # Options relative to SQLite and SQLiteC++ functions
 
 option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getColumnOriginName(). Require support from sqlite3 library." ON)
-if (SQLITE_ENABLE_COLUMN_METADATA) 
+if (SQLITE_ENABLE_COLUMN_METADATA)
     # Enable the use of SQLite column metadata and Column::getColumnOriginName() method,
     # Require that the sqlite3 library is also compiled with this flag (default under Debian/Ubuntu, but not on Mac OS X).
     add_definitions(-DSQLITE_ENABLE_COLUMN_METADATA)
 endif (SQLITE_ENABLE_COLUMN_METADATA)
 
 option(SQLITE_ENABLE_ASSERT_HANDLER "Enable the user defintion of a assertion_failed() handler." OFF)
-if (SQLITE_ENABLE_ASSERT_HANDLER) 
+if (SQLITE_ENABLE_ASSERT_HANDLER)
     # Enable the user defintion of a assertion_failed() handler (default to false, easier to handler for begginers).
     add_definitions(-DSQLITECPP_ENABLE_ASSERT_HANDLER)
 endif (SQLITE_ENABLE_ASSERT_HANDLER)
 
 option(SQLITE_USE_LEGACY_STRUCT "Fallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)" OFF)
-if (SQLITE_USE_LEGACY_STRUCT) 
+if (SQLITE_USE_LEGACY_STRUCT)
     # Force forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)
     add_definitions(-DSQLITE_USE_LEGACY_STRUCT)
 endif (SQLITE_USE_LEGACY_STRUCT)
@@ -148,7 +148,7 @@ source_group(example1 FILES ${SQLITECPP_EXAMPLES})
 set(SQLITECPP_DOC
  README.md
  LICENSE.txt
- CHANGELOG.txt
+ CHANGELOG.md
  TODO.txt
 )
 source_group(doc FILES ${SQLITECPP_DOC})
@@ -165,7 +165,7 @@ set(SQLITECPP_SCRIPT
 )
 source_group(scripts FILES ${SQLITECPP_SCRIPT})
 
-# All includes are relative to the "include" directory 
+# All includes are relative to the "include" directory
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
 # add sources of the wrapper as a "SQLiteCpp" static library
@@ -184,7 +184,7 @@ install(TARGETS SQLiteCpp
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
     COMPONENT libraries)
-target_include_directories(SQLiteCpp PUBLIC 
+target_include_directories(SQLiteCpp PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/>)
 install(DIRECTORY include/ DESTINATION include COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
@@ -269,7 +269,7 @@ if (SQLITECPP_BUILD_EXAMPLES)
         endif ()
     elseif (MSYS OR MINGW)
         target_link_libraries(SQLiteCpp_example1 ssp)
-    endif ()    
+    endif ()
 else (SQLITECPP_BUILD_EXAMPLES)
     message(STATUS "SQLITECPP_BUILD_EXAMPLES OFF")
 endif (SQLITECPP_BUILD_EXAMPLES)
@@ -287,7 +287,7 @@ if (SQLITECPP_BUILD_TESTS)
     if (NOT EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
         message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git init submodule' and 'git update submodule' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
     endif ()
-    add_subdirectory(googletest) 
+    add_subdirectory(googletest)
     include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
 
     # add the unit test executable
@@ -296,7 +296,7 @@ if (SQLITECPP_BUILD_TESTS)
     # Link target with dl for linux
     if (UNIX AND NOT APPLE)
         target_link_libraries(SQLiteCpp_tests dl)
-    endif ()    
+    endif ()
 
     # add a "test" target:
     enable_testing()

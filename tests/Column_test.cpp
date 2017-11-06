@@ -74,14 +74,14 @@ TEST(Column, basis) {
         EXPECT_EQ(1,            id2);
         EXPECT_EQ(1,            id3);
         EXPECT_EQ(1,            id4);
-        EXPECT_EQ(1,            uint1);
-        EXPECT_EQ(1,            uint2);
+        EXPECT_EQ(1U,           uint1);
+        EXPECT_EQ(1U,           uint2);
         EXPECT_STREQ("first",   ptxt);
         EXPECT_EQ("first",      msg);
         EXPECT_EQ(-123,         integer);
         EXPECT_EQ(0.123,        real);
         EXPECT_EQ(0,            memcmp("bl\0b", pblob, size));
-        EXPECT_EQ(size,         sblob.size());
+        EXPECT_EQ((size_t)size, sblob.size());
         EXPECT_EQ(0,            memcmp("bl\0b", &sblob[0], size));
         EXPECT_EQ(NULL,         pempty);
     }
@@ -99,8 +99,8 @@ TEST(Column, basis) {
         const void*         pblob   = query.getColumn(4).getBlob();
         const std::string   sblob   = query.getColumn(4).getString();
         EXPECT_EQ(1,            id);
-        EXPECT_EQ(1,            uint1);
-        EXPECT_EQ(1,            uint2);
+        EXPECT_EQ(1U,           uint1);
+        EXPECT_EQ(1U,           uint2);
         EXPECT_STREQ("first",   ptxt);
         EXPECT_EQ("first",      msg1);
         EXPECT_EQ("first",      msg2);

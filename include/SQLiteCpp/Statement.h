@@ -196,6 +196,24 @@ public:
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const char* apName, const unsigned        aValue);
+
+#if (LONG_MAX == INT_MAX) // sizeof(long)==4 means the data model of the system is ILP32 (32bits OS or Windows 64bits)
+    /**
+     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName, const long           aValue)
+    {
+        bind(apName, static_cast<int>(aValue));
+    }
+#else
+    /**
+     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName, const long           aValue)
+    {
+        bind(apName, static_cast<long long>(aValue));
+    }
+#endif
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -266,6 +284,24 @@ public:
     {
         bind(aName.c_str(), aValue);
     }
+
+#if (LONG_MAX == INT_MAX) // sizeof(long)==4 means the data model of the system is ILP32 (32bits OS or Windows 64bits)
+    /**
+     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const std::string& aName, const long                  aValue)
+    {
+        bind(aName.c_str(), static_cast<int>(aValue));
+    }
+#else
+    /**
+     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const std::string& aName, const long                   aValue)
+    {
+        bind(aName.c_str(), static_cast<long long>(aValue));
+    }
+#endif
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */

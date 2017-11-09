@@ -384,15 +384,16 @@ TEST(Statement, bindByName) {
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a new table
-    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL, long INTEGER)"));
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Insertion with bindable parameters
-    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, @msg, @int, @double)");
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, @msg, @int, @double, @long)");
 
     // First row with text/int/double
     insert.bind("@msg",      "first");
     insert.bind("@int",      123);
+    insert.bind("@long",      -123);
     insert.bind("@double",   0.123);
     EXPECT_EQ(1, insert.exec());
     EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
@@ -400,7 +401,7 @@ TEST(Statement, bindByName) {
     // Compile a SQL query to check the result
     SQLite::Statement query(db, "SELECT * FROM test");
     EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
-    EXPECT_EQ(4, query.getColumnCount());
+    EXPECT_EQ(5, query.getColumnCount());
 
     // Check the result
     query.executeStep();
@@ -410,6 +411,7 @@ TEST(Statement, bindByName) {
     EXPECT_STREQ("first",   query.getColumn(1).getText());
     EXPECT_EQ   (123,       query.getColumn(2).getInt());
     EXPECT_EQ   (0.123,     query.getColumn(3).getDouble());
+    EXPECT_EQ   (-123,      query.getColumn(4).getInt());
 
     // reset() with clearbindings() and new bindings
     insert.reset();
@@ -419,10 +421,12 @@ TEST(Statement, bindByName) {
     {
         const std::string   second("second");
         const long long     int64 = 12345678900000LL;
+        const long          integer = -123;
         const float         float32 = 0.234f;
         insert.bind("@msg",      second);
         insert.bind("@int",      int64);
         insert.bind("@double",   float32);
+        insert.bind("@long",     integer);
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
@@ -434,6 +438,7 @@ TEST(Statement, bindByName) {
         EXPECT_EQ(second,           query.getColumn(1).getText());
         EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
         EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+        EXPECT_EQ(-123,             query.getColumn(4).getInt());
     }
 
     // reset() without clearbindings()

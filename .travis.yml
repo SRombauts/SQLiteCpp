@@ -143,9 +143,27 @@ matrix:
         - CXX=clang
         - CXXFLAGS=-lstdc++
 
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "Qm4d8NEDPBtYZCYav46uPEvDCtaRsjLXlkVS+C+WCJAPcwXCGkrr96wEi7RWcq2xD86QCh0XiqaPT+xdUmlohOYIovRhaaBmZ1lwIJ4GsG/ZR6xoFr3DYsZ3o4GyXk2vNXNxEl82AC+Xs6e6gkLOV9XRkBcjpVIvoIXgNlKWeGY="
 
 before_install:
+  # coveralls test coverage:
   - if [[ "$CXX" == "g++" ]]; then pip install --user cpp-coveralls ; fi
+  # coverity static analysis:
+  - if [[ "$CXX" == "g++" ]]; then echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca- ; fi
+
+addons:
+  coverity_scan:
+    project:
+      name: "SRombauts/SQLiteCpp"
+      description: "Build submitted via Travis CI"
+    notification_email: sebastien.rombauts@gmail.com
+    build_command_prepend: "cmake ."
+    build_command:   "make -j 8"
+    branch_pattern: master
 
 # scripts to run before build
 before_script:

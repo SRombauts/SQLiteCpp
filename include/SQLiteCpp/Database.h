@@ -11,7 +11,7 @@
 #pragma once
 
 #include <SQLiteCpp/Column.h>
-#include <compability_macros.h>
+#include <SQLiteCpp/compability_macros.h>
 
 #include <string.h>
 

@@ -4,7 +4,7 @@
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
-cmake_minimum_required(VERSION 3.1) # first version with the WriteCompilerDetectionHeader module
+cmake_minimum_required(VERSION 2.8.12) # first version with add_compile_options()
 project(SQLiteCpp)
 
 message (STATUS "CMake version: ${CMAKE_VERSION}")
@@ -167,16 +167,6 @@ source_group(scripts FILES ${SQLITECPP_SCRIPT})
 
 # All includes are relative to the "include" directory
 include_directories("${PROJECT_SOURCE_DIR}/include")
-
-# Detect some newer C++ features and create a suitable compability header
-include(WriteCompilerDetectionHeader)
-write_compiler_detection_header(
-	FILE "${CMAKE_CURRENT_BINARY_DIR}/compability_macros.h"
-	PREFIX COMPABILITY
-	COMPILERS GNU Clang MSVC
-	FEATURES cxx_nullptr
-)
-include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})

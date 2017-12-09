@@ -11,6 +11,7 @@
 #pragma once
 
 #include <SQLiteCpp/Column.h>
+#include <SQLiteCpp/compability_macros.h>
 
 #include <string.h>
 
@@ -95,7 +96,7 @@ public:
     Database(const char* apFilename,
              const int   aFlags         = SQLite::OPEN_READONLY,
              const int   aBusyTimeoutMs = 0,
-             const char* apVfs          = NULL);
+             const char* apVfs          = COMPABILITY_NULLPTR);
 
     /**
      * @brief Open the provided database UTF-8 filename.

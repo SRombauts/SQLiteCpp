@@ -217,7 +217,7 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
 
     throw std::runtime_error("sqlite extensions are disabled");
 #else
-#ifdef SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION // Since SQLite 3.13 (2017-05-18):
+#ifdef SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION // Since SQLite 3.13 (2016-05-18):
     // Security warning:
     // It is recommended that the SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION method be used to enable only this interface.
     // The use of the sqlite3_enable_load_extension() interface should be avoided to keep the SQL load_extension()

@@ -30,6 +30,7 @@
 #define nullptr NULL
 #endif  // nullptr
 #endif  // _MSC_VER < 1600
+#elif defined(__APPLE__) // AppleClang
 #elif defined(__clang__) && __has_feature(cxx_nullptr) // Clang 3.0+
 #else // GCC or older Clang
 #if (__cplusplus < 201103L) && !defined(__GXX_EXPERIMENTAL_CXX0X__) // before C++11 on GCC4.7 and Visual Studio 2010

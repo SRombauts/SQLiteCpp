@@ -125,7 +125,7 @@ set(SQLITECPP_INC
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Utils.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/VariadicBind.h
 )
-source_group(inc FILES ${SQLITECPP_INC})
+source_group(include FILES ${SQLITECPP_INC})
 
 # list of test files of the library
 set(SQLITECPP_TESTS

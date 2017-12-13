@@ -30,7 +30,8 @@
 #define nullptr NULL
 #endif  // nullptr
 #endif  // _MSC_VER < 1600
-#else   // _MSC_VER
+#elif defined(__clang__) && __has_feature(cxx_nullptr) // Clang 3.0+
+#else // GCC or older Clang
 #if (__cplusplus < 201103L) && !defined(__GXX_EXPERIMENTAL_CXX0X__) // before C++11 on GCC4.7 and Visual Studio 2010
 #ifndef HAVE_NULLPTR
 #define HAVE_NULLPTR    ///< A macro to avoid double definition of nullptr

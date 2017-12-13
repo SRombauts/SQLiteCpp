@@ -122,6 +122,7 @@ set(SQLITECPP_INC
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Exception.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Statement.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Transaction.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Utils.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/VariadicBind.h
 )
 source_group(inc FILES ${SQLITECPP_INC})

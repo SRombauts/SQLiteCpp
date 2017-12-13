@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Management of a SQLite Database Connection.
  *
- * Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2017 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -53,8 +53,8 @@ int getLibVersionNumber() noexcept // nothrow
 Database::Database(const char* apFilename,
                    const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
-                   const char* apVfs          /* = NULL*/) :
-    mpSQLite(NULL),
+                   const char* apVfs          /* = nullptr*/) :
+    mpSQLite(nullptr),
     mFilename(apFilename)
 {
     const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
@@ -75,10 +75,10 @@ Database::Database(const std::string& aFilename,
                    const int          aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int          aBusyTimeoutMs /* = 0 */,
                    const std::string& aVfs           /* = "" */) :
-    mpSQLite(NULL),
+    mpSQLite(nullptr),
     mFilename(aFilename)
 {
-    const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? NULL : aVfs.c_str());
+    const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? nullptr : aVfs.c_str());
     if (SQLITE_OK != ret)
     {
         const SQLite::Exception exception(mpSQLite, ret); // must create before closing
@@ -126,7 +126,7 @@ void Database::setBusyTimeout(const int aBusyTimeoutMs)
 // Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT, CREATE...).
 int Database::exec(const char* apQueries)
 {
-    const int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);
+    const int ret = sqlite3_exec(mpSQLite, apQueries, nullptr, nullptr, nullptr);
     check(ret);
 
     // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE only)
@@ -217,12 +217,12 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
 
     throw std::runtime_error("sqlite extensions are disabled");
 #else
-#ifdef SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION // Since SQLite 3.13 (2016-05-18):
+#ifdef SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION // Since SQLite 3.13 (2017-05-18):
     // Security warning:
     // It is recommended that the SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION method be used to enable only this interface.
     // The use of the sqlite3_enable_load_extension() interface should be avoided to keep the SQL load_extension()
     // disabled and prevent SQL injections from giving attackers access to extension loading capabilities.
-    int ret = sqlite3_db_config(mpSQLite, SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, 1, NULL);
+    int ret = sqlite3_db_config(mpSQLite, SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, 1, nullptr);
 #else
     int ret = sqlite3_enable_load_extension(mpSQLite, 1);
 #endif

@@ -99,18 +99,17 @@ Example for Linux:
 ```cmake
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/thirdparty/SQLiteCpp)
 
-INCLUDE_DIRECTORIES(
+include_directories(
   ${CMAKE_CURRENT_LIST_DIR}/thirdparty/SQLiteCpp/include
 )
 
-ADD_executable(main src/main.cpp)
+add_executable(main src/main.cpp)
 target_link_libraries(main
   SQLiteCpp
   sqlite3
   pthread
   dl
   )
-  
 ``` 
 Thus this SQLiteCpp repository can be directly used as a Git submoldule.
 See the [SQLiteCpp_Example](https://github.com/SRombauts/SQLiteCpp_Example) side repository for a standalone "from scratch" example.

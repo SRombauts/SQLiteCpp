@@ -12,11 +12,12 @@ cache:
 
 matrix:
   include:
-    # gcc default
+    # gcc default (4.8)
     - compiler: gcc
       env:
         - CC=gcc
         - CXX=g++
+        - CXXFLAGS="-Wall -Wextra -pedantic"
     # gcc 4.9 std=default
     - compiler: gcc
       addons:
@@ -28,6 +29,7 @@ matrix:
       env:
         - CC=gcc-4.9
         - CXX=g++-4.9
+        - CXXFLAGS="-Wall -Wextra -pedantic"
     # gcc 5 std=c++03
     - compiler: gcc
       addons:
@@ -39,7 +41,7 @@ matrix:
       env:
         - CC=gcc-5
         - CXX=g++-5
-        - CXXFLAGS="-std=c++03"
+        - CXXFLAGS="-std=c++03 -Wall -Wextra -pedantic"
     # gcc 5 std=c++11
     - compiler: gcc
       addons:
@@ -51,7 +53,31 @@ matrix:
       env:
         - CC=gcc-5
         - CXX=g++-5
-        - CXXFLAGS="-std=c++11"
+        - CXXFLAGS="-std=c++11 -Wall -Wextra -pedantic"
+    # gcc 5 default
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+      env:
+        - CC=gcc-5
+        - CXX=g++-5
+        - CXXFLAGS="-Wall -Wextra -pedantic"
+    # gcc 5 std=c++11
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+      env:
+        - CC=gcc-5
+        - CXX=g++-5
+        - CXXFLAGS="-std=c++11 -Wall -Wextra -pedantic"
     # gcc 5 std=c++14
     - compiler: gcc
       addons:
@@ -63,7 +89,7 @@ matrix:
       env:
         - CC=gcc-5
         - CXX=g++-5
-        - CXXFLAGS="-std=c++14"
+        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
     # gcc 5 std=c++1z
     - compiler: gcc
       addons:
@@ -75,31 +101,8 @@ matrix:
       env:
         - CC=gcc-5
         - CXX=g++-5
-        - CXXFLAGS="-std=c++1z"
+        - CXXFLAGS="-std=c++1z -Wall -Wextra -pedantic"
     # gcc 6 std=c++14
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-      env:
-        - CXX=g++-6
-        - CXXFLAGS="-std=c++14"
-    # gcc 6 std=c++1z
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-      env:
-        - CC=gcc-6
-        - CXX=g++-6
-        - CXXFLAGS="-std=c++1z"
-    # gcc 6 std=c++14 all warnings, pedantic
     - compiler: gcc
       addons:
         apt:
@@ -111,6 +114,42 @@ matrix:
         - CC=gcc-6
         - CXX=g++-6
         - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
+    # gcc 6 std=c++1z
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - CC=gcc-6
+        - CXX=g++-6
+        - CXXFLAGS="-std=c++1z -Wall -Wextra -pedantic"
+    # gcc 7 std=c++14
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - CC=gcc-7
+        - CXX=g++-7
+        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
+    # gcc 7 std=c++1z
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - CC=gcc-7
+        - CXX=g++-7
+        - CXXFLAGS="-std=c++1z -Wall -Wextra -pedantic"
     # clang default
     - compiler: clang
       env:

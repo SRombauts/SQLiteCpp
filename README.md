@@ -62,7 +62,7 @@ where assert() are used instead).
 Each SQLiteC++ object must be constructed with a valid SQLite database connection,
 and then is always valid until destroyed.
 
-### Supported platforms:
+### Supported platforms:
 
 Developements and tests are done under the following OSs:
 - Ubuntu 14.04 (Travis CI)
@@ -163,7 +163,7 @@ cmake --build .
 ctest --output-on-failure
 ```
 
-#### CMake options
+#### CMake options
 
   * For more options on customizing the build, see the [CMakeLists.txt](https://github.com/SRombauts/SQLiteCpp/blob/master/CMakeLists.txt) file.
 
@@ -181,7 +181,7 @@ You can either recompile it yourself (seek help online) or you can comment out t
 #define SQLITE_ENABLE_COLUMN_METADATA
 ```
 
-### Continuous Integration
+### Continuous Integration
 
 This project is continuously tested under Ubuntu Linux with the gcc and clang compilers
 using the Travis CI community service with the above CMake building and testing procedure.

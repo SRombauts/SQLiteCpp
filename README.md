@@ -95,6 +95,22 @@ The "CMakeLists.txt" file defining the static library is provided in the root di
 so you simply have to add_subdirectory(SQLiteCpp) to you main CMakeLists.txt
 and link to the "SQLiteCpp" wrapper library.
 
+Example for Linux: 
+```cmake
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/thirdparty/SQLiteCpp)
+
+include_directories(
+  ${CMAKE_CURRENT_LIST_DIR}/thirdparty/SQLiteCpp/include
+)
+
+add_executable(main src/main.cpp)
+target_link_libraries(main
+  SQLiteCpp
+  sqlite3
+  pthread
+  dl
+  )
+``` 
 Thus this SQLiteCpp repository can be directly used as a Git submoldule.
 See the [SQLiteCpp_Example](https://github.com/SRombauts/SQLiteCpp_Example) side repository for a standalone "from scratch" example.
 

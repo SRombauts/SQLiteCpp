@@ -14,6 +14,7 @@
 
 #include <string>
 #include <map>
+#include <climits> // For INT_MAX
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
@@ -123,7 +124,7 @@ public:
     {
         bind(aIndex, static_cast<int>(aValue));
     }
-#else
+#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
     /**
      * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -205,7 +206,7 @@ public:
     {
         bind(apName, static_cast<int>(aValue));
     }
-#else
+#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
     /**
      * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -293,7 +294,7 @@ public:
     {
         bind(aName.c_str(), static_cast<int>(aValue));
     }
-#else
+#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
     /**
      * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -408,7 +409,7 @@ public:
     /**
      * @brief Try to execute a step of the prepared query to fetch one row of results, returning the sqlite result code.
      *
-     *  
+     *
      *
      * @see exec() execute a one-step prepared statement with no expected result
      * @see executeStep() execute a step of the prepared query to fetch one row of results

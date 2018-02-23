@@ -14,7 +14,7 @@
 #include <SQLiteCpp/Exception.h>
 
 #include <string>
-#include <limits.h>
+#include <climits> // For INT_MAX
 
 
 namespace SQLite
@@ -76,7 +76,7 @@ public:
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
     /**
      * @brief Return a pointer to the table column name that is the origin of this result column
-     * 
+     *
      *  Require definition of the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro :
      * - when building the SQLite library itself (which is the case for the Debian libsqlite3 binary for instance),
      * - and also when compiling this wrapper.
@@ -187,7 +187,7 @@ public:
     {
         return getUInt();
     }
-#else
+#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
     /// Inline cast operator to 64bits long when the data model of the system is ILP64 (Linux 64 bits...)
     inline operator long() const
     {

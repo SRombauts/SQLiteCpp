@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <stdint.h>
 
+#include <climits> // For INT_MAX
 
 TEST(Statement, invalid) {
     // Create a new database
@@ -751,7 +752,7 @@ TEST(Statement, getColumns) {
     EXPECT_EQ("first", testStruct.msg);
     EXPECT_EQ(123, testStruct.integer);
     EXPECT_EQ(0.123, testStruct.real);
-    
+
     // Get only the first 2 columns
     auto testStruct2 = query.getColumns<GetRowTestStruct, 2>();
     EXPECT_EQ(1, testStruct2.id);
@@ -761,3 +762,16 @@ TEST(Statement, getColumns) {
 }
 #endif
 
+#if (LONG_MAX > INT_MAX) // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
+TEST(Statement, bind64bitsLong) {
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
+
+    SQLite::Statement query(db, "SELECT ?");
+    query.bind(1, 4294967297L);
+    query.executeStep();
+    EXPECT_EQ(4294967297L, query.getColumn(0).getInt64());
+}
+#endif

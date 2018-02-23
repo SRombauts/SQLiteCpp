@@ -118,3 +118,7 @@ Version 2.2.0 - Sept 19 2017
 
 Version ?
 - Add Statement binding for long int values #147
+- Allows long int for bind when used with name #148
+- More cmake instructions for linux #151
+- Add comparison with sqlite_orm #141
+- Fix Statement::bind truncates long integer to 32 bits on x86_64 Linux #155

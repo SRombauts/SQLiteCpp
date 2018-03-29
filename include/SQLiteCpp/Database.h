@@ -120,6 +120,20 @@ public:
              const int          aBusyTimeoutMs  = 0,
              const std::string& aVfs            = "");
 
+#if __cplusplus >= 201103L
+    /**
+     * @brief Move an SQLite database connection.
+     *
+     * @param[in] aDb   Database to move
+     */
+    inline Database(Database&& aDb) noexcept :
+        mpSQLite(aDb.mpSQLite),
+        mFilename(std::move(aDb.mFilename))
+    {
+        aDb.mpSQLite = nullptr;
+    }
+#endif
+
     /**
      * @brief Close the SQLite database connection.
      *

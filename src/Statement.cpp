@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
  *
- * Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2018 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -25,7 +25,7 @@ Statement::Statement(Database &aDatabase, const char* apQuery) :
     mQuery(apQuery),
     mStmtPtr(aDatabase.mpSQLite, mQuery), // prepare the SQL query, and ref count (needs Database friendship)
     mColumnCount(0),
-    mbOk(false),
+    mbHasRow(false),
     mbDone(false)
 {
     mColumnCount = sqlite3_column_count(mStmtPtr);
@@ -36,7 +36,7 @@ Statement::Statement(Database &aDatabase, const std::string& aQuery) :
     mQuery(aQuery),
     mStmtPtr(aDatabase.mpSQLite, mQuery), // prepare the SQL query, and ref count (needs Database friendship)
     mColumnCount(0),
-    mbOk(false),
+    mbHasRow(false),
     mbDone(false)
 {
     mColumnCount = sqlite3_column_count(mStmtPtr);
@@ -44,7 +44,7 @@ Statement::Statement(Database &aDatabase, const std::string& aQuery) :
 
 
 // Finalize and unregister the SQL query from the SQLite Database Connection.
-Statement::~Statement() noexcept // nothrow
+Statement::~Statement()
 {
     // the finalization will be done by the destructor of the last shared pointer
 }
@@ -52,10 +52,15 @@ Statement::~Statement() noexcept // nothrow
 // Reset the statement to make it ready for a new execution (see also #clearBindings() bellow)
 void Statement::reset()
 {
-    mbOk = false;
-    mbDone = false;
-    const int ret = sqlite3_reset(mStmtPtr);
+    const int ret = tryReset();
     check(ret);
+}
+
+int Statement::tryReset() noexcept
+{
+    mbHasRow = false;
+    mbDone = false;
+    return sqlite3_reset(mStmtPtr);
 }
 
 // Clears away all the bindings of a prepared statement (can be associated with #reset() above).
@@ -239,65 +244,64 @@ void Statement::bind(const char* apName)
 // Execute a step of the query to fetch one row of results
 bool Statement::executeStep()
 {
-    if (false == mbDone)
+    const int ret = tryExecuteStep();
+    if ((SQLITE_ROW != ret) && (SQLITE_DONE != ret)) // on row or no (more) row ready, else it's a problem
     {
-        const int ret = sqlite3_step(mStmtPtr);
-        if (SQLITE_ROW == ret) // one row is ready : call getColumn(N) to access it
-        {
-            mbOk = true;
-        }
-        else if (SQLITE_DONE == ret) // no (more) row ready : the query has finished executing
-        {
-            mbOk = false;
-            mbDone = true;
-        }
-        else
-        {
-            mbOk = false;
-            mbDone = false;
-            throw SQLite::Exception(mStmtPtr, ret);
-        }
-    }
-    else
-    {
-        throw SQLite::Exception("Statement needs to be reseted.");
+        throw SQLite::Exception(mStmtPtr, ret);
     }
 
-    return mbOk; // true only if one row is accessible by getColumn(N)
+    return mbHasRow; // true only if one row is accessible by getColumn(N)
 }
 
 // Execute a one-step query with no expected result
 int Statement::exec()
 {
-    if (false == mbDone)
+    const int ret = tryExecuteStep();
+    if (SQLITE_DONE != ret) // the statement has finished executing successfully
     {
-        const int ret = sqlite3_step(mStmtPtr);
-        if (SQLITE_DONE == ret) // the statement has finished executing successfully
+        if (SQLITE_ROW == ret)
         {
-            mbOk = false;
-            mbDone = true;
-        }
-        else if (SQLITE_ROW == ret)
-        {
-            mbOk = false;
-            mbDone = false;
             throw SQLite::Exception("exec() does not expect results. Use executeStep.");
         }
         else
         {
-            mbOk = false;
-            mbDone = false;
             throw SQLite::Exception(mStmtPtr, ret);
         }
-    }
-    else
-    {
-        throw SQLite::Exception("Statement need to be reseted.");
     }
 
     // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
     return sqlite3_changes(mStmtPtr);
 }
+
+int Statement::tryExecuteStep() noexcept
+{
+    if (false == mbDone)
+    {
+        const int ret = sqlite3_step(mStmtPtr);
+        if (SQLITE_ROW == ret) // one row is ready : call getColumn(N) to access it
+        {
+            mbHasRow = true;
+        }
+        else if (SQLITE_DONE == ret) // no (more) row ready : the query has finished executing
+        {
+            mbHasRow = false;
+            mbDone = true;
+        }
+        else
+        {
+            mbHasRow = false;
+            mbDone = false;
+        }
+
+        return ret;
+    }
+    else
+    {
+        // Statement needs to be reseted !
+        return SQLITE_MISUSE;
+    }
+}
+
 
 // Return a copy of the column data specified by its index starting at 0
 // (use the Column copy-constructor)
@@ -437,7 +441,7 @@ Statement::Ptr::Ptr(const Statement::Ptr& aPtr) :
 /**
  * @brief Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
  */
-Statement::Ptr::~Ptr() noexcept // nothrow
+Statement::Ptr::~Ptr()
 {
     assert(NULL != mpRefCount);
     assert(0 != *mpRefCount);

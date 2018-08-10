@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
  *
- * Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2018 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -14,7 +14,7 @@
 #include <SQLiteCpp/Exception.h>
 
 #include <string>
-#include <limits.h>
+#include <climits> // For INT_MAX
 
 
 namespace SQLite
@@ -54,7 +54,7 @@ public:
      */
     Column(Statement::Ptr& aStmtPtr, int aIndex)    noexcept; // nothrow
     /// Simple destructor
-    virtual ~Column()                               noexcept; // nothrow
+    ~Column();
 
     // default copy constructor and assignment operator are perfectly suited :
     // they copy the Statement::Ptr which in turn increments the reference counter.
@@ -76,7 +76,7 @@ public:
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
     /**
      * @brief Return a pointer to the table column name that is the origin of this result column
-     * 
+     *
      *  Require definition of the SQLITE_ENABLE_COLUMN_METADATA preprocessor macro :
      * - when building the SQLite library itself (which is the case for the Debian libsqlite3 binary for instance),
      * - and also when compiling this wrapper.
@@ -111,7 +111,7 @@ public:
      *
      * Note this correctly handles strings that contain null bytes.
      */
-    std::string getString() const noexcept; // nothrow
+    std::string getString() const;
 
     /**
      * @brief Return the type of the value of the column
@@ -187,7 +187,7 @@ public:
     {
         return getUInt();
     }
-#else
+#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
     /// Inline cast operator to 64bits long when the data model of the system is ILP64 (Linux 64 bits...)
     inline operator long() const
     {
@@ -260,5 +260,24 @@ private:
  */
 std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
 
+#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
+
+// Create an instance of T from the first N columns, see declaration in Statement.h for full details
+template<typename T, int N>
+T Statement::getColumns()
+{
+    checkRow();
+    checkIndex(N - 1);
+    return getColumns<T>(std::make_integer_sequence<int, N>{});
+}
+
+// Helper function called by getColums<typename T, int N>
+template<typename T, const int... Is>
+T Statement::getColumns(const std::integer_sequence<int, Is...>)
+{
+    return T{Column(mStmtPtr, Is)...};
+}
+
+#endif
 
 }  // namespace SQLite

@@ -3,7 +3,7 @@
  * @ingroup tests
  * @brief   Test of a SQLiteCpp Column.
  *
- * Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2018 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -52,7 +52,7 @@ TEST(Column, basis) {
     EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
     EXPECT_EQ(6, query.getColumnCount ());
     query.executeStep();
-    EXPECT_TRUE (query.isOk());
+    EXPECT_TRUE (query.hasRow());
     EXPECT_FALSE(query.isDone());
 
     // validates every variant of cast operators, and conversions of types
@@ -74,14 +74,14 @@ TEST(Column, basis) {
         EXPECT_EQ(1,            id2);
         EXPECT_EQ(1,            id3);
         EXPECT_EQ(1,            id4);
-        EXPECT_EQ(1,            uint1);
-        EXPECT_EQ(1,            uint2);
+        EXPECT_EQ(1U,           uint1);
+        EXPECT_EQ(1U,           uint2);
         EXPECT_STREQ("first",   ptxt);
         EXPECT_EQ("first",      msg);
         EXPECT_EQ(-123,         integer);
         EXPECT_EQ(0.123,        real);
         EXPECT_EQ(0,            memcmp("bl\0b", pblob, size));
-        EXPECT_EQ(size,         sblob.size());
+        EXPECT_EQ((size_t)size, sblob.size());
         EXPECT_EQ(0,            memcmp("bl\0b", &sblob[0], size));
         EXPECT_EQ(NULL,         pempty);
     }
@@ -99,8 +99,8 @@ TEST(Column, basis) {
         const void*         pblob   = query.getColumn(4).getBlob();
         const std::string   sblob   = query.getColumn(4).getString();
         EXPECT_EQ(1,            id);
-        EXPECT_EQ(1,            uint1);
-        EXPECT_EQ(1,            uint2);
+        EXPECT_EQ(1U,           uint1);
+        EXPECT_EQ(1U,           uint2);
         EXPECT_STREQ("first",   ptxt);
         EXPECT_EQ("first",      msg1);
         EXPECT_EQ("first",      msg2);
@@ -198,4 +198,27 @@ TEST(Column, getName) {
     EXPECT_EQ("id",     oname0);
     EXPECT_EQ("msg",    oname1);
 #endif
+}
+
+TEST(Column, stream) {
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (msg TEXT)"));
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (?)");
+
+    // content to test
+    const char str_[] = "stringwith\0embedded";
+    std::string str(str_, sizeof(str_)-1);
+
+    insert.bind(1, str);
+    // Execute the one-step query to insert the row
+    EXPECT_EQ(1, insert.exec());
+    EXPECT_EQ(1, db.getTotalChanges());
+
+    SQLite::Statement query(db, "SELECT * FROM test");
+    query.executeStep();
+    std::stringstream ss;
+    ss << query.getColumn(0);
+    std::string content = ss.str();
+    EXPECT_EQ(content, str);
 }

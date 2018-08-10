@@ -38,7 +38,7 @@ PROJECT_NAME           = SQLiteC++
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 2.0.0
+PROJECT_NUMBER         = 2.2.0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -1129,7 +1129,7 @@ HTML_COLORSTYLE_GAMMA  = 80
 # The default value is: YES.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_TIMESTAMP         = YES
+HTML_TIMESTAMP         = NO
 
 # If the HTML_DYNAMIC_SECTIONS tag is set to YES then the generated HTML
 # documentation will contain sections that can be hidden and shown after the

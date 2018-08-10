@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
  *
- * Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2018 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -33,7 +33,7 @@ Column::Column(Statement::Ptr& aStmtPtr, int aIndex) noexcept : // nothrow
 }
 
 // Finalize and unregister the SQL query from the SQLite Database Connection.
-Column::~Column() noexcept // nothrow
+Column::~Column()
 {
     // the finalization will be done by the destructor of the last shared pointer
 }
@@ -90,7 +90,7 @@ const void* Column::getBlob() const noexcept // nothrow
 }
 
 // Return a std::string to a TEXT or BLOB column
-std::string Column::getString() const noexcept // nothrow
+std::string Column::getString() const
 {
     // Note: using sqlite3_column_blob and not sqlite3_column_text
     // - no need for sqlite3_column_text to add a \0 on the end, as we're getting the bytes length directly
@@ -116,7 +116,7 @@ int Column::getBytes() const noexcept // nothrow
 // Standard std::ostream inserter
 std::ostream& operator<<(std::ostream& aStream, const Column& aColumn)
 {
-    aStream << aColumn.getText();
+    aStream.write(aColumn.getText(), aColumn.getBytes());
     return aStream;
 }
 

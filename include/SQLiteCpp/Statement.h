@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
  *
- * Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2018 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -14,6 +14,7 @@
 
 #include <string>
 #include <map>
+#include <climits> // For INT_MAX
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
@@ -73,10 +74,13 @@ public:
     Statement(Database& aDatabase, const std::string& aQuery);
 
     /// Finalize and unregister the SQL query from the SQLite Database Connection.
-    virtual ~Statement() noexcept; // nothrow
+    ~Statement();
 
-    /// Reset the statement to make it ready for a new execution.
+    /// Reset the statement to make it ready for a new execution. Throws an exception on error.
     void reset();
+
+    /// Reset the statement. Returns the sqlite result code instead of throwing an exception on error.
+    int tryReset() noexcept;
 
     /**
      * @brief Clears away all the bindings of a prepared statement.
@@ -111,6 +115,25 @@ public:
      * @brief Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const int aIndex, const unsigned      aValue);
+
+#if (LONG_MAX == INT_MAX) // sizeof(long)==4 means the data model of the system is ILP32 (32bits OS or Windows 64bits)
+    /**
+     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const int aIndex, const long          aValue)
+    {
+        bind(aIndex, static_cast<int>(aValue));
+    }
+#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
+    /**
+     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const int aIndex, const long          aValue)
+    {
+        bind(aIndex, static_cast<long long>(aValue));
+    }
+#endif
+
     /**
      * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -174,6 +197,24 @@ public:
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     void bind(const char* apName, const unsigned        aValue);
+
+#if (LONG_MAX == INT_MAX) // sizeof(long)==4 means the data model of the system is ILP32 (32bits OS or Windows 64bits)
+    /**
+     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName, const long           aValue)
+    {
+        bind(apName, static_cast<int>(aValue));
+    }
+#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
+    /**
+     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const char* apName, const long           aValue)
+    {
+        bind(apName, static_cast<long long>(aValue));
+    }
+#endif
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -244,6 +285,24 @@ public:
     {
         bind(aName.c_str(), aValue);
     }
+
+#if (LONG_MAX == INT_MAX) // sizeof(long)==4 means the data model of the system is ILP32 (32bits OS or Windows 64bits)
+    /**
+     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const std::string& aName, const long                  aValue)
+    {
+        bind(aName.c_str(), static_cast<int>(aValue));
+    }
+#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
+    /**
+     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const std::string& aName, const long                   aValue)
+    {
+        bind(aName.c_str(), static_cast<long long>(aValue));
+    }
+#endif
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -335,6 +394,7 @@ public:
      * thru the getColumn() method
      *
      * @see exec() execute a one-step prepared statement with no expected result
+     * @see tryExecuteStep() try to execute a step of the prepared query to fetch one row of results, returning the sqlite result code.
      * @see Database::exec() is a shortcut to execute one or multiple statements without results
      *
      * @return - true  (SQLITE_ROW)  if there is another row ready : you can call getColumn(N) to get it
@@ -345,6 +405,19 @@ public:
      * @throw SQLite::Exception in case of error
      */
     bool executeStep();
+
+    /**
+     * @brief Try to execute a step of the prepared query to fetch one row of results, returning the sqlite result code.
+     *
+     *
+     *
+     * @see exec() execute a one-step prepared statement with no expected result
+     * @see executeStep() execute a step of the prepared query to fetch one row of results
+     * @see Database::exec() is a shortcut to execute one or multiple statements without results
+     *
+     * @return the sqlite result code.
+     */
+    int tryExecuteStep() noexcept;
 
     /**
      * @brief Execute a one-step query with no expected result.
@@ -359,6 +432,7 @@ public:
      * - reusing it allows for better performances (efficient for multiple insertion).
      *
      * @see executeStep() execute a step of the prepared query to fetch one row of results
+     * @see tryExecuteStep() try to execute a step of the prepared query to fetch one row of results, returning the sqlite result code.
      * @see Database::exec() is a shortcut to execute one or multiple statements without results
      *
      * @return number of row modified by this SQL statement (INSERT, UPDATE or DELETE)
@@ -426,6 +500,40 @@ public:
      *  Throw an exception if the specified name is not one of the aliased name of the columns in the result.
      */
     Column  getColumn(const char* apName);
+
+#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
+     /**
+     * @brief Return an instance of T constructed from copies of the first N columns
+     *
+     *  Can be used to access the data of the current row of result when applicable,
+     * while the executeStep() method returns true.
+     *
+     *  Throw an exception if there is no row to return a Column from:
+     * - if provided column count is out of bound
+     * - before any executeStep() call
+     * - after the last executeStep() returned false
+     * - after a reset() call
+     *
+     *  Throw an exception if the specified column count is out of the [0, getColumnCount()) range.
+     *
+     * @tparam  T   Object type to construct
+     * @tparam  N   Number of columns
+     *
+     * @note Requires std=C++14
+     */
+    template<typename T, int N>
+    T       getColumns();
+
+private:
+    /**
+    * @brief Helper function used by getColumns<typename T, int N> to expand an integer_sequence used to generate
+    *        the required Column objects
+    */
+    template<typename T, const int... Is>
+    T       getColumns(const std::integer_sequence<int, Is...>);
+
+public:
+#endif
 
     /**
      * @brief Test if the column value is NULL
@@ -497,9 +605,14 @@ public:
         return mColumnCount;
     }
     /// true when a row has been fetched with executeStep()
+    inline bool hasRow() const
+    {
+        return mbHasRow;
+    }
+    /// @deprecated, use #hasRow()
     inline bool isOk() const
     {
-        return mbOk;
+        return hasRow();
     }
     /// true when the last executeStep() had no more row to fetch
     inline bool isDone() const
@@ -530,7 +643,7 @@ private:
         // Copy constructor increments the ref counter
         Ptr(const Ptr& aPtr);
         // Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
-        ~Ptr() noexcept; // nothrow (no virtual destructor needed here)
+        ~Ptr();
 
         /// Inline cast operator returning the pointer to SQLite Database Connection Handle
         inline operator sqlite3*() const
@@ -565,7 +678,7 @@ private:
     /**
      * @brief Check if a return code equals SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      *
-     * @param[in] SQLite return code to test against the SQLITE_OK expected value
+     * @param[in] aRet SQLite return code to test against the SQLITE_OK expected value
      */
     inline void check(const int aRet) const
     {
@@ -576,11 +689,11 @@ private:
     }
 
     /**
-     * @brief Check if there is a row of result returnes by executeStep(), else throw a SQLite::Exception.
+     * @brief Check if there is a row of result returned by executeStep(), else throw a SQLite::Exception.
      */
     inline void checkRow() const
     {
-        if (false == mbOk)
+        if (false == mbHasRow)
         {
             throw SQLite::Exception("No row to get a column from. executeStep() was not called, or returned false.");
         }
@@ -606,7 +719,7 @@ private:
     Ptr                     mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
     int                     mColumnCount;   //!< Number of columns in the result of the prepared statement
     mutable TColumnNames    mColumnNames;   //!< Map of columns index by name (mutable so getColumnIndex can be const)
-    bool                    mbOk;           //!< true when a row has been fetched with executeStep()
+    bool                    mbHasRow;           //!< true when a row has been fetched with executeStep()
     bool                    mbDone;         //!< true when the last executeStep() had no more row to fetch
 };
 

@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Management of a SQLite Database Connection.
  *
- * Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2018 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -11,14 +11,20 @@
 #pragma once
 
 #include <SQLiteCpp/Column.h>
+#include <SQLiteCpp/Utils.h>    // definition of nullptr for C++98/C++03 compilers
 
-#include <string>
+#include <string.h>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
 struct sqlite3_context;
+
+#ifndef SQLITE_USE_LEGACY_STRUCT // Since SQLITE 3.19 (used by default since SQLiteCpp 2.1.0)
+typedef struct sqlite3_value sqlite3_value;
+#else // Before SQLite 3.19 (legacy struct forward declaration can be activated with CMake SQLITECPP_LEGACY_STRUCT var)
 struct Mem;
 typedef struct Mem sqlite3_value;
+#endif
 
 
 namespace SQLite
@@ -90,7 +96,7 @@ public:
     Database(const char* apFilename,
              const int   aFlags         = SQLite::OPEN_READONLY,
              const int   aBusyTimeoutMs = 0,
-             const char* apVfs          = NULL);
+             const char* apVfs          = nullptr);
 
     /**
      * @brief Open the provided database UTF-8 filename.
@@ -122,7 +128,7 @@ public:
      *
      * @warning assert in case of error
      */
-    virtual ~Database() noexcept; // nothrow
+    ~Database();
 
     /**
      * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
@@ -137,7 +143,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    void setBusyTimeout(const int aBusyTimeoutMs) noexcept; // nothrow
+    void setBusyTimeout(const int aBusyTimeoutMs);
 
     /**
      * @brief Shortcut to execute one or multiple statements without results.
@@ -304,10 +310,10 @@ public:
      * @param[in] aNbArg        Number of arguments in the function
      * @param[in] abDeterministic Optimize for deterministic functions (most are). A random number generator is not.
      * @param[in] apApp         Arbitrary pointer of user data, accessible with sqlite3_user_data().
-     * @param[in] apFunc        Pointer to a C-function to implement a scalar SQL function (apStep & apFinal NULL)
-     * @param[in] apStep        Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
-     * @param[in] apFinal       Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
-     * @param[in] apDestroy     If not NULL, then it is the destructor for the application data pointer.
+     * @param[in] apFunc        Pointer to a C-function to implement a scalar SQL function (apStep & apFinal nullptr)
+     * @param[in] apStep        Pointer to a C-function to implement an aggregate SQL function (apFunc nullptr)
+     * @param[in] apFinal       Pointer to a C-function to implement an aggregate SQL function (apFunc nullptr)
+     * @param[in] apDestroy     If not nullptr, then it is the destructor for the application data pointer.
      *
      * @throw SQLite::Exception in case of error
      */
@@ -332,10 +338,10 @@ public:
      * @param[in] aNbArg        Number of arguments in the function
      * @param[in] abDeterministic Optimize for deterministic functions (most are). A random number generator is not.
      * @param[in] apApp         Arbitrary pointer of user data, accessible with sqlite3_user_data().
-     * @param[in] apFunc        Pointer to a C-function to implement a scalar SQL function (apStep & apFinal NULL)
-     * @param[in] apStep        Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
-     * @param[in] apFinal       Pointer to a C-function to implement an aggregate SQL function (apFunc NULL)
-     * @param[in] apDestroy     If not NULL, then it is the destructor for the application data pointer.
+     * @param[in] apFunc        Pointer to a C-function to implement a scalar SQL function (apStep & apFinal nullptr)
+     * @param[in] apStep        Pointer to a C-function to implement an aggregate SQL function (apFunc nullptr)
+     * @param[in] apFinal       Pointer to a C-function to implement an aggregate SQL function (apFunc nullptr)
+     * @param[in] apDestroy     If not nullptr, then it is the destructor for the application data pointer.
      *
      * @throw SQLite::Exception in case of error
      */
@@ -363,11 +369,56 @@ public:
      * @note UTF-8 text encoding assumed.
      *
      * @param[in] apExtensionName   Name of the shared library containing extension
-     * @param[in] apEntryPointName  Name of the entry point (NULL to let sqlite work it out)
+     * @param[in] apEntryPointName  Name of the entry point (nullptr to let sqlite work it out)
      *
      * @throw SQLite::Exception in case of error
      */
     void loadExtension(const char* apExtensionName, const char* apEntryPointName);
+
+    /**
+    * @brief Set the key for the current sqlite database instance.
+    *
+    *  This is the equivalent of the sqlite3_key call and should thus be called 
+    *  directly after opening the database. 
+    *  Open encrypted database -> call db.key("secret") -> database ready
+    *
+    * @param[in] aKey   Key to decode/encode the database
+    *
+    * @throw SQLite::Exception in case of error
+    */
+    void key(const std::string& aKey) const;
+
+    /**
+    * @brief Reset the key for the current sqlite database instance.
+    *
+    *  This is the equivalent of the sqlite3_rekey call and should thus be called
+    *  after the database has been opened with a valid key. To decrypt a
+    *  database, call this method with an empty string.
+    *  Open normal database -> call db.rekey("secret") -> encrypted database, database ready
+    *  Open encrypted database -> call db.key("secret") -> call db.rekey("newsecret") -> change key, database ready
+    *  Open encrypted database -> call db.key("secret") -> call db.rekey("") -> decrypted database, database ready
+    *
+    * @param[in] aNewKey   New key to encode the database
+    *
+    * @throw SQLite::Exception in case of error
+    */
+    void rekey(const std::string& aNewKey) const;
+
+    /**
+    * @brief Test if a file contains an unencrypted database.
+    *
+    *  This is a simple test that reads the first bytes of a database file and 
+    *  compares them to the standard header for unencrypted databases. If the 
+    *  header does not match the standard string, we assume that we have an 
+    *  encrypted file. 
+    *
+    * @param[in] aFilename path/uri to a file
+    *
+    * @return true if the database has the standard header.
+    *
+    * @throw SQLite::Exception in case of error
+    */
+    static bool isUnencrypted(const std::string& aFilename);
 
 private:
     /// @{ Database must be non-copyable

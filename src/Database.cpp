@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Management of a SQLite Database Connection.
  *
- * Copyright (c) 2012-2016 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2018 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -15,6 +15,8 @@
 #include <SQLiteCpp/Exception.h>
 
 #include <sqlite3.h>
+#include <fstream>
+#include <string.h>
 
 #ifndef SQLITE_DETERMINISTIC
 #define SQLITE_DETERMINISTIC 0x800
@@ -51,8 +53,8 @@ int getLibVersionNumber() noexcept // nothrow
 Database::Database(const char* apFilename,
                    const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
-                   const char* apVfs          /* = NULL*/) :
-    mpSQLite(NULL),
+                   const char* apVfs          /* = nullptr*/) :
+    mpSQLite(nullptr),
     mFilename(apFilename)
 {
     const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
@@ -62,7 +64,6 @@ Database::Database(const char* apFilename,
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw exception;
     }
-
     if (aBusyTimeoutMs > 0)
     {
         setBusyTimeout(aBusyTimeoutMs);
@@ -74,17 +75,16 @@ Database::Database(const std::string& aFilename,
                    const int          aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int          aBusyTimeoutMs /* = 0 */,
                    const std::string& aVfs           /* = "" */) :
-    mpSQLite(NULL),
+    mpSQLite(nullptr),
     mFilename(aFilename)
 {
-    const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? NULL : aVfs.c_str());
+    const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? nullptr : aVfs.c_str());
     if (SQLITE_OK != ret)
     {
         const SQLite::Exception exception(mpSQLite, ret); // must create before closing
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
         throw exception;
     }
-
     if (aBusyTimeoutMs > 0)
     {
         setBusyTimeout(aBusyTimeoutMs);
@@ -92,7 +92,7 @@ Database::Database(const std::string& aFilename,
 }
 
 // Close the SQLite database connection.
-Database::~Database() noexcept // nothrow
+Database::~Database()
 {
     const int ret = sqlite3_close(mpSQLite);
 
@@ -108,8 +108,8 @@ Database::~Database() noexcept // nothrow
  * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
  *
  *  This is useful in multithreaded program to handle case where a table is locked for writting by a thread.
- * Any other thread cannot access the table and will receive a SQLITE_BUSY error:
- * setting a timeout will wait and retry up to the time specified before returning this SQLITE_BUSY error.
+ *  Any other thread cannot access the table and will receive a SQLITE_BUSY error:
+ *  setting a timeout will wait and retry up to the time specified before returning this SQLITE_BUSY error.
  *  Reading the value of timeout for current connection can be done with SQL query "PRAGMA busy_timeout;".
  *  Default busy timeout is 0ms.
  *
@@ -117,7 +117,7 @@ Database::~Database() noexcept // nothrow
  *
  * @throw SQLite::Exception in case of error
  */
-void Database::setBusyTimeout(const int aBusyTimeoutMs) noexcept // nothrow
+void Database::setBusyTimeout(const int aBusyTimeoutMs)
 {
     const int ret = sqlite3_busy_timeout(mpSQLite, aBusyTimeoutMs);
     check(ret);
@@ -126,7 +126,7 @@ void Database::setBusyTimeout(const int aBusyTimeoutMs) noexcept // nothrow
 // Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT, CREATE...).
 int Database::exec(const char* apQueries)
 {
-    const int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);
+    const int ret = sqlite3_exec(mpSQLite, apQueries, nullptr, nullptr, nullptr);
     check(ret);
 
     // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE only)
@@ -211,6 +211,10 @@ void Database::createFunction(const char*   apFuncName,
 void Database::loadExtension(const char* apExtensionName, const char *apEntryPointName)
 {
 #ifdef SQLITE_OMIT_LOAD_EXTENSION
+    // Unused
+    (void)apExtensionName;
+    (void)apEntryPointName;
+
     throw std::runtime_error("sqlite extensions are disabled");
 #else
 #ifdef SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION // Since SQLite 3.13 (2016-05-18):
@@ -218,7 +222,8 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
     // It is recommended that the SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION method be used to enable only this interface.
     // The use of the sqlite3_enable_load_extension() interface should be avoided to keep the SQL load_extension()
     // disabled and prevent SQL injections from giving attackers access to extension loading capabilities.
-    int ret = sqlite3_db_config(mpSQLite, SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, 1, NULL);
+    // (NOTE: not using nullptr: cannot pass object of non-POD type 'std::__1::nullptr_t' through variadic function)
+    int ret = sqlite3_db_config(mpSQLite, SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, 1, NULL); // NOTE: not using nullptr
 #else
     int ret = sqlite3_enable_load_extension(mpSQLite, 1);
 #endif
@@ -227,6 +232,62 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
     ret = sqlite3_load_extension(mpSQLite, apExtensionName, apEntryPointName, 0);
     check(ret);
 #endif
+}
+
+// Set the key for the current sqlite database instance.
+void Database::key(const std::string& aKey) const
+{
+    int pass_len = static_cast<int>(aKey.length());
+#ifdef SQLITE_HAS_CODEC
+    if (pass_len > 0) {
+        const int ret = sqlite3_key(mpSQLite, aKey.c_str(), pass_len);
+        check(ret);
+    }
+#else // SQLITE_HAS_CODEC
+    if (pass_len > 0) {
+        const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
+        throw exception;
+    }
+#endif // SQLITE_HAS_CODEC
+}
+
+// Reset the key for the current sqlite database instance.
+void Database::rekey(const std::string& aNewKey) const
+{
+#ifdef SQLITE_HAS_CODEC
+    int pass_len = aNewKey.length();
+    if (pass_len > 0) {
+        const int ret = sqlite3_rekey(mpSQLite, aNewKey.c_str(), pass_len);
+        check(ret);
+    } else {
+        const int ret = sqlite3_rekey(mpSQLite, nullptr, 0);
+        check(ret);
+    }
+#else // SQLITE_HAS_CODEC
+    static_cast<void>(aNewKey); // silence unused parameter warning
+    const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
+    throw exception;
+#endif // SQLITE_HAS_CODEC
+}
+
+// Test if a file contains an unencrypted database.
+bool Database::isUnencrypted(const std::string& aFilename)
+{
+    if (aFilename.length() > 0) {
+        std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
+        char header[16];
+        if (fileBuffer.is_open()) {
+            fileBuffer.seekg(0, std::ios::beg);
+            fileBuffer.getline(header, 16);
+            fileBuffer.close();
+        } else {
+            const SQLite::Exception exception("Error opening file: " + aFilename);
+            throw exception;
+        }
+        return strncmp(header, "SQLite format 3\000", 16) == 0;
+    }
+    const SQLite::Exception exception("Could not open database, the aFilename parameter was empty.");
+    throw exception;
 }
 
 }  // namespace SQLite

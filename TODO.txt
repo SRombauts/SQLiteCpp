@@ -1,4 +1,4 @@
-Switch to C++11 for v2.0.0 with removal of include <sqlite.h> in headers
+Switch to C++11 for v3.0.0
 
 Add a Tutorial for SQLite newbies
 Add a real example in the form of a small interactive console application
@@ -20,7 +20,7 @@ Missing unit tests in v2.0.0:
 Advanced missing features:
 - #39: SAVEPOINT https://www.sqlite.org/lang_savepoint.html
 
-- Add optional usage of experimental sqlite3_trace() function to enable statistics 
+- Add optional usage of experimental sqlite3_trace() function to enable statistics
 - Agregate ?
 
 - support for different transaction mode ? NO: too specific

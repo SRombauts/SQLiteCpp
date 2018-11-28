@@ -5,22 +5,45 @@ version: "{build}"
 
 # scripts that run after cloning repository
 install:
- - git submodule update --init googletest
-
+  - git submodule update --init --recursive
+ 
+image:
+  - Visual Studio 2017
+  - Visual Studio 2015
+  - Visual Studio 2013
+  
 # configurations to add to build matrix
 # TODO: VS2010->VS2015 and Win32/Win64 (see https://github.com/google/googletest/blob/master/appveyor.yml)
 # TODO: MinGW Makefiles and MSYS Makefiles
 configuration:
   - Debug
-# - Release # CMake can only build the default configuration on Visual Studio
+  - Release
+
+environment:
+  matrix:
+  - arch: Win32
+  - arch: Win64
+
+matrix:
+  allow_failures:
+    - image: Visual Studio 2013
+  
+init:
+  - echo %APPVEYOR_BUILD_WORKER_IMAGE% - %configuration% - %arch%
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" (set vs=Visual Studio 15 2017)
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (set vs=Visual Studio 14 2015)
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" (set vs=Visual Studio 12 2013)
+  - if "%arch%"=="Win64" (set generator="%vs% Win64")
+  - if "%arch%"=="Win32" (set generator="%vs%")
+  - echo %generator%
  
 # scripts to run before build
 before_build:
   - mkdir build
   - cd build
-  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF ..
+  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF .. -G %generator%
 
 # build examples, and run tests (ie make & make test)
 build_script:
-  - cmake --build .
+  - cmake --build . --config %configuration%
   - ctest --output-on-failure

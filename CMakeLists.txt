@@ -209,6 +209,7 @@ option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project
 if (SQLITECPP_INTERNAL_SQLITE)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
+    target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/sqlite3")
     target_include_directories(SQLiteCpp PRIVATE "${PROJECT_SOURCE_DIR}/sqlite3")
 endif (SQLITECPP_INTERNAL_SQLITE)
 

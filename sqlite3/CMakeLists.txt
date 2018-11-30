@@ -6,7 +6,6 @@
 # or copy at http://opensource.org/licenses/MIT) 
 
 # add sources of the "sqlite3" static library
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_library(sqlite3
  sqlite3.c
  sqlite3.h

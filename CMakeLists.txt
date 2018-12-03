@@ -5,6 +5,7 @@
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
 cmake_minimum_required(VERSION 2.8.12) # first version with add_compile_options()
+cmake_policy(SET CMP0048 OLD)
 project(SQLiteCpp)
 
 message (STATUS "CMake version: ${CMAKE_VERSION}")
@@ -31,9 +32,9 @@ if (MSVC)
         set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
     endif (SQLITECPP_BUILD_TESTS)
     # Handle the (partly supported) MSVC versions prior to 2015
-    if (MSVC_TOOLSET_VERSION LESS 140)
-      message(WARNING " MSVC < 2015 detected: Visual Studio prior to 2015 is not fully supported. BLOB storage seems to be corrupted.")
-    endif (MSVC_TOOLSET_VERSION LESS 140)
+    if (MSVC_VERSION LESS 1900) # OR MSVC_TOOLSET_VERSION LESS 140)
+      message(WARNING "MSVC < 2015 detected: Visual Studio prior to 2015 is not fully supported. BLOB storage seems to be corrupted.")
+    endif (MSVC_VERSION LESS 1900)
 else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
@@ -208,10 +209,9 @@ option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project
 if (SQLITECPP_INTERNAL_SQLITE)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
-    include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
     target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/sqlite3")
+    target_include_directories(SQLiteCpp PRIVATE "${PROJECT_SOURCE_DIR}/sqlite3")
 endif (SQLITECPP_INTERNAL_SQLITE)
-
 
 # Optional additional targets:
 
@@ -295,13 +295,12 @@ if (SQLITECPP_BUILD_TESTS)
     add_subdirectory(googletest)
     include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
 
-    # Add definitions to keep googletest from making the compilation fail
-    if (MSVC_TOOLSET_VERSION EQUAL 141)
+    if (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919) # OR MSVC_TOOLSET_VERSION EQUAL 141)
       target_compile_definitions(gtest PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
       target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
       target_compile_definitions(gmock PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
       target_compile_definitions(gmock_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-    endif (MSVC_TOOLSET_VERSION EQUAL 141)
+    endif (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919)
 
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})

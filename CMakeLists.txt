@@ -295,6 +295,7 @@ if (SQLITECPP_BUILD_TESTS)
     add_subdirectory(googletest)
     include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
 
+    # Add definitions to keep googletest from making the compilation fail
     if (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919) # OR MSVC_TOOLSET_VERSION EQUAL 141)
       target_compile_definitions(gtest PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
       target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)

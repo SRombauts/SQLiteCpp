@@ -280,7 +280,7 @@ else (SQLITECPP_BUILD_EXAMPLES)
     message(STATUS "SQLITECPP_BUILD_EXAMPLES OFF")
 endif (SQLITECPP_BUILD_EXAMPLES)
 
-option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
+option(SQLITECPP_BUILD_TESTS "Build and run tests." ON)
 if (SQLITECPP_BUILD_TESTS)
     # deactivate some warnings for compiling the gtest library
     if (NOT MSVC)

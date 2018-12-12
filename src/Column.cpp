@@ -101,6 +101,32 @@ std::string Column::getString() const
     return std::string(data, sqlite3_column_bytes(mStmtPtr, mIndex));
 }
 
+fc::variant Column::getVariant() const
+{
+    fc::variant ret;
+
+    const int columnType = getType();
+    switch(columnType) {
+        case SQLite::INTEGER:
+            ret = getInt();
+            break;
+        case SQLite::FLOAT:
+            ret = getDouble();
+            break;
+        case SQLite::TEXT:
+            ret = getString();
+            break;
+        case SQLite::Null:
+           ret = nullptr;
+           break;
+        case SQLite::BLOB:
+        default:
+           throw SQLite::Exception("Invalid SQLite Column type: " + std::to_string(columnType) + " to create fc::variant");
+    }
+
+    return ret;
+}
+
 // Return the type of the value of the column
 int Column::getType() const noexcept // nothrow
 {

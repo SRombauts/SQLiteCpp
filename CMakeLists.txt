@@ -180,21 +180,30 @@ add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLIT
 # PR https://github.com/SRombauts/SQLiteCpp/pull/111 "linked SQLiteCpp to sqlite3" commented out since it breacks install step from PR #118
 #target_link_libraries(SQLiteCpp PUBLIC sqlite3)
 
+
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
 endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
 
-# Allow the library to be installed via "make install" and found with "find_package"
-install(TARGETS SQLiteCpp
-    EXPORT ${PROJECT_NAME}Config
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    COMPONENT libraries)
+
+target_link_libraries(SQLiteCpp PUBLIC sqlite3 fc)
 target_include_directories(SQLiteCpp PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/>)
-install(DIRECTORY include/ DESTINATION include COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
-install(EXPORT ${PROJECT_NAME}Config DESTINATION lib/cmake/${PROJECT_NAME})
+#*******commented out so target_link_libraries(SQLiteCpp PUBLIC sqlite3 fc) is working *******#
+## Allow the library to be installed via "make install" and found with "find_package"
+#install(TARGETS SQLiteCpp
+#    EXPORT ${PROJECT_NAME}Config
+#    LIBRARY DESTINATION lib
+#    ARCHIVE DESTINATION lib
+#    COMPONENT libraries)
+#target_include_directories(SQLiteCpp PUBLIC
+#  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#  $<INSTALL_INTERFACE:include/>)
+#install(DIRECTORY include/ DESTINATION include COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
+#install(EXPORT ${PROJECT_NAME}Config DESTINATION lib/cmake/${PROJECT_NAME})
+#*******commented out so target_link_libraries(SQLiteCpp PUBLIC sqlite3 fc) is working *******#
+
 
 ## Build provided copy of SQLite3 C library ##
 

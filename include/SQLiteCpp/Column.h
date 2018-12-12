@@ -16,6 +16,7 @@
 #include <string>
 #include <climits> // For INT_MAX
 
+#include <fc/variant_object.hpp>
 
 namespace SQLite
 {
@@ -112,6 +113,12 @@ public:
      * Note this correctly handles strings that contain null bytes.
      */
     std::string getString() const;
+    /**
+     * @brief Return a fc::variant for a TEXT, INT, FLOAT, or NULL type.
+     *
+     * @throws SQLite::Exception for BLOB and unknown column type
+     */
+    fc::variant getVariant() const;
 
     /**
      * @brief Return the type of the value of the column
@@ -222,6 +229,15 @@ public:
     inline operator const void*() const
     {
         return getBlob();
+    }
+    /**
+     * @brief Inline cast operator to fc::variant
+     *
+     * @see getBlob
+     */
+    inline operator fc::variant() const
+    {
+        return getVariant();
     }
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1900)

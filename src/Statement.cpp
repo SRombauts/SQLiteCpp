@@ -53,7 +53,10 @@ Statement::~Statement()
 void Statement::reset()
 {
     const int ret = tryReset();
-    check(ret);
+    // Do not check ret value. sqlite3_reset return error if the most recent call to sqlite3_step returned error.
+    // If sqlite3_step returns error, it should be handled right away. We might want to call reset and start again with new
+    // data but it was not possible because reset always throws exception in case previous call to sqlite3_step returned error
+    //check(ret);
 }
 
 int Statement::tryReset() noexcept
@@ -149,6 +152,36 @@ void Statement::bind(const int aIndex)
     check(ret);
 }
 
+// Bind fc::variant value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+void Statement::bind(const int aIndex, const fc::variant& aValue) {
+    fc::variant::type_id variant_type = aValue.get_type();
+    switch(variant_type) {
+        case fc::variant::type_id::null_type:
+            bind(aIndex);
+          return;
+        case fc::variant::type_id::int64_type:
+            bind(aIndex, aValue.as_int64());
+          return;
+        case fc::variant::type_id::uint64_type:
+            // largest supported integer type is long long
+            bind(aIndex, static_cast<long long>(aValue.as_uint64()));
+          return;
+        case fc::variant::type_id::double_type:
+            bind(aIndex, aValue.as_double());
+          return;
+        case fc::variant::type_id::bool_type:
+            bind(aIndex, aValue.as_bool());
+          return;
+        case fc::variant::type_id::string_type:
+            bind(aIndex, aValue.as_string());
+          return;
+        case fc::variant::type_id::array_type:
+        case fc::variant::type_id::object_type:
+        default:
+            throw SQLite::Exception("Invalid fc::variant::type_id: " + std::to_string(variant_type) + ". Unable to bind it to the SQL query.");
+    }
+}
+
 
 // Bind an int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const char* apName, const int aValue)
@@ -199,6 +232,12 @@ void Statement::bind(const char* apName, const char* apValue)
     check(ret);
 }
 
+// Bind fc::variant value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+void Statement::bind(const char* apName, const fc::variant& aValue) {
+    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
+    bind(index, aValue);
+}
+
 // Bind a binary blob value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const char* apName, const void* apValue, const int aSize)
 {
@@ -240,6 +279,30 @@ void Statement::bind(const char* apName)
     check(ret);
 }
 
+void Statement::bind(const fc::mutable_variant_object& aValue) {
+    int lastParamIdx = sqlite3_bind_parameter_count(mStmtPtr);  // returns the index of the largest (rightmost) parameter.
+    int firstParamIdx = 1;                                      // The first host parameter has an index of 1, not 0.
+
+    for (int paramIdx = firstParamIdx; paramIdx <= lastParamIdx; paramIdx++) {
+        // Check if statement bind parameter is named
+        const char* paramName = sqlite3_bind_parameter_name(mStmtPtr, paramIdx);
+        if (paramName == NULL) {
+            throw SQLite::Exception("Invalid bind parameter name format in prepared statement. To bind fc::mutable_variant_object members, format \"?\" and \"?NNN\" cannot be used!");
+        }
+
+        // Remove first character from paramName, which might be ":" or "$" or "@" or "?"
+        std::string newParamName(paramName);
+        newParamName.erase(newParamName.begin());
+
+        // Check if provided mutable_variant_object has key == newParamName
+        fc::variant_object::iterator foundMember = aValue.find(newParamName);
+        if (foundMember == aValue.end()) {
+            throw SQLite::Exception("Invalid bind parameter name in prepared statement. There is no fc::mutable_variant_object member with key: \"" + std::string(newParamName) + "\"");
+        }
+
+        bind(paramIdx, foundMember->value());
+    }
+}
 
 // Execute a step of the query to fetch one row of results
 bool Statement::executeStep()
@@ -460,6 +523,18 @@ Statement::Ptr::~Ptr()
         mpStmt = NULL;
     }
     // else, the finalization will be done later, by the last object
+}
+
+fc::mutable_variant_object Statement::getRow() {
+   checkRow();
+
+   fc::mutable_variant_object ret;
+   for (int colIdx = 0; colIdx < getColumnCount(); colIdx++) {
+       Column actCol = getColumn(colIdx);
+       ret.set(actCol.getName(), actCol.getVariant());
+   }
+
+   return ret;
 }
 
 

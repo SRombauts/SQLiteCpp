@@ -16,6 +16,8 @@
 #include <map>
 #include <climits> // For INT_MAX
 
+#include <fc/variant_object.hpp>
+
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
 struct sqlite3_stmt;
@@ -188,6 +190,10 @@ public:
      * @see clearBindings() to set all bound parameters to NULL.
      */
     void bind(const int aIndex);
+    /**
+     * @brief Bind fc::variant value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    void bind(const int aIndex, const fc::variant& aValue);
 
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
@@ -236,6 +242,12 @@ public:
      */
     void bind(const char* apName, const char*           apValue);
     /**
+     * @brief Bind fc::variant value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const char* apName, const fc::variant&    aValue);
+    /**
      * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
@@ -269,7 +281,15 @@ public:
      * @see clearBindings() to set all bound parameters to NULL.
      */
     void bind(const char* apName); // bind NULL value
-
+    /**
+     * @brief Bind fc::variant members to a named parameters "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1).
+     *        Function lists all named parameters from sql statement and binds to them fc::variant members with the same name/key
+     *
+     * @warning !!! Do not use with prepared statement, which uses bind parameters in format "?" or "?NNN". It works only with formats: ":VVV", "@VVV" or "$VVV"
+     *
+     * @throws SQLite::Exception in case statement contains unnamed parameters "?" or "aValue" has no member with the same key as named parameter from statement
+     */
+     void bind(const fc::mutable_variant_object& aValue);
 
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
@@ -282,6 +302,13 @@ public:
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     inline void bind(const std::string& aName, const unsigned       aValue)
+    {
+        bind(aName.c_str(), aValue);
+    }
+    /**
+     * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     */
+    inline void bind(const std::string& aName, const fc::variant&    aValue)
     {
         bind(aName.c_str(), aValue);
     }
@@ -501,7 +528,15 @@ public:
      */
     Column  getColumn(const char* apName);
 
+    /**
+     * @brief Return an instance of fc::mutable_variant_object constructed from copies of all the columns
+     *
+     * @return fc::mutable_variant_object
+     */
+    fc::mutable_variant_object getRow();
+
 #if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
+
      /**
      * @brief Return an instance of T constructed from copies of the first N columns
      *

@@ -27,7 +27,7 @@ namespace detail {
 template<class F, class ...Args, std::size_t ... I>
 inline void invoke_with_index(F&& f, std::integer_sequence<std::size_t, I...>, const Args& ...args)
 {
-    std::initializer_list<int> { (f(I+1, args), 0)... };
+    std::initializer_list<int>({ (f(I+1, args), 0)... });
 }
 
 /// implementation detail for variadic bind.

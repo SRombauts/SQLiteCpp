@@ -5,6 +5,7 @@
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
 cmake_minimum_required(VERSION 3.1) # for "CMAKE_CXX_STANDARD" version
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # custom CMake modules like FindSQLiteCpp
 project(SQLiteCpp VERSION "2.99")
 
 # SQLiteC++ 3.x now requires C++11 compiler
@@ -154,6 +155,8 @@ set(SQLITECPP_SCRIPT
  cpplint.py
  Doxyfile
  cmake/FindSQLiteCpp.cmake
+ cmake/FindSQLite3.cmake
+ cmake/SQLiteCppConfig.cmake.in
 )
 source_group(scripts FILES ${SQLITECPP_SCRIPT})
 
@@ -246,6 +249,7 @@ install(FILES
 
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
 if (SQLITECPP_INTERNAL_SQLITE)
+    message(STATUS "Compile sqlite3 from source in subdirectory")
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
     target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/sqlite3")
@@ -253,8 +257,9 @@ if (SQLITECPP_INTERNAL_SQLITE)
 else (SQLITECPP_INTERNAL_SQLITE)
     find_package (SQLite3 REQUIRED)
     if (SQLITE3_FOUND)
+        message(STATUS "Link to sqlite3 system library")
         include_directories(${SQLITE3_INCLUDE_DIRS})
-        target_link_libraries (SQLiteCpp ${SQLITE3_LIBRARIES})
+        target_link_libraries(SQLiteCpp ${SQLITE3_LIBRARIES})
     endif (SQLITE3_FOUND)
 endif (SQLITECPP_INTERNAL_SQLITE)
 
@@ -336,7 +341,7 @@ if (SQLITECPP_BUILD_TESTS)
     else (GTEST_FOUND)
         # deactivate some warnings for compiling the googletest library
         if (NOT MSVC)
-            add_compile_options(-Wno-variadic-macros -Wno-long-long -Wno-switch-enum -Wno-float-equal -Wno-conversion-null -Wno-switch-default -Wno-pedantic)
+            add_compile_options(-Wno-switch-enum)
         endif (NOT MSVC)
 
         # add the subdirectory containing the CMakeLists.txt for the googletest library

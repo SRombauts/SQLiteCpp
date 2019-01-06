@@ -9,6 +9,13 @@ os: linux
 cache:
   apt: true
 
+env:
+  global:
+    - BUILD_TYPE=Debug
+    - ASAN=ON
+    - INTERNAL_SQLITE=ON
+    - VALGRIND=OFF
+
 matrix:
   include:
 
@@ -31,15 +38,14 @@ matrix:
     - dist: bionic
       env:
         - cc=gcc cxx=g++
-        - BUILD_TYPE=Debug
-        - ASAN=ON GCOV=ON
+        - GCOV=ON
         - COVERALLS=true
 
     # GCC Debug build with Valgrind instead of Address Sanitizer
     - dist: bionic
       env:
         - cc=gcc cxx=g++
-        - BUILD_TYPE=Debug
+        - ASAN=OFF
         - VALGRIND=true
 
     # GCC Release build
@@ -48,17 +54,19 @@ matrix:
         - cc=gcc cxx=g++
         - BUILD_TYPE=Release
 
+    # GCC test linking with libsqlite3-dev package
+    - dist: bionic
+      env:
+        - cc=gcc cxx=g++
+        - INTERNAL_SQLITE=OFF
+
     - dist: xenial
       env:
         - cc=gcc cxx=g++
-        - BUILD_TYPE=Debug
-        - ASAN=ON
 
     - dist: trusty
       env:
         - cc=gcc cxx=g++
-        - BUILD_TYPE=Debug
-        - ASAN=ON
 
     ##########################################################################
     # Clang on Linux
@@ -67,20 +75,14 @@ matrix:
     - dist: bionic
       env:
         - cc=clang cxx=clang++
-        - BUILD_TYPE=Debug
-        - ASAN=ON
 
     - dist: xenial
       env:
         - cc=clang cxx=clang++
-        - BUILD_TYPE=Debug
-        - ASAN=ON
 
     - dist: trusty
       env:
         - cc=clang cxx=clang++
-        - BUILD_TYPE=Debug
-        - ASAN=ON
 
     ##########################################################################
     # Clang on OSX
@@ -90,23 +92,20 @@ matrix:
     - os: osx
       env:
         - cc=clang cxx=clang++
-        - BUILD_TYPE=Debug
-        - ASAN=ON
 
     # XCode 8.3
     - os: osx
       osx_image: xcode8.3
       env:
         - cc=clang cxx=clang++
-        - BUILD_TYPE=Debug
-        - ASAN=ON
 
 before_install:
   # Coverity: don't use addons.coverity_scan since it run on every job of the build matrix, which waste resources and exhausts quotas
   # Note: the job dedicated to Coverity need to only run the shell script and then exit (to not try to build and run unit tests etc.)
   - if [[ -n "$COVERITY_SCAN_PROJECT_NAME" ]] ; then curl -s https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh | bash ; exit 0 ; fi
 
-  - if [[ "$VALGRIND" == "true" ]]; then sudo apt-get install -qq valgrind ; fi
+  - if [[ "$INTERNAL_SQLITE" == "OFF" ]]; then sudo apt-get install libsqlite3-dev ; fi
+  - if [[ "$VALGRIND" == "true" ]]; then sudo apt-get install valgrind ; fi
   - if [[ "$COVERALLS" == "true" ]]; then pip install --user cpp-coveralls ; fi
 
     # Set the compiler environment variables properly
@@ -117,7 +116,7 @@ before_install:
 before_script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSQLITECPP_USE_ASAN=$ASAN -DSQLITECPP_USE_GCOV=$GCOV -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
+  - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSQLITECPP_INTERNAL_SQLITE=$INTERNAL_SQLITE -DSQLITECPP_USE_ASAN=$ASAN -DSQLITECPP_USE_GCOV=$GCOV -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
 
 # build examples, and run tests (ie make & make test)
 script:

@@ -290,7 +290,7 @@ if (SQLITECPP_BUILD_TESTS)
     # add the subdirectory containing the CMakeLists.txt for the gtest library
     # TODO: under Linux, uses libgtest-dev if found
     if (NOT EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
-        message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git init submodule' and 'git update submodule' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
+        message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git submodule init' and 'git submodule update' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
     endif ()
     add_subdirectory(googletest)
     include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")

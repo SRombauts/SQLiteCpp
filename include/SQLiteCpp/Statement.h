@@ -53,6 +53,7 @@ class Statement
     friend class Column; // For access to Statement::Ptr inner class
 
 public:
+    Ptr mStmtPtr; //!< Shared Pointer to the prepared SQLite Statement Object
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
      *
@@ -716,7 +717,6 @@ private:
 
 private:
     std::string             mQuery;         //!< UTF-8 SQL Query
-    Ptr                     mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
     int                     mColumnCount;   //!< Number of columns in the result of the prepared statement
     mutable TColumnNames    mColumnNames;   //!< Map of columns index by name (mutable so getColumnIndex can be const)
     bool                    mbHasRow;           //!< true when a row has been fetched with executeStep()

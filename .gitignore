@@ -18,7 +18,6 @@ core
 
 CMakeCache.txt
 CMakeFiles
-*.cmake
 *.dir
 Testing
 Win32

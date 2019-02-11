@@ -4,17 +4,13 @@
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
-cmake_minimum_required(VERSION 2.8.12) # first version with add_compile_options()
-if (CMAKE_VERSION VERSION_LESS 3.0)
-    project(SQLiteCpp)
-    set(PROJECT_VERSION_MAJOR 2)
-    set(PROJECT_VERSION_MINOR 4)
-    set(PROJECT_VERSION_PATCH 0)
-    set(PROJECT_VERSION "2.4.0")
-else()
-    cmake_policy(SET CMP0048 NEW)
-    project(SQLiteCpp VERSION "2.4.0")
-endif()
+cmake_minimum_required(VERSION 3.14)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+include(FetchContent)
+include(DownloadSQLite)
+
+cmake_policy(SET CMP0048 NEW)
+project(SQLiteCpp VERSION "2.4.0")
 
 message (STATUS "CMake version: ${CMAKE_VERSION}")
 
@@ -182,11 +178,23 @@ source_group(scripts FILES ${SQLITECPP_SCRIPT})
 # All includes are relative to the "include" directory
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
+option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
+if (SQLITECPP_INTERNAL_SQLITE)
+    # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
+    downloadSQLiteIfNeeded(sqlite3)
+    add_library(sqlite3 "${sqlite3_AMALGAMATION_SOURCE_DIR}/sqlite3.c")
+    target_include_directories(sqlite3 PRIVATE "${sqlite3_AMALGAMATION_SOURCE_DIR}")
+    harden(sqlite3)
+endif (SQLITECPP_INTERNAL_SQLITE)
+
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
 # make the sqlite3 library part of the interface of the SQLiteCpp wrapper itself (the client app does not need to link to sqlite3)
 # PR https://github.com/SRombauts/SQLiteCpp/pull/111 "linked SQLiteCpp to sqlite3" commented out since it breaks install step from PR #118
-#target_link_libraries(SQLiteCpp PUBLIC sqlite3)
+target_include_directories(SQLiteCpp PRIVATE
+    ${sqlite3_AMALGAMATION_SOURCE_DIR}
+)
+target_link_libraries(SQLiteCpp PUBLIC sqlite3)
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
@@ -194,7 +202,7 @@ endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "
 
 # Allow the library to be installed via "make install" and found with "find_package"
 include(GNUInstallDirs)
-install(TARGETS SQLiteCpp
+install(TARGETS SQLiteCpp sqlite3
     EXPORT ${PROJECT_NAME}Config
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -224,14 +232,6 @@ if (SQLITECPP_USE_ASAN)
         endif ()
     endif ()
 endif (SQLITECPP_USE_ASAN)
-
-option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
-if (SQLITECPP_INTERNAL_SQLITE)
-    # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
-    add_subdirectory(sqlite3)
-    target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/sqlite3")
-    target_include_directories(SQLiteCpp PRIVATE "${PROJECT_SOURCE_DIR}/sqlite3")
-endif (SQLITECPP_INTERNAL_SQLITE)
 
 # Optional additional targets:
 

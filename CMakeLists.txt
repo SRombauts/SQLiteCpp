@@ -6,6 +6,7 @@
 # or copy at http://opensource.org/licenses/MIT)
 cmake_minimum_required(VERSION 3.1) # for "CMAKE_CXX_STANDARD" version
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # custom CMake modules like FindSQLiteCpp
+include(GNUInstallDirs)
 project(SQLiteCpp VERSION 3.1.1)
 
 # SQLiteC++ 3.x requires C++11 features
@@ -178,8 +179,66 @@ if (SQLITECPP_INCLUDE_SCRIPT)
     source_group(scripts FILES ${SQLITECPP_SCRIPT})
 endif()
 
+# All includes are relative to the "include" directory
+include_directories("${PROJECT_SOURCE_DIR}/include")
+
+option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
+option(SQLITECPP_DOWNLOAD_SQLITE "Automatically download SQLite sources from sqlite.org" ON)
+if (SQLITECPP_INTERNAL_SQLITE)
+    # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
+    if(SQLITECPP_DOWNLOAD_SQLITE)
+        include(FetchContent)
+        include(DownloadSQLite)
+        downloadSQLiteIfNeeded(sqlite3)
+    else()
+        set(sqlite3_AMALGAMATION_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/sqlite3")
+    endif()
+    add_library(sqlite3 "${sqlite3_AMALGAMATION_SOURCE_DIR}/sqlite3.c")
+    if (SQLITE_ENABLE_COLUMN_METADATA)
+        # Enable the use of SQLite column metadata method
+        # Require that the sqlite3 library is also compiled with this flag:
+        target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_COLUMN_METADATA)
+    endif (SQLITE_ENABLE_COLUMN_METADATA)
+
+    if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
+        set_target_properties(sqlite3 PROPERTIES COMPILE_FLAGS "-fPIC")
+    endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
+
+    if (UNIX AND CMAKE_COMPILER_IS_GNUCXX)
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.0)
+            target_compile_options(sqlite3 PRIVATE "-Wimplicit-fallthrough=0")
+        endif()
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 8.0)
+            target_compile_options(sqlite3 PRIVATE "-Wno-cast-function-type")
+        endif()
+    endif()
+    target_link_libraries(sqlite3 dl)
+    target_include_directories(sqlite3 PRIVATE "${sqlite3_AMALGAMATION_SOURCE_DIR}")
+    target_include_directories(sqlite3
+      PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+      PUBLIC $<INSTALL_INTERFACE:include/>
+    )
+
+    install(TARGETS sqlite3
+        #EXPORT ${PROJECT_NAME}Targets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        COMPONENT libsqlite3
+    )
+    install(FILES "${sqlite3_AMALGAMATION_SOURCE_DIR}/sqlite3.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT libsqlite3_dev)
+endif (SQLITECPP_INTERNAL_SQLITE)
+
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
+# make the sqlite3 library part of the interface of the SQLiteCpp wrapper itself (the client app does not need to link to sqlite3)
+# PR https://github.com/SRombauts/SQLiteCpp/pull/111 "linked SQLiteCpp to sqlite3" commented out since it breaks install step from PR #118
+target_include_directories(SQLiteCpp
+  PRIVATE
+    $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${sqlite3_AMALGAMATION_SOURCE_DIR}>
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include/>)
+target_link_libraries(SQLiteCpp PUBLIC sqlite3)
 
 # Options relative to SQLite and SQLiteC++ functions
 
@@ -230,83 +289,10 @@ if (SQLITECPP_USE_GCOV)
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fkeep-inline-functions -fkeep-static-functions")
 endif ()
 
-## Build provided copy of SQLite3 C library ##
-
-option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
-if (SQLITECPP_INTERNAL_SQLITE)
-    message(STATUS "Compile sqlite3 from source in subdirectory")
-    option(SQLITE_ENABLE_JSON1 "Enable JSON1 extension when building internal sqlite3 library." ON)
-    # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
-    add_subdirectory(sqlite3)
-    target_link_libraries(SQLiteCpp PUBLIC sqlite3)
-else (SQLITECPP_INTERNAL_SQLITE)
-    find_package (SQLite3 REQUIRED)
-    message(STATUS "Link to sqlite3 system library")
-    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
-    if(SQLite3_VERSION VERSION_LESS "3.19")
-        set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
-    endif()
-
-    # When using the SQLite codec, we need to link against the sqlcipher lib & include <sqlcipher/sqlite3.h>
-    # So this gets the lib & header, and links/includes everything
-    if(SQLITE_HAS_CODEC)
-        # Make PkgConfig optional since Windows doesn't usually have it installed.
-        find_package(PkgConfig QUIET)
-        if(PKG_CONFIG_FOUND)
-            # IMPORTED_TARGET was added in 3.6.3
-            if(CMAKE_VERSION VERSION_LESS 3.6.3)
-                pkg_check_modules(sqlcipher REQUIRED sqlcipher)
-                # Only used in Database.cpp so PRIVATE to hide from end-user
-                # Since we can't use IMPORTED_TARGET on this older Cmake version, manually link libs & includes
-                target_link_libraries(SQLiteCpp PRIVATE ${sqlcipher_LIBRARIES})
-                target_include_directories(SQLiteCpp PRIVATE ${sqlcipher_INCLUDE_DIRS})
-            else()
-                pkg_check_modules(sqlcipher REQUIRED IMPORTED_TARGET sqlcipher)
-                # Only used in Database.cpp so PRIVATE to hide from end-user
-                target_link_libraries(SQLiteCpp PRIVATE PkgConfig::sqlcipher)
-            endif()
-        else()
-            # Since we aren't using pkgconf here, find it manually
-            find_library(sqlcipher_LIBRARY "sqlcipher")
-            find_path(sqlcipher_INCLUDE_DIR "sqlcipher/sqlite3.h"
-                PATH_SUFFIXES
-                    "include"
-                    "includes"
-            )
-            # Hides it from the GUI
-            mark_as_advanced(sqlcipher_LIBRARY sqlcipher_INCLUDE_DIR)
-            if(NOT sqlcipher_INCLUDE_DIR)
-                message(FATAL_ERROR "${PROJECT_NAME} requires the \"<sqlcipher/sqlite3.h>\" header to use the codec functionality but it wasn't found.")
-            elseif(NOT sqlcipher_LIBRARY)
-                message(FATAL_ERROR "${PROJECT_NAME} requires the sqlcipher library to use the codec functionality but it wasn't found.")
-            endif()
-            # Only used in Database.cpp so PRIVATE to hide from end-user
-            target_include_directories(SQLiteCpp PRIVATE "${sqlcipher_INCLUDE_DIR}/sqlcipher")
-            target_link_libraries(SQLiteCpp PRIVATE ${sqlcipher_LIBRARY})
-        endif()
-    endif()
-endif (SQLITECPP_INTERNAL_SQLITE)
-
-# Link target with pthread and dl for Unix
-if (UNIX)
-    set(THREADS_PREFER_PTHREAD_FLAG ON)
-    find_package(Threads REQUIRED)
-    target_link_libraries(SQLiteCpp PUBLIC Threads::Threads ${CMAKE_DL_LIBS})
-endif (UNIX)
-
-# Set includes for target and transitive downstream targets
-
-target_include_directories(SQLiteCpp
-  PRIVATE
-    $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3>
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/>)
-
 # Allow the library to be installed via "make install" and found with "find_package"
 
 include(GNUInstallDirs)
-install(TARGETS SQLiteCpp
+install(TARGETS SQLiteCpp sqlite3
     EXPORT ${PROJECT_NAME}Targets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -381,11 +367,14 @@ option(SQLITECPP_BUILD_EXAMPLES "Build examples." OFF)
 if (SQLITECPP_BUILD_EXAMPLES)
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
-    target_link_libraries(SQLiteCpp_example1 SQLiteCpp)
-    target_include_directories(SQLiteCpp_example1 PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3>)
-    if (MSYS OR MINGW)
+    target_link_libraries(SQLiteCpp_example1 SQLiteCpp sqlite3)
+    # Link target with pthread and dl for Linux
+    if (UNIX)
+        target_link_libraries(SQLiteCpp_example1 pthread)
+        if (NOT APPLE)
+            target_link_libraries(SQLiteCpp_example1 dl)
+        endif ()
+    elseif (MSYS OR MINGW)
         target_link_libraries(SQLiteCpp_example1 ssp)
     endif ()
 else (SQLITECPP_BUILD_EXAMPLES)
@@ -399,12 +388,12 @@ if (SQLITECPP_BUILD_TESTS)
     target_link_libraries(SQLiteCpp_tests SQLiteCpp)
     target_include_directories(SQLiteCpp_tests PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
-        $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3>)
+        $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${sqlite3_AMALGAMATION_SOURCE_DIR}>)
 
     find_package(GTest)
     if (GTEST_FOUND)
         message(STATUS "Link to GTest system library")
-        target_link_libraries(SQLiteCpp_tests GTest::GTest GTest::Main)
+        target_link_libraries(SQLiteCpp_tests GTest::GTest GTest::Main SQLiteCpp sqlite3)
     else (GTEST_FOUND)
         message(STATUS "Compile googletest from source in submodule")
         # deactivate some warnings for compiling the googletest library
@@ -429,7 +418,7 @@ if (SQLITECPP_BUILD_TESTS)
             endif (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919)
         endif (MSVC)
 
-        target_link_libraries(SQLiteCpp_tests gtest_main)
+        target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp sqlite3)
     endif (GTEST_FOUND)
 
     # add a "test" target:

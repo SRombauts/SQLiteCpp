@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 3.14)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(FetchContent)
 include(DownloadSQLite)
+include(Hardening)
 
 cmake_policy(SET CMP0048 NEW)
 project(SQLiteCpp VERSION "2.4.0")
@@ -43,7 +44,6 @@ else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
     # Useful compile flags and extra warnings
-    add_compile_options(-fstack-protector -Wall -Wextra -Wpedantic -Wno-long-long -Wswitch-enum -Wshadow -Winline)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++0x-compat") # C++ only
     if (CMAKE_COMPILER_IS_GNUCXX)
         # GCC flags
@@ -195,6 +195,7 @@ target_include_directories(SQLiteCpp PRIVATE
     ${sqlite3_AMALGAMATION_SOURCE_DIR}
 )
 target_link_libraries(SQLiteCpp PUBLIC sqlite3)
+harden(SQLiteCpp)
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
@@ -286,7 +287,9 @@ option(SQLITECPP_BUILD_EXAMPLES "Build examples." OFF)
 if (SQLITECPP_BUILD_EXAMPLES)
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
-    target_link_libraries(SQLiteCpp_example1 SQLiteCpp sqlite3)
+    target_link_libraries(SQLiteCpp_example1 SQLiteCpp)
+    harden(SQLiteCpp_example1)
+    
     # Link target with pthread and dl for linux
     if (UNIX)
         target_link_libraries(SQLiteCpp_example1 pthread)
@@ -336,9 +339,8 @@ if (SQLITECPP_BUILD_TESTS)
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
     target_include_directories(SQLiteCpp_tests PRIVATE "${GTEST_INCLUDE_DIR}" "${sqlite3_AMALGAMATION_SOURCE_DIR}")
     target_link_libraries(SQLiteCpp_tests "${GTEST_LIBRARY}" "${GTEST_MAIN_LIBRARY}" SQLiteCpp sqlite3)
-    if (MSYS OR MINGW)
-        target_link_libraries(SQLiteCpp_tests "ssp")
-    endif()
+    harden(SQLiteCpp_tests)
+
     # Link target with dl for linux
     if (UNIX AND NOT APPLE)
         target_link_libraries(SQLiteCpp_tests dl)

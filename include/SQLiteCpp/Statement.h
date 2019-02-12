@@ -116,6 +116,8 @@ public:
     // instead of being copied.
     // => if you know what you are doing, use bindNoCopy() instead of bind()
 
+    int getIndex(const char * const apName);
+
     /**
      * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */

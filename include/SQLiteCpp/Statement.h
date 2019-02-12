@@ -16,6 +16,32 @@
 #include <map>
 #include <climits> // For INT_MAX
 
+// some macros are taken from https://github.com/nemequ/hedley/blob/master/hedley.h , it was public domain that time
+#if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__) ||\
+(defined(__INTEL_COMPILER) && __INTEL_COMPILER > 1600) ||\
+(defined(__ARMCC_VERSION) && __ARMCC_VERSION > 4010000) ||\
+(\
+    defined(__TI_COMPILER_VERSION__) && (\
+        __TI_COMPILER_VERSION__ > 8003000 ||\
+        (__TI_COMPILER_VERSION__ > 7003000 && defined(__TI_GNU_ATTRIBUTE_SUPPORT__))\
+    )\
+)
+    #if defined(__has_attribute)
+        #if !defined(SQLITECPP_PURE_FUNC) && __has_attribute(const)
+            #define SQLITECPP_PURE_FUNC __attribute__((const))
+        #endif
+    #endif
+#endif
+#if !defined(SQLITECPP_PURE_FUNC)
+    #define SQLITECPP_PURE_FUNC
+    #if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)
+        #warning "You have a compiler without the needed macros or attributes. Cannot detect and apply support of pure const functions. Efficiency likely will be harmed. Consider using another compiler or its version"
+    #elif _MSC_VER
+        #pragma message "You have a compiler without the needed macros or attributes. Cannot detect and apply support of pure const functions. Efficiency likely will be harmed. Consider using another compiler or its version"
+    #endif
+#endif
+
+
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
 struct sqlite3_stmt;
@@ -116,6 +142,7 @@ public:
     // instead of being copied.
     // => if you know what you are doing, use bindNoCopy() instead of bind()
 
+    SQLITECPP_PURE_FUNC
     int getIndex(const char * const apName);
 
     /**

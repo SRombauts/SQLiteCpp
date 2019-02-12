@@ -83,6 +83,7 @@ void Statement::clearBindings()
     check(ret);
 }
 
+
 int Statement::getIndex(const char * const apName)
 {
     return sqlite3_bind_parameter_index(mStmtPtr, apName);

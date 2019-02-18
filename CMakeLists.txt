@@ -193,7 +193,7 @@ install(EXPORT ${PROJECT_NAME}Config DESTINATION lib/cmake/${PROJECT_NAME})
 
 ## Build provided copy of SQLite3 C library ##
 
-# TODO NOCOMMIT
+# TODO 
 #find_package(sqlite3)
 #if(sqlite3_VERSION VERSION_LESS "3.19")
 #    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
@@ -284,7 +284,6 @@ if (SQLITECPP_BUILD_TESTS)
 
     # add the subdirectory containing the CMakeLists.txt for the gtest library
     # TODO: under Linux, uses libgtest-dev if found
-    # TODO: move to the new googletest Github repository
     if (NOT EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
         message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git init submodule' and 'git update submodule' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
     endif ()

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+# Copyright (c) 2012-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 
 # build format
 version: "{build}"
@@ -13,7 +13,6 @@ image:
   - Visual Studio 2013
   
 # configurations to add to build matrix
-# TODO: VS2010->VS2015 and Win32/Win64 (see https://github.com/google/googletest/blob/master/appveyor.yml)
 # TODO: MinGW Makefiles and MSYS Makefiles
 configuration:
   - Debug

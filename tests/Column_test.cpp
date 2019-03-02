@@ -68,7 +68,11 @@ TEST(Column, basis) {
         const int           integer = query.getColumn(2); // operator int()
         const double        real    = query.getColumn(3); // operator double()
         const void*         pblob   = query.getColumn(4); // operator void*()
-        const std::string   sblob   = query.getColumn(4); // operator std::string() (or const char* with MSVC)
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+        // This implicit cast should use operator std::string()
+        // but would fallback to const char* with MSVC 2010-2013 (witch does not work with the NULL char in the middle)
+        const std::string   sblob   = query.getColumn(4); // operator std::string()
+#endif
         const void*         pempty  = query.getColumn(5); // operator void*()
         EXPECT_EQ(1,            id1);
         EXPECT_EQ(1,            id2);
@@ -81,8 +85,10 @@ TEST(Column, basis) {
         EXPECT_EQ(-123,         integer);
         EXPECT_EQ(0.123,        real);
         EXPECT_EQ(0,            memcmp("bl\0b", pblob, size));
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
         EXPECT_EQ((size_t)size, sblob.size());
         EXPECT_EQ(0,            memcmp("bl\0b", &sblob[0], size));
+#endif
         EXPECT_EQ(NULL,         pempty);
     }
 

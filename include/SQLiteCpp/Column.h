@@ -224,12 +224,16 @@ public:
         return getBlob();
     }
 
-#if !(defined(_MSC_VER) && _MSC_VER < 1900)
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
     // NOTE : the following is required by GCC and Clang to cast a Column result in a std::string
     // (error: conversion from ‘SQLite::Column’ to non-scalar type ‘std::string {aka std::basic_string<char>}’)
+    // and also required for Microsoft Visual Studio 2015 and newer
     // but is not working under Microsoft Visual Studio 2010, 2012 and 2013
     // (error C2440: 'initializing' : cannot convert from 'SQLite::Column' to 'std::basic_string<_Elem,_Traits,_Ax>'
     //  [...] constructor overload resolution was ambiguous)
+    // WARNING: without it, trying to access a binary blob with implicit cast to string
+    // ends up converting it to a C-style char*, damaging the data by truncating it to the first null character!
+    // (see https://github.com/SRombauts/SQLiteCpp/issues/189 Visual Studio 2013: unit test "Column.basis" failing)
     /**
      * @brief Inline cast operator to std::string
      *

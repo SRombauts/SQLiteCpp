@@ -338,6 +338,25 @@ TEST(Statement, bindings) {
         EXPECT_EQ(4294967295U, query.getColumn(2).getUInt());
         EXPECT_EQ(-123, query.getColumn(3).getInt());
     }
+
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Seventh row using another variant of int64 type
+    {
+        const int64_t   int64 = 12345678900000LL;
+        insert.bind(2, int64);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(7, query.getColumn(0).getInt64());
+        EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
+    }
 }
 
 TEST(Statement, bindNoCopy) {
@@ -466,10 +485,12 @@ TEST(Statement, bindByName) {
     // reset() without clearbindings()
     insert.reset();
 
-    // Fourth row with uint32_t unsigned value
+    // Fourth row with uint32_t unsigned value and int64_t 64bits value
     {
         const uint32_t  uint32 = 4294967295U;
+        const int64_t   int64 = 12345678900000LL;
         insert.bind("@int", uint32);
+        insert.bind("@long", int64);
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
@@ -479,6 +500,7 @@ TEST(Statement, bindByName) {
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(4, query.getColumn(0).getInt64());
         EXPECT_EQ(4294967295U, query.getColumn(2).getUInt());
+        EXPECT_EQ(12345678900000LL, query.getColumn(4).getInt64());
     }
 }
 
@@ -762,7 +784,7 @@ TEST(Statement, getColumns) {
 }
 #endif
 
-#if (LONG_MAX > INT_MAX) // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
+#if (LONG_MAX > INT_MAX) // sizeof(long)==8 means the data model of the system is LP64 (64bits Linux)
 TEST(Statement, bind64bitsLong) {
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);

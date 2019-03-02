@@ -116,7 +116,7 @@ public:
      */
     void bind(const int aIndex, const unsigned      aValue);
 
-#if (LONG_MAX == INT_MAX) // sizeof(long)==4 means the data model of the system is ILP32 (32bits OS or Windows 64bits)
+#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
     /**
      * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -124,7 +124,7 @@ public:
     {
         bind(aIndex, static_cast<int>(aValue));
     }
-#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
+#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
     /**
      * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -198,7 +198,7 @@ public:
      */
     void bind(const char* apName, const unsigned        aValue);
 
-#if (LONG_MAX == INT_MAX) // sizeof(long)==4 means the data model of the system is ILP32 (32bits OS or Windows 64bits)
+#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
     /**
      * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -206,7 +206,7 @@ public:
     {
         bind(apName, static_cast<int>(aValue));
     }
-#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
+#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
     /**
      * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -286,7 +286,7 @@ public:
         bind(aName.c_str(), aValue);
     }
 
-#if (LONG_MAX == INT_MAX) // sizeof(long)==4 means the data model of the system is ILP32 (32bits OS or Windows 64bits)
+#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
     /**
      * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -294,7 +294,7 @@ public:
     {
         bind(aName.c_str(), static_cast<int>(aValue));
     }
-#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
+#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
     /**
      * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */

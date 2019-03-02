@@ -176,7 +176,7 @@ public:
     {
         return getUInt();
     }
-#if (LONG_MAX == INT_MAX) // sizeof(long)==4 means the data model of the system is ILP32 (32bits OS or Windows 64bits)
+#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
     /// Inline cast operator to 32bits long
     inline operator long() const
     {
@@ -187,8 +187,8 @@ public:
     {
         return getUInt();
     }
-#else // sizeof(long)==8 means the data model of the system is LLP64 (64bits Linux)
-    /// Inline cast operator to 64bits long when the data model of the system is ILP64 (Linux 64 bits...)
+#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
+    /// Inline cast operator to 64bits long when the data model of the system is LP64 (Linux 64 bits...)
     inline operator long() const
     {
         return getInt64();

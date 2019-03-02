@@ -5,7 +5,6 @@
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
 cmake_minimum_required(VERSION 2.8.12) # first version with add_compile_options()
-cmake_policy(SET CMP0048 OLD)
 project(SQLiteCpp)
 
 message (STATUS "CMake version: ${CMAKE_VERSION}")

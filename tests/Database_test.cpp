@@ -283,7 +283,7 @@ TEST(Database, encryptAndDecrypt) {
         // Reopen the database file and try to use it
         EXPECT_FALSE(SQLite::Database::isUnencrypted("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READONLY);
-        // Decrypt the database
+        EXPECT_THROW(db.tableExists("test"), SQLite::Exception);
         db.key("123secret");
         EXPECT_TRUE(db.tableExists("test"));
     } // Close DB test.db3

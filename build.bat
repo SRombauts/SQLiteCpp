@@ -17,9 +17,9 @@ if ERRORLEVEL 1 goto onError
 ctest --output-on-failure
 if ERRORLEVEL 1 goto onError
 
-cd ..
-exit
+goto onSuccess
 
 :onError
 @echo An error occured!
+:onSuccess
 cd ..

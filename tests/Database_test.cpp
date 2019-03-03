@@ -63,6 +63,23 @@ TEST(Database, ctorExecCreateDropExist) {
     remove("test.db3");
 }
 
+#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
+TEST(Database, moveConstructor) {
+    remove("test.db3");
+    {
+        // Create a new database
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        EXPECT_FALSE(db.tableExists("test"));
+        EXPECT_TRUE(db.getHandle() != NULL);
+        SQLite::Database moved = std::move(db);
+        EXPECT_TRUE(db.getHandle() == NULL);
+        EXPECT_TRUE(moved.getHandle() != NULL);
+        EXPECT_FALSE(moved.tableExists("test"));
+    } // Close DB test.db3
+    remove("test.db3");
+}
+#endif 
+
 TEST(Database, createCloseReopen) {
     remove("test.db3");
     {

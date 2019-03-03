@@ -128,3 +128,7 @@ Version 2.3.0 - March 3 2019
 - Update VariadicBind.h #172
 - Better CMake compatibility #170
 - Add implicit cast operator to char and short types #179 #180
+
+Version ?
+- #191 CMake Warning line 299
+- #190 Implement move constructors

@@ -127,4 +127,4 @@ Version 2.3.0 - March 3 2019
 - Added tests for all MSVC compilers available on AppVeyor (2013, 2015, 2017) #169
 - Update VariadicBind.h #172
 - Better CMake compatibility #170
-- Add implicit cast operator to char and short types
+- Add implicit cast operator to char and short types #179 #180

@@ -74,7 +74,6 @@ And the following IDEs/Compilers
 - Clang 3.5 and 3.8
 - Xcode 8
 - Visual Studio Community 2017, and VS 2013 & 2015 (AppVeyor)
-- Eclipse CDT under Linux
 
 ### Dependencies
 

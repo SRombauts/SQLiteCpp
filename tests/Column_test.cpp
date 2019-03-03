@@ -57,12 +57,16 @@ TEST(Column, basis) {
 
     // validates every variant of cast operators, and conversions of types
     {
-        const sqlite3_int64 id1     = query.getColumn(0); // operator int64_t()
-        const int64_t       id2     = query.getColumn(0); // operator int64_t()
-        const long long     id3     = query.getColumn(0); // operator int64_t()
-        const long          id4     = query.getColumn(0); // operator int64_t() or long() depending on compiler/architecture
-        const unsigned int  uint1   = query.getColumn(0); // operator uint32_t()
-        const uint32_t      uint2   = query.getColumn(0); // operator uint32_t()
+        const sqlite3_int64 id1     = query.getColumn(0); // operator long long()
+        const int64_t       id2     = query.getColumn(0); // operator long long()
+        const long long     id3     = query.getColumn(0); // operator long long()
+        const long          id4     = query.getColumn(0); // operator long long() or long() depending on compiler/architecture
+        const char          id5     = query.getColumn(0); // operator char()
+        const short         id6     = query.getColumn(0); // operator short()
+        const unsigned int  uint1   = query.getColumn(0); // operator unsigned int()
+        const uint32_t      uint2   = query.getColumn(0); // operator unsigned int()
+        const unsigned char uint3   = query.getColumn(0); // operator unsigned char()
+        const unsigned short uint4  = query.getColumn(0); // operator unsigned short()
         const char*         ptxt    = query.getColumn(1); // operator const char*()
         const std::string   msg     = query.getColumn(1); // operator std::string() (or const char* with MSVC)
         const int           integer = query.getColumn(2); // operator int()
@@ -78,8 +82,12 @@ TEST(Column, basis) {
         EXPECT_EQ(1,            id2);
         EXPECT_EQ(1,            id3);
         EXPECT_EQ(1,            id4);
+        EXPECT_EQ(1,            id5);
+        EXPECT_EQ(1,            id6);
         EXPECT_EQ(1U,           uint1);
         EXPECT_EQ(1U,           uint2);
+        EXPECT_EQ(1U,           uint3);
+        EXPECT_EQ(1U,           uint4);
         EXPECT_STREQ("first",   ptxt);
         EXPECT_EQ("first",      msg);
         EXPECT_EQ(-123,         integer);

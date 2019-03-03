@@ -166,6 +166,27 @@ public:
         return getBytes ();
     }
 
+    /// Inline cast operator to char
+    inline operator char() const
+    {
+        return static_cast<char>(getInt());
+    }
+    /// Inline cast operator to unsigned char
+    inline operator unsigned char() const
+    {
+        return static_cast<unsigned char>(getInt());
+    }
+    /// Inline cast operator to short
+    inline operator short() const
+    {
+        return static_cast<short>(getInt());
+    }
+    /// Inline cast operator to unsigned short
+    inline operator unsigned short() const
+    {
+        return static_cast<unsigned short>(getInt());
+    }
+
     /// Inline cast operator to int
     inline operator int() const
     {

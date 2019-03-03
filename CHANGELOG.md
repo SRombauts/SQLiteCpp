@@ -116,7 +116,7 @@ Version 2.2.0 - Sept 19 2017
 - Fix warnings #134
 - Deprecated Statement::IsOk() to Statement::HasRow()
 
-Version 2.3.0
+Version 2.3.0 - March 3 2019
 - Update SQLite3 from 3.20.1 to latest 3.27.2 (2019-02-25) #183 #187
 - Add Statement binding for long int values #147
 - Allows long int for bind when used with name #148
@@ -124,6 +124,7 @@ Version 2.3.0
 - Add comparison with sqlite_orm #141
 - Fix Statement::bind truncates long integer to 32 bits on x86_64 Linux #155
 - Add a move constructor to Database #157
-- Added tests for all MSVC compilers available on AppVeyor #169
+- Added tests for all MSVC compilers available on AppVeyor (2013, 2015, 2017) #169
 - Update VariadicBind.h #172
 - Better CMake compatibility #170
+- Add implicit cast operator to char and short types

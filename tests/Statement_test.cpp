@@ -797,3 +797,18 @@ TEST(Statement, bind64bitsLong) {
     EXPECT_EQ(4294967297L, query.getColumn(0).getInt64());
 }
 #endif
+
+TEST(Statement, getBindParameterCount) {
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT)"));
+
+    SQLite::Statement query(db, "SELECT id, msg FROM test where id = ?");
+    EXPECT_EQ(1, query.getBindParameterCount());
+
+    SQLite::Statement query2(db, "SELECT id, msg FROM test where id = ? and msg = ?");
+    EXPECT_EQ(2, query2.getBindParameterCount());
+
+    SQLite::Statement query3(db, "SELECT id, msg FROM test");
+    EXPECT_EQ(0, query3.getBindParameterCount());
+}

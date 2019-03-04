@@ -64,11 +64,17 @@ TEST(Database, ctorExecCreateDropExist) {
 }
 
 #if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
+
+SQLite::Database DatabaseBuilder(const char* apName)
+{
+    return SQLite::Database(apName, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+}
+
 TEST(Database, moveConstructor) {
     remove("test.db3");
     {
-        // Create a new database
-        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        // Create a new database, using the move constructor
+        SQLite::Database db = DatabaseBuilder("test.db3");
         EXPECT_FALSE(db.tableExists("test"));
         EXPECT_TRUE(db.getHandle() != NULL);
         SQLite::Database moved = std::move(db);
@@ -78,6 +84,7 @@ TEST(Database, moveConstructor) {
     } // Close DB test.db3
     remove("test.db3");
 }
+
 #endif 
 
 TEST(Database, createCloseReopen) {

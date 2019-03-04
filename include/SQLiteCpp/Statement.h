@@ -73,6 +73,15 @@ public:
      */
     Statement(Database& aDatabase, const std::string& aQuery);
 
+#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
+    /**
+     * @brief Move an SQLite statement.
+     *
+     * @param[in] aStatement    Statement to move
+     */
+    Statement(Statement&& aStatement) noexcept;
+#endif
+
     /// Finalize and unregister the SQL query from the SQLite Database Connection.
     ~Statement();
 
@@ -719,7 +728,7 @@ private:
     Ptr                     mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
     int                     mColumnCount;   //!< Number of columns in the result of the prepared statement
     mutable TColumnNames    mColumnNames;   //!< Map of columns index by name (mutable so getColumnIndex can be const)
-    bool                    mbHasRow;           //!< true when a row has been fetched with executeStep()
+    bool                    mbHasRow;       //!< true when a row has been fetched with executeStep()
     bool                    mbDone;         //!< true when the last executeStep() had no more row to fetch
 };
 

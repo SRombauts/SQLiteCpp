@@ -124,13 +124,13 @@ public:
     /**
      * @brief Move an SQLite database connection.
      *
-     * @param[in] aDb   Database to move
+     * @param[in] aDatabase Database to move
      */
-    inline Database(Database&& aDb) noexcept :
-        mpSQLite(aDb.mpSQLite),
-        mFilename(std::move(aDb.mFilename))
+    inline Database(Database&& aDatabase) noexcept :
+        mpSQLite(aDatabase.mpSQLite),
+        mFilename(std::move(aDatabase.mFilename))
     {
-        aDb.mpSQLite = nullptr;
+        aDatabase.mpSQLite = nullptr;
     }
 #endif
 

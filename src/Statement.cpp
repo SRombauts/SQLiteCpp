@@ -42,6 +42,19 @@ Statement::Statement(Database &aDatabase, const std::string& aQuery) :
     mColumnCount = sqlite3_column_count(mStmtPtr);
 }
 
+#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
+Statement::Statement(Statement&& aStatement) noexcept :
+    mQuery(std::move(aStatement.mQuery)),
+    mStmtPtr(std::move(aStatement.mStmtPtr)),
+    mColumnCount(aStatement.mColumnCount),
+    mbHasRow(aStatement.mbHasRow),
+    mbDone(aStatement.mbDone)
+{
+    aStatement.mColumnCount = 0;
+    aStatement.mbHasRow = false;
+    aStatement.mbDone = false;
+}
+#endif
 
 // Finalize and unregister the SQL query from the SQLite Database Connection.
 Statement::~Statement()

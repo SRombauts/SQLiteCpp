@@ -96,6 +96,40 @@ TEST(Statement, invalid) {
     EXPECT_THROW(query.exec(), SQLite::Exception); // exec() shall throw as it does not expect a result
 }
 
+#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
+
+SQLite::Statement StatementBuilder(SQLite::Database& aDb, const char* apQuery)
+{
+    return SQLite::Statement(aDb, apQuery);
+}
+
+TEST(Statement, moveConstructor) {
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\")"));
+    EXPECT_EQ(1, db.getLastInsertRowid());
+
+    SQLite::Statement query = StatementBuilder(db, "SELECT * FROM test");
+    EXPECT_FALSE(query.getQuery().empty());
+    EXPECT_FALSE(query.hasRow());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_EQ(2, query.getColumnCount());
+    SQLite::Statement moved = std::move(query);
+    EXPECT_TRUE(query.getQuery().empty());
+    EXPECT_EQ(0, query.getColumnCount());
+    EXPECT_FALSE(moved.getQuery().empty());
+    EXPECT_EQ(2, moved.getColumnCount());
+    // Execute
+    moved.executeStep();
+    EXPECT_TRUE(moved.hasRow());
+    EXPECT_FALSE(moved.isDone());
+    EXPECT_FALSE(query.hasRow());
+    EXPECT_FALSE(query.isDone());
+}
+
+#endif
+
 TEST(Statement, executeStep) {
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);

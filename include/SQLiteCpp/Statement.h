@@ -629,6 +629,9 @@ public:
         return mbDone;
     }
 
+    /// Return the number of bind parameters in the statement
+    int getBindParameterCount() const noexcept;
+
     /// Return the numeric result code for the most recent failed API call (if any).
     int getErrorCode() const noexcept; // nothrow
     /// Return the extended numeric result code for the most recent failed API call (if any).

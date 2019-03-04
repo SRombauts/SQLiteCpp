@@ -391,6 +391,11 @@ int Statement::getColumnIndex(const char* apName) const
     return (*iIndex).second;
 }
 
+int Statement::getBindParameterCount() const noexcept
+{
+    return sqlite3_bind_parameter_count(mStmtPtr);
+}
+
 // Return the numeric result code for the most recent failed API call (if any).
 int Statement::getErrorCode() const noexcept // nothrow
 {

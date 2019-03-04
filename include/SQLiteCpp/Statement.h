@@ -654,6 +654,12 @@ private:
         Ptr(sqlite3* apSQLite, std::string& aQuery);
         // Copy constructor increments the ref counter
         Ptr(const Ptr& aPtr);
+
+#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
+        // Move constructor
+        Ptr(Ptr&& aPtr);
+#endif
+
         // Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
         ~Ptr();
 

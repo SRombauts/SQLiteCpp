@@ -456,6 +456,18 @@ Statement::Ptr::Ptr(const Statement::Ptr& aPtr) :
     ++(*mpRefCount);
 }
 
+#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
+Statement::Ptr::Ptr(Ptr&& aPtr) :
+    mpSQLite(aPtr.mpSQLite),
+    mpStmt(aPtr.mpStmt),
+    mpRefCount(aPtr.mpRefCount)
+{
+    aPtr.mpSQLite = NULL;
+    aPtr.mpStmt = NULL;
+    aPtr.mpRefCount = NULL;
+}
+#endif 
+
 /**
  * @brief Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
  */

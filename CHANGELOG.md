@@ -132,3 +132,4 @@ Version 2.3.0 - March 3 2019
 Version ?
 - #191 CMake Warning line 299
 - #190 Implement move constructors
+- #192 Add wrapper for bind parameter count

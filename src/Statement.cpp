@@ -466,30 +466,32 @@ Statement::Ptr::Ptr(Ptr&& aPtr) :
     aPtr.mpStmt = NULL;
     aPtr.mpRefCount = NULL;
 }
-#endif 
+#endif
 
 /**
  * @brief Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
  */
 Statement::Ptr::~Ptr()
 {
-    assert(NULL != mpRefCount);
-    assert(0 != *mpRefCount);
-
-    // Decrement and check the reference counter of the sqlite3_stmt
-    --(*mpRefCount);
-    if (0 == *mpRefCount)
+    if (NULL != mpRefCount)
     {
-        // If count reaches zero, finalize the sqlite3_stmt, as no Statement nor Column objet use it anymore.
-        // No need to check the return code, as it is the same as the last statement evaluation.
-        sqlite3_finalize(mpStmt);
+        assert(0 != *mpRefCount);
 
-        // and delete the reference counter
-        delete mpRefCount;
-        mpRefCount = NULL;
-        mpStmt = NULL;
+        // Decrement and check the reference counter of the sqlite3_stmt
+        --(*mpRefCount);
+        if (0 == *mpRefCount)
+        {
+            // If count reaches zero, finalize the sqlite3_stmt, as no Statement nor Column objet use it anymore.
+            // No need to check the return code, as it is the same as the last statement evaluation.
+            sqlite3_finalize(mpStmt);
+
+            // and delete the reference counter
+            delete mpRefCount;
+            mpRefCount = NULL;
+            mpStmt = NULL;
+        }
+        // else, the finalization will be done later, by the last object
     }
-    // else, the finalization will be done later, by the last object
 }
 
 

@@ -64,6 +64,6 @@ const nullptr_t nullptr = {};
 #endif // _MSC_VER
 
 // A macro for snprintf support in Visual Studio
-#if _MSC_VER
+#if defined(_MSC_VER) && _MSC_VER < 1500
 #define snprintf _snprintf
 #endif

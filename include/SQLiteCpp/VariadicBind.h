@@ -5,13 +5,14 @@
  *
  * Copyright (c) 2016 Paul Dreik (github@pauldreik.se)
  * Copyright (c) 2016-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2019 Maximilian Bachmann (github@maxbachmann)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
 #pragma once
 
-#if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && (_MSC_VER >= 1800) ) // c++14: Visual Studio 2015
+#if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && (_MSC_VER >= 1800) ) // c++11: Visual Studio 2013
 
 #include <SQLiteCpp/Statement.h>
 

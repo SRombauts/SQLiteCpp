@@ -43,6 +43,8 @@ namespace SQLite
 template<class ...Args>
 void bind(SQLite::Statement& s, const Args& ... args)
 {
+    static_assert(sizeof...(args) > 0, "please invoke bind with one or more args");
+    
     int pos = 1;
 	(void)std::initializer_list<int>{
 		((void)s.bind(pos++, std::forward<decltype(args)>(args)), 0)...

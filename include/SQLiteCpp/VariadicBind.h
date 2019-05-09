@@ -11,7 +11,7 @@
  */
 #pragma once
 
-#if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
+#if (__cplusplus <= 199711L) || ( defined(_MSC_VER) && (_MSC_VER >= 1800) ) // c++14: Visual Studio 2015
 
 #include <SQLiteCpp/Statement.h>
 
@@ -27,7 +27,7 @@ namespace SQLite
  *
  * This takes care of incrementing the index between each calls to bind.
  *
- * This feature requires a c++14 capable compiler.
+ * This feature requires a c++11 capable compiler.
  *
  * \code{.cpp}
  * SQLite::Statement stm("SELECT * FROM MyTable WHERE colA>? && colB=? && colC<?");
@@ -52,5 +52,5 @@ void bind(SQLite::Statement& s, const Args& ... args)
 
 }  // namespace SQLite
 
-#endif // c++14
+#endif // c++11
 

@@ -16,28 +16,10 @@
 #include <SQLiteCpp/Statement.h>
 
 /// @cond
-#include <utility>
 #include <initializer_list>
 
 namespace SQLite
 {
-
-/// implementation detail for variadic bind.
-namespace detail {
-template<class F, class ...Args, std::size_t ... I>
-inline void invoke_with_index(F&& f, std::integer_sequence<std::size_t, I...>, const Args& ...args)
-{
-    std::initializer_list<int>({ (f(I+1, args), 0)... });
-}
-
-/// implementation detail for variadic bind.
-template<class F, class ...Args>
-inline void invoke_with_index(F&& f, const Args& ... args)
-{
-    invoke_with_index(std::forward<F>(f), std::index_sequence_for<Args...>(), args...);
-}
-
-} // namespace detail
 /// @endcond
 
 /**
@@ -61,13 +43,10 @@ inline void invoke_with_index(F&& f, const Args& ... args)
 template<class ...Args>
 void bind(SQLite::Statement& s, const Args& ... args)
 {
-    static_assert(sizeof...(args) > 0, "please invoke bind with one or more args");
-
-    auto f=[&s](std::size_t index, const auto& value)
-    {
-        s.bind(index, value);
-    };
-    detail::invoke_with_index(f, args...);
+    int pos = 1;
+	(void)std::initializer_list<int>{
+		((void)s.bind(pos++, std::forward<decltype(args)>(args)), 0)...
+	};
 }
 
 }  // namespace SQLite

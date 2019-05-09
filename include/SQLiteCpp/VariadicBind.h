@@ -11,7 +11,7 @@
  */
 #pragma once
 
-#if (__cplusplus <= 199711L) || ( defined(_MSC_VER) && (_MSC_VER >= 1800) ) // c++14: Visual Studio 2015
+#if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && (_MSC_VER >= 1800) ) // c++14: Visual Studio 2015
 
 #include <SQLiteCpp/Statement.h>
 

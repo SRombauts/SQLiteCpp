@@ -18,7 +18,7 @@
 
 #include <cstdio>
 
-#if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
+#if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && (_MSC_VER >= 1800) ) // c++11: Visual Studio 2013
 TEST(VariadicBind, invalid) {
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
@@ -69,4 +69,4 @@ TEST(VariadicBind, invalid) {
         EXPECT_EQ(std::make_pair(3,"three"s), results.at(2));
     }
 }
-#endif // c++14
+#endif // c++11

@@ -53,9 +53,7 @@ TEST(VariadicBind, invalid) {
 
     // make sure the content is as expected
     {
-        using namespace std::string_literals;
-
-        SQLite::Statement query(db, "SELECT id, value FROM test ORDER BY id"s);
+        SQLite::Statement query(db, std::string{"SELECT id, value FROM test ORDER BY id"});
         std::vector<std::pair<int, std::string> > results;
         while (query.executeStep()) {
             const int id = query.getColumn(0);
@@ -64,9 +62,9 @@ TEST(VariadicBind, invalid) {
         }
         EXPECT_EQ(std::size_t(3), results.size());
 
-        EXPECT_EQ(std::make_pair(1,""s), results.at(0));
-        EXPECT_EQ(std::make_pair(2,"two"s), results.at(1));
-        EXPECT_EQ(std::make_pair(3,"three"s), results.at(2));
+        EXPECT_EQ(std::make_pair(1,std::string{""}), results.at(0));
+        EXPECT_EQ(std::make_pair(2,std::string{"two"}), results.at(1));
+        EXPECT_EQ(std::make_pair(3,std::string{"three"}), results.at(2));
     }
 }
 #endif // c++11

@@ -5,6 +5,7 @@
  *
  * Copyright (c) 2016 Paul Dreik (github@pauldreik.se)
  * Copyright (c) 2016-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2019 Maximilian Bachmann (github@maxbachmann)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -18,7 +19,7 @@
 
 #include <cstdio>
 
-#if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
+#if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && (_MSC_VER >= 1800) ) // c++11: Visual Studio 2013
 TEST(VariadicBind, invalid) {
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
@@ -53,9 +54,7 @@ TEST(VariadicBind, invalid) {
 
     // make sure the content is as expected
     {
-        using namespace std::string_literals;
-
-        SQLite::Statement query(db, "SELECT id, value FROM test ORDER BY id"s);
+        SQLite::Statement query(db, std::string{"SELECT id, value FROM test ORDER BY id"});
         std::vector<std::pair<int, std::string> > results;
         while (query.executeStep()) {
             const int id = query.getColumn(0);
@@ -64,9 +63,9 @@ TEST(VariadicBind, invalid) {
         }
         EXPECT_EQ(std::size_t(3), results.size());
 
-        EXPECT_EQ(std::make_pair(1,""s), results.at(0));
-        EXPECT_EQ(std::make_pair(2,"two"s), results.at(1));
-        EXPECT_EQ(std::make_pair(3,"three"s), results.at(2));
+        EXPECT_EQ(std::make_pair(1,std::string{""}), results.at(0));
+        EXPECT_EQ(std::make_pair(2,std::string{"two"}), results.at(1));
+        EXPECT_EQ(std::make_pair(3,std::string{"three"}), results.at(2));
     }
 }
-#endif // c++14
+#endif // c++11

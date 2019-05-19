@@ -129,6 +129,7 @@ set(SQLITECPP_INC
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Transaction.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Utils.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/VariadicBind.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/ExecuteMany.h
 )
 source_group(include FILES ${SQLITECPP_INC})
 
@@ -141,6 +142,7 @@ set(SQLITECPP_TESTS
  tests/Transaction_test.cpp
  tests/VariadicBind_test.cpp
  tests/Exception_test.cpp
+ tests/ExecuteMany_test.cpp
 )
 source_group(tests FILES ${SQLITECPP_TESTS})
 
@@ -325,4 +327,3 @@ if (SQLITECPP_BUILD_TESTS)
 else (SQLITECPP_BUILD_TESTS)
     message(STATUS "SQLITECPP_BUILD_TESTS OFF")
 endif (SQLITECPP_BUILD_TESTS)
-

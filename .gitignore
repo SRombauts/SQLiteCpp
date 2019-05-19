@@ -4,6 +4,7 @@ build
 example1
 *.a
 
+.vscode/
 /SQLiteCpp.sln
 *.ncb
 *.suo

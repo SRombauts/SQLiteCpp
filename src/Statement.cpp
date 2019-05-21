@@ -260,7 +260,14 @@ bool Statement::executeStep()
     const int ret = tryExecuteStep();
     if ((SQLITE_ROW != ret) && (SQLITE_DONE != ret)) // on row or no (more) row ready, else it's a problem
     {
-        throw SQLite::Exception(mStmtPtr, ret);
+        if (ret == sqlite3_errcode(mStmtPtr))
+        {
+            throw SQLite::Exception(mStmtPtr, ret);
+        }
+        else
+        {
+            throw SQLite::Exception("Statement needs to be reseted", ret);
+        }
     }
 
     return mbHasRow; // true only if one row is accessible by getColumn(N)
@@ -270,15 +277,20 @@ bool Statement::executeStep()
 int Statement::exec()
 {
     const int ret = tryExecuteStep();
-    if (SQLITE_DONE != ret) // the statement has finished executing successfully
+    // the statement has finished executing successfully
+    if (SQLITE_DONE != ret) 
     {
         if (SQLITE_ROW == ret)
         {
             throw SQLite::Exception("exec() does not expect results. Use executeStep.");
         }
-        else
+        else if (ret == sqlite3_errcode(mStmtPtr))
         {
             throw SQLite::Exception(mStmtPtr, ret);
+        }
+        else
+        {
+            throw SQLite::Exception("Statement needs to be reseted", ret);
         }
     }
 

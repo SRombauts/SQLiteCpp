@@ -3,9 +3,8 @@
  * @ingroup tests
  * @brief   Test of variadic bind
  *
- * Copyright (c) 2016 Paul Dreik (github@pauldreik.se)
- * Copyright (c) 2016-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  * Copyright (c) 2019 Maximilian Bachmann (github@maxbachmann)
+ * Copyright (c) 2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -20,14 +19,13 @@
 #include <cstdio>
 
 #if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
-TEST(ExecuteMany, invalid) {
+TEST(ExecuteMany, invalid)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
 
     EXPECT_EQ(0, db.exec("DROP TABLE IF EXISTS test"));
-    EXPECT_EQ(0,
-            db.exec(
-                    "CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT DEFAULT 'default') "));
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT DEFAULT 'default')"));
     EXPECT_TRUE(db.tableExists("test"));
     {
         execute_many(db, "INSERT INTO test VALUES (?, ?)",
@@ -40,7 +38,8 @@ TEST(ExecuteMany, invalid) {
     {
         SQLite::Statement query(db, std::string{"SELECT id, value FROM test ORDER BY id"});
         std::vector<std::pair<int, std::string> > results;
-        while (query.executeStep()) {
+        while (query.executeStep())
+        {
             const int id = query.getColumn(0);
             std::string value = query.getColumn(1);
             results.emplace_back( id, std::move(value) );

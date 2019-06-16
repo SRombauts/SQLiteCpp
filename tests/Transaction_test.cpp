@@ -18,7 +18,8 @@
 
 #include <cstdio>
 
-TEST(Transaction, commitRollback) {
+TEST(Transaction, commitRollback)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());

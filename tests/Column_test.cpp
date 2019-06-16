@@ -21,7 +21,8 @@
 #include <stdint.h>
 
 
-TEST(Column, basis) {
+TEST(Column, basis)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
@@ -187,7 +188,8 @@ TEST(Column, basis) {
     }
 }
 
-TEST(Column, getName) {
+TEST(Column, getName)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT)"));
@@ -214,7 +216,8 @@ TEST(Column, getName) {
 #endif
 }
 
-TEST(Column, stream) {
+TEST(Column, stream)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(0, db.exec("CREATE TABLE test (msg TEXT)"));

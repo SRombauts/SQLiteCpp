@@ -134,3 +134,5 @@ Version ?
 - #191 CMake Warning line 299
 - #190 Implement move constructors
 - #192 Add wrapper for bind parameter count
+- #197 Add tuple_bind and execute_many
+- #199 Fix #156 misleading error message in exception from Statement::exec

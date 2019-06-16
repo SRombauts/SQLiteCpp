@@ -3,7 +3,8 @@
  * @ingroup SQLiteCpp
  * @brief   Convenience function to execute a Statement with multiple Parameter sets
  *
- * Copyright (c) 2019 Maximilian Bachmann (github@maxbachmann)
+ * Copyright (c) 2019 Maximilian Bachmann (github maxbachmann)
+ * Copyright (c) 2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -39,15 +40,17 @@ namespace SQLite
  * \endcode
  * @param aDatabase Database to use
  * @param apQuery   Query to use with all parameter sets
- * @param Arg       first tuple with parameters
- * @param Types     the following tuples with parameters
+ * @param aArg      first tuple with parameters
+ * @param aParams   the following tuples with parameters
  */
 template <typename Arg, typename... Types>
-void execute_many(Database& aDatabase, const char* apQuery, Arg&& arg, Types&&... params) {
+void execute_many(Database& aDatabase, const char* apQuery, Arg&& aArg, Types&&... aParams)
+{
     SQLite::Statement query(aDatabase, apQuery);
-    bind_exec(query, std::forward<decltype(arg)>(arg));
-    (void)std::initializer_list<int>{
-        ((void)reset_bind_exec(query, std::forward<decltype(params)>(params)), 0)...
+    bind_exec(query, std::forward<decltype(aArg)>(aArg));
+    (void)std::initializer_list<int>
+    {
+        ((void)reset_bind_exec(query, std::forward<decltype(aParams)>(aParams)), 0)...
     };
 }
 
@@ -58,13 +61,13 @@ void execute_many(Database& aDatabase, const char* apQuery, Arg&& arg, Types&&..
  * This feature requires a c++14 capable compiler.
  *
  * @param apQuery   Query to use
- * @param tuple     tuple to bind
+ * @param aTuple    Tuple to bind
  */
 template <typename ... Types>
-void reset_bind_exec(SQLite::Statement& query, std::tuple<Types...>&& tuple)
+void reset_bind_exec(SQLite::Statement& apQuery, std::tuple<Types...>&& aTuple)
 {
-    query.reset();
-    bind_exec(query, std::forward<decltype(tuple)>(tuple));
+    apQuery.reset();
+    bind_exec(apQuery, std::forward<decltype(aTuple)>(aTuple));
 }
 
 /**
@@ -73,13 +76,13 @@ void reset_bind_exec(SQLite::Statement& query, std::tuple<Types...>&& tuple)
  * This feature requires a c++14 capable compiler.
  *
  * @param apQuery   Query to use
- * @param tuple     tuple to bind
+ * @param aTuple    Tuple to bind
  */
 template <typename ... Types>
-void bind_exec(SQLite::Statement& query, std::tuple<Types...>&& tuple)
+void bind_exec(SQLite::Statement& apQuery, std::tuple<Types...>&& aTuple)
 {
-    bind(query, std::forward<decltype(tuple)>(tuple));
-    while (query.executeStep()) {}
+    bind(apQuery, std::forward<decltype(aTuple)>(aTuple));
+    while (apQuery.executeStep()) {}
 }
 
 }  // namespace SQLite

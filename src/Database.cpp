@@ -198,7 +198,8 @@ void Database::createFunction(const char*   apFuncName,
 {
     int TextRep = SQLITE_UTF8;
     // optimization if deterministic function (e.g. of nondeterministic function random())
-    if (abDeterministic) {
+    if (abDeterministic)
+    {
         TextRep = TextRep|SQLITE_DETERMINISTIC;
     }
     const int ret = sqlite3_create_function_v2(mpSQLite, apFuncName, aNbArg, TextRep,
@@ -237,14 +238,16 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
 // Set the key for the current sqlite database instance.
 void Database::key(const std::string& aKey) const
 {
-    int pass_len = static_cast<int>(aKey.length());
+    int passLen = static_cast<int>(aKey.length());
 #ifdef SQLITE_HAS_CODEC
-    if (pass_len > 0) {
-        const int ret = sqlite3_key(mpSQLite, aKey.c_str(), pass_len);
+    if (passLen > 0)
+    {
+        const int ret = sqlite3_key(mpSQLite, aKey.c_str(), passLen);
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
-    if (pass_len > 0) {
+    if (passLen > 0)
+    {
         const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
         throw exception;
     }
@@ -255,11 +258,14 @@ void Database::key(const std::string& aKey) const
 void Database::rekey(const std::string& aNewKey) const
 {
 #ifdef SQLITE_HAS_CODEC
-    int pass_len = aNewKey.length();
-    if (pass_len > 0) {
-        const int ret = sqlite3_rekey(mpSQLite, aNewKey.c_str(), pass_len);
+    int passLen = aNewKey.length();
+    if (passLen > 0)
+    {
+        const int ret = sqlite3_rekey(mpSQLite, aNewKey.c_str(), passLen);
         check(ret);
-    } else {
+    }
+    else
+    {
         const int ret = sqlite3_rekey(mpSQLite, nullptr, 0);
         check(ret);
     }
@@ -273,14 +279,18 @@ void Database::rekey(const std::string& aNewKey) const
 // Test if a file contains an unencrypted database.
 bool Database::isUnencrypted(const std::string& aFilename)
 {
-    if (aFilename.length() > 0) {
+    if (aFilename.length() > 0)
+    {
         std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
         char header[16];
-        if (fileBuffer.is_open()) {
+        if (fileBuffer.is_open())
+        {
             fileBuffer.seekg(0, std::ios::beg);
             fileBuffer.getline(header, 16);
             fileBuffer.close();
-        } else {
+        }
+        else
+        {
             const SQLite::Exception exception("Error opening file: " + aFilename);
             throw exception;
         }

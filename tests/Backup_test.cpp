@@ -21,7 +21,8 @@
 
 #include <cstdio>
 
-TEST(Backup, initException) {
+TEST(Backup, initException)
+{
     remove("backup_test.db3");
     SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
@@ -34,7 +35,8 @@ TEST(Backup, initException) {
     remove("backup_test.db3");
 }
 
-TEST(Backup, executeStepOne) {
+TEST(Backup, executeStepOne)
+{
     remove("backup_test.db3");
     remove("backup_test.db3.backup");
     SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
@@ -66,7 +68,8 @@ TEST(Backup, executeStepOne) {
     remove("backup_test.db3.backup");
 }
 
-TEST(Backup, executeStepAll) {
+TEST(Backup, executeStepAll)
+{
     remove("backup_test.db3");
     remove("backup_test.db3.backup");
     SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
@@ -94,7 +97,8 @@ TEST(Backup, executeStepAll) {
     remove("backup_test.db3.backup");
 }
 
-TEST(Backup, executeStepException) {
+TEST(Backup, executeStepException)
+{
     remove("backup_test.db3");
     remove("backup_test.db3.backup");
     SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);

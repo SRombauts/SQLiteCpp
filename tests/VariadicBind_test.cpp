@@ -20,7 +20,8 @@
 #include <cstdio>
 
 #if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && (_MSC_VER >= 1800) ) // c++11: Visual Studio 2013
-TEST(VariadicBind, invalid) {
+TEST(VariadicBind, invalid)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
 
@@ -56,7 +57,8 @@ TEST(VariadicBind, invalid) {
     {
         SQLite::Statement query(db, std::string{"SELECT id, value FROM test ORDER BY id"});
         std::vector<std::pair<int, std::string> > results;
-        while (query.executeStep()) {
+        while (query.executeStep())
+        {
             const int id = query.getColumn(0);
             std::string value = query.getColumn(1);
             results.emplace_back( id, std::move(value) );
@@ -90,7 +92,8 @@ TEST(VariadicBind, invalid) {
     {
         SQLite::Statement query(db, std::string{"SELECT id, value FROM test2 ORDER BY id"});
         std::vector<std::pair<int, std::string> > results;
-        while (query.executeStep()) {
+        while (query.executeStep())
+        {
             const int id = query.getColumn(0);
             std::string value = query.getColumn(1);
             results.emplace_back( id, std::move(value) );

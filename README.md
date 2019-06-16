@@ -302,6 +302,7 @@ The source code use the CamelCase naming style variant where:
 - function and variable names begin with a lower case letter
 - member variables begin with a 'm', function arguments begin with a 'a', booleans with a 'b', pointers with a 'p'
 - each file, class, method and member variable is documented using Doxygen tags
+- braces on their own line
 See also http://www.appinf.com/download/CppCodingStyleGuide.pdf for good guidelines
 
 ## See also - Some other simple C++ SQLite wrappers:

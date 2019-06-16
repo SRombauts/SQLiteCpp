@@ -21,7 +21,8 @@
 
 #include <climits> // For INT_MAX
 
-TEST(Statement, invalid) {
+TEST(Statement, invalid)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
@@ -103,7 +104,8 @@ SQLite::Statement StatementBuilder(SQLite::Database& aDb, const char* apQuery)
     return SQLite::Statement(aDb, apQuery);
 }
 
-TEST(Statement, moveConstructor) {
+TEST(Statement, moveConstructor)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
@@ -130,7 +132,8 @@ TEST(Statement, moveConstructor) {
 
 #endif
 
-TEST(Statement, executeStep) {
+TEST(Statement, executeStep)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
@@ -182,7 +185,8 @@ TEST(Statement, executeStep) {
     EXPECT_THROW(insert2.exec(), SQLite::Exception);
 }
 
-TEST(Statement, tryExecuteStep) {
+TEST(Statement, tryExecuteStep)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
@@ -227,7 +231,8 @@ TEST(Statement, tryExecuteStep) {
     EXPECT_EQ(insert.tryReset(), SQLITE_CONSTRAINT);
 }
 
-TEST(Statement, bindings) {
+TEST(Statement, bindings)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
@@ -393,7 +398,8 @@ TEST(Statement, bindings) {
     }
 }
 
-TEST(Statement, bindNoCopy) {
+TEST(Statement, bindNoCopy)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
@@ -432,7 +438,8 @@ TEST(Statement, bindNoCopy) {
     }
 }
 
-TEST(Statement, bindByName) {
+TEST(Statement, bindByName)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
@@ -538,7 +545,8 @@ TEST(Statement, bindByName) {
     }
 }
 
-TEST(Statement, bindNoCopyByName) {
+TEST(Statement, bindNoCopyByName)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
@@ -577,7 +585,8 @@ TEST(Statement, bindNoCopyByName) {
     }
 }
 
-TEST(Statement, isColumnNull) {
+TEST(Statement, isColumnNull)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     ASSERT_EQ(SQLite::OK, db.getErrorCode());
@@ -639,7 +648,8 @@ TEST(Statement, isColumnNull) {
     EXPECT_THROW(query.isColumnNull(3), SQLite::Exception);
 }
 
-TEST(Statement, isColumnNullByName) {
+TEST(Statement, isColumnNullByName)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
     ASSERT_EQ(SQLITE_OK, db.getErrorCode());
@@ -701,7 +711,8 @@ TEST(Statement, isColumnNullByName) {
     EXPECT_THROW(query.isColumnNull(3), SQLite::Exception);
 }
 
-TEST(Statement, getColumnByName) {
+TEST(Statement, getColumnByName)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
@@ -737,7 +748,8 @@ TEST(Statement, getColumnByName) {
     EXPECT_EQ(0.123,    real);
 }
 
-TEST(Statement, getName) {
+TEST(Statement, getName)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT)"));
@@ -763,7 +775,8 @@ TEST(Statement, getName) {
 }
 
 #if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
-TEST(Statement, getColumns) {
+TEST(Statement, getColumns)
+{
     struct GetRowTestStruct
     {
         int id;
@@ -819,7 +832,8 @@ TEST(Statement, getColumns) {
 #endif
 
 #if (LONG_MAX > INT_MAX) // sizeof(long)==8 means the data model of the system is LP64 (64bits Linux)
-TEST(Statement, bind64bitsLong) {
+TEST(Statement, bind64bitsLong)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
@@ -832,7 +846,8 @@ TEST(Statement, bind64bitsLong) {
 }
 #endif
 
-TEST(Statement, getBindParameterCount) {
+TEST(Statement, getBindParameterCount)
+{
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT)"));

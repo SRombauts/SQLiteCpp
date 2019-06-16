@@ -15,7 +15,8 @@
 
 #include <string>
 
-TEST(Exception, copy) {
+TEST(Exception, copy)
+{
     const SQLite::Exception ex1("some error", 2);
     const SQLite::Exception ex2 = ex1;
     EXPECT_STREQ(ex1.what(), ex2.what());
@@ -25,7 +26,8 @@ TEST(Exception, copy) {
 
 // see http://eel.is/c++draft/exception#2 or http://www.cplusplus.com/reference/exception/exception/operator=/
 // an assignment operator is expected to be avaiable
-TEST(Exception, assignment) {
+TEST(Exception, assignment)
+{
     const SQLite::Exception ex1("some error", 2);
     SQLite::Exception ex2("some error2", 3);
 
@@ -36,17 +38,22 @@ TEST(Exception, assignment) {
     EXPECT_EQ(ex1.getExtendedErrorCode(), ex2.getExtendedErrorCode());
 }
 
-TEST(Exception, throw_catch) {
+TEST(Exception, throw_catch)
+{
     const char message[] = "some error";
-    try {
+    try
+    {
         throw SQLite::Exception(message);
-    } catch (const std::runtime_error& ex) {
+    }
+    catch (const std::runtime_error& ex)
+    {
         EXPECT_STREQ(ex.what(), message);
     }
 }
 
 
-TEST(Exception, constructor) {
+TEST(Exception, constructor)
+{
     const char msg1[] = "error msg";
     std::string msg2 = msg1;
     {

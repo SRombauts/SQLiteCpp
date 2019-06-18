@@ -257,6 +257,7 @@ TEST(Statement, bindings)
         insert.bind(1, text);
         insert.bind(2, integer);
         insert.bind(3, dbl);
+        EXPECT_EQ(insert.getExtendedSQL(), "INSERT INTO test VALUES (NULL, 'first', -123, 0.123)");
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 

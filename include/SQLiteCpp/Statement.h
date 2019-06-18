@@ -608,6 +608,10 @@ public:
     {
         return mQuery;
     }
+
+    // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
+    std::string getExtendedSQL();
+
     /// Return the number of columns in the result set returned by the prepared statement
     inline int getColumnCount() const
     {

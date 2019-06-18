@@ -412,15 +412,22 @@ int Statement::getErrorCode() const noexcept // nothrow
 {
     return sqlite3_errcode(mStmtPtr);
 }
+
 // Return the extended numeric result code for the most recent failed API call (if any).
 int Statement::getExtendedErrorCode() const noexcept // nothrow
 {
     return sqlite3_extended_errcode(mStmtPtr);
 }
+
 // Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
 const char* Statement::getErrorMsg() const noexcept // nothrow
 {
     return sqlite3_errmsg(mStmtPtr);
+}
+
+// Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
+std::string Statement::getExtendedSQL() {
+    return sqlite3_expanded_sql(mStmtPtr);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

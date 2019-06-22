@@ -416,7 +416,10 @@ const char* Statement::getErrorMsg() const noexcept // nothrow
 
 // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
 std::string Statement::getExtendedSQL() {
-    return sqlite3_expanded_sql(mStmtPtr);
+    auto statement = sqlite3_expanded_sql(mStmtPtr);
+    std::string rv = statement;
+    sqlite3_free(statement);
+    return rv;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

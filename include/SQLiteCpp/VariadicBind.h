@@ -47,7 +47,7 @@ namespace SQLite
  * @param args      zero or more args to bind.
  */
 template<class ...Args>
-void bind(SQLite::Statement& query, const Args& ... args)
+void bind(Statement& query, const Args& ... args)
 {
     int pos = 0;
     (void)std::initializer_list<int>{
@@ -75,7 +75,7 @@ void bind(SQLite::Statement& query, const Args& ... args)
  * @param tuple     tuple with values to bind
  */
 template <typename ... Types>
-void bind(SQLite::Statement& query, const std::tuple<Types...> &tuple)
+void bind(Statement& query, const std::tuple<Types...> &tuple)
 {
     bind(query, tuple, std::index_sequence_for<Types...>());
 }
@@ -91,7 +91,7 @@ void bind(SQLite::Statement& query, const std::tuple<Types...> &tuple)
  * @param tuple     tuple with values to bind
  */
 template <typename ... Types, std::size_t ... Indices>
-void bind(SQLite::Statement& query, const std::tuple<Types...> &tuple, std::index_sequence<Indices...>)
+void bind(Statement& query, const std::tuple<Types...> &tuple, std::index_sequence<Indices...>)
 {
     bind(query, std::get<Indices>(tuple)...);
 }

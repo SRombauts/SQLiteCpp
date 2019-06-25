@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Convenience function to execute a Statement with multiple Parameter sets
  *
- * Copyright (c) 2019 Maximilian Bachmann (github maxbachmann)
+ * Copyright (c) 2019 Maximilian Bachmann (contact@maxbachmann.de)
  * Copyright (c) 2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt

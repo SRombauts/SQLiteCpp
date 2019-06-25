@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2016 Paul Dreik (github@pauldreik.se)
  * Copyright (c) 2016-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
- * Copyright (c) 2019 Maximilian Bachmann (github maxbachmann)
+ * Copyright (c) 2019 Maximilian Bachmann (contact@maxbachmann.de)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)

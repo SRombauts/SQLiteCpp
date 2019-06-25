@@ -12,180 +12,6 @@ cache:
 
 matrix:
   include:
-    # gcc default (4.8)
-    - compiler: gcc
-      env:
-        - CC=gcc
-        - CXX=g++
-        - CXXFLAGS="-Wall -Wextra -pedantic"
-    # gcc 4.9 std=default
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
-      env:
-        - CC=gcc-4.9
-        - CXX=g++-4.9
-        - CXXFLAGS="-Wall -Wextra -pedantic"
-    # gcc 5 std=c++03
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-std=c++03 -Wall -Wextra -pedantic"
-    # gcc 5 std=c++11
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-std=c++11 -Wall -Wextra -pedantic"
-    # gcc 5 default
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-Wall -Wextra -pedantic"
-    # gcc 5 std=c++11
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-std=c++11 -Wall -Wextra -pedantic"
-    # gcc 5 std=c++14
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
-    # gcc 5 std=c++1z
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-std=c++1z -Wall -Wextra -pedantic"
-    # gcc 6.5 std=c++14 (default standard)
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-      env:
-        - CC=gcc-6
-        - CXX=g++-6
-        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
-    # gcc 6.5 std=c++1z
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-      env:
-        - CC=gcc-6
-        - CXX=g++-6
-        - CXXFLAGS="-std=c++1z -Wall -Wextra -pedantic"
-    # gcc 7.4 std=c++14 (default standard)
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-      env:
-        - CC=gcc-7
-        - CXX=g++-7
-        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
-    # gcc 7.4 std=c++17
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-      env:
-        - CC=gcc-7
-        - CXX=g++-7
-        - CXXFLAGS="-std=c++17 -Wall -Wextra -pedantic"
-    # gcc 8 std=c++14 (default standard)
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-        - CC=gcc-8
-        - CXX=g++-8
-        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
-    # gcc 8 std=c++17
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-        - CC=gcc-8
-        - CXX=g++-8
-        - CXXFLAGS="-std=c++17 -Wall -Wextra -pedantic"
-    # gcc 8 std=c++2a
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-        - CC=gcc-8
-        - CXX=g++-8
-        - CXXFLAGS="-std=c++2a -Wall -Wextra -pedantic"
     # gcc 9 std=c++14 (default standard)
     - compiler: gcc
       addons:
@@ -199,42 +25,30 @@ matrix:
         - CXX=g++-9
         - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
 # TODO: issue with ExecuteMany and Bind helper function
-#    # gcc 9 std=c++17
-#    - compiler: gcc
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-9
-#      env:
-#        - CC=gcc-9
-#        - CXX=g++-9
-#        - CXXFLAGS="-std=c++17 -Wall -Wextra -pedantic"
-#    # gcc 9 std=c++2a
-#    - compiler: gcc
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-9
-#      env:
-#        - CC=gcc-9
-#        - CXX=g++-9
-#        - CXXFLAGS="-std=c++2a -Wall -Wextra -pedantic"
-    # clang default
-    - compiler: clang
+    # gcc 9 std=c++17
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
       env:
-        - CC=clang
-        - CXX=clang++
-    # os x
-    - compiler: clang
-      os: osx
+        - CC=gcc-9
+        - CXX=g++-9
+        - CXXFLAGS="-std=c++17 -Wall -Wextra -pedantic"
+    # gcc 9 std=c++2a
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
       env:
-        - CC=clang
-        - CXX=clang
-        - CXXFLAGS=-lstdc++
+        - CC=gcc-9
+        - CXX=g++-9
+        - CXXFLAGS="-std=c++2a -Wall -Wextra -pedantic"
 
 before_install:
   # coveralls test coverage:
@@ -242,9 +56,10 @@ before_install:
 
 # scripts to run before build
 before_script:
+  - gcc --version
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Debug -DSQLITECPP_USE_ASAN=ON -DSQLITECPP_USE_GCOV=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DSQLITECPP_USE_GCOV=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
 
 # build examples, and run tests (ie make & make test)
 script:

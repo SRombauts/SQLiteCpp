@@ -3,7 +3,7 @@
  * @ingroup tests
  * @brief   Test of variadic bind
  *
- * Copyright (c) 2019 Maximilian Bachmann (github@maxbachmann)
+ * Copyright (c) 2019 Maximilian Bachmann (contact@maxbachmann.de)
  * Copyright (c) 2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
@@ -29,8 +29,8 @@ TEST(ExecuteMany, invalid)
     EXPECT_TRUE(db.tableExists("test"));
     {
         execute_many(db, "INSERT INTO test VALUES (?, ?)",
-            std::make_tuple(1),
-            std::make_tuple(2, "two"),
+            1,
+            std::make_tuple(2),
             std::make_tuple(3, "three")
         );
     }
@@ -47,7 +47,7 @@ TEST(ExecuteMany, invalid)
         EXPECT_EQ(std::size_t(3), results.size());
 
         EXPECT_EQ(std::make_pair(1,std::string{""}), results.at(0));
-        EXPECT_EQ(std::make_pair(2,std::string{"two"}), results.at(1));
+        EXPECT_EQ(std::make_pair(2,std::string{""}), results.at(1));
         EXPECT_EQ(std::make_pair(3,std::string{"three"}), results.at(2));
     }
 }

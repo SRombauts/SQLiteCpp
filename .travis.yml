@@ -198,31 +198,30 @@ matrix:
         - CC=gcc-9
         - CXX=g++-9
         - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
-# TODO: issue with ExecuteMany and Bind helper function
-#    # gcc 9 std=c++17
-#    - compiler: gcc
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-9
-#      env:
-#        - CC=gcc-9
-#        - CXX=g++-9
-#        - CXXFLAGS="-std=c++17 -Wall -Wextra -pedantic"
-#    # gcc 9 std=c++2a
-#    - compiler: gcc
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-9
-#      env:
-#        - CC=gcc-9
-#        - CXX=g++-9
-#        - CXXFLAGS="-std=c++2a -Wall -Wextra -pedantic"
+    # gcc 9 std=c++17
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+      env:
+        - CC=gcc-9
+        - CXX=g++-9
+        - CXXFLAGS="-std=c++17 -Wall -Wextra -pedantic"
+    # gcc 9 std=c++2a
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+      env:
+        - CC=gcc-9
+        - CXX=g++-9
+        - CXXFLAGS="-std=c++2a -Wall -Wextra -pedantic"
     # clang default
     - compiler: clang
       env:

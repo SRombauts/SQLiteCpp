@@ -44,9 +44,9 @@ namespace SQLite
  * @param aParams   the following tuples with parameters
  */
 template <typename Arg, typename... Types>
-void execute_many(Database& aDatabase, const char* apQuery, Arg&& aArg, Types&&... aParams)
+void execute_many(SQLite::Database& aDatabase, const char* apQuery, Arg&& aArg, Types&&... aParams)
 {
-    Statement query(aDatabase, apQuery);
+    SQLite::Statement query(aDatabase, apQuery);
     bind_exec(query, std::forward<Arg>(aArg));
     (void)std::initializer_list<int>
     {
@@ -64,7 +64,7 @@ void execute_many(Database& aDatabase, const char* apQuery, Arg&& aArg, Types&&.
  * @param aTuple    Tuple to bind
  */
 template <typename TupleT>
-void reset_bind_exec(Statement& apQuery, TupleT&& aTuple)
+void reset_bind_exec(SQLite::Statement& apQuery, TupleT&& aTuple)
 {
     apQuery.reset();
     bind_exec(apQuery, std::forward<TupleT>(aTuple));
@@ -79,9 +79,9 @@ void reset_bind_exec(Statement& apQuery, TupleT&& aTuple)
  * @param aTuple    Tuple to bind
  */
 template <typename TupleT>
-void bind_exec(Statement& apQuery, TupleT&& aTuple)
+void bind_exec(SQLite::Statement& apQuery, TupleT&& aTuple)
 {
-    bind(apQuery, std::forward<TupleT>(aTuple));
+    SQLite::bind(apQuery, std::forward<TupleT>(aTuple));
     while (apQuery.executeStep()) {}
 }
 

@@ -77,7 +77,7 @@ void bind(SQLite::Statement& query, const Args& ... args)
 template <typename ... Types>
 void bind(SQLite::Statement& query, const std::tuple<Types...> &tuple)
 {
-    SQLite::bind(query, tuple, std::index_sequence_for<Types...>());
+    bind(query, tuple, std::index_sequence_for<Types...>());
 }
 
 /**
@@ -93,7 +93,7 @@ void bind(SQLite::Statement& query, const std::tuple<Types...> &tuple)
 template <typename ... Types, std::size_t ... Indices>
 void bind(SQLite::Statement& query, const std::tuple<Types...> &tuple, std::index_sequence<Indices...>)
 {
-    SQLite::bind(query, std::get<Indices>(tuple)...);
+    bind(query, std::get<Indices>(tuple)...);
 }
 #endif // c++14
 

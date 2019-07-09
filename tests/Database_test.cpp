@@ -56,7 +56,7 @@ TEST(Database, ctorExecCreateDropExist)
         EXPECT_TRUE(db.tableExists("test"));
         EXPECT_TRUE(db.tableExists(std::string("test")));
         EXPECT_EQ(0, db.getLastInsertRowid());
-        
+
         EXPECT_EQ(0, db.exec("DROP TABLE IF EXISTS test"));
         EXPECT_FALSE(db.tableExists("test"));
         EXPECT_FALSE(db.tableExists(std::string("test")));
@@ -88,7 +88,7 @@ TEST(Database, moveConstructor)
     remove("test.db3");
 }
 
-#endif 
+#endif
 
 TEST(Database, createCloseReopen)
 {
@@ -128,6 +128,28 @@ TEST(Database, inMemory)
         SQLite::Database db(":memory:");
         EXPECT_FALSE(db.tableExists("test"));
     } // Close an destroy DB
+}
+
+TEST(Database, import_export)
+{
+    // Create a new in-memory database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE);
+    EXPECT_FALSE(db.tableExists("test"));
+    db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+    EXPECT_TRUE(db.tableExists("test"));
+
+    // Export the data into a file
+    remove("backup");
+    EXPECT_EQ(db.backup("backup", SQLite::Database::BackupType::Save), SQLITE_OK);
+
+    // Trash the table
+    db.exec("DROP TABLE test;");
+    EXPECT_FALSE(db.tableExists("test"));
+
+    // Import the data back from the file
+    EXPECT_EQ(db.backup("backup", SQLite::Database::BackupType::Load), SQLITE_OK);
+
+    EXPECT_TRUE(db.tableExists("test"));
 }
 
 #if SQLITE_VERSION_NUMBER >= 3007015 // SQLite v3.7.15 is first version with PRAGMA busy_timeout

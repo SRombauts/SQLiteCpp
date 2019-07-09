@@ -300,4 +300,48 @@ bool Database::isUnencrypted(const std::string& aFilename)
     throw exception;
 }
 
+// This is a reference implementation of live backup taken from the official sit:
+// https://www.sqlite.org/backup.html
+
+int Database::backup(const char* zFilename, BackupType type) {
+    /* Open the database file identified by zFilename. Exit early if this fails. */
+    sqlite3* pFile;
+    int rc = sqlite3_open(zFilename, &pFile);
+    if (rc == SQLITE_OK)
+    {
+        /* If this is a 'load' operation (isSave==0), then data is copied
+        ** from the database file just opened to database mpSQLite.
+        ** Otherwise, if this is a 'save' operation (isSave==1), then data
+        ** is copied from mpSQLite to pFile.  Set the variables pFrom and
+        ** pTo accordingly. */
+        sqlite3* pFrom = (type == BackupType::Save ? mpSQLite : pFile);
+        sqlite3* pTo = (type == BackupType::Save ? pFile : mpSQLite);
+
+        /* Set up the backup procedure to copy from the "main" database of
+        ** connection pFile to the main database of connection mpSQLite.
+        ** If something goes wrong, pBackup will be set to NULL and an error
+        ** code and message left in connection pTo.
+        **
+        ** If the backup object is successfully created, call backup_step()
+        ** to copy data from pFile to mpSQLite. Then call backup_finish()
+        ** to release resources associated with the pBackup object.  If an
+        ** error occurred, then an error code and message will be left in
+        ** connection pTo. If no error occurred, then the error code belonging
+        ** to pTo is set to SQLITE_OK.
+        */
+        sqlite3_backup *pBackup = sqlite3_backup_init(pTo, "main", pFrom, "main");
+        if (pBackup)
+        {
+            sqlite3_backup_step(pBackup, -1);
+            sqlite3_backup_finish(pBackup);
+        }
+        rc = sqlite3_errcode(pTo);
+    }
+
+    /* Close the database connection opened on database file zFilename
+    ** and return the result of this function. */
+    sqlite3_close(pFile);
+    return rc;
+}
+
 }  // namespace SQLite

@@ -435,6 +435,11 @@ public:
     static bool isUnencrypted(const std::string& aFilename);
 
     /**
+     * @brief BackupType for the backup() method
+     */
+    enum BackupType { Save, Load };
+
+    /**
      * @brief Load or save the database content.
      *
      * This function is used to load the contents of a database file on disk
@@ -443,7 +448,6 @@ public:
      *
      * @return SQLITE_OK on success or an error code from SQLite.
      */
-    enum class BackupType { Save, Load };
     int backup(const char* zFilename, BackupType type);
 
 private:

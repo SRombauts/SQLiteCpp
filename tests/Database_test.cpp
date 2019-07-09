@@ -140,14 +140,14 @@ TEST(Database, import_export)
 
     // Export the data into a file
     remove("backup");
-    EXPECT_EQ(db.backup("backup", SQLite::Database::BackupType::Save), SQLITE_OK);
+    EXPECT_EQ(db.backup("backup", SQLite::Database::Save), SQLITE_OK);
 
     // Trash the table
     db.exec("DROP TABLE test;");
     EXPECT_FALSE(db.tableExists("test"));
 
     // Import the data back from the file
-    EXPECT_EQ(db.backup("backup", SQLite::Database::BackupType::Load), SQLITE_OK);
+    EXPECT_EQ(db.backup("backup", SQLite::Database::Load), SQLITE_OK);
 
     EXPECT_TRUE(db.tableExists("test"));
 }

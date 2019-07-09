@@ -137,3 +137,4 @@ Version ?
 - #197 Add tuple_bind and execute_many
 - #199 Fix #156 misleading error message in exception from Statement::exec
 - #201 Add Statement::getExpandedSQL() to get the SQL text of prepared statement with bound parameters expanded
+- #211 Implement Database::backup()

@@ -314,8 +314,8 @@ int Database::backup(const char* zFilename, BackupType type) {
         ** Otherwise, if this is a 'save' operation (isSave==1), then data
         ** is copied from mpSQLite to pFile.  Set the variables pFrom and
         ** pTo accordingly. */
-        sqlite3* pFrom = (type == BackupType::Save ? mpSQLite : pFile);
-        sqlite3* pTo = (type == BackupType::Save ? pFile : mpSQLite);
+        sqlite3* pFrom = (type == Save ? mpSQLite : pFile);
+        sqlite3* pTo = (type == Save ? pFile : mpSQLite);
 
         /* Set up the backup procedure to copy from the "main" database of
         ** connection pFile to the main database of connection mpSQLite.

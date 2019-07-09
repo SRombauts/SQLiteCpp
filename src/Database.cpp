@@ -303,7 +303,7 @@ bool Database::isUnencrypted(const std::string& aFilename)
 // This is a reference implementation of live backup taken from the official sit:
 // https://www.sqlite.org/backup.html
 
-int Database::loadOrSaveDb(const char* zFilename, int isSave) {
+int Database::backup(const char* zFilename, BackupType type) {
     /* Open the database file identified by zFilename. Exit early if this fails. */
     sqlite3* pFile;
     int rc = sqlite3_open(zFilename, &pFile);
@@ -314,8 +314,8 @@ int Database::loadOrSaveDb(const char* zFilename, int isSave) {
         ** Otherwise, if this is a 'save' operation (isSave==1), then data
         ** is copied from mpSQLite to pFile.  Set the variables pFrom and
         ** pTo accordingly. */
-        sqlite3* pFrom = (isSave ? mpSQLite : pFile);
-        sqlite3* pTo = (isSave ? pFile : mpSQLite);
+        sqlite3* pFrom = (type == BackupType::Save ? mpSQLite : pFile);
+        sqlite3* pTo = (type == BackupType::Save ? pFile : mpSQLite);
 
         /* Set up the backup procedure to copy from the "main" database of
         ** connection pFile to the main database of connection mpSQLite.

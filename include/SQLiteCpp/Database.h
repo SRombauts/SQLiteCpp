@@ -443,7 +443,8 @@ public:
      *
      * @return SQLITE_OK on success or an error code from SQLite.
      */
-    int loadOrSaveDb(const char* zFilename, int isSave);
+    enum class BackupType { Save, Load };
+    int backup(const char* zFilename, BackupType type);
 
 private:
     /// @{ Database must be non-copyable

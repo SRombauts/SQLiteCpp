@@ -14,3 +14,7 @@ add_library(sqlite3
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
 endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
+
+if (UNIX AND CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(sqlite3 PRIVATE "-Wimplicit-fallthrough=0")
+endif()

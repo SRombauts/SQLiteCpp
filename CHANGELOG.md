@@ -129,7 +129,7 @@ Version 2.3.0 - March 3 2019
 - Better CMake compatibility #170
 - Add implicit cast operator to char and short types #179 #180
 
-Version ?
+Version 2.4.0 - August 25 2019
 - Update SQLite3 from 3.27.2 to 3.29.0 (2019-07-10)
 - #191 CMake Warning line 299
 - #190 Implement move constructors

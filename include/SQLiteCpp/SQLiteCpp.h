@@ -37,6 +37,8 @@
  * The [SQLITECPP_VERSION_NUMBER] C preprocessor macro resolves to an integer
  * with the value (X*1000000 + Y*1000 + Z) where X, Y, and Z are the same
  * numbers used in [SQLITECPP_VERSION].
+ *
+ * WARNING: shall always be updated in sync with PROJECT_VERSION in CMakeLists.txt
  */
-#define SQLITECPP_VERSION           "2.03.00"   // 2.3.0
-#define SQLITECPP_VERSION_NUMBER     2003000    // 2.3.0
+#define SQLITECPP_VERSION           "2.04.00"   // 2.4.0
+#define SQLITECPP_VERSION_NUMBER     2004000    // 2.4.0

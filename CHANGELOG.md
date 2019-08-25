@@ -130,7 +130,7 @@ Version 2.3.0 - March 3 2019
 - Add implicit cast operator to char and short types #179 #180
 
 Version 2.4.0 - August 25 2019
-- Update SQLite3 from 3.27.2 to 3.29.0 (2019-07-10)
+- Update SQLite3 from 3.27.2 to 3.29.0 (2019-07-10) #217
 - #191 CMake Warning line 299
 - #190 Implement move constructors
 - #192 Add wrapper for bind parameter count
@@ -138,3 +138,5 @@ Version 2.4.0 - August 25 2019
 - #199 Fix #156 misleading error message in exception from Statement::exec
 - #201 Add Statement::getExpandedSQL() to get the SQL text of prepared statement with bound parameters expanded
 - #211 Implement Database::backup()
+- #215 Disable implicit fallthrough warning when building internal sqlite3
+- #216 Set PROJECT_VERSION to fix CMP0048 Policy warnings

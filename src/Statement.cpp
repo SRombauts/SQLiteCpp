@@ -120,9 +120,9 @@ void Statement::bind(const int aIndex, const std::string& aValue)
 }
 
 // Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const char* apValue)
+void Statement::bind(const int aIndex, const char* apValue, const int aSize)
 {
-    const int ret = sqlite3_bind_text(mStmtPtr, aIndex, apValue, -1, SQLITE_TRANSIENT);
+    const int ret = sqlite3_bind_text(mStmtPtr, aIndex, apValue, aSize, SQLITE_TRANSIENT);
     check(ret);
 }
 
@@ -142,9 +142,9 @@ void Statement::bindNoCopy(const int aIndex, const std::string& aValue)
 }
 
 // Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bindNoCopy(const int aIndex, const char* apValue)
+void Statement::bindNoCopy(const int aIndex, const char* apValue, const int aSize)
 {
-    const int ret = sqlite3_bind_text(mStmtPtr, aIndex, apValue, -1, SQLITE_STATIC);
+    const int ret = sqlite3_bind_text(mStmtPtr, aIndex, apValue, aSize, SQLITE_STATIC);
     check(ret);
 }
 
@@ -205,10 +205,10 @@ void Statement::bind(const char* apName, const std::string& aValue)
 }
 
 // Bind a text value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const char* apName, const char* apValue)
+void Statement::bind(const char* apName, const char* apValue, const int aSize)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_text(mStmtPtr, index, apValue, -1, SQLITE_TRANSIENT);
+    const int ret = sqlite3_bind_text(mStmtPtr, index, apValue, aSize, SQLITE_TRANSIENT);
     check(ret);
 }
 
@@ -230,10 +230,10 @@ void Statement::bindNoCopy(const char* apName, const std::string& aValue)
 }
 
 // Bind a text value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bindNoCopy(const char* apName, const char* apValue)
+void Statement::bindNoCopy(const char* apName, const char* apValue, const int aSize)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_text(mStmtPtr, index, apValue, -1, SQLITE_STATIC);
+    const int ret = sqlite3_bind_text(mStmtPtr, index, apValue, aSize, SQLITE_STATIC);
     check(ret);
 }
 

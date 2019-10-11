@@ -48,6 +48,9 @@ int getLibVersionNumber() noexcept // nothrow
     return sqlite3_libversion_number();
 }
 
+// Empty constructor
+Database::Database() {}
+
 
 // Open the provided database UTF-8 filename with SQLite::OPEN_xxx provided flags.
 Database::Database(const char* apFilename,
@@ -102,6 +105,32 @@ Database::~Database()
     // Only case of error is SQLITE_BUSY: "database is locked" (some statements are not finalized)
     // Never throw an exception in a destructor :
     SQLITECPP_ASSERT(SQLITE_OK == ret, "database is locked");  // See SQLITECPP_ENABLE_ASSERT_HANDLER
+}
+
+/**
+ * @brief Open the provided database UTF-8 filename. For use instead constructor.
+ *  Example:
+ *    Database db;
+ *    db.open("database.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE)
+ */
+void Database::open(const char* apFilename,
+                   const int   aFlags         /* = SQLite::OPEN_READONLY*/,
+                   const int   aBusyTimeoutMs /* = 0 */,
+                   const char* apVfs          /* = nullptr*/)
+{
+    mpSQLite = nullptr;
+    mFilename = apFilename;
+    const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
+    if (SQLITE_OK != ret)
+    {
+        const SQLite::Exception exception(mpSQLite, ret); // must create before closing
+        sqlite3_close(mpSQLite); // close is required even in case of error on opening
+        throw exception;
+    }
+    if (aBusyTimeoutMs > 0)
+    {
+        setBusyTimeout(aBusyTimeoutMs);
+    }
 }
 
 /**

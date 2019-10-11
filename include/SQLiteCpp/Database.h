@@ -76,6 +76,9 @@ class Database
     friend class Statement; // Give Statement constructor access to the mpSQLite Connection Handle
 
 public:
+    // Empty constructor
+    Database();
+
     /**
      * @brief Open the provided database UTF-8 filename.
      *
@@ -143,6 +146,17 @@ public:
      * @warning assert in case of error
      */
     ~Database();
+
+    /**
+     * @brief Open the provided database UTF-8 filename. For use instead constructor.
+     *  Example:
+     *    Database db;
+     *    db.open("database.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE)
+     */
+    void open(const char* apFilename,
+             const int   aFlags         = SQLite::OPEN_READONLY,
+             const int   aBusyTimeoutMs = 0,
+             const char* apVfs          = nullptr);
 
     /**
      * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.

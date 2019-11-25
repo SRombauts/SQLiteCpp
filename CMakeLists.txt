@@ -85,28 +85,6 @@ else (NOT MSVC)
     endif ()
 endif ()
 
-# Options relative to SQLite and SQLiteC++ functions
-
-option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getColumnOriginName(). Require support from sqlite3 library." ON)
-if (SQLITE_ENABLE_COLUMN_METADATA)
-    # Enable the use of SQLite column metadata and Column::getColumnOriginName() method,
-    # Require that the sqlite3 library is also compiled with this flag (default under Debian/Ubuntu, but not on Mac OS X).
-    add_definitions(-DSQLITE_ENABLE_COLUMN_METADATA)
-endif (SQLITE_ENABLE_COLUMN_METADATA)
-
-option(SQLITE_ENABLE_ASSERT_HANDLER "Enable the user defintion of a assertion_failed() handler." OFF)
-if (SQLITE_ENABLE_ASSERT_HANDLER)
-    # Enable the user defintion of a assertion_failed() handler (default to false, easier to handler for begginers).
-    add_definitions(-DSQLITECPP_ENABLE_ASSERT_HANDLER)
-endif (SQLITE_ENABLE_ASSERT_HANDLER)
-
-option(SQLITE_USE_LEGACY_STRUCT "Fallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)" OFF)
-if (SQLITE_USE_LEGACY_STRUCT)
-    # Force forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)
-    add_definitions(-DSQLITE_USE_LEGACY_STRUCT)
-endif (SQLITE_USE_LEGACY_STRUCT)
-
-
 ## Build the C++ Wrapper ##
 
 # adding a new file require explicittly modifing the CMakeLists.txt
@@ -187,6 +165,27 @@ add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLIT
 # make the sqlite3 library part of the interface of the SQLiteCpp wrapper itself (the client app does not need to link to sqlite3)
 # PR https://github.com/SRombauts/SQLiteCpp/pull/111 "linked SQLiteCpp to sqlite3" commented out since it breaks install step from PR #118
 #target_link_libraries(SQLiteCpp PUBLIC sqlite3)
+
+# Options relative to SQLite and SQLiteC++ functions
+
+option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getColumnOriginName(). Require support from sqlite3 library." ON)
+if (SQLITE_ENABLE_COLUMN_METADATA)
+    # Enable the use of SQLite column metadata and Column::getColumnOriginName() method,
+    # Require that the sqlite3 library is also compiled with this flag (default under Debian/Ubuntu, but not on Mac OS X).
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITE_ENABLE_COLUMN_METADATA)
+endif (SQLITE_ENABLE_COLUMN_METADATA)
+
+option(SQLITE_ENABLE_ASSERT_HANDLER "Enable the user defintion of a assertion_failed() handler." OFF)
+if (SQLITE_ENABLE_ASSERT_HANDLER)
+    # Enable the user defintion of a assertion_failed() handler (default to false, easier to handler for begginers).
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITECPP_ENABLE_ASSERT_HANDLER)
+endif (SQLITE_ENABLE_ASSERT_HANDLER)
+
+option(SQLITE_USE_LEGACY_STRUCT "Fallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)" OFF)
+if (SQLITE_USE_LEGACY_STRUCT)
+    # Force forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITE_USE_LEGACY_STRUCT)
+endif (SQLITE_USE_LEGACY_STRUCT)
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")

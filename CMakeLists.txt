@@ -193,16 +193,17 @@ if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Cla
 endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
 
 # Allow the library to be installed via "make install" and found with "find_package"
+include(GNUInstallDirs)
 install(TARGETS SQLiteCpp
     EXPORT ${PROJECT_NAME}Config
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     COMPONENT libraries)
 target_include_directories(SQLiteCpp PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/>)
-install(DIRECTORY include/ DESTINATION include COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
-install(EXPORT ${PROJECT_NAME}Config DESTINATION lib/cmake/${PROJECT_NAME})
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
+install(EXPORT ${PROJECT_NAME}Config DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 ## Build provided copy of SQLite3 C library ##
 

@@ -206,12 +206,6 @@ install(EXPORT ${PROJECT_NAME}Config DESTINATION lib/cmake/${PROJECT_NAME})
 
 ## Build provided copy of SQLite3 C library ##
 
-# TODO 
-#find_package(sqlite3)
-#if(sqlite3_VERSION VERSION_LESS "3.19")
-#    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
-#endif()
-
 option(SQLITECPP_USE_ASAN "Use Address Sanitizer." OFF)
 if (SQLITECPP_USE_ASAN)
     if ((CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 6) OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
@@ -230,6 +224,12 @@ if (SQLITECPP_INTERNAL_SQLITE)
     add_subdirectory(sqlite3)
     target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/sqlite3")
     target_include_directories(SQLiteCpp PRIVATE "${PROJECT_SOURCE_DIR}/sqlite3")
+else (SQLITECPP_INTERNAL_SQLITE)
+    find_package (SQLite3 REQUIRED)
+    if (SQLITE3_FOUND)
+        include_directories(${SQLITE3_INCLUDE_DIRS})
+        target_link_libraries (SQLiteCpp ${SQLITE3_LIBRARIES})
+    endif (SQLITE3_FOUND)
 endif (SQLITECPP_INTERNAL_SQLITE)
 
 # Optional additional targets:

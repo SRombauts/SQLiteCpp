@@ -301,32 +301,38 @@ endif (SQLITECPP_BUILD_EXAMPLES)
 
 option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 if (SQLITECPP_BUILD_TESTS)
-    # deactivate some warnings for compiling the gtest library
-    if (NOT MSVC)
-        add_compile_options(-Wno-variadic-macros -Wno-long-long -Wno-switch-enum -Wno-float-equal -Wno-conversion-null -Wno-switch-default -Wno-pedantic)
-    endif (NOT MSVC)
-
-    # add the subdirectory containing the CMakeLists.txt for the gtest library
-    # TODO: under Linux, uses libgtest-dev if found
-    if (NOT EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
-        message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git submodule init' and 'git submodule update' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
-    endif ()
-    add_subdirectory(googletest)
-    include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
-
-    # Add definitions to keep googletest from making the compilation fail
-    if (MSVC)
-        if (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919) # OR MSVC_TOOLSET_VERSION EQUAL 141)
-            target_compile_definitions(gtest PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-            target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-            target_compile_definitions(gmock PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-            target_compile_definitions(gmock_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-        endif (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919)
-    endif (MSVC)
-
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
-    target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp sqlite3)
+
+    find_package(GTest)
+    if (GTEST_FOUND)
+        target_link_libraries(SQLiteCpp_tests GTest::GTest GTest::Main SQLiteCpp sqlite3)
+    else (GTEST_FOUND)
+        # deactivate some warnings for compiling the gtest library
+        if (NOT MSVC)
+            add_compile_options(-Wno-variadic-macros -Wno-long-long -Wno-switch-enum -Wno-float-equal -Wno-conversion-null -Wno-switch-default -Wno-pedantic)
+        endif (NOT MSVC)
+
+        # add the subdirectory containing the CMakeLists.txt for the gtest library
+        if (NOT EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
+            message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git submodule init' and 'git submodule update' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
+        endif ()
+        add_subdirectory(googletest)
+        include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
+
+        # Add definitions to keep googletest from making the compilation fail
+        if (MSVC)
+            if (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919) # OR MSVC_TOOLSET_VERSION EQUAL 141)
+                target_compile_definitions(gtest PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+                target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+                target_compile_definitions(gmock PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+                target_compile_definitions(gmock_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+            endif (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919)
+        endif (MSVC)
+
+        target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp sqlite3)
+    endif (GTEST_FOUND)
+
     # Link target with dl for linux
     if (UNIX AND NOT APPLE)
         target_link_libraries(SQLiteCpp_tests dl)

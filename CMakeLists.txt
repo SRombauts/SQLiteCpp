@@ -351,3 +351,6 @@ if (SQLITECPP_BUILD_TESTS)
 else (SQLITECPP_BUILD_TESTS)
     message(STATUS "SQLITECPP_BUILD_TESTS OFF")
 endif (SQLITECPP_BUILD_TESTS)
+
+# API version for SQLiteCpp shared library.
+set_property(TARGET SQLiteCpp PROPERTY SOVERSION 0)

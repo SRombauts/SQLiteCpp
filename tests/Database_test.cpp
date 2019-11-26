@@ -90,6 +90,24 @@ TEST(Database, moveConstructor)
 
 #endif
 
+TEST(Database, emptyConstructor)
+{
+    remove("test.db3");
+    {
+      // Create a new object of Database
+      SQLite::Database db;
+
+      // Open a database or create a new one
+      db.open("test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+
+      // Create test table
+      EXPECT_FALSE(db.tableExists("test"));
+      db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+      EXPECT_TRUE(db.tableExists("test"));
+    }
+    remove("test.db3");
+}
+
 TEST(Database, createCloseReopen)
 {
     remove("test.db3");

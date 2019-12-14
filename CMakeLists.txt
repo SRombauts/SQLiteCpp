@@ -369,10 +369,8 @@ if (SQLITECPP_BUILD_TESTS)
         target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp sqlite3)
     endif (GTEST_FOUND)
 
-    # Link target with dl for linux
-    if (UNIX AND NOT APPLE)
-        target_link_libraries(SQLiteCpp_tests dl)
-    endif ()
+    # Google test requires C++11 since at least version 1.10:
+    set_target_properties(SQLiteCpp_tests PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS NO)
 
     # add a "test" target:
     enable_testing()

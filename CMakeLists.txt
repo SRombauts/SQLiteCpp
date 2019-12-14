@@ -15,6 +15,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 message (STATUS "CMake version: ${CMAKE_VERSION}")
 message (STATUS "Project version: ${PROJECT_VERSION}")
 
+option(SQLITECPP_USE_STATIC_RUNTIME "Use MSVC static runtime (default for internal googletest)." ON)
+
 # Define useful variables to handle OS differences:
 if (WIN32)
     set(DEV_NULL                "NUL")
@@ -28,14 +30,14 @@ if (MSVC)
     set(CPPCHECK_ARG_TEMPLATE   "--template=vs")
     # disable Visual Studio warnings for fopen() used in the example
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    # Flags for linking with multithread static C++ runtime, required by googletest
-    if (SQLITECPP_BUILD_TESTS)
-        message(STATUS "Linking against multithread static C++ runtime for unit tests with googletest")
+    # Flags for linking with multithread static C++ runtime, required by internal googletest
+    if (SQLITECPP_USE_STATIC_RUNTIME)
+        message(STATUS "Linking against multithread static C++ runtime")
         set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MT")
         set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MTd")
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
         set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-    endif (SQLITECPP_BUILD_TESTS)
+    endif (SQLITECPP_USE_STATIC_RUNTIME)
     # MSVC versions prior to 2015 are not supported anymore by SQLiteC++ 3.x
     if (MSVC_VERSION LESS 1900) # OR MSVC_TOOLSET_VERSION LESS 140)
       message(ERROR "Visual Studio prior to 2015 is not supported anymore.")

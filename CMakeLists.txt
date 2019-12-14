@@ -8,10 +8,6 @@ cmake_minimum_required(VERSION 3.1) # for "CMAKE_CXX_STANDARD" version
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # custom CMake modules like FindSQLiteCpp
 project(SQLiteCpp VERSION "2.99")
 
-# SQLiteC++ 3.x now requires C++11 compiler
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 message (STATUS "CMake version: ${CMAKE_VERSION}")
 message (STATUS "Project version: ${PROJECT_VERSION}")
 
@@ -191,9 +187,8 @@ if (SQLITE_USE_LEGACY_STRUCT)
     target_compile_definitions(SQLiteCpp PUBLIC SQLITE_USE_LEGACY_STRUCT)
 endif (SQLITE_USE_LEGACY_STRUCT)
 
-if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
-    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
-endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
+set_target_properties(SQLiteCpp PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS NO)
+set_target_properties(SQLiteCpp PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 option(SQLITECPP_USE_ASAN "Use Address Sanitizer." OFF)
 if (SQLITECPP_USE_ASAN)
@@ -322,6 +317,7 @@ option(SQLITECPP_BUILD_EXAMPLES "Build examples." OFF)
 if (SQLITECPP_BUILD_EXAMPLES)
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
+    set_target_properties(SQLiteCpp_example1 PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS NO)
     target_link_libraries(SQLiteCpp_example1 SQLiteCpp)
     target_include_directories(SQLiteCpp_example1 PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -337,6 +333,7 @@ option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 if (SQLITECPP_BUILD_TESTS)
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
+    set_target_properties(SQLiteCpp_tests PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS NO)
     target_link_libraries(SQLiteCpp_tests SQLiteCpp)
     target_include_directories(SQLiteCpp_tests PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include

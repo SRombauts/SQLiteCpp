@@ -12,8 +12,6 @@
  */
 #pragma once
 
-#if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && (_MSC_VER >= 1800) ) // c++11: Visual Studio 2013
-
 #include <SQLiteCpp/Statement.h>
 
 #if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
@@ -98,5 +96,3 @@ void bind(SQLite::Statement& query, const std::tuple<Types...> &tuple, std::inde
 #endif // c++14
 
 } // namespace SQLite
-
-#endif // c++11

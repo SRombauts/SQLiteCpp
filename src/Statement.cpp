@@ -20,7 +20,6 @@
 namespace SQLite
 {
 
-// Compile and register the SQL query for the provided SQLite Database Connection
 Statement::Statement(Database &aDatabase, const char* apQuery) :
     mQuery(apQuery),
     mStmtPtr(aDatabase.mpSQLite, mQuery), // prepare the SQL query, and ref count (needs Database friendship)
@@ -31,18 +30,6 @@ Statement::Statement(Database &aDatabase, const char* apQuery) :
     mColumnCount = sqlite3_column_count(mStmtPtr);
 }
 
-// Compile and register the SQL query for the provided SQLite Database Connection
-Statement::Statement(Database &aDatabase, const std::string& aQuery) :
-    mQuery(aQuery),
-    mStmtPtr(aDatabase.mpSQLite, mQuery), // prepare the SQL query, and ref count (needs Database friendship)
-    mColumnCount(0),
-    mbHasRow(false),
-    mbDone(false)
-{
-    mColumnCount = sqlite3_column_count(mStmtPtr);
-}
-
-#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
 Statement::Statement(Statement&& aStatement) noexcept :
     mQuery(std::move(aStatement.mQuery)),
     mStmtPtr(std::move(aStatement.mStmtPtr)),
@@ -53,13 +40,6 @@ Statement::Statement(Statement&& aStatement) noexcept :
     aStatement.mColumnCount = 0;
     aStatement.mbHasRow = false;
     aStatement.mbDone = false;
-}
-#endif
-
-// Finalize and unregister the SQL query from the SQLite Database Connection.
-Statement::~Statement()
-{
-    // the finalization will be done by the destructor of the last shared pointer
 }
 
 // Reset the statement to make it ready for a new execution (see also #clearBindings() bellow)
@@ -408,19 +388,19 @@ int Statement::getBindParameterCount() const noexcept
 }
 
 // Return the numeric result code for the most recent failed API call (if any).
-int Statement::getErrorCode() const noexcept // nothrow
+int Statement::getErrorCode() const noexcept
 {
     return sqlite3_errcode(mStmtPtr);
 }
 
 // Return the extended numeric result code for the most recent failed API call (if any).
-int Statement::getExtendedErrorCode() const noexcept // nothrow
+int Statement::getExtendedErrorCode() const noexcept
 {
     return sqlite3_extended_errcode(mStmtPtr);
 }
 
 // Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-const char* Statement::getErrorMsg() const noexcept // nothrow
+const char* Statement::getErrorMsg() const noexcept
 {
     return sqlite3_errmsg(mStmtPtr);
 }
@@ -477,7 +457,6 @@ Statement::Ptr::Ptr(const Statement::Ptr& aPtr) :
     ++(*mpRefCount);
 }
 
-#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
 Statement::Ptr::Ptr(Ptr&& aPtr) :
     mpSQLite(aPtr.mpSQLite),
     mpStmt(aPtr.mpStmt),
@@ -487,7 +466,6 @@ Statement::Ptr::Ptr(Ptr&& aPtr) :
     aPtr.mpStmt = NULL;
     aPtr.mpRefCount = NULL;
 }
-#endif
 
 /**
  * @brief Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0

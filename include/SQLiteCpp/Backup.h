@@ -99,6 +99,10 @@ public:
     Backup(Database& aDestDatabase,
            Database& aSrcDatabase);
 
+    // Backup is non-copyable
+    Backup(const Backup&) = delete;
+    Backup& operator=(const Backup&) = delete;
+
     /// Release the SQLite Backup resource.
     ~Backup();
 
@@ -124,13 +128,8 @@ public:
     int getTotalPageCount();
 
 private:
-    /// @{ Backup must be non-copyable
-    Backup(const Backup&);
-    Backup& operator=(const Backup&);
-    /// @}
-
-private:
-    sqlite3_backup* mpSQLiteBackup;   ///< Pointer to SQLite Database Backup Handle
+    // TODO: use std::unique_ptr with a custom deleter to call sqlite3_backup_finish()
+    sqlite3_backup* mpSQLiteBackup = nullptr;   ///< Pointer to SQLite Database Backup Handle
 };
 
 }  // namespace SQLite

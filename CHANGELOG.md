@@ -114,7 +114,7 @@ Version 2.2.0 - Sept 19 2017
 - Removed misplaced noexcept keyword #139
 - Improved Exception class C++ conformance #138
 - Fix warnings #134
-- Deprecated Statement::IsOk() to Statement::HasRow()
+- Deprecated Statement::isOk() to Statement::hasRow()
 
 Version 2.3.0 - March 3 2019
 - Update SQLite3 from 3.20.1 to latest 3.27.2 (2019-02-25) #183 #187
@@ -155,3 +155,10 @@ Version 2.5.0 - December 31 2019
 - #249 Added SQLite header parsing functionality and associated tests (patrick--)
 
 - #251 Added example for getHeaderInfo()
+
+Version 3.0.0 - January 1 2020
+- C++11 minimum
+- CMake 3.1 minimum
+- Visual Studio 2015 minimum
+- Googletest 1.10
+- Remove Statement::isOk() deprecated in 2.2.0 when renamed to Statement::hasRow()

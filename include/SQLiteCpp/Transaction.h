@@ -52,6 +52,10 @@ public:
      */
     explicit Transaction(Database& aDatabase);
 
+    // Transaction is non-copyable
+    Transaction(const Transaction&) = delete;
+    Transaction& operator=(const Transaction&) = delete;
+
     /**
      * @brief Safely rollback the transaction if it has not been committed.
      */
@@ -61,12 +65,6 @@ public:
      * @brief Commit the transaction.
      */
     void commit();
-
-private:
-    // Transaction must be non-copyable
-    Transaction(const Transaction&);
-    Transaction& operator=(const Transaction&);
-    /// @}
 
 private:
     Database&   mDatabase;  ///< Reference to the SQLite Database Connection

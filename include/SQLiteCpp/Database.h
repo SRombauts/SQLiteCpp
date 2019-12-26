@@ -11,7 +11,6 @@
 #pragma once
 
 #include <SQLiteCpp/Column.h>
-#include <SQLiteCpp/Utils.h>    // definition of nullptr for C++98/C++03 compilers
 #include <string.h>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
@@ -42,15 +41,15 @@ extern const int OPEN_CREATE;       // SQLITE_OPEN_CREATE
 /// Enable URI filename interpretation, parsed according to RFC 3986 (ex. "file:data.db?mode=ro&cache=private")
 extern const int OPEN_URI;          // SQLITE_OPEN_URI
 
-extern const int OK;                ///< SQLITE_OK (used by inline check() bellow)
+extern const int OK;                ///< SQLITE_OK (used by check() bellow)
 
 extern const char*  VERSION;        ///< SQLITE_VERSION string from the sqlite3.h used at compile time
 extern const int    VERSION_NUMBER; ///< SQLITE_VERSION_NUMBER from the sqlite3.h used at compile time
 
 /// Return SQLite version string using runtime call to the compiled library
-const char* getLibVersion() noexcept; // nothrow
+const char* getLibVersion() noexcept;
 /// Return SQLite version number using runtime call to the compiled library
-int   getLibVersionNumber() noexcept; // nothrow
+int   getLibVersionNumber() noexcept;
 
 // Public structure for representing all fields contained within the SQLite header.
 // Official documentation for fields: https://www.sqlite.org/fileformat.html#the_database_header
@@ -143,27 +142,34 @@ public:
     Database(const std::string& aFilename,
              const int          aFlags          = SQLite::OPEN_READONLY,
              const int          aBusyTimeoutMs  = 0,
-             const std::string& aVfs            = "");
+             const std::string& aVfs            = "") :
+        Database(aFilename.c_str(), aFlags, aBusyTimeoutMs, aVfs.empty() ? nullptr : aVfs.c_str())
+    {
+    }
 
-#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
     /**
      * @brief Move an SQLite database connection.
      *
      * @param[in] aDatabase Database to move
      */
-    inline Database(Database&& aDatabase) noexcept :
+    Database(Database&& aDatabase) noexcept :
         mpSQLite(aDatabase.mpSQLite),
         mFilename(std::move(aDatabase.mFilename))
     {
         aDatabase.mpSQLite = nullptr;
     }
-#endif
+
+    // Database is non-copyable
+    Database(const Database&) = delete;
+    Database& operator=(const Database&) = delete;
 
     /**
      * @brief Close the SQLite database connection.
      *
      * All SQLite statements must have been finalized before,
      * so all Statement objects must have been unregistered.
+     *
+     * TODO: revisit this design, to perhaps switch to having Statement sharing a pointer to the Database?
      *
      * @warning assert in case of error
      */
@@ -222,7 +228,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    inline int exec(const std::string& aQueries)
+    int exec(const std::string& aQueries)
     {
         return exec(aQueries.c_str());
     }
@@ -267,7 +273,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    inline Column execAndGet(const std::string& aQuery)
+    Column execAndGet(const std::string& aQuery)
     {
         return execAndGet(aQuery.c_str());
     }
@@ -296,7 +302,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    inline bool tableExists(const std::string& aTableName)
+    bool tableExists(const std::string& aTableName)
     {
         return tableExists(aTableName.c_str());
     }
@@ -309,20 +315,20 @@ public:
      *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */
-    long long getLastInsertRowid() const noexcept; // nothrow
+    long long getLastInsertRowid() const noexcept;
 
     /// Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection (not DROP table).
-    int getTotalChanges() const noexcept; // nothrow
+    int getTotalChanges() const noexcept;
 
     /// Return the numeric result code for the most recent failed API call (if any).
-    int getErrorCode() const noexcept; // nothrow
+    int getErrorCode() const noexcept;
     /// Return the extended numeric result code for the most recent failed API call (if any).
-    int getExtendedErrorCode() const noexcept; // nothrow
+    int getExtendedErrorCode() const noexcept;
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-    const char* getErrorMsg() const noexcept; // nothrow
+    const char* getErrorMsg() const noexcept;
 
     /// Return the filename used to open the database.
-    const std::string& getFilename() const noexcept // nothrow
+    const std::string& getFilename() const noexcept
     {
         return mFilename;
     }
@@ -332,7 +338,7 @@ public:
      *
      * This is often needed to mix this wrapper with other libraries or for advance usage not supported by SQLiteCpp.
      */
-    inline sqlite3* getHandle() const noexcept // nothrow
+    sqlite3* getHandle() const noexcept
     {
         return mpSQLite;
     }
@@ -384,7 +390,7 @@ public:
      *
      * @throw SQLite::Exception in case of error
      */
-    inline void createFunction(const std::string&   aFuncName,
+    void createFunction(const std::string&   aFuncName,
                                int                  aNbArg,
                                bool                 abDeterministic,
                                void*                apApp,
@@ -490,16 +496,10 @@ public:
      */
     int backup(const char* zFilename, BackupType type);
 
-private:
-    /// @{ Database must be non-copyable
-    Database(const Database&);
-    Database& operator=(const Database&);
-    /// @}
-
     /**
      * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
      */
-    inline void check(const int aRet) const
+    void check(const int aRet) const
     {
         if (SQLite::OK != aRet)
         {
@@ -508,6 +508,7 @@ private:
     }
 
 private:
+    // TODO: use std::unique_ptr with a custom deleter to call sqlite3_close()
     sqlite3*    mpSQLite;   ///< Pointer to SQLite Database Connection Handle
     std::string mFilename;  ///< UTF-8 filename used to open the database
 };

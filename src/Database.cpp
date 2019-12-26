@@ -37,13 +37,13 @@ const char* VERSION         = SQLITE_VERSION;
 const int   VERSION_NUMBER  = SQLITE_VERSION_NUMBER;
 
 // Return SQLite version string using runtime call to the compiled library
-const char* getLibVersion() noexcept // nothrow
+const char* getLibVersion() noexcept
 {
     return sqlite3_libversion();
 }
 
 // Return SQLite version number using runtime call to the compiled library
-int getLibVersionNumber() noexcept // nothrow
+int getLibVersionNumber() noexcept
 {
     return sqlite3_libversion_number();
 }
@@ -58,27 +58,6 @@ Database::Database(const char* apFilename,
     mFilename(apFilename)
 {
     const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
-    if (SQLITE_OK != ret)
-    {
-        const SQLite::Exception exception(mpSQLite, ret); // must create before closing
-        sqlite3_close(mpSQLite); // close is required even in case of error on opening
-        throw exception;
-    }
-    if (aBusyTimeoutMs > 0)
-    {
-        setBusyTimeout(aBusyTimeoutMs);
-    }
-}
-
-// Open the provided database UTF-8 filename with SQLite::OPEN_xxx provided flags.
-Database::Database(const std::string& aFilename,
-                   const int          aFlags         /* = SQLite::OPEN_READONLY*/,
-                   const int          aBusyTimeoutMs /* = 0 */,
-                   const std::string& aVfs           /* = "" */) :
-    mpSQLite(nullptr),
-    mFilename(aFilename)
-{
-    const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? nullptr : aVfs.c_str());
     if (SQLITE_OK != ret)
     {
         const SQLite::Exception exception(mpSQLite, ret); // must create before closing
@@ -156,31 +135,31 @@ bool Database::tableExists(const char* apTableName)
 }
 
 // Get the rowid of the most recent successful INSERT into the database from the current connection.
-long long Database::getLastInsertRowid() const noexcept // nothrow
+long long Database::getLastInsertRowid() const noexcept
 {
     return sqlite3_last_insert_rowid(mpSQLite);
 }
 
 // Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection.
-int Database::getTotalChanges() const noexcept // nothrow
+int Database::getTotalChanges() const noexcept
 {
     return sqlite3_total_changes(mpSQLite);
 }
 
 // Return the numeric result code for the most recent failed API call (if any).
-int Database::getErrorCode() const noexcept // nothrow
+int Database::getErrorCode() const noexcept
 {
     return sqlite3_errcode(mpSQLite);
 }
 
 // Return the extended numeric result code for the most recent failed API call (if any).
-int Database::getExtendedErrorCode() const noexcept // nothrow
+int Database::getExtendedErrorCode() const noexcept
 {
     return sqlite3_extended_errcode(mpSQLite);
 }
 
 // Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-const char* Database::getErrorMsg() const noexcept // nothrow
+const char* Database::getErrorMsg() const noexcept
 {
     return sqlite3_errmsg(mpSQLite);
 }

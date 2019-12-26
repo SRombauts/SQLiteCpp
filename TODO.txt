@@ -7,11 +7,10 @@ Improve Github Wiki pages with the FAQ: Installation, Examples, Tutorial, How to
 Publish the Doxygen Documentation in the Github Pages (gh-pages branch)
 
 Missing features in v2.0.0:
-- #24: executemany() like in Python https://docs.python.org/2/library/sqlite3.html#sqlite3.Connection.executemany
 - #34: Better type for getColumn
 
 Missing documentation in v2.0.0:
-- explain the noncopyable property for RAII design
+- explain the non-copyable property for RAII design
 - comment on returning error code instead of exception that shall not be thrown when expected (!?)
 
 Missing unit tests in v2.0.0:
@@ -21,7 +20,7 @@ Advanced missing features:
 - #39: SAVEPOINT https://www.sqlite.org/lang_savepoint.html
 
 - Add optional usage of experimental sqlite3_trace() function to enable statistics
-- Agregate ?
+- Aggregate ?
 
 - support for different transaction mode ? NO: too specific
 - operator<< binding ? NO: redundant with bind()

@@ -73,7 +73,7 @@ And the following IDEs/Compilers
 - GCC 4.8.4, 4.9.3, 5.3.0 and 6.1.1 (C++03, C++11, C++14, C++1z)
 - Clang 3.5 and 3.8
 - Xcode 8
-- Visual Studio Community 2017, and VS 2013 & 2015 (AppVeyor)
+- Visual Studio Community 2019, 2017, and VS 2013 & 2015 (AppVeyor)
 
 ### Dependencies
 

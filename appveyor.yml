@@ -11,7 +11,6 @@ image:
   - Visual Studio 2019
   - Visual Studio 2017
   - Visual Studio 2015
-  - Visual Studio 2013
   
 # configurations to add to build matrix
 # TODO: MinGW Makefiles and MSYS Makefiles

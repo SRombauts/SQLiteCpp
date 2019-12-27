@@ -147,6 +147,7 @@ source_group(doc FILES ${SQLITECPP_DOC})
 
 # list of script files of the library
 set(SQLITECPP_SCRIPT
+ .github/workflows/actions.yml
  .travis.yml
  appveyor.yml
  build.bat

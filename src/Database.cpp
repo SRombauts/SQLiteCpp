@@ -216,7 +216,7 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
     (void)apExtensionName;
     (void)apEntryPointName;
 
-    throw std::runtime_error("sqlite extensions are disabled");
+    throw SQLite::Exception("sqlite extensions are disabled");
 #else
 #ifdef SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION // Since SQLite 3.13 (2016-05-18):
     // Security warning:
@@ -248,8 +248,7 @@ void Database::key(const std::string& aKey) const
 #else // SQLITE_HAS_CODEC
     if (passLen > 0)
     {
-        const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
-        throw exception;
+        throw SQLite::Exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
     }
 #endif // SQLITE_HAS_CODEC
 }
@@ -271,33 +270,32 @@ void Database::rekey(const std::string& aNewKey) const
     }
 #else // SQLITE_HAS_CODEC
     static_cast<void>(aNewKey); // silence unused parameter warning
-    const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
-    throw exception;
+    throw SQLite::Exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
 #endif // SQLITE_HAS_CODEC
 }
 
 // Test if a file contains an unencrypted database.
 bool Database::isUnencrypted(const std::string& aFilename)
 {
-    if (aFilename.length() > 0)
+    if (aFilename.empty())
     {
-        std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
-        char header[16];
-        if (fileBuffer.is_open())
-        {
-            fileBuffer.seekg(0, std::ios::beg);
-            fileBuffer.getline(header, 16);
-            fileBuffer.close();
-        }
-        else
-        {
-            const SQLite::Exception exception("Error opening file: " + aFilename);
-            throw exception;
-        }
-        return strncmp(header, "SQLite format 3\000", 16) == 0;
+        throw SQLite::Exception("Could not open database, the aFilename parameter was empty.");
     }
-    const SQLite::Exception exception("Could not open database, the aFilename parameter was empty.");
-    throw exception;
+
+    std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
+    char header[16];
+    if (fileBuffer.is_open())
+    {
+        fileBuffer.seekg(0, std::ios::beg);
+        fileBuffer.getline(header, 16);
+        fileBuffer.close();
+    }
+    else
+    {
+        throw SQLite::Exception("Error opening file: " + aFilename);
+    }
+
+    return strncmp(header, "SQLite format 3\000", 16) == 0;
 }
 
 // This is a reference implementation of live backup taken from the official sit:

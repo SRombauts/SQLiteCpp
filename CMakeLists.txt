@@ -175,11 +175,18 @@ if (SQLITE_ENABLE_COLUMN_METADATA)
     target_compile_definitions(SQLiteCpp PUBLIC SQLITE_ENABLE_COLUMN_METADATA)
 endif (SQLITE_ENABLE_COLUMN_METADATA)
 
-option(SQLITE_ENABLE_ASSERT_HANDLER "Enable the user defintion of a assertion_failed() handler." OFF)
+option(SQLITE_ENABLE_ASSERT_HANDLER "Enable the user definition of a assertion_failed() handler." OFF)
 if (SQLITE_ENABLE_ASSERT_HANDLER)
-    # Enable the user defintion of a assertion_failed() handler (default to false, easier to handler for begginers).
+    # Enable the user definition of a assertion_failed() handler (default to false, easier to handler for beginners).
     target_compile_definitions(SQLiteCpp PUBLIC SQLITECPP_ENABLE_ASSERT_HANDLER)
 endif (SQLITE_ENABLE_ASSERT_HANDLER)
+
+option(SQLITE_HAS_CODEC "Enable database encryption API. Not available in the public release of SQLite." OFF)
+if (SQLITE_HAS_CODEC)
+    # Enable database encryption API. Requires implementations of sqlite3_key & sqlite3_key_v2.
+    # Eg. SQLCipher (libsqlcipher-dev) is an SQLite extension that provides 256 bit AES encryption of database files. 
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITE_HAS_CODEC)
+endif (SQLITE_HAS_CODEC)
 
 option(SQLITE_USE_LEGACY_STRUCT "Fallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)" OFF)
 if (SQLITE_USE_LEGACY_STRUCT)

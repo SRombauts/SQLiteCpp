@@ -99,7 +99,7 @@ Version 2.1.0 - July 18 2017
 - Update SQLite3 from 3.13 to latest 3.19.3 (2017-06-08)
 - Fixed Incompatibility in 3.19.0 (to use older SQLite version set the CMake variable SQLITE_USE_LEGACY_STRUCT) #125
 - Fixed link error (inline in cpp) and compiler warnings (unused variable...) #96
-- Added ability to open encrypted databases #107
+- Added ability to open encrypted databases (using SQLCipher, eg. libsqlcipher-dev) #107
 - Added convenience functions for constructing objects from a row #114
 - Added CMake install step #118
 - Fix warnings #119
@@ -110,7 +110,7 @@ Version 2.1.0 - July 18 2017
 Version 2.2.0 - Sept 19 2017
 - Update SQLite3 from 3.19.3 to latest 3.20.1 (2017-08-24) #143
 - Added tryExecuteStep and tryReset #142
-- Removed virtual kewords from destructors #140
+- Removed virtual keywords from destructors #140
 - Removed misplaced noexcept keyword #139
 - Improved Exception class C++ conformance #138
 - Fix warnings #134
@@ -120,7 +120,7 @@ Version 2.3.0 - March 3 2019
 - Update SQLite3 from 3.20.1 to latest 3.27.2 (2019-02-25) #183 #187
 - Add Statement binding for long int values #147
 - Allows long int for bind when used with name #148
-- More cmake instructions for linux #151
+- More cmake instructions for Linux #151
 - Add comparison with sqlite_orm #141
 - Fix Statement::bind truncates long integer to 32 bits on x86_64 Linux #155
 - Add a move constructor to Database #157
@@ -141,7 +141,7 @@ Version 2.4.0 - August 25 2019
 - #215 Disable implicit fallthrough warning when building internal sqlite3
 - #216 Set PROJECT_VERSION to fix CMP0048 Policy warnings
 
-Upcoming Version 2.5.0 - Decembre 2019
+Upcoming Version 2.5.0 - December 2019
 - Update SQLite3 from 3.29.0 to 3.30.1 (2019-10-10)
 - #212 fix sqlite3 compile properties (jzt)
 - #219 Disable cast-function-type warning when building internal sqlite (zxey)

@@ -52,7 +52,7 @@ void Transaction::commit()
     }
     else
     {
-        throw SQLite::Exception("Transaction already commited.");
+        throw SQLite::Exception("Transaction already committed.");
     }
 }
 

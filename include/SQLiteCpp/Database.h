@@ -336,9 +336,9 @@ public:
                         bool        abDeterministic,
                         void*       apApp,
                         void      (*apFunc)(sqlite3_context *, int, sqlite3_value **),
-                        void      (*apStep)(sqlite3_context *, int, sqlite3_value **),
-                        void      (*apFinal)(sqlite3_context *),  // NOLINT(readability/casting)
-                        void      (*apDestroy)(void *));
+                        void      (*apStep)(sqlite3_context *, int, sqlite3_value **) = nullptr,
+                        void      (*apFinal)(sqlite3_context *) = nullptr,  // NOLINT(readability/casting)
+                        void      (*apDestroy)(void *) = nullptr);
 
     /**
      * @brief Create or redefine a SQL function or aggregate in the sqlite database.
@@ -364,12 +364,12 @@ public:
                                bool                 abDeterministic,
                                void*                apApp,
                                void               (*apFunc)(sqlite3_context *, int, sqlite3_value **),
-                               void               (*apStep)(sqlite3_context *, int, sqlite3_value **),
-                               void               (*apFinal)(sqlite3_context *), // NOLINT(readability/casting)
-                               void               (*apDestroy)(void *))
+                               void               (*apStep)(sqlite3_context *, int, sqlite3_value **) = nullptr,
+                               void               (*apFinal)(sqlite3_context *) = nullptr,
+                               void               (*apDestroy)(void *) = nullptr)
     {
-        return createFunction(aFuncName.c_str(), aNbArg, abDeterministic,
-                              apApp, apFunc, apStep, apFinal, apDestroy);
+        createFunction(aFuncName.c_str(), aNbArg, abDeterministic,
+                       apApp, apFunc, apStep, apFinal, apDestroy);
     }
 
     /**

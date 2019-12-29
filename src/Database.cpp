@@ -192,17 +192,17 @@ void Database::createFunction(const char*   apFuncName,
                               bool          abDeterministic,
                               void*         apApp,
                               void        (*apFunc)(sqlite3_context *, int, sqlite3_value **),
-                              void        (*apStep)(sqlite3_context *, int, sqlite3_value **),
-                              void        (*apFinal)(sqlite3_context *),   // NOLINT(readability/casting)
-                              void        (*apDestroy)(void *))
+                              void        (*apStep)(sqlite3_context *, int, sqlite3_value **) /* = nullptr */,
+                              void        (*apFinal)(sqlite3_context *) /* = nullptr */, // NOLINT(readability/casting)
+                              void        (*apDestroy)(void *) /* = nullptr */)
 {
-    int TextRep = SQLITE_UTF8;
+    int textRep = SQLITE_UTF8;
     // optimization if deterministic function (e.g. of nondeterministic function random())
     if (abDeterministic)
     {
-        TextRep = TextRep|SQLITE_DETERMINISTIC;
+        textRep = textRep | SQLITE_DETERMINISTIC;
     }
-    const int ret = sqlite3_create_function_v2(mpSQLite, apFuncName, aNbArg, TextRep,
+    const int ret = sqlite3_create_function_v2(mpSQLite, apFuncName, aNbArg, textRep,
                                                apApp, apFunc, apStep, apFinal, apDestroy);
     check(ret);
 }

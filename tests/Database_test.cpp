@@ -311,7 +311,40 @@ TEST(Database, execException)
     EXPECT_STREQ("table test has 3 columns but 4 values were supplied", db.getErrorMsg());
 }
 
-// TODO: test Database::createFunction()
+// From https://stackoverflow.com/a/8283265/1163698 How can I create a user-defined function in SQLite?
+static void firstchar(sqlite3_context *context, int argc, sqlite3_value **argv)
+{
+    if (argc == 1)
+    {
+        const unsigned char *text = sqlite3_value_text(argv[0]);
+        if (text && text[0])
+        {
+            char result[2];
+            result[0] = text[0]; result[1] = '\0';
+            sqlite3_result_text(context, result, -1, SQLITE_TRANSIENT);
+            return;
+        }
+    }
+    sqlite3_result_null(context);
+}
+
+TEST(Database, createFunction)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE);
+    db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\")"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"second\")"));
+
+    // exception with SQL error: "no such function: firstchar"
+    EXPECT_THROW(db.exec("SELECT firstchar(value) FROM test WHERE id=1"), SQLite::Exception);
+
+    db.createFunction("firstchar", 1, true, nullptr, &firstchar, nullptr, nullptr, nullptr);
+    
+    EXPECT_EQ(1, db.exec("SELECT firstchar(value) FROM test WHERE id=1"));
+}
+
 // TODO: test Database::loadExtension()
 
 #ifdef SQLITE_HAS_CODEC

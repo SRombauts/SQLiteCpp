@@ -134,9 +134,20 @@ Version 2.4.0 - August 25 2019
 - #191 CMake Warning line 299
 - #190 Implement move constructors
 - #192 Add wrapper for bind parameter count
-- #197 Add tuple_bind and execute_many
+- #197 Add tuple_bind and execute_many (requested by #24)
 - #199 Fix #156 misleading error message in exception from Statement::exec
 - #201 Add Statement::getExpandedSQL() to get the SQL text of prepared statement with bound parameters expanded
 - #211 Implement Database::backup()
 - #215 Disable implicit fallthrough warning when building internal sqlite3
 - #216 Set PROJECT_VERSION to fix CMP0048 Policy warnings
+
+Upcoming Version 2.5.0 - Decembre 2019
+- Update SQLite3 from 3.29.0 to 3.30.1 (2019-10-10)
+- #212 fix sqlite3 compile properties (jzt)
+- #219 Disable cast-function-type warning when building internal sqlite (zxey)
+- #230 Fixed installation on other than Ubuntu GNU/Linux distributions (xvitaly)
+- #228 use transitive compile definitions via cmake (BioDataAnalysis/emmenlau)
+- #232 Added support of packaged GTest for running unit tests (xvitaly)
+- #231 Added SOVERSION field for shared library (xvitaly)
+- #229 Explicitly find and link against system sqlite library (xvitaly)
+- #235 Added support for cmake dependencies and version information (BioDataAnalysis/emmenlau)

@@ -330,7 +330,6 @@ static void firstchar(sqlite3_context *context, int argc, sqlite3_value **argv)
 
 TEST(Database, createFunction)
 {
-    // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE);
     db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
 
@@ -345,7 +344,15 @@ TEST(Database, createFunction)
     EXPECT_EQ(1, db.exec("SELECT firstchar(value) FROM test WHERE id=1"));
 }
 
-// TODO: test Database::loadExtension()
+TEST(Database, loadExtension)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE);
+
+    // Try to load a non-existing extension (no dynamic library found)
+    EXPECT_THROW(db.loadExtension("non-existing-extension", "entry-point"), SQLite::Exception);
+
+    // TODO: test a proper extension
+}
 
 #ifdef SQLITE_HAS_CODEC
 TEST(Database, encryptAndDecrypt)
@@ -354,6 +361,8 @@ TEST(Database, encryptAndDecrypt)
     {
         // Try to open the non-existing database
         EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isUnencrypted("test.db3"), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isUnencrypted(""), SQLite::Exception);
 
         // Create a new database
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
@@ -399,6 +408,8 @@ TEST(Database, encryptAndDecrypt)
     {
         // Try to open the non-existing database
         EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isUnencrypted("test.db3"), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isUnencrypted(""), SQLite::Exception);
 
         // Create a new database
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);

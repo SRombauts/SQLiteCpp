@@ -283,7 +283,7 @@ TEST(Database, execException)
     EXPECT_THROW(db.exec("INSERT INTO test VALUES (NULL, \"first\",  3)"), SQLite::Exception);
     EXPECT_EQ(SQLITE_ERROR, db.getErrorCode());
     EXPECT_EQ(SQLITE_ERROR, db.getExtendedErrorCode());
-    EXPECT_STREQ("no such table: test", db.getErrorMsg());remove("test.db3");
+    EXPECT_STREQ("no such table: test", db.getErrorMsg());
 
     // Create a new table
     db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT, weight INTEGER)");

@@ -327,9 +327,11 @@ TEST(Database, getHeaderInfo)
 
         //Simulate a corrupt header by writing garbage to a file
         unsigned char badData[100];
+        char* pBadData = reinterpret_cast<char*>(&badData[0]);
+
         std::ofstream corruptDb;
         corruptDb.open("corrupt.db3", std::ios::app | std::ios::binary);
-        corruptDb.write(reinterpret_cast<char*>(&badData), sizeof(badData));
+        corruptDb.write(pBadData, 100);
 
         EXPECT_THROW(SQLite::Database::getHeaderInfo("corrupt.db3"), SQLite::Exception);
         

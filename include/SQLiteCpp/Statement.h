@@ -16,6 +16,32 @@
 #include <map>
 #include <climits> // For INT_MAX
 
+// some macros are taken from https://github.com/nemequ/hedley/blob/master/hedley.h , it was public domain that time
+#if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__) ||\
+(defined(__INTEL_COMPILER) && __INTEL_COMPILER > 1600) ||\
+(defined(__ARMCC_VERSION) && __ARMCC_VERSION > 4010000) ||\
+(\
+    defined(__TI_COMPILER_VERSION__) && (\
+        __TI_COMPILER_VERSION__ > 8003000 ||\
+        (__TI_COMPILER_VERSION__ > 7003000 && defined(__TI_GNU_ATTRIBUTE_SUPPORT__))\
+    )\
+)
+    #if defined(__has_attribute)
+        #if !defined(SQLITECPP_PURE_FUNC) && __has_attribute(const)
+            #define SQLITECPP_PURE_FUNC __attribute__((const))
+        #endif
+    #endif
+#endif
+#if !defined(SQLITECPP_PURE_FUNC)
+    #define SQLITECPP_PURE_FUNC
+    #if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)
+        #warning "You have a compiler without the needed macros or attributes. Cannot detect and apply support of pure const functions. Efficiency likely will be harmed. Consider using another compiler or its version"
+    #elif _MSC_VER
+        #pragma message "You have a compiler without the needed macros or attributes. Cannot detect and apply support of pure const functions. Efficiency likely will be harmed. Consider using another compiler or its version"
+    #endif
+#endif
+
+
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
 struct sqlite3_stmt;
@@ -116,6 +142,9 @@ public:
     // instead of being copied.
     // => if you know what you are doing, use bindNoCopy() instead of bind()
 
+    SQLITECPP_PURE_FUNC
+    int getIndex(const char * const apName);
+
     /**
      * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -198,201 +227,93 @@ public:
      */
     void bind(const int aIndex);
 
-    /**
-     * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const int             aValue);
-    /**
-     * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const unsigned        aValue);
+    template<typename T>
+    inline void bind(const char* apName, const T &aValue)
+    {
+        bind(getIndex(apName), aValue);
+    }
 
-#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
-    /**
-     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const long           aValue)
+    template<typename T> inline void bindNoCopy(const char* apName, const T& aValue)
     {
-        bind(apName, static_cast<int>(aValue));
+        bindNoCopy(getIndex(apName), aValue);
     }
-#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
-    /**
-     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const long           aValue)
+
+    #if __cplusplus >= 201103L
+    #define ENABLE_IF_CONST_CHAR_OR_VOID \
+    template<\
+        typename T\
+        , class = typename std::enable_if<\
+            std::is_same<T, const char>::value\
+            || std::is_same<T, const void>::value\
+        >::type\
+    >
+
+
+    ENABLE_IF_CONST_CHAR_OR_VOID
+    void bind(const char* apName, T* apValue)
     {
-        bind(apName, static_cast<long long>(aValue));
+        bind(getIndex(apName), apValue);
     }
-#endif
-    /**
-     * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const long long       aValue);
-    /**
-     * @brief Bind a double (64bits float) value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const double          aValue);
-    /**
-     * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
-     */
-    void bind(const char* apName, const std::string&    aValue);
-    /**
-     * @brief Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
-     */
-    void bind(const char* apName, const char*           apValue);
-    /**
-     * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
-     */
-    void bind(const char* apName, const void*           apValue, const int aSize);
-    /**
-     * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * The string can contain null characters as it is binded using its size.
-     *
-     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
-     */
-    void bindNoCopy(const char* apName, const std::string&  aValue);
-    /**
-     * @brief Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * Main usage is with null-terminated literal text (aka in code static strings)
-     *
-     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
-     */
-    void bindNoCopy(const char* apName, const char*         apValue);
-    /**
-     * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
-     */
-    void bindNoCopy(const char* apName, const void*         apValue, const int aSize);
+    ENABLE_IF_CONST_CHAR_OR_VOID
+    void bindNoCopy(const char* apName, T* apValue)
+    {
+        bindNoCopy(getIndex(apName), apValue);
+    }
+
+    ENABLE_IF_CONST_CHAR_OR_VOID
+    void bind(const char* apName, T* apValue, const int aSize)
+    {
+        bind(getIndex(apName), apValue, aSize);
+    }
+    ENABLE_IF_CONST_CHAR_OR_VOID
+    void bindNoCopy(const char* apName, T* apValue, const int aSize)
+    {
+        bindNoCopy(getIndex(apName), apValue, aSize);
+    }
+    #endif
+
+
     /**
      * @brief Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * @see clearBindings() to set all bound parameters to NULL.
      */
-    void bind(const char* apName); // bind NULL value
-
-
-    /**
-     * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    inline void bind(const std::string& aName, const int            aValue)
+    void bind(const char* apName) // bind NULL value
     {
-        bind(aName.c_str(), aValue);
-    }
-    /**
-     * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    inline void bind(const std::string& aName, const unsigned       aValue)
-    {
-        bind(aName.c_str(), aValue);
+        bind(getIndex(apName));
     }
 
-#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
-    /**
-     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const std::string& aName, const long                  aValue)
+    template<typename T>
+    void bind(const std::string& aName, T &v)
     {
-        bind(aName.c_str(), static_cast<int>(aValue));
+        bind(aName.c_str(), v);
     }
-#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
-    /**
-     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const std::string& aName, const long                   aValue)
+
+    #if __cplusplus >= 201103L
+    ENABLE_IF_CONST_CHAR_OR_VOID
+    inline void bind(const std::string& aName, T* v)
     {
-        bind(aName.c_str(), static_cast<long long>(aValue));
+        bind(aName.c_str(), v);
     }
-#endif
-    /**
-     * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    inline void bind(const std::string& aName, const long long      aValue)
+
+    ENABLE_IF_CONST_CHAR_OR_VOID
+    inline void bind(const std::string& aName, T* v, const int aSize)
     {
-        bind(aName.c_str(), aValue);
+        bind(aName.c_str(), v, aSize);
     }
-    /**
-     * @brief Bind a double (64bits float) value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    inline void bind(const std::string& aName, const double         aValue)
+
+    ENABLE_IF_CONST_CHAR_OR_VOID
+    inline void bindNoCopy(const std::string& aName, T* v)
     {
-        bind(aName.c_str(), aValue);
+        bindNoCopy(aName.c_str(), v);
     }
-    /**
-     * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
-     */
-    inline void bind(const std::string& aName, const std::string&    aValue)
+
+    ENABLE_IF_CONST_CHAR_OR_VOID
+    inline void bindNoCopy(const std::string& aName, T* v, const int aSize)
     {
-        bind(aName.c_str(), aValue);
+        bindNoCopy(aName.c_str(), v, aSize);
     }
-    /**
-     * @brief Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
-     */
-    inline void bind(const std::string& aName, const char*           apValue)
-    {
-        bind(aName.c_str(), apValue);
-    }
-    /**
-     * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
-     */
-    inline void bind(const std::string& aName, const void*           apValue, const int aSize)
-    {
-        bind(aName.c_str(), apValue, aSize);
-    }
-    /**
-     * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * The string can contain null characters as it is binded using its size.
-     *
-     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
-     */
-    inline void bindNoCopy(const std::string& aName, const std::string& aValue)
-    {
-        bindNoCopy(aName.c_str(), aValue);
-    }
-    /**
-     * @brief Bind a text value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * Main usage is with null-terminated literal text (aka in code static strings)
-     *
-     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
-     */
-    inline void bindNoCopy(const std::string& aName, const char*        apValue)
-    {
-        bindNoCopy(aName.c_str(), apValue);
-    }
-    /**
-     * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
-     */
-    inline void bindNoCopy(const std::string& aName, const void*        apValue, const int aSize)
-    {
-        bindNoCopy(aName.c_str(), apValue, aSize);
-    }
-    /**
-     * @brief Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     *
-     * @see clearBindings() to set all bound parameters to NULL.
-     */
-    inline void bind(const std::string& aName) // bind NULL value
-    {
-        bind(aName.c_str());
-    }
+    #endif
 
     ////////////////////////////////////////////////////////////////////////////
 

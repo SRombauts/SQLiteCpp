@@ -12,7 +12,7 @@
 
 #include <SQLiteCpp/Column.h>
 #include <SQLiteCpp/Utils.h>    // definition of nullptr for C++98/C++03 compilers
-
+#include <cstdint>
 #include <string.h>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
@@ -53,6 +53,32 @@ const char* getLibVersion() noexcept; // nothrow
 /// Return SQLite version number using runtime call to the compiled library
 int   getLibVersionNumber() noexcept; // nothrow
 
+// Public structure for representing all fields contained within the SQLite header.
+// Official documentation for fields: https://www.sqlite.org/fileformat.html#the_database_header
+struct Header {
+    unsigned char headerStr[16];
+    uint16_t pageSizeBytes;
+    unsigned char fileFormatWriteVersion;
+    unsigned char fileFormatReadVersion;
+    unsigned char reservedSpaceBytes;
+    unsigned char maxEmbeddedPayloadFrac;
+    unsigned char minEmbeddedPayloadFrac;
+    unsigned char leafPayloadFrac;
+    uint32_t fileChangeCounter;
+    uint32_t databaseSizePages;
+    uint32_t firstFreelistTrunkPage;
+    uint32_t totalFreelistPages;
+    uint32_t schemaCookie;
+    uint32_t schemaFormatNumber;
+    uint32_t defaultPageCacheSizeBytes;
+    uint32_t largestBTreePageNumber;
+    uint32_t databaseTextEncoding;
+    uint32_t userVersion;
+    uint32_t incrementalVaccumMode;
+    uint32_t applicationId;
+    uint32_t versionValidFor;
+    uint32_t sqliteVersion;
+};
 
 /**
  * @brief RAII management of a SQLite Database Connection.
@@ -433,6 +459,21 @@ public:
     * @throw SQLite::Exception in case of error
     */
     static bool isUnencrypted(const std::string& aFilename);
+
+    /**
+    * @brief Parse SQLite header data from a database file.
+    *
+    *  This function reads the first 100 bytes of a SQLite database file
+    *  and reconstructs groups of individual bytes into the associated fields
+    *  in a Header object.
+    *  
+    * @param[in] aFilename path/uri to a file
+    *
+    * @return Header object containing file data
+    *
+    * @throw SQLite::Exception in case of error
+    */
+    static Header getHeaderInfo(const std::string& aFilename);
 
     /**
      * @brief BackupType for the backup() method

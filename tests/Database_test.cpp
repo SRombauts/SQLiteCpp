@@ -283,7 +283,7 @@ TEST(Database, execException)
     EXPECT_THROW(db.exec("INSERT INTO test VALUES (NULL, \"first\",  3)"), SQLite::Exception);
     EXPECT_EQ(SQLITE_ERROR, db.getErrorCode());
     EXPECT_EQ(SQLITE_ERROR, db.getExtendedErrorCode());
-    EXPECT_STREQ("no such table: test", db.getErrorMsg());
+    EXPECT_STREQ("no such table: test", db.getErrorMsg());remove("test.db3");
 
     // Create a new table
     db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT, weight INTEGER)");
@@ -313,6 +313,49 @@ TEST(Database, execException)
 
 // TODO: test Database::createFunction()
 // TODO: test Database::loadExtension()
+
+TEST(Database, getHeaderInfo)
+{
+    remove("test.db3");
+    {
+        // Create a new database
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+        
+        // Set assorted SQLite header values using associated PRAGMA
+        db.exec("PRAGMA main.user_version = 12345");
+        db.exec("PRAGMA main.application_id = 2468");
+
+        // Parse header fields from test database
+        SQLite::Header h = SQLite::Database::getHeaderInfo("test.db3");
+
+        //Test header values expliticly set via PRAGMA statements
+        EXPECT_EQ(h.userVersion, 12345);
+        EXPECT_EQ(h.applicationId, 2468);
+
+        //Test header values with expected default values
+        EXPECT_EQ(h.pageSizeBytes, 4096);
+        EXPECT_EQ(h.fileFormatWriteVersion,1);
+        EXPECT_EQ(h.fileFormatReadVersion,1);
+        EXPECT_EQ(h.reservedSpaceBytes,0);
+        EXPECT_EQ(h.maxEmbeddedPayloadFrac, 64);
+        EXPECT_EQ(h.minEmbeddedPayloadFrac, 32);
+        EXPECT_EQ(h.leafPayloadFrac, 32);
+        EXPECT_EQ(h.fileChangeCounter, 3);
+        EXPECT_EQ(h.databaseSizePages, 2);
+        EXPECT_EQ(h.firstFreelistTrunkPage, 0);
+        EXPECT_EQ(h.totalFreelistPages, 0);
+        EXPECT_EQ(h.schemaCookie, 1);
+        EXPECT_EQ(h.schemaFormatNumber, 4);
+        EXPECT_EQ(h.defaultPageCacheSizeBytes, 0);
+        EXPECT_EQ(h.largestBTreePageNumber, 0);
+        EXPECT_EQ(h.databaseTextEncoding, 1);
+        EXPECT_EQ(h.incrementalVaccumMode, 0);
+        EXPECT_EQ(h.versionValidFor, 3);
+        EXPECT_EQ(h.sqliteVersion, SQLITE_VERSION_NUMBER);
+    }
+    remove("test.db3");
+}
 
 #ifdef SQLITE_HAS_CODEC
 TEST(Database, encryptAndDecrypt)

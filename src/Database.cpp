@@ -16,6 +16,7 @@
 
 #include <sqlite3.h>
 #include <fstream>
+#include <vector>
 #include <string.h>
 
 #ifndef SQLITE_DETERMINISTIC
@@ -299,6 +300,138 @@ bool Database::isUnencrypted(const std::string& aFilename)
     const SQLite::Exception exception("Could not open database, the aFilename parameter was empty.");
     throw exception;
 }
+
+// Parse header data from a database.
+Header Database::getHeaderInfo(const std::string& aFilename)
+{
+    Header h;
+    unsigned char buf[100];
+
+    if (aFilename.length() > 0 )
+    {
+
+        std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
+
+        if (fileBuffer.is_open())
+        {
+            fileBuffer.seekg(0, std::ios::beg);
+            fileBuffer.read(reinterpret_cast<char*>(&buf[0]), 100);
+            fileBuffer.close();
+            strncpy(reinterpret_cast<char*>(&h.headerStr[0]), reinterpret_cast<char*>(buf), 16);
+        }
+
+        else
+        {
+            const SQLite::Exception exception("Error opening file: " + aFilename);
+            throw exception;
+        }
+
+        // If the "magic string" can't be found then header is invalid, corrupt or unreadable
+        if (!strncmp(reinterpret_cast<const char*>(h.headerStr), "SQLite format 3", 15) == 0)
+        {
+            const SQLite::Exception exception("Invalid SQLite header");
+            throw exception;
+        }
+
+        h.pageSizeBytes = (buf[16] << 8) | buf[17];
+        h.fileFormatWriteVersion = buf[18];
+        h.fileFormatReadVersion = buf[19];
+        h.reservedSpaceBytes = buf[20];
+        h.maxEmbeddedPayloadFrac = buf[21];
+        h.minEmbeddedPayloadFrac = buf[22];
+        h.leafPayloadFrac = buf[23];
+
+        h.fileChangeCounter =
+            (buf[24] << 24) |
+            (buf[25] << 16) |
+            (buf[26] << 8)  |
+            (buf[27] << 0);
+
+        h.databaseSizePages =
+            (buf[28] << 24) |
+            (buf[29] << 16) |
+            (buf[30] << 8)  |
+            (buf[31] << 0);
+
+        h.firstFreelistTrunkPage =
+            (buf[32] << 24) |
+            (buf[33] << 16) |
+            (buf[34] << 8)  |
+            (buf[35] << 0);
+
+        h.totalFreelistPages =
+            (buf[36] << 24) |
+            (buf[37] << 16) |
+            (buf[38] << 8)  |
+            (buf[39] << 0);
+
+        h.schemaCookie =
+            (buf[40] << 24) |
+            (buf[41] << 16) |
+            (buf[42] << 8)  |
+            (buf[43] << 0);
+
+        h.schemaFormatNumber =
+            (buf[44] << 24) |
+            (buf[45] << 16) |
+            (buf[46] << 8)  |
+            (buf[47] << 0);
+
+        h.defaultPageCacheSizeBytes =
+            (buf[48] << 24) |
+            (buf[49] << 16) |
+            (buf[50] << 8)  |
+            (buf[51] << 0);
+
+        h.largestBTreePageNumber =
+            (buf[52] << 24) |
+            (buf[53] << 16) |
+            (buf[54] << 8)  |
+            (buf[55] << 0);
+
+        h.databaseTextEncoding =
+            (buf[56] << 24) |
+            (buf[57] << 16) |
+            (buf[58] << 8)  |
+            (buf[59] << 0);
+
+        h.userVersion =
+            (buf[60] << 24) |
+            (buf[61] << 16) |
+            (buf[62] << 8)  |
+            (buf[63] << 0);
+
+        h.incrementalVaccumMode =
+            (buf[64] << 24) |
+            (buf[65] << 16) |
+            (buf[66] << 8)  |
+            (buf[67] << 0);
+
+        h.applicationId =
+            (buf[68] << 24) |
+            (buf[69] << 16) |
+            (buf[70] << 8)  |
+            (buf[71] << 0);
+
+        h.versionValidFor =
+            (buf[92] << 24) |
+            (buf[93] << 16) |
+            (buf[94] << 8)  |
+            (buf[95] << 0);
+
+        h.sqliteVersion =
+            (buf[96] << 24) |
+            (buf[97] << 16) |
+            (buf[98] << 8)  |
+            (buf[99] << 0);
+
+        return h;
+    }
+
+    const SQLite::Exception exception("Could not open database, the aFilename parameter was empty.");
+    throw exception;
+}
+
 
 // This is a reference implementation of live backup taken from the official sit:
 // https://www.sqlite.org/backup.html

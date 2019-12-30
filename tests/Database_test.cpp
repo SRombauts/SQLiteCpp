@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdio>
+#include <fstream>
 
 #ifdef SQLITECPP_ENABLE_ASSERT_HANDLER
 namespace SQLite
@@ -352,6 +353,67 @@ TEST(Database, loadExtension)
     EXPECT_THROW(db.loadExtension("non-existing-extension", "entry-point"), SQLite::Exception);
 
     // TODO: test a proper extension
+}
+
+TEST(Database, getHeaderInfo)
+{
+    remove("test.db3");
+    {
+        //Call without passing a database file name
+        EXPECT_THROW(SQLite::Database::getHeaderInfo(""),SQLite::Exception);
+
+        //Call with a non existant database
+        EXPECT_THROW(SQLite::Database::getHeaderInfo("test.db3"), SQLite::Exception);
+
+        //Simulate a corrupt header by writing garbage to a file
+        unsigned char badData[100];
+        char* pBadData = reinterpret_cast<char*>(&badData[0]);
+
+        std::ofstream corruptDb;
+        corruptDb.open("corrupt.db3", std::ios::app | std::ios::binary);
+        corruptDb.write(pBadData, 100);
+
+        EXPECT_THROW(SQLite::Database::getHeaderInfo("corrupt.db3"), SQLite::Exception);
+        
+        remove("corrupt.db3");
+
+        // Create a new database
+        SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+        
+        // Set assorted SQLite header values using associated PRAGMA
+        db.exec("PRAGMA main.user_version = 12345");
+        db.exec("PRAGMA main.application_id = 2468");
+
+        // Parse header fields from test database
+        SQLite::Header h = SQLite::Database::getHeaderInfo("test.db3");
+
+        //Test header values expliticly set via PRAGMA statements
+        EXPECT_EQ(h.userVersion, 12345);
+        EXPECT_EQ(h.applicationId, 2468);
+
+        //Test header values with expected default values
+        EXPECT_EQ(h.pageSizeBytes, 4096);
+        EXPECT_EQ(h.fileFormatWriteVersion,1);
+        EXPECT_EQ(h.fileFormatReadVersion,1);
+        EXPECT_EQ(h.reservedSpaceBytes,0);
+        EXPECT_EQ(h.maxEmbeddedPayloadFrac, 64);
+        EXPECT_EQ(h.minEmbeddedPayloadFrac, 32);
+        EXPECT_EQ(h.leafPayloadFrac, 32);
+        EXPECT_EQ(h.fileChangeCounter, 3);
+        EXPECT_EQ(h.databaseSizePages, 2);
+        EXPECT_EQ(h.firstFreelistTrunkPage, 0);
+        EXPECT_EQ(h.totalFreelistPages, 0);
+        EXPECT_EQ(h.schemaCookie, 1);
+        EXPECT_EQ(h.schemaFormatNumber, 4);
+        EXPECT_EQ(h.defaultPageCacheSizeBytes, 0);
+        EXPECT_EQ(h.largestBTreePageNumber, 0);
+        EXPECT_EQ(h.databaseTextEncoding, 1);
+        EXPECT_EQ(h.incrementalVaccumMode, 0);
+        EXPECT_EQ(h.versionValidFor, 3);
+        EXPECT_EQ(h.sqliteVersion, SQLITE_VERSION_NUMBER);
+    }
+    remove("test.db3");
 }
 
 #ifdef SQLITE_HAS_CODEC

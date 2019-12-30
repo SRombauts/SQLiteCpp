@@ -16,7 +16,6 @@
 
 #include <sqlite3.h>
 #include <fstream>
-#include <vector>
 #include <string.h>
 
 #ifndef SQLITE_DETERMINISTIC

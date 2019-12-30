@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdio>
+#include <fstream>
 
 #ifdef SQLITECPP_ENABLE_ASSERT_HANDLER
 namespace SQLite
@@ -318,6 +319,22 @@ TEST(Database, getHeaderInfo)
 {
     remove("test.db3");
     {
+        //Call without passing a database file name
+        EXPECT_THROW(SQLite::Database::getHeaderInfo(""),SQLite::Exception);
+
+        //Call with a non existant database
+        EXPECT_THROW(SQLite::Database::getHeaderInfo("test.db3"), SQLite::Exception);
+
+        //Simulate a corrupt header by writing garbage to a file
+        unsigned char badData[100];
+        std::ofstream corruptDb;
+        corruptDb.open("corrupt.db3", std::ios::app | std::ios::binary);
+        corruptDb.write(reinterpret_cast<char*>(&badData), sizeof(badData));
+
+        EXPECT_THROW(SQLite::Database::getHeaderInfo("corrupt.db3"), SQLite::Exception);
+        
+        remove("corrupt.db3");
+
         // Create a new database
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");

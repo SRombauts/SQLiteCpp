@@ -12,7 +12,6 @@
 
 #include <SQLiteCpp/Column.h>
 #include <SQLiteCpp/Utils.h>    // definition of nullptr for C++98/C++03 compilers
-#include <cstdint>
 #include <string.h>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
@@ -57,27 +56,27 @@ int   getLibVersionNumber() noexcept; // nothrow
 // Official documentation for fields: https://www.sqlite.org/fileformat.html#the_database_header
 struct Header {
     unsigned char headerStr[16];
-    uint16_t pageSizeBytes;
+    unsigned int pageSizeBytes;
     unsigned char fileFormatWriteVersion;
     unsigned char fileFormatReadVersion;
     unsigned char reservedSpaceBytes;
     unsigned char maxEmbeddedPayloadFrac;
     unsigned char minEmbeddedPayloadFrac;
     unsigned char leafPayloadFrac;
-    uint32_t fileChangeCounter;
-    uint32_t databaseSizePages;
-    uint32_t firstFreelistTrunkPage;
-    uint32_t totalFreelistPages;
-    uint32_t schemaCookie;
-    uint32_t schemaFormatNumber;
-    uint32_t defaultPageCacheSizeBytes;
-    uint32_t largestBTreePageNumber;
-    uint32_t databaseTextEncoding;
-    uint32_t userVersion;
-    uint32_t incrementalVaccumMode;
-    uint32_t applicationId;
-    uint32_t versionValidFor;
-    uint32_t sqliteVersion;
+    unsigned long fileChangeCounter;
+    unsigned long  databaseSizePages;
+    unsigned long firstFreelistTrunkPage;
+    unsigned long totalFreelistPages;
+    unsigned long schemaCookie;
+    unsigned long schemaFormatNumber;
+    unsigned long defaultPageCacheSizeBytes;
+    unsigned long largestBTreePageNumber;
+    unsigned long databaseTextEncoding;
+    unsigned long userVersion;
+    unsigned long incrementalVaccumMode;
+    unsigned long applicationId;
+    unsigned long versionValidFor;
+    unsigned long sqliteVersion;
 };
 
 /**

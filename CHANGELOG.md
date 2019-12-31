@@ -141,8 +141,9 @@ Version 2.4.0 - August 25 2019
 - #215 Disable implicit fallthrough warning when building internal sqlite3
 - #216 Set PROJECT_VERSION to fix CMP0048 Policy warnings
 
-Upcoming Version 2.5.0 - December 2019
+Version 2.5.0 - December 31 2019
 - Update SQLite3 from 3.29.0 to 3.30.1 (2019-10-10)
+- 100% Unit Test coverage
 - #212 fix sqlite3 compile properties (jzt)
 - #219 Disable cast-function-type warning when building internal sqlite (zxey)
 - #230 Fixed installation on other than Ubuntu GNU/Linux distributions (xvitaly)
@@ -151,3 +152,4 @@ Upcoming Version 2.5.0 - December 2019
 - #231 Added SOVERSION field for shared library (xvitaly)
 - #229 Explicitly find and link against system sqlite library (xvitaly)
 - #235 Added support for cmake dependencies and version information (BioDataAnalysis/emmenlau)
+- #249 Added SQLite header parsing functionality and associated tests (patrick--)

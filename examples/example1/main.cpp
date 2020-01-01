@@ -93,32 +93,32 @@ int main ()
     // Inspect a database via SQLite header information
     try
     {
-       SQLite::Header exampleHeader = SQLite::Database::getHeaderInfo(filename_example_db3);
+       const SQLite::Header header = SQLite::Database::getHeaderInfo(filename_example_db3);
 
        // Print values for all header fields
        // Official documentation for fields can be found here: https://www.sqlite.org/fileformat.html#the_database_header
-        std::cout << "Magic header string: " << exampleHeader.headerStr << std::endl;
-        std::cout << "Page size bytes: " << exampleHeader.pageSizeBytes << std::endl;
-        std::cout << "File format write version: " << exampleHeader.fileFormatWriteVersion << std::endl;
-        std::cout << "File format read version: " << exampleHeader.fileFormatReadVersion << std::endl;
-        std::cout << "Reserved space bytes: " << exampleHeader.reservedSpaceBytes << std::endl;
-        std::cout << "Max embedded payload fraction " << exampleHeader.maxEmbeddedPayloadFrac << std::endl;
-        std::cout << "Min embedded payload fraction: " << exampleHeader.minEmbeddedPayloadFrac << std::endl;
-        std::cout << "Leaf payload fraction: " << exampleHeader.leafPayloadFrac << std::endl;
-        std::cout << "File change counter: " << exampleHeader.fileChangeCounter << std::endl;
-        std::cout << "Database size pages: " << exampleHeader.databaseSizePages << std::endl;
-        std::cout << "First freelist trunk page: " << exampleHeader.firstFreelistTrunkPage << std::endl;
-        std::cout << "Total freelist trunk pages: " << exampleHeader.totalFreelistPages << std::endl;
-        std::cout << "Schema cookie: " << exampleHeader.schemaCookie << std::endl;
-        std::cout << "Schema format number: " << exampleHeader.schemaFormatNumber << std::endl;
-        std::cout << "Default page cache size bytes: " << exampleHeader.defaultPageCacheSizeBytes << std::endl;
-        std::cout << "Largest B tree page number: " << exampleHeader.largestBTreePageNumber << std::endl;
-        std::cout << "Database text encoding: " << exampleHeader.databaseTextEncoding << std::endl;
-        std::cout << "User version: " << exampleHeader.userVersion << std::endl;
-        std::cout << "Incremental vaccum mode: " << exampleHeader.incrementalVaccumMode << std::endl;
-        std::cout << "Application ID: " << exampleHeader.applicationId << std::endl;
-        std::cout << "Version valid for: " << exampleHeader.versionValidFor << std::endl;
-        std::cout << "SQLite version: " << exampleHeader.sqliteVersion << std::endl;
+        std::cout << "Magic header string: " << header.headerStr << std::endl;
+        std::cout << "Page size bytes: " << header.pageSizeBytes << std::endl;
+        std::cout << "File format write version: " << (int)header.fileFormatWriteVersion << std::endl;
+        std::cout << "File format read version: " << (int)header.fileFormatReadVersion << std::endl;
+        std::cout << "Reserved space bytes: " << (int)header.reservedSpaceBytes << std::endl;
+        std::cout << "Max embedded payload fraction " << (int)header.maxEmbeddedPayloadFrac << std::endl;
+        std::cout << "Min embedded payload fraction: " << (int)header.minEmbeddedPayloadFrac << std::endl;
+        std::cout << "Leaf payload fraction: " << (int)header.leafPayloadFrac << std::endl;
+        std::cout << "File change counter: " << header.fileChangeCounter << std::endl;
+        std::cout << "Database size pages: " << header.databaseSizePages << std::endl;
+        std::cout << "First freelist trunk page: " << header.firstFreelistTrunkPage << std::endl;
+        std::cout << "Total freelist trunk pages: " << header.totalFreelistPages << std::endl;
+        std::cout << "Schema cookie: " << header.schemaCookie << std::endl;
+        std::cout << "Schema format number: " << header.schemaFormatNumber << std::endl;
+        std::cout << "Default page cache size bytes: " << header.defaultPageCacheSizeBytes << std::endl;
+        std::cout << "Largest B tree page number: " << header.largestBTreePageNumber << std::endl;
+        std::cout << "Database text encoding: " << header.databaseTextEncoding << std::endl;
+        std::cout << "User version: " << header.userVersion << std::endl;
+        std::cout << "Incremental vaccum mode: " << header.incrementalVaccumMode << std::endl;
+        std::cout << "Application ID: " << header.applicationId << std::endl;
+        std::cout << "Version valid for: " << header.versionValidFor << std::endl;
+        std::cout << "SQLite version: " << header.sqliteVersion << std::endl;
     }
     catch (std::exception& e)
     {

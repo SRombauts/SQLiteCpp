@@ -153,3 +153,5 @@ Version 2.5.0 - December 31 2019
 - #229 Explicitly find and link against system sqlite library (xvitaly)
 - #235 Added support for cmake dependencies and version information (BioDataAnalysis/emmenlau)
 - #249 Added SQLite header parsing functionality and associated tests (patrick--)
+
+- #251 Added example for getHeaderInfo()

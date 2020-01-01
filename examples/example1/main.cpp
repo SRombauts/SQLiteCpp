@@ -90,6 +90,43 @@ int main ()
     std::cout << "SQliteC++ version " << SQLITECPP_VERSION << std::endl;
 
     ////////////////////////////////////////////////////////////////////////////
+    // Inspect a database via SQLite header information
+    try
+    {
+       SQLite::Header exampleHeader = SQLite::Database::getHeaderInfo(filename_example_db3);
+
+       // Print values for all header fields
+       // Official documentation for fields can be found here: https://www.sqlite.org/fileformat.html#the_database_header
+        std::cout << "Magic header string: " << exampleHeader.headerStr << std::endl;
+        std::cout << "Page size bytes: " << exampleHeader.pageSizeBytes << std::endl;
+        std::cout << "File format write version: " << exampleHeader.fileFormatWriteVersion << std::endl;
+        std::cout << "File format read version: " << exampleHeader.fileFormatReadVersion << std::endl;
+        std::cout << "Reserved space bytes: " << exampleHeader.reservedSpaceBytes << std::endl;
+        std::cout << "Max embedded payload fraction " << exampleHeader.maxEmbeddedPayloadFrac << std::endl;
+        std::cout << "Min embedded payload fraction: " << exampleHeader.minEmbeddedPayloadFrac << std::endl;
+        std::cout << "Leaf payload fraction: " << exampleHeader.leafPayloadFrac << std::endl;
+        std::cout << "File change counter: " << exampleHeader.fileChangeCounter << std::endl;
+        std::cout << "Database size pages: " << exampleHeader.databaseSizePages << std::endl;
+        std::cout << "First freelist trunk page: " << exampleHeader.firstFreelistTrunkPage << std::endl;
+        std::cout << "Total freelist trunk pages: " << exampleHeader.totalFreelistPages << std::endl;
+        std::cout << "Schema cookie: " << exampleHeader.schemaCookie << std::endl;
+        std::cout << "Schema format number: " << exampleHeader.schemaFormatNumber << std::endl;
+        std::cout << "Default page cache size bytes: " << exampleHeader.defaultPageCacheSizeBytes << std::endl;
+        std::cout << "Largest B tree page number: " << exampleHeader.largestBTreePageNumber << std::endl;
+        std::cout << "Database text encoding: " << exampleHeader.databaseTextEncoding << std::endl;
+        std::cout << "User version: " << exampleHeader.userVersion << std::endl;
+        std::cout << "Incremental vaccum mode: " << exampleHeader.incrementalVaccumMode << std::endl;
+        std::cout << "Application ID: " << exampleHeader.applicationId << std::endl;
+        std::cout << "Version valid for: " << exampleHeader.versionValidFor << std::endl;
+        std::cout << "SQLite version: " << exampleHeader.sqliteVersion << std::endl;
+    }
+    catch (std::exception& e)
+    {
+        std::cout << "SQLite exception: " << e.what() << std::endl;
+        return EXIT_FAILURE; // unexpected error : exit the example program
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     // Very basic first example (1/7) :
     try
     {

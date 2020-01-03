@@ -11,6 +11,7 @@
 #pragma once
 
 #include <SQLiteCpp/Column.h>
+#include <memory>
 #include <string.h>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
@@ -97,7 +98,7 @@ struct Header {
  */
 class Database
 {
-    friend class Statement; // Give Statement constructor access to the mpSQLite Connection Handle
+    friend class Statement; // Give Statement constructor access to the mSQLitePtr Connection Handle
 
 public:
     /**
@@ -147,21 +148,13 @@ public:
     {
     }
 
-    /**
-     * @brief Move an SQLite database connection.
-     *
-     * @param[in] aDatabase Database to move
-     */
-    Database(Database&& aDatabase) noexcept :
-        mpSQLite(aDatabase.mpSQLite),
-        mFilename(std::move(aDatabase.mFilename))
-    {
-        aDatabase.mpSQLite = nullptr;
-    }
-
     // Database is non-copyable
     Database(const Database&) = delete;
     Database& operator=(const Database&) = delete;
+
+    // Database is movable
+    Database(Database&& aDatabase) = default;
+    Database& operator=(Database&& aDatabase) = default;
 
     /**
      * @brief Close the SQLite database connection.
@@ -169,11 +162,15 @@ public:
      * All SQLite statements must have been finalized before,
      * so all Statement objects must have been unregistered.
      *
-     * TODO: revisit this design, to perhaps switch to having Statement sharing a pointer to the Database?
-     *
      * @warning assert in case of error
      */
-    ~Database();
+    ~Database() = default;
+
+    // Deleter functor to use with smart pointers to close the SQLite database connection in an RAII fashion.
+    struct Deleter
+    {
+        void operator()(sqlite3* apSQLite);
+    };
 
     /**
      * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
@@ -340,7 +337,7 @@ public:
      */
     sqlite3* getHandle() const noexcept
     {
-        return mpSQLite;
+        return mSQLitePtr.get();
     }
 
     /**
@@ -503,14 +500,14 @@ public:
     {
         if (SQLite::OK != aRet)
         {
-            throw SQLite::Exception(mpSQLite, aRet);
+            throw SQLite::Exception(getHandle(), aRet);
         }
     }
 
 private:
-    // TODO: use std::unique_ptr with a custom deleter to call sqlite3_close()
-    sqlite3*    mpSQLite;   ///< Pointer to SQLite Database Connection Handle
-    std::string mFilename;  ///< UTF-8 filename used to open the database
+    // TODO: perhaps switch to having Statement sharing a pointer to the Connexion
+    std::unique_ptr<sqlite3, Deleter> mSQLitePtr;   ///< Pointer to SQLite Database Connection Handle
+    std::string mFilename;                          ///< UTF-8 filename used to open the database
 };
 
 

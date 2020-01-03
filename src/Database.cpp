@@ -10,9 +10,9 @@
  */
 #include <SQLiteCpp/Database.h>
 
-#include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Assertion.h>
 #include <SQLiteCpp/Exception.h>
+#include <SQLiteCpp/Statement.h>
 
 #include <sqlite3.h>
 #include <fstream>
@@ -54,15 +54,14 @@ Database::Database(const char* apFilename,
                    const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
                    const char* apVfs          /* = nullptr*/) :
-    mpSQLite(nullptr),
     mFilename(apFilename)
 {
-    const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
+    sqlite3* handle;
+    const int ret = sqlite3_open_v2(apFilename, &handle, aFlags, apVfs);
+    mSQLitePtr.reset(handle);
     if (SQLITE_OK != ret)
     {
-        const SQLite::Exception exception(mpSQLite, ret); // must create before closing
-        sqlite3_close(mpSQLite); // close is required even in case of error on opening
-        throw exception;
+        throw SQLite::Exception(handle, ret);
     }
     if (aBusyTimeoutMs > 0)
     {
@@ -70,10 +69,10 @@ Database::Database(const char* apFilename,
     }
 }
 
-// Close the SQLite database connection.
-Database::~Database()
+// Deleter functor to use with smart pointers to close the SQLite database connection in an RAII fashion.
+void Database::Deleter::operator()(sqlite3* apSQLite)
 {
-    const int ret = sqlite3_close(mpSQLite);
+    const int ret = sqlite3_close(apSQLite); // Calling sqlite3_close() with a nullptr argument is a harmless no-op.
 
     // Avoid unreferenced variable warning when build in release mode
     (void) ret;
@@ -98,18 +97,18 @@ Database::~Database()
  */
 void Database::setBusyTimeout(const int aBusyTimeoutMs)
 {
-    const int ret = sqlite3_busy_timeout(mpSQLite, aBusyTimeoutMs);
+    const int ret = sqlite3_busy_timeout(getHandle(), aBusyTimeoutMs);
     check(ret);
 }
 
 // Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT, CREATE...).
 int Database::exec(const char* apQueries)
 {
-    const int ret = sqlite3_exec(mpSQLite, apQueries, nullptr, nullptr, nullptr);
+    const int ret = sqlite3_exec(getHandle(), apQueries, nullptr, nullptr, nullptr);
     check(ret);
 
     // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE only)
-    return sqlite3_changes(mpSQLite);
+    return sqlite3_changes(getHandle());
 }
 
 // Shortcut to execute a one step query and fetch the first column of the result.
@@ -137,31 +136,31 @@ bool Database::tableExists(const char* apTableName)
 // Get the rowid of the most recent successful INSERT into the database from the current connection.
 long long Database::getLastInsertRowid() const noexcept
 {
-    return sqlite3_last_insert_rowid(mpSQLite);
+    return sqlite3_last_insert_rowid(getHandle());
 }
 
 // Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection.
 int Database::getTotalChanges() const noexcept
 {
-    return sqlite3_total_changes(mpSQLite);
+    return sqlite3_total_changes(getHandle());
 }
 
 // Return the numeric result code for the most recent failed API call (if any).
 int Database::getErrorCode() const noexcept
 {
-    return sqlite3_errcode(mpSQLite);
+    return sqlite3_errcode(getHandle());
 }
 
 // Return the extended numeric result code for the most recent failed API call (if any).
 int Database::getExtendedErrorCode() const noexcept
 {
-    return sqlite3_extended_errcode(mpSQLite);
+    return sqlite3_extended_errcode(getHandle());
 }
 
 // Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
 const char* Database::getErrorMsg() const noexcept
 {
-    return sqlite3_errmsg(mpSQLite);
+    return sqlite3_errmsg(getHandle());
 }
 
 // Attach a custom function to your sqlite database. Assumes UTF8 text representation.
@@ -181,7 +180,7 @@ void Database::createFunction(const char*   apFuncName,
     {
         textRep = textRep | SQLITE_DETERMINISTIC;
     }
-    const int ret = sqlite3_create_function_v2(mpSQLite, apFuncName, aNbArg, textRep,
+    const int ret = sqlite3_create_function_v2(getHandle(), apFuncName, aNbArg, textRep,
                                                apApp, apFunc, apStep, apFinal, apDestroy);
     check(ret);
 }
@@ -203,13 +202,13 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
     // The use of the sqlite3_enable_load_extension() interface should be avoided to keep the SQL load_extension()
     // disabled and prevent SQL injections from giving attackers access to extension loading capabilities.
     // (NOTE: not using nullptr: cannot pass object of non-POD type 'std::__1::nullptr_t' through variadic function)
-    int ret = sqlite3_db_config(mpSQLite, SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, 1, NULL); // NOTE: not using nullptr
+    int ret = sqlite3_db_config(getHandle(), SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, 1, NULL); // NOTE: not using nullptr
 #else
-    int ret = sqlite3_enable_load_extension(mpSQLite, 1);
+    int ret = sqlite3_enable_load_extension(getHandle(), 1);
 #endif
     check(ret);
 
-    ret = sqlite3_load_extension(mpSQLite, apExtensionName, apEntryPointName, 0);
+    ret = sqlite3_load_extension(getHandle(), apExtensionName, apEntryPointName, 0);
     check(ret);
 #endif
 }
@@ -221,7 +220,7 @@ void Database::key(const std::string& aKey) const
 #ifdef SQLITE_HAS_CODEC
     if (passLen > 0)
     {
-        const int ret = sqlite3_key(mpSQLite, aKey.c_str(), passLen);
+        const int ret = sqlite3_key(getHandle(), aKey.c_str(), passLen);
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
@@ -239,12 +238,12 @@ void Database::rekey(const std::string& aNewKey) const
     int passLen = aNewKey.length();
     if (passLen > 0)
     {
-        const int ret = sqlite3_rekey(mpSQLite, aNewKey.c_str(), passLen);
+        const int ret = sqlite3_rekey(getHandle(), aNewKey.c_str(), passLen);
         check(ret);
     }
     else
     {
-        const int ret = sqlite3_rekey(mpSQLite, nullptr, 0);
+        const int ret = sqlite3_rekey(getHandle(), nullptr, 0);
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
@@ -421,8 +420,8 @@ int Database::backup(const char* zFilename, BackupType type) {
         ** Otherwise, if this is a 'save' operation (isSave==1), then data
         ** is copied from mpSQLite to pFile.  Set the variables pFrom and
         ** pTo accordingly. */
-        sqlite3* pFrom = (type == Save ? mpSQLite : pFile);
-        sqlite3* pTo = (type == Save ? pFile : mpSQLite);
+        sqlite3* pFrom = (type == Save ? getHandle() : pFile);
+        sqlite3* pTo = (type == Save ? pFile : getHandle());
 
         /* Set up the backup procedure to copy from the "main" database of
         ** connection pFile to the main database of connection mpSQLite.

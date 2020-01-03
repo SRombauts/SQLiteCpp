@@ -22,7 +22,7 @@ namespace SQLite
 
 Statement::Statement(Database &aDatabase, const char* apQuery) :
     mQuery(apQuery),
-    mStmtPtr(aDatabase.mpSQLite, mQuery), // prepare the SQL query, and ref count (needs Database friendship)
+    mStmtPtr(aDatabase.getHandle(), mQuery), // prepare the SQL query, and ref count (needs Database friendship)
     mColumnCount(0),
     mbHasRow(false),
     mbDone(false)
@@ -449,7 +449,7 @@ Statement::Ptr::Ptr(const Statement::Ptr& aPtr) :
     mpStmt(aPtr.mpStmt),
     mpRefCount(aPtr.mpRefCount)
 {
-    assert(NULL != mpRefCount);
+    assert(mpRefCount);
     assert(0 != *mpRefCount);
 
     // Increment the reference counter of the sqlite3_stmt,
@@ -462,9 +462,9 @@ Statement::Ptr::Ptr(Ptr&& aPtr) :
     mpStmt(aPtr.mpStmt),
     mpRefCount(aPtr.mpRefCount)
 {
-    aPtr.mpSQLite = NULL;
-    aPtr.mpStmt = NULL;
-    aPtr.mpRefCount = NULL;
+    aPtr.mpSQLite = nullptr;
+    aPtr.mpStmt = nullptr;
+    aPtr.mpRefCount = nullptr;
 }
 
 /**
@@ -472,7 +472,7 @@ Statement::Ptr::Ptr(Ptr&& aPtr) :
  */
 Statement::Ptr::~Ptr()
 {
-    if (NULL != mpRefCount)
+    if (mpRefCount)
     {
         assert(0 != *mpRefCount);
 
@@ -486,8 +486,8 @@ Statement::Ptr::~Ptr()
 
             // and delete the reference counter
             delete mpRefCount;
-            mpRefCount = NULL;
-            mpStmt = NULL;
+            mpRefCount = nullptr;
+            mpStmt = nullptr;
         }
         // else, the finalization will be done later, by the last object
     }

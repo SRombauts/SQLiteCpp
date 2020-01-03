@@ -131,7 +131,7 @@ TEST(Database, inMemory)
     } // Close an destroy DB
 }
 
-TEST(Database, import_export)
+TEST(Database, backup)
 {
     // Create a new in-memory database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE);
@@ -141,14 +141,14 @@ TEST(Database, import_export)
 
     // Export the data into a file
     remove("backup");
-    EXPECT_EQ(db.backup("backup", SQLite::Database::Save), SQLITE_OK);
+    EXPECT_NO_THROW(db.backup("backup", SQLite::Database::Save));
 
     // Trash the table
     db.exec("DROP TABLE test;");
     EXPECT_FALSE(db.tableExists("test"));
 
     // Import the data back from the file
-    EXPECT_EQ(db.backup("backup", SQLite::Database::Load), SQLITE_OK);
+    EXPECT_NO_THROW(db.backup("backup", SQLite::Database::Load));
 
     EXPECT_TRUE(db.tableExists("test"));
 }

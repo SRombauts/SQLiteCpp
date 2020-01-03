@@ -11,6 +11,7 @@
 #include <SQLiteCpp/Database.h>
 
 #include <SQLiteCpp/Assertion.h>
+#include <SQLiteCpp/Backup.h>
 #include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/Statement.h>
 
@@ -405,49 +406,20 @@ Header Database::getHeaderInfo(const std::string& aFilename)
     return h;
 }
 
+void Database::backup(const char* apFilename, BackupType aType)
+{
+    // Open the database file identified by apFilename
+    Database otherDatabase(apFilename, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
-// This is a reference implementation of live backup taken from the official sit:
-// https://www.sqlite.org/backup.html
+    // For a 'Save' operation, data is copied from the current Database to the other. A 'Load' is the reverse.
+    Database& src = (aType == Save ? *this : otherDatabase);
+    Database& dest = (aType == Save ? otherDatabase : *this);
 
-int Database::backup(const char* zFilename, BackupType type) {
-    /* Open the database file identified by zFilename. Exit early if this fails. */
-    sqlite3* pFile;
-    int rc = sqlite3_open(zFilename, &pFile);
-    if (rc == SQLITE_OK)
-    {
-        /* If this is a 'load' operation (isSave==0), then data is copied
-        ** from the database file just opened to database mpSQLite.
-        ** Otherwise, if this is a 'save' operation (isSave==1), then data
-        ** is copied from mpSQLite to pFile.  Set the variables pFrom and
-        ** pTo accordingly. */
-        sqlite3* pFrom = (type == Save ? getHandle() : pFile);
-        sqlite3* pTo = (type == Save ? pFile : getHandle());
+    // Set up the backup procedure to copy between the "main" databases of each connection
+    Backup bkp(dest, src);
+    bkp.executeStep(); // Execute all steps at once
 
-        /* Set up the backup procedure to copy from the "main" database of
-        ** connection pFile to the main database of connection mpSQLite.
-        ** If something goes wrong, pBackup will be set to NULL and an error
-        ** code and message left in connection pTo.
-        **
-        ** If the backup object is successfully created, call backup_step()
-        ** to copy data from pFile to mpSQLite. Then call backup_finish()
-        ** to release resources associated with the pBackup object.  If an
-        ** error occurred, then an error code and message will be left in
-        ** connection pTo. If no error occurred, then the error code belonging
-        ** to pTo is set to SQLITE_OK.
-        */
-        sqlite3_backup *pBackup = sqlite3_backup_init(pTo, "main", pFrom, "main");
-        if (pBackup)
-        {
-            sqlite3_backup_step(pBackup, -1);
-            sqlite3_backup_finish(pBackup);
-        }
-        rc = sqlite3_errcode(pTo);
-    }
-
-    /* Close the database connection opened on database file zFilename
-    ** and return the result of this function. */
-    sqlite3_close(pFile);
-    return rc;
+    // RAII Finish Backup an Close the other Database
 }
 
 }  // namespace SQLite

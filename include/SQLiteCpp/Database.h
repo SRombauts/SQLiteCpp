@@ -489,9 +489,9 @@ public:
      * into the "main" database of open database connection, or to save the current
      * contents of the database into a database file on disk.
      *
-     * @return SQLITE_OK on success or an error code from SQLite.
+     * @throw SQLite::Exception in case of error
      */
-    int backup(const char* zFilename, BackupType type);
+    void backup(const char* apFilename, BackupType aType);
 
     /**
      * @brief Check if aRet equal SQLITE_OK, else throw a SQLite::Exception with the SQLite error message

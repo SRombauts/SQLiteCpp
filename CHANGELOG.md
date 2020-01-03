@@ -162,3 +162,4 @@ Version 3.0.0 - January 1 2020
 - Visual Studio 2015 minimum
 - Googletest 1.10
 - Remove Statement::isOk() deprecated in 2.2.0 when renamed to Statement::hasRow()
+- Replace Database::backup() "C" implementation by calling the Backup class

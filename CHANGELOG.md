@@ -2,12 +2,12 @@ Mar 30 2012
 - Start of a new thin C++ SQLite wrapper
 
 Apr 2 2012
-- The wrapper is functionnal
+- The wrapper is functional
 - Added documentation and examples
 - Publication on GitHub
 
 Version 0.1.0 - Apr 4 2012
-- Added a Database::exec() methode to execute simple SQL statement
+- Added a Database::exec() method to execute simple SQL statement
 - Added a version number like in sqlite3.h, starting with 0.1.0
 
 Version 0.2.0 - Apr 11 2012
@@ -75,7 +75,7 @@ Version 1.3.0 - November 1 2015
 - Added Backup class
 
 Version 1.3.1 - February 10 2016
-- Swith Linux/Mac build to the provided SQLite3 C library
+- Switch Linux/Mac build to the provided SQLite3 C library
 - Update SQLite3 from 3.8.8.3 to latest 3.10.2 (2016-01-20)
 - Remove warnings
 - Remove biicode support (defunct service, servers will shutdown the 16th of February 2016)
@@ -157,9 +157,11 @@ Version 2.5.0 - December 31 2019
 - #251 Added example for getHeaderInfo()
 
 Version 3.0.0 - January 1 2020
-- C++11 minimum
+- C++11 is now required
 - CMake 3.1 minimum
 - Visual Studio 2015 minimum
-- Googletest 1.10
+- Update Googletest to latest release 1.10
+- Add Github Actions continuous integration solution
+- Add Valgrind memcheck tool to Travis CI
 - Remove Statement::isOk() deprecated in 2.2.0 when renamed to Statement::hasRow()
 - Replace Database::backup() "C" implementation by calling the Backup class

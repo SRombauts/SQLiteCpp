@@ -16,6 +16,17 @@ matrix:
     # GCC on Linux
     ##########################################################################
 
+    # Coverity static code analysis
+    - dist: bionic
+      env:
+        - COVERITY_SCAN_PROJECT_NAME=SRombauts/SQLiteCpp
+        - COVERITY_SCAN_BRANCH_PATTERN=master
+        - COVERITY_SCAN_NOTIFICATION_EMAIL=sebastien.rombauts@gmail.com
+        - COVERITY_SCAN_BUILD_COMMAND_PREPEND="cmake ."
+        - COVERITY_SCAN_BUILD_COMMAND="make -j8"
+        # Encrypted COVERITY_SCAN_TOKEN, created via the "travis encrypt" command using the project repo's public key
+        - secure: "Qm4d8NEDPBtYZCYav46uPEvDCtaRsjLXlkVS+C+WCJAPcwXCGkrr96wEi7RWcq2xD86QCh0XiqaPT+xdUmlohOYIovRhaaBmZ1lwIJ4GsG/ZR6xoFr3DYsZ3o4GyXk2vNXNxEl82AC+Xs6e6gkLOV9XRkBcjpVIvoIXgNlKWeGY="
+
     # GCC Debug build with GCov for coverage build
     - dist: bionic
       env:
@@ -91,16 +102,16 @@ matrix:
         - ASAN=ON
 
 before_install:
-  # Set the compiler environment variables properly
+  # Coverity: don't use addons.coverity_scan since it run on every job of the build matrix, which waste resources and exhausts quotas
+  # Note: the job dedicated to Coverity need to only run the shell script and then exit (to not try to build and run unit tests etc.)
+  - if [[ -n "$COVERITY_SCAN_PROJECT_NAME" ]] ; then curl -s https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh | bash ; exit 0 ; fi
+
+  - if [[ "$VALGRIND" == "true" ]]; then sudo apt-get install -qq valgrind ; fi
+  - if [[ "$COVERALLS" == "true" ]]; then pip install --user cpp-coveralls ; fi
+
+    # Set the compiler environment variables properly
   - export CC=${cc}
   - export CXX=${cxx}
-  - ${CC} --version
-  - ${CXX} --version
-  - if [[ "$VALGRIND" == "true" ]]; then sudo apt-get install -qq valgrind ; fi
-
-install:
-  # coveralls test coverage:
-  - if [[ "$COVERALLS" == "true" ]]; then pip install --user cpp-coveralls ; fi
 
 # scripts to run before build
 before_script:

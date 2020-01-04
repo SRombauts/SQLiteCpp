@@ -43,14 +43,14 @@ else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
     # Useful compile flags and extra warnings
-    add_compile_options(-fstack-protector -Wall -Wextra -Wpedantic -Wno-long-long -Wswitch-enum -Wshadow -Winline)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++0x-compat") # C++ only
+    add_compile_options(-fstack-protector)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wswitch-enum -Wshadow -Wno-long-long") # C++ only, don't bother with sqlite3
     if (CMAKE_COMPILER_IS_GNUCXX)
         # GCC flags
         option(SQLITECPP_USE_GCOV "USE GCov instrumentation." OFF)
         if (SQLITECPP_USE_GCOV)
             message (STATUS "Using GCov instrumentation")
-            add_compile_options (-coverage) # NOTE -fkeep-inline-functions would be usefull but not working with current google test and gcc 4.8
+            add_compile_options (-coverage) # NOTE -fkeep-inline-functions would be useful but not working with current Google test and GCC 4.8
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -coverage")
         endif ()
     endif (CMAKE_COMPILER_IS_GNUCXX)
@@ -83,7 +83,7 @@ endif ()
 
 ## Build the C++ Wrapper ##
 
-# adding a new file require explicittly modifing the CMakeLists.txt
+# adding a new file require explicitly modifying the CMakeLists.txt
 # so that CMake knows that it should rebuild the project (it is best practice)
 
 # list of sources files of the library
@@ -307,7 +307,7 @@ if (SQLITECPP_BUILD_EXAMPLES)
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
     target_link_libraries(SQLiteCpp_example1 SQLiteCpp sqlite3)
-    # Link target with pthread and dl for linux
+    # Link target with pthread and dl for Linux
     if (UNIX)
         target_link_libraries(SQLiteCpp_example1 pthread)
         if (NOT APPLE)
@@ -329,12 +329,12 @@ if (SQLITECPP_BUILD_TESTS)
     if (GTEST_FOUND)
         target_link_libraries(SQLiteCpp_tests GTest::GTest GTest::Main SQLiteCpp sqlite3)
     else (GTEST_FOUND)
-        # deactivate some warnings for compiling the gtest library
+        # deactivate some warnings for compiling the googletest library
         if (NOT MSVC)
             add_compile_options(-Wno-variadic-macros -Wno-long-long -Wno-switch-enum -Wno-float-equal -Wno-conversion-null -Wno-switch-default -Wno-pedantic)
         endif (NOT MSVC)
 
-        # add the subdirectory containing the CMakeLists.txt for the gtest library
+        # add the subdirectory containing the CMakeLists.txt for the googletest library
         if (NOT EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
             message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git submodule init' and 'git submodule update' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
         endif ()

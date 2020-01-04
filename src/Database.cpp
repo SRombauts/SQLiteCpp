@@ -287,28 +287,32 @@ Header Database::getHeaderInfo(const std::string& aFilename)
 
     if (aFilename.empty())
     {
-        throw SQLite::Exception("Could not open database, the aFilename parameter was empty.");
+        throw SQLite::Exception("Filename parameter is empty");
     }
 
-    std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
-
-    if (fileBuffer.is_open())
     {
-        fileBuffer.seekg(0, std::ios::beg);
-        fileBuffer.read(pBuf, 100);
-        fileBuffer.close();
-        strncpy(pHeaderStr, pBuf, 16);
-    }
-
-    else
-    {
-        throw SQLite::Exception("Error opening file: " + aFilename);
+        std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
+        if (fileBuffer.is_open())
+        {
+            fileBuffer.seekg(0, std::ios::beg);
+            fileBuffer.read(pBuf, 100);
+            fileBuffer.close();
+            if (fileBuffer.gcount() < 100)
+            {
+                throw SQLite::Exception("File " + aFilename + " is too short");
+            }
+        }
+        else
+        {
+            throw SQLite::Exception("Error opening file " + aFilename);
+        }
     }
 
     // If the "magic string" can't be found then header is invalid, corrupt or unreadable
+    strncpy(pHeaderStr, pBuf, 16);
     if (!strncmp(pHeaderStr, "SQLite format 3", 15) == 0)
     {
-        throw SQLite::Exception("Invalid or encrypted SQLite header");
+        throw SQLite::Exception("Invalid or encrypted SQLite header in file " + aFilename);
     }
 
     h.pageSizeBytes = (buf[16] << 8) | buf[17];

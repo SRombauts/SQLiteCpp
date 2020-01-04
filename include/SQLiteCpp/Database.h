@@ -477,6 +477,12 @@ public:
     */
     static Header getHeaderInfo(const std::string& aFilename);
 
+    // Parse SQLite header data from a database file.
+    Header getHeaderInfo()
+    {
+        return getHeaderInfo(mFilename);
+    }
+
     /**
      * @brief BackupType for the backup() method
      */

@@ -72,6 +72,7 @@ Developments and tests are done under the following OSs:
 - Windows 10, and Windows Server 2012 R2 & Windows Server 2016 (AppVeyor)
 - OS X 10.11 (Travis CI)
 - Github Actions
+- Valgrind memcheck tool
 
 And the following IDEs/Compilers
 - GCC 4.8.4, 5.3.0 and 7.1.1 (C++11, C++14, C++17)

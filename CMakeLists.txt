@@ -50,7 +50,7 @@ else (MSVC)
         option(SQLITECPP_USE_GCOV "USE GCov instrumentation." OFF)
         if (SQLITECPP_USE_GCOV)
             message (STATUS "Using GCov instrumentation")
-            add_compile_options (-coverage) # NOTE -fkeep-inline-functions would be useful but not working with current Google test and GCC 4.8
+            add_compile_options (-coverage)
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -coverage")
         endif ()
     endif (CMAKE_COMPILER_IS_GNUCXX)
@@ -198,6 +198,23 @@ if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Cla
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
 endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
 
+option(SQLITECPP_USE_ASAN "Use Address Sanitizer." OFF)
+if (SQLITECPP_USE_ASAN)
+    if ((CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 6) OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
+        message (STATUS "Using Address Sanitizer")
+        set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fsanitize=address -fno-omit-frame-pointer")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+        if (CMAKE_COMPILER_IS_GNUCXX)
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold")
+        endif ()
+    endif ()
+endif (SQLITECPP_USE_ASAN)
+
+if (SQLITECPP_USE_GCOV)
+    # Prevent the compiler from removing the unused inline functions so that they get tracked as "non-covered"
+    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fkeep-inline-functions -fkeep-static-functions")
+endif ()
+
 # Allow the library to be installed via "make install" and found with "find_package"
 include(GNUInstallDirs)
 install(TARGETS SQLiteCpp
@@ -226,18 +243,6 @@ install(FILES
     DESTINATION lib/cmake/${PROJECT_NAME})
 
 ## Build provided copy of SQLite3 C library ##
-
-option(SQLITECPP_USE_ASAN "Use Address Sanitizer." OFF)
-if (SQLITECPP_USE_ASAN)
-    if ((CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 6) OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
-        message (STATUS "Using Address Sanitizer")
-        set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fsanitize=address -fno-omit-frame-pointer")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
-        if (CMAKE_COMPILER_IS_GNUCXX)
-            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold")
-        endif ()
-    endif ()
-endif (SQLITECPP_USE_ASAN)
 
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
 if (SQLITECPP_INTERNAL_SQLITE)

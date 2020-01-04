@@ -140,15 +140,16 @@ TEST(Database, backup)
     EXPECT_TRUE(db.tableExists("test"));
 
     // Export the data into a file
-    remove("backup");
-    EXPECT_NO_THROW(db.backup("backup", SQLite::Database::Save));
+    remove("backup.db3");
+    EXPECT_NO_THROW(db.backup("backup.db3", SQLite::Database::Save));
 
     // Trash the table
     db.exec("DROP TABLE test;");
     EXPECT_FALSE(db.tableExists("test"));
 
     // Import the data back from the file
-    EXPECT_NO_THROW(db.backup("backup", SQLite::Database::Load));
+    EXPECT_NO_THROW(db.backup("backup.db3", SQLite::Database::Load));
+    remove("backup.db3");
 
     EXPECT_TRUE(db.tableExists("test"));
 }
@@ -359,28 +360,46 @@ TEST(Database, getHeaderInfo)
 {
     remove("test.db3");
     {
-        //Call without passing a database file name
+        // Call without passing a database file name
         EXPECT_THROW(SQLite::Database::getHeaderInfo(""),SQLite::Exception);
 
-        //Call with a non existant database
+        // Call with a non-existent database
         EXPECT_THROW(SQLite::Database::getHeaderInfo("test.db3"), SQLite::Exception);
 
-        //Simulate a corrupt header by writing garbage to a file
-        unsigned char badData[100];
-        char* pBadData = reinterpret_cast<char*>(&badData[0]);
+        // Simulate an incomplete header by writing garbage to a file
+        {
+            const unsigned char badData[] = "garbage...";
+            const char* pBadData = reinterpret_cast<const char*>(&badData[0]);
 
-        std::ofstream corruptDb;
-        corruptDb.open("corrupt.db3", std::ios::app | std::ios::binary);
-        corruptDb.write(pBadData, 100);
+            remove("short.db3");
+            std::ofstream corruptDb;
+            corruptDb.open("short.db3", std::ios::app | std::ios::binary);
+            corruptDb.write(pBadData, sizeof(badData));
+            corruptDb.close();
 
-        EXPECT_THROW(SQLite::Database::getHeaderInfo("corrupt.db3"), SQLite::Exception);
-        
-        remove("corrupt.db3");
+            EXPECT_THROW(SQLite::Database::getHeaderInfo("short.db3"), SQLite::Exception);
+            remove("short.db3");
+        }
+
+        // Simulate a corrupt header by writing garbage to a file
+        {
+            const unsigned char badData[100] = "garbage...";
+            const char* pBadData = reinterpret_cast<const char*>(&badData[0]);
+
+            remove("corrupt.db3");
+            std::ofstream corruptDb;
+            corruptDb.open("corrupt.db3", std::ios::app | std::ios::binary);
+            corruptDb.write(pBadData, sizeof(badData));
+            corruptDb.close();
+
+            EXPECT_THROW(SQLite::Database::getHeaderInfo("corrupt.db3"), SQLite::Exception);
+            remove("corrupt.db3");
+        }
 
         // Create a new database
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
-        
+
         // Set assorted SQLite header values using associated PRAGMA
         db.exec("PRAGMA main.user_version = 12345");
         db.exec("PRAGMA main.application_id = 2468");
@@ -388,7 +407,7 @@ TEST(Database, getHeaderInfo)
         // Parse header fields from test database
         SQLite::Header h = SQLite::Database::getHeaderInfo("test.db3");
 
-        //Test header values expliticly set via PRAGMA statements
+        //Test header values explicitly set via PRAGMA statements
         EXPECT_EQ(h.userVersion, 12345);
         EXPECT_EQ(h.applicationId, 2468);
 

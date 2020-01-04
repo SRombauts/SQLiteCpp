@@ -609,7 +609,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////
 
     /// Return the UTF-8 SQL Query.
-    inline const std::string& getQuery() const
+    const std::string& getQuery() const
     {
         return mQuery;
     }
@@ -618,17 +618,17 @@ public:
     std::string getExpandedSQL();
 
     /// Return the number of columns in the result set returned by the prepared statement
-    inline int getColumnCount() const
+    int getColumnCount() const
     {
         return mColumnCount;
     }
     /// true when a row has been fetched with executeStep()
-    inline bool hasRow() const
+    bool hasRow() const
     {
         return mbHasRow;
     }
     /// true when the last executeStep() had no more row to fetch
-    inline bool isDone() const
+    bool isDone() const
     {
         return mbDone;
     }
@@ -667,13 +667,13 @@ private:
         ~Ptr();
 
         /// Inline cast operator returning the pointer to SQLite Database Connection Handle
-        inline operator sqlite3*() const
+        operator sqlite3*() const
         {
             return mpSQLite;
         }
 
         /// Inline cast operator returning the pointer to SQLite Statement Object
-        inline operator sqlite3_stmt*() const
+        operator sqlite3_stmt*() const
         {
             return mpStmt;
         }
@@ -696,7 +696,7 @@ private:
      *
      * @param[in] aRet SQLite return code to test against the SQLITE_OK expected value
      */
-    inline void check(const int aRet) const
+    void check(const int aRet) const
     {
         if (SQLite::OK != aRet)
         {
@@ -707,7 +707,7 @@ private:
     /**
      * @brief Check if there is a row of result returned by executeStep(), else throw a SQLite::Exception.
      */
-    inline void checkRow() const
+    void checkRow() const
     {
         if (false == mbHasRow)
         {
@@ -718,7 +718,7 @@ private:
     /**
      * @brief Check if there is a Column index is in the range of columns in the result.
      */
-    inline void checkIndex(const int aIndex) const
+    void checkIndex(const int aIndex) const
     {
         if ((aIndex < 0) || (aIndex >= mColumnCount))
         {

@@ -18,3 +18,7 @@ cmake --build .
 
 # Build and run unit-tests (ie 'make test')
 ctest --output-on-failure
+
+# And with Valgrind
+#valgrind --leak-check=full --error-exitcode=1 ./SQLiteCpp_example1
+#valgrind --leak-check=full --error-exitcode=1 ./SQLiteCpp_tests

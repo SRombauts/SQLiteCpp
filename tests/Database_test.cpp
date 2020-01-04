@@ -271,7 +271,8 @@ TEST(Database, execAndGet)
     // Get a single value result with an easy to use shortcut
     EXPECT_STREQ("second",  db.execAndGet("SELECT value FROM test WHERE id=2"));
     EXPECT_STREQ("third",   db.execAndGet("SELECT value FROM test WHERE weight=7"));
-    EXPECT_EQ(3,            db.execAndGet("SELECT weight FROM test WHERE value=\"first\"").getInt());
+    const std::string query("SELECT weight FROM test WHERE value=\"first\"");
+    EXPECT_EQ(3,            db.execAndGet(query).getInt());
 }
 
 TEST(Database, execException)
@@ -405,7 +406,7 @@ TEST(Database, getHeaderInfo)
         db.exec("PRAGMA main.application_id = 2468");
 
         // Parse header fields from test database
-        SQLite::Header h = SQLite::Database::getHeaderInfo("test.db3");
+        const SQLite::Header h = db.getHeaderInfo();
 
         //Test header values explicitly set via PRAGMA statements
         EXPECT_EQ(h.userVersion, 12345);

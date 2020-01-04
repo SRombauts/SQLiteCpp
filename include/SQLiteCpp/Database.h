@@ -369,38 +369,6 @@ public:
                         void      (*apDestroy)(void *) = nullptr);
 
     /**
-     * @brief Create or redefine a SQL function or aggregate in the sqlite database.
-     *
-     *  This is the equivalent of the sqlite3_create_function_v2 command.
-     * @see http://www.sqlite.org/c3ref/create_function.html
-     *
-     * @note UTF-8 text encoding assumed.
-     *
-     * @param[in] aFuncName     Name of the SQL function to be created or redefined
-     * @param[in] aNbArg        Number of arguments in the function
-     * @param[in] abDeterministic Optimize for deterministic functions (most are). A random number generator is not.
-     * @param[in] apApp         Arbitrary pointer of user data, accessible with sqlite3_user_data().
-     * @param[in] apFunc        Pointer to a C-function to implement a scalar SQL function (apStep & apFinal nullptr)
-     * @param[in] apStep        Pointer to a C-function to implement an aggregate SQL function (apFunc nullptr)
-     * @param[in] apFinal       Pointer to a C-function to implement an aggregate SQL function (apFunc nullptr)
-     * @param[in] apDestroy     If not nullptr, then it is the destructor for the application data pointer.
-     *
-     * @throw SQLite::Exception in case of error
-     */
-    void createFunction(const std::string&   aFuncName,
-                               int                  aNbArg,
-                               bool                 abDeterministic,
-                               void*                apApp,
-                               void               (*apFunc)(sqlite3_context *, int, sqlite3_value **),
-                               void               (*apStep)(sqlite3_context *, int, sqlite3_value **) = nullptr,
-                               void               (*apFinal)(sqlite3_context *) = nullptr,
-                               void               (*apDestroy)(void *) = nullptr)
-    {
-        createFunction(aFuncName.c_str(), aNbArg, abDeterministic,
-                       apApp, apFunc, apStep, apFinal, apDestroy);
-    }
-
-    /**
      * @brief Load a module into the current sqlite database instance.
      *
      *  This is the equivalent of the sqlite3_load_extension call, but additionally enables

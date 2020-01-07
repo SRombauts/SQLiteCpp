@@ -165,3 +165,7 @@ Version 3.0.0 - January 1 2020
 - Add Valgrind memcheck tool to Travis CI
 - Remove Statement::isOk() deprecated in 2.2.0 when renamed to Statement::hasRow()
 - Replace Database::backup() "C" implementation by calling the Backup class
+- Run Valgrind memcheck on Travis CI #252
+- Keep inline functions for GCov code coverage #253
+- Re-enable Coverity static analysis #254
+- Fix linking with system library (libsqlite3) #256

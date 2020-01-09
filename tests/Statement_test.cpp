@@ -546,6 +546,119 @@ TEST(Statement, bindByName)
     }
 }
 
+
+TEST(Statement, bindByNameString)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+
+    // Create a new table
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL, long INTEGER)"));
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+
+    // Insertion with bindable parameters
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, @msg, @int, @double, @long)");
+
+    const std::string amsg = "@msg";
+    const std::string aint = "@int";
+    const std::string along = "@long";
+    const std::string adouble = "@double";
+
+    // First row with text/int/double
+    insert.bind(amsg, "first");
+    insert.bind(aint, 123);
+    insert.bind(along, -123);
+    insert.bind(adouble, 0.123);
+    EXPECT_EQ(1, insert.exec());
+    EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+    // Compile a SQL query to check the result
+    SQLite::Statement query(db, "SELECT * FROM test");
+    EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
+    EXPECT_EQ(5, query.getColumnCount());
+
+    // Check the result
+    query.executeStep();
+    EXPECT_TRUE(query.hasRow());
+    EXPECT_FALSE(query.isDone());
+    EXPECT_EQ(1, query.getColumn(0).getInt64());
+    EXPECT_STREQ("first", query.getColumn(1).getText());
+    EXPECT_EQ(123, query.getColumn(2).getInt());
+    EXPECT_EQ(0.123, query.getColumn(3).getDouble());
+    EXPECT_EQ(-123, query.getColumn(4).getInt());
+
+    // reset() with clearbindings() and new bindings
+    insert.reset();
+    insert.clearBindings();
+
+    // Second row with string/int64/float
+    {
+        const std::string   second("second");
+        const long long     int64 = 12345678900000LL;
+        const long          integer = -123;
+        const float         float32 = 0.234f;
+        insert.bind(amsg, second);
+        insert.bind(aint, int64);
+        insert.bind(adouble, float32);
+        insert.bind(along, integer);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(2, query.getColumn(0).getInt64());
+        EXPECT_EQ(second, query.getColumn(1).getText());
+        EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
+        EXPECT_EQ(0.234f, query.getColumn(3).getDouble());
+        EXPECT_EQ(-123, query.getColumn(4).getInt());
+    }
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Third row with binary buffer and a null parameter
+    {
+        const char buffer[] = "binary";
+        insert.bind(amsg, buffer, sizeof(buffer));
+        insert.bind(aint);
+        EXPECT_EQ(1, insert.exec());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(3, query.getColumn(0).getInt64());
+        EXPECT_STREQ(buffer, query.getColumn(1).getText());
+        EXPECT_TRUE(query.isColumnNull(2));
+        EXPECT_EQ(0, query.getColumn(2).getInt());
+        EXPECT_EQ(0.234f, query.getColumn(3).getDouble());
+    }
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Fourth row with uint32_t unsigned value and int64_t 64bits value
+    {
+        const uint32_t  uint32 = 4294967295U;
+        const int64_t   int64 = 12345678900000LL;
+        insert.bind(aint, uint32);
+        insert.bind(along, int64);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(4, query.getColumn(0).getInt64());
+        EXPECT_EQ(4294967295U, query.getColumn(2).getUInt());
+        EXPECT_EQ(12345678900000LL, query.getColumn(4).getInt64());
+    }
+}
+
 TEST(Statement, bindNoCopyByName)
 {
     // Create a new database
@@ -573,6 +686,7 @@ TEST(Statement, bindNoCopyByName)
         insert.bindNoCopy("@txt2", txt2);
         insert.bindNoCopy("@blob", blob, sizeof(blob));
         EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(1, db.getLastInsertRowid());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
         // Check the result
@@ -580,6 +694,35 @@ TEST(Statement, bindNoCopyByName)
         EXPECT_TRUE(query.hasRow());
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(1, query.getColumn(0).getInt64());
+        EXPECT_STREQ(txt1, query.getColumn(1).getText());
+        EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
+        EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
+    }
+
+    insert.reset();
+    query.reset();
+
+    // Insert a second row with all variants of bindNoCopy() using std::string names
+    {
+        const std::string   atxt1 = "@txt1";
+        const std::string   atxt2 = "@txt2";
+        const std::string   ablob = "@blob";
+        const char*         txt1 = "first2";
+        const std::string   txt2 = "sec\0nd2";
+        const char          blob[] = { 'b','l','\0','b','2' };
+        insert.bindNoCopy(atxt1, txt1);
+        insert.bindNoCopy(atxt2, txt2);
+        insert.bindNoCopy(ablob, blob, sizeof(blob));
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(2, db.getLastInsertRowid());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep(); // pass on the first row
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(2, query.getColumn(0).getInt64());
         EXPECT_STREQ(txt1, query.getColumn(1).getText());
         EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
         EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));

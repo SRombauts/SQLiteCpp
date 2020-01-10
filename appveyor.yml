@@ -36,7 +36,7 @@ init:
 before_build:
   - mkdir build
   - cd build
-  - cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF .. -G %generator%
+  - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF .. -G %generator%
 
 # build examples, and run tests (ie make & make test)
 build_script:

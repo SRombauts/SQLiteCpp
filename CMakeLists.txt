@@ -160,14 +160,8 @@ set(SQLITECPP_SCRIPT
 )
 source_group(scripts FILES ${SQLITECPP_SCRIPT})
 
-# All includes are relative to the "include" directory
-include_directories("${PROJECT_SOURCE_DIR}/include")
-
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
-# make the sqlite3 library part of the interface of the SQLiteCpp wrapper itself (the client app does not need to link to sqlite3)
-# PR https://github.com/SRombauts/SQLiteCpp/pull/111 "linked SQLiteCpp to sqlite3" commented out since it breaks install step from PR #118
-#target_link_libraries(SQLiteCpp PUBLIC sqlite3)
 
 # Options relative to SQLite and SQLiteC++ functions
 
@@ -218,16 +212,46 @@ if (SQLITECPP_USE_GCOV)
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fkeep-inline-functions -fkeep-static-functions")
 endif ()
 
+## Build provided copy of SQLite3 C library ##
+
+option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
+if (SQLITECPP_INTERNAL_SQLITE)
+    message(STATUS "Compile sqlite3 from source in subdirectory")
+    # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
+    add_subdirectory(sqlite3)
+    target_link_libraries(SQLiteCpp PUBLIC sqlite3)
+else (SQLITECPP_INTERNAL_SQLITE)
+    find_package (SQLite3 REQUIRED)
+    message(STATUS "Link to sqlite3 system library")
+    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
+    if(SQLite3_VERSION VERSION_LESS "3.19")
+        set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
+    endif()
+endif (SQLITECPP_INTERNAL_SQLITE)
+
+# Link target with pthread and dl for Unix
+if (UNIX)
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+    target_link_libraries(SQLiteCpp PUBLIC Threads::Threads ${CMAKE_DL_LIBS})
+endif (UNIX)
+
+# Set includes for target and transitive downstream targets
+
+target_include_directories(SQLiteCpp
+  PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3>
+  PUBLIC $<INSTALL_INTERFACE:include/>)
+
 # Allow the library to be installed via "make install" and found with "find_package"
+
 include(GNUInstallDirs)
 install(TARGETS SQLiteCpp
     EXPORT ${PROJECT_NAME}Targets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     COMPONENT libraries)
-target_include_directories(SQLiteCpp PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/>)
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
 install(EXPORT ${PROJECT_NAME}Targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
@@ -244,24 +268,6 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake
     DESTINATION lib/cmake/${PROJECT_NAME})
-
-## Build provided copy of SQLite3 C library ##
-
-option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
-if (SQLITECPP_INTERNAL_SQLITE)
-    message(STATUS "Compile sqlite3 from source in subdirectory")
-    # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
-    add_subdirectory(sqlite3)
-    target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/sqlite3")
-    target_include_directories(SQLiteCpp PRIVATE "${PROJECT_SOURCE_DIR}/sqlite3")
-else (SQLITECPP_INTERNAL_SQLITE)
-    find_package (SQLite3 REQUIRED)
-    if (SQLITE3_FOUND)
-        message(STATUS "Link to sqlite3 system library")
-        include_directories(${SQLITE3_INCLUDE_DIRS})
-        target_link_libraries(SQLiteCpp ${SQLITE3_LIBRARIES})
-    endif (SQLITE3_FOUND)
-endif (SQLITECPP_INTERNAL_SQLITE)
 
 # Optional additional targets:
 
@@ -316,14 +322,11 @@ option(SQLITECPP_BUILD_EXAMPLES "Build examples." OFF)
 if (SQLITECPP_BUILD_EXAMPLES)
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
-    target_link_libraries(SQLiteCpp_example1 SQLiteCpp sqlite3)
-    # Link target with pthread and dl for Linux
-    if (UNIX)
-        target_link_libraries(SQLiteCpp_example1 pthread)
-        if (NOT APPLE)
-            target_link_libraries(SQLiteCpp_example1 dl)
-        endif ()
-    elseif (MSYS OR MINGW)
+    target_link_libraries(SQLiteCpp_example1 SQLiteCpp)
+    target_include_directories(SQLiteCpp_example1 PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3>)
+    if (MSYS OR MINGW)
         target_link_libraries(SQLiteCpp_example1 ssp)
     endif ()
 else (SQLITECPP_BUILD_EXAMPLES)
@@ -334,11 +337,15 @@ option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 if (SQLITECPP_BUILD_TESTS)
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
+    target_link_libraries(SQLiteCpp_tests SQLiteCpp)
+    target_include_directories(SQLiteCpp_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3>)
 
     find_package(GTest)
     if (GTEST_FOUND)
         message(STATUS "Link to GTest system library")
-        target_link_libraries(SQLiteCpp_tests GTest::GTest GTest::Main SQLiteCpp sqlite3)
+        target_link_libraries(SQLiteCpp_tests GTest::GTest GTest::Main)
     else (GTEST_FOUND)
         message(STATUS "Compile googletest from source in submodule")
         # deactivate some warnings for compiling the googletest library
@@ -363,13 +370,8 @@ if (SQLITECPP_BUILD_TESTS)
             endif (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919)
         endif (MSVC)
 
-        target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp sqlite3)
+        target_link_libraries(SQLiteCpp_tests gtest_main)
     endif (GTEST_FOUND)
-
-    # Link target with dl for linux
-    if (UNIX AND NOT APPLE)
-        target_link_libraries(SQLiteCpp_tests dl)
-    endif ()
 
     # add a "test" target:
     enable_testing()

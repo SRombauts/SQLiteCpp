@@ -310,7 +310,7 @@ Header Database::getHeaderInfo(const std::string& aFilename)
 
     // If the "magic string" can't be found then header is invalid, corrupt or unreadable
     strncpy(pHeaderStr, pBuf, 16);
-    if (!strncmp(pHeaderStr, "SQLite format 3", 15) == 0)
+    if (strncmp(pHeaderStr, "SQLite format 3", 15) != 0)
     {
         throw SQLite::Exception("Invalid or encrypted SQLite header in file " + aFilename);
     }

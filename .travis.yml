@@ -16,6 +16,11 @@ env:
     - INTERNAL_SQLITE=ON
     - VALGRIND=OFF
 
+# Build variants (should test a reasonable number of combination of CMake options)
+# TODO GCC 8+ using ubuntu-toolchain-r-test packages
+# TODO cppcheck
+# TODO Doxygen
+# TODO link against googletest system library
 matrix:
   include:
 
@@ -34,36 +39,38 @@ matrix:
         # Encrypted COVERITY_SCAN_TOKEN, created via the "travis encrypt" command using the project repo's public key
         - secure: "Qm4d8NEDPBtYZCYav46uPEvDCtaRsjLXlkVS+C+WCJAPcwXCGkrr96wEi7RWcq2xD86QCh0XiqaPT+xdUmlohOYIovRhaaBmZ1lwIJ4GsG/ZR6xoFr3DYsZ3o4GyXk2vNXNxEl82AC+Xs6e6gkLOV9XRkBcjpVIvoIXgNlKWeGY="
 
-    # GCC Debug build with GCov for coverage build
+    # GCC 7.4.0 Debug build with GCov for coverage build
     - dist: bionic
       env:
         - cc=gcc cxx=g++
         - GCOV=ON
         - COVERALLS=true
 
-    # GCC Debug build with Valgrind instead of Address Sanitizer
+    # GCC 7.4.0 Debug build with Valgrind instead of Address Sanitizer
     - dist: bionic
       env:
         - cc=gcc cxx=g++
         - ASAN=OFF
         - VALGRIND=true
 
-    # GCC Release build
+    # GCC 7.4.0 Release build
     - dist: bionic
       env:
         - cc=gcc cxx=g++
         - BUILD_TYPE=Release
 
-    # GCC test linking with libsqlite3-dev package
+    # GCC 7.4.0 test linking with libsqlite3-dev package
     - dist: bionic
       env:
         - cc=gcc cxx=g++
         - INTERNAL_SQLITE=OFF
 
+    # GCC 5.4.0
     - dist: xenial
       env:
         - cc=gcc cxx=g++
 
+    # GCC 4.8.4
     - dist: trusty
       env:
         - cc=gcc cxx=g++
@@ -72,14 +79,17 @@ matrix:
     # Clang on Linux
     ##########################################################################
 
+    # Clang 7.0.0
     - dist: bionic
       env:
         - cc=clang cxx=clang++
 
+    # Clang 7.0.0
     - dist: xenial
       env:
         - cc=clang cxx=clang++
 
+    # Clang 5.0.0
     - dist: trusty
       env:
         - cc=clang cxx=clang++
@@ -88,12 +98,12 @@ matrix:
     # Clang on OSX
     ##########################################################################
 
-    # Latest XCode
+    # Latest XCode - AppleClang 9.1.0
     - os: osx
       env:
         - cc=clang cxx=clang++
 
-    # XCode 8.3
+    # XCode 8.3 - AppleClang 8.1.0
     - os: osx
       osx_image: xcode8.3
       env:

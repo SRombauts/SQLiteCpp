@@ -337,8 +337,10 @@ if (SQLITECPP_BUILD_TESTS)
 
     find_package(GTest)
     if (GTEST_FOUND)
+        message(STATUS "Link to GTest system library")
         target_link_libraries(SQLiteCpp_tests GTest::GTest GTest::Main SQLiteCpp sqlite3)
     else (GTEST_FOUND)
+        message(STATUS "Compile googletest from source in submodule")
         # deactivate some warnings for compiling the googletest library
         if (NOT MSVC)
             add_compile_options(-Wno-switch-enum)

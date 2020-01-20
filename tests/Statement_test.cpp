@@ -748,6 +748,7 @@ TEST(Statement, bindNoCopyByName)
     }
     
     insert.reset();
+    insert.clearBindings();
     query.reset();
     
     // Insert a third row with some more variants of bindNoCopy() using std::string names

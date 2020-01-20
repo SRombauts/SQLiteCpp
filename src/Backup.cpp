@@ -4,7 +4,7 @@
  * @brief   Backup is used to backup a database file in a safe and online way.
  *
  * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
- * Copyright (c) 2015-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2015-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -22,57 +22,36 @@ namespace SQLite
 Backup::Backup(Database&    aDestDatabase,
                const char*  apDestDatabaseName,
                Database&    aSrcDatabase,
-               const char*  apSrcDatabaseName) :
-    mpSQLiteBackup(NULL)
+               const char*  apSrcDatabaseName)
 {
     mpSQLiteBackup = sqlite3_backup_init(aDestDatabase.getHandle(),
                                          apDestDatabaseName,
                                          aSrcDatabase.getHandle(),
                                          apSrcDatabaseName);
-    if (NULL == mpSQLiteBackup)
+    if (nullptr == mpSQLiteBackup)
     {
         // If an error occurs, the error code and message are attached to the destination database connection.
         throw SQLite::Exception(aDestDatabase.getHandle());
     }
 }
 
-// Initialize resource for SQLite database backup
 Backup::Backup(Database&            aDestDatabase,
                const std::string&   aDestDatabaseName,
                Database&            aSrcDatabase,
                const std::string&   aSrcDatabaseName) :
-    mpSQLiteBackup(NULL)
+    Backup(aDestDatabase, aDestDatabaseName.c_str(), aSrcDatabase, aSrcDatabaseName.c_str())
 {
-    mpSQLiteBackup = sqlite3_backup_init(aDestDatabase.getHandle(),
-                                         aDestDatabaseName.c_str(),
-                                         aSrcDatabase.getHandle(),
-                                         aSrcDatabaseName.c_str());
-    if (NULL == mpSQLiteBackup)
-    {
-        // If an error occurs, the error code and message are attached to the destination database connection.
-        throw SQLite::Exception(aDestDatabase.getHandle());
-    }
 }
 
-// Initialize resource for SQLite database backup
 Backup::Backup(Database &aDestDatabase, Database &aSrcDatabase) :
-    mpSQLiteBackup(NULL)
+    Backup(aDestDatabase, "main", aSrcDatabase, "main")
 {
-    mpSQLiteBackup = sqlite3_backup_init(aDestDatabase.getHandle(),
-                                         "main",
-                                         aSrcDatabase.getHandle(),
-                                         "main");
-    if (NULL == mpSQLiteBackup)
-    {
-        // If an error occurs, the error code and message are attached to the destination database connection.
-        throw SQLite::Exception(aDestDatabase.getHandle());
-    }
 }
 
 // Release resource for SQLite database backup
 Backup::~Backup()
 {
-    if (NULL != mpSQLiteBackup)
+    if (mpSQLiteBackup)
     {
         sqlite3_backup_finish(mpSQLiteBackup);
     }

@@ -4,7 +4,7 @@
  * @brief   Backup is used to backup a database file in a safe and online way.
  *
  * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
- * Copyright (c) 2015-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2015-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -27,16 +27,8 @@ namespace SQLite
  * A Backup object is used to backup a source database file to a destination database file
  * in a safe and online way.
  *
- * Resource Acquisition Is Initialization (RAII) means that the Backup Resource
- * is allocated in the constructor and released in the destructor, so that there is
- * no need to worry about memory management or the validity of the underlying SQLite Backup.
- *
- * Thread-safety: a Backup object shall not be shared by multiple threads, because :
- * 1) in the SQLite "Thread Safe" mode, "SQLite can be safely used by multiple threads
- *    provided that no single database connection is used simultaneously in two or more threads."
- * 2) the SQLite "Serialized" mode is not supported by SQLiteC++,
- *    because of the way it shares the underling SQLite precompiled statement
- *    in a custom shared pointer (See the inner class "Statement::Ptr").
+ * See also the a reference implementation of live backup taken from the official site:
+ * https://www.sqlite.org/backup.html
  */
 class Backup
 {
@@ -99,6 +91,10 @@ public:
     Backup(Database& aDestDatabase,
            Database& aSrcDatabase);
 
+    // Backup is non-copyable
+    Backup(const Backup&) = delete;
+    Backup& operator=(const Backup&) = delete;
+
     /// Release the SQLite Backup resource.
     ~Backup();
 
@@ -124,13 +120,8 @@ public:
     int getTotalPageCount();
 
 private:
-    /// @{ Backup must be non-copyable
-    Backup(const Backup&);
-    Backup& operator=(const Backup&);
-    /// @}
-
-private:
-    sqlite3_backup* mpSQLiteBackup;   ///< Pointer to SQLite Database Backup Handle
+    // TODO: use std::unique_ptr with a custom deleter to call sqlite3_backup_finish()
+    sqlite3_backup* mpSQLiteBackup = nullptr;   ///< Pointer to SQLite Database Backup Handle
 };
 
 }  // namespace SQLite

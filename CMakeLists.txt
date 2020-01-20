@@ -1,22 +1,19 @@
 # Main CMake file for compiling the library itself, examples and tests.
 #
-# Copyright (c) 2012-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+# Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
-cmake_minimum_required(VERSION 2.8.12) # first version with add_compile_options()
-if (CMAKE_VERSION VERSION_LESS 3.0)
-    project(SQLiteCpp)
-    set(PROJECT_VERSION_MAJOR 2)
-    set(PROJECT_VERSION_MINOR 4)
-    set(PROJECT_VERSION_PATCH 0)
-    set(PROJECT_VERSION "2.4.0")
-else()
-    cmake_policy(SET CMP0048 NEW)
-    project(SQLiteCpp VERSION "2.4.0")
-endif()
+cmake_minimum_required(VERSION 3.1) # for "CMAKE_CXX_STANDARD" version
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # custom CMake modules like FindSQLiteCpp
+project(SQLiteCpp VERSION "2.99")
+
+# SQLiteC++ 3.x now requires C++11 compiler
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 message (STATUS "CMake version: ${CMAKE_VERSION}")
+message (STATUS "Project version: ${PROJECT_VERSION}")
 
 # Define useful variables to handle OS differences:
 if (WIN32)
@@ -39,22 +36,22 @@ if (MSVC)
         set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
         set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
     endif (SQLITECPP_BUILD_TESTS)
-    # Handle the (partly supported) MSVC versions prior to 2015
+    # MSVC versions prior to 2015 are not supported anymore by SQLiteC++ 3.x
     if (MSVC_VERSION LESS 1900) # OR MSVC_TOOLSET_VERSION LESS 140)
-      message(WARNING "MSVC < 2015 detected: Visual Studio prior to 2015 is not fully supported. BLOB storage seems to be corrupted.")
+      message(ERROR "Visual Studio prior to 2015 is not supported anymore.")
     endif (MSVC_VERSION LESS 1900)
 else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
     # Useful compile flags and extra warnings
-    add_compile_options(-fstack-protector -Wall -Wextra -Wpedantic -Wno-long-long -Wswitch-enum -Wshadow -Winline)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++0x-compat") # C++ only
+    add_compile_options(-fstack-protector)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wswitch-enum -Wshadow -Wno-long-long") # C++ only, don't bother with sqlite3
     if (CMAKE_COMPILER_IS_GNUCXX)
         # GCC flags
         option(SQLITECPP_USE_GCOV "USE GCov instrumentation." OFF)
         if (SQLITECPP_USE_GCOV)
             message (STATUS "Using GCov instrumentation")
-            add_compile_options (-coverage) # NOTE -fkeep-inline-functions would be usefull but not working with current google test and gcc 4.8
+            add_compile_options (-coverage)
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -coverage")
         endif ()
     endif (CMAKE_COMPILER_IS_GNUCXX)
@@ -85,31 +82,9 @@ else (NOT MSVC)
     endif ()
 endif ()
 
-# Options relative to SQLite and SQLiteC++ functions
-
-option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getColumnOriginName(). Require support from sqlite3 library." ON)
-if (SQLITE_ENABLE_COLUMN_METADATA)
-    # Enable the use of SQLite column metadata and Column::getColumnOriginName() method,
-    # Require that the sqlite3 library is also compiled with this flag (default under Debian/Ubuntu, but not on Mac OS X).
-    add_definitions(-DSQLITE_ENABLE_COLUMN_METADATA)
-endif (SQLITE_ENABLE_COLUMN_METADATA)
-
-option(SQLITE_ENABLE_ASSERT_HANDLER "Enable the user defintion of a assertion_failed() handler." OFF)
-if (SQLITE_ENABLE_ASSERT_HANDLER)
-    # Enable the user defintion of a assertion_failed() handler (default to false, easier to handler for begginers).
-    add_definitions(-DSQLITECPP_ENABLE_ASSERT_HANDLER)
-endif (SQLITE_ENABLE_ASSERT_HANDLER)
-
-option(SQLITE_USE_LEGACY_STRUCT "Fallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)" OFF)
-if (SQLITE_USE_LEGACY_STRUCT)
-    # Force forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)
-    add_definitions(-DSQLITE_USE_LEGACY_STRUCT)
-endif (SQLITE_USE_LEGACY_STRUCT)
-
-
 ## Build the C++ Wrapper ##
 
-# adding a new file require explicittly modifing the CMakeLists.txt
+# adding a new file require explicitly modifying the CMakeLists.txt
 # so that CMake knows that it should rebuild the project (it is best practice)
 
 # list of sources files of the library
@@ -133,7 +108,6 @@ set(SQLITECPP_INC
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Exception.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Statement.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Transaction.h
- ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Utils.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/VariadicBind.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/ExecuteMany.h
 )
@@ -167,50 +141,59 @@ set(SQLITECPP_DOC
 )
 source_group(doc FILES ${SQLITECPP_DOC})
 
-# list of script files of the library
+# list of config & script files of the library
 set(SQLITECPP_SCRIPT
+ .editorconfig
+ .gitbugtraq
+ .github/workflows/actions.yml
+ .gitignore
+ .gitmodules
  .travis.yml
  appveyor.yml
  build.bat
  build.sh
  cpplint.py
  Doxyfile
- FindSQLiteCpp.cmake
+ cmake/FindSQLiteCpp.cmake
+ cmake/FindSQLite3.cmake
+ cmake/SQLiteCppConfig.cmake.in
 )
 source_group(scripts FILES ${SQLITECPP_SCRIPT})
 
-# All includes are relative to the "include" directory
-include_directories("${PROJECT_SOURCE_DIR}/include")
-
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
-# make the sqlite3 library part of the interface of the SQLiteCpp wrapper itself (the client app does not need to link to sqlite3)
-# PR https://github.com/SRombauts/SQLiteCpp/pull/111 "linked SQLiteCpp to sqlite3" commented out since it breaks install step from PR #118
-#target_link_libraries(SQLiteCpp PUBLIC sqlite3)
+
+# Options relative to SQLite and SQLiteC++ functions
+
+option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getColumnOriginName(). Require support from sqlite3 library." ON)
+if (SQLITE_ENABLE_COLUMN_METADATA)
+    # Enable the use of SQLite column metadata and Column::getColumnOriginName() method,
+    # Require that the sqlite3 library is also compiled with this flag (default under Debian/Ubuntu, but not on Mac OS X).
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITE_ENABLE_COLUMN_METADATA)
+endif (SQLITE_ENABLE_COLUMN_METADATA)
+
+option(SQLITE_ENABLE_ASSERT_HANDLER "Enable the user definition of a assertion_failed() handler." OFF)
+if (SQLITE_ENABLE_ASSERT_HANDLER)
+    # Enable the user definition of a assertion_failed() handler (default to false, easier to handler for beginners).
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITECPP_ENABLE_ASSERT_HANDLER)
+endif (SQLITE_ENABLE_ASSERT_HANDLER)
+
+option(SQLITE_HAS_CODEC "Enable database encryption API. Not available in the public release of SQLite." OFF)
+if (SQLITE_HAS_CODEC)
+    # Enable database encryption API. Requires implementations of sqlite3_key & sqlite3_key_v2.
+    # Eg. SQLCipher (libsqlcipher-dev) is an SQLite extension that provides 256 bit AES encryption of database files. 
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITE_HAS_CODEC)
+endif (SQLITE_HAS_CODEC)
+
+option(SQLITE_USE_LEGACY_STRUCT "Fallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)" OFF)
+if (SQLITE_USE_LEGACY_STRUCT)
+    # Force forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITE_USE_LEGACY_STRUCT)
+endif (SQLITE_USE_LEGACY_STRUCT)
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
 endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
-
-# Allow the library to be installed via "make install" and found with "find_package"
-install(TARGETS SQLiteCpp
-    EXPORT ${PROJECT_NAME}Config
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    COMPONENT libraries)
-target_include_directories(SQLiteCpp PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/>)
-install(DIRECTORY include/ DESTINATION include COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
-install(EXPORT ${PROJECT_NAME}Config DESTINATION lib/cmake/${PROJECT_NAME})
-
-## Build provided copy of SQLite3 C library ##
-
-# TODO 
-#find_package(sqlite3)
-#if(sqlite3_VERSION VERSION_LESS "3.19")
-#    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
-#endif()
 
 option(SQLITECPP_USE_ASAN "Use Address Sanitizer." OFF)
 if (SQLITECPP_USE_ASAN)
@@ -224,13 +207,67 @@ if (SQLITECPP_USE_ASAN)
     endif ()
 endif (SQLITECPP_USE_ASAN)
 
+if (SQLITECPP_USE_GCOV)
+    # Prevent the compiler from removing the unused inline functions so that they get tracked as "non-covered"
+    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fkeep-inline-functions -fkeep-static-functions")
+endif ()
+
+## Build provided copy of SQLite3 C library ##
+
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
 if (SQLITECPP_INTERNAL_SQLITE)
+    message(STATUS "Compile sqlite3 from source in subdirectory")
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
-    target_include_directories(sqlite3 PUBLIC "${PROJECT_SOURCE_DIR}/sqlite3")
-    target_include_directories(SQLiteCpp PRIVATE "${PROJECT_SOURCE_DIR}/sqlite3")
+    target_link_libraries(SQLiteCpp PUBLIC sqlite3)
+else (SQLITECPP_INTERNAL_SQLITE)
+    find_package (SQLite3 REQUIRED)
+    message(STATUS "Link to sqlite3 system library")
+    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
+    if(SQLite3_VERSION VERSION_LESS "3.19")
+        set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
+    endif()
 endif (SQLITECPP_INTERNAL_SQLITE)
+
+# Link target with pthread and dl for Unix
+if (UNIX)
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
+    target_link_libraries(SQLiteCpp PUBLIC Threads::Threads ${CMAKE_DL_LIBS})
+endif (UNIX)
+
+# Set includes for target and transitive downstream targets
+
+target_include_directories(SQLiteCpp
+  PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3>
+  PUBLIC $<INSTALL_INTERFACE:include/>)
+
+# Allow the library to be installed via "make install" and found with "find_package"
+
+include(GNUInstallDirs)
+install(TARGETS SQLiteCpp
+    EXPORT ${PROJECT_NAME}Targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    COMPONENT libraries)
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
+install(EXPORT ${PROJECT_NAME}Targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    cmake/${PROJECT_NAME}ConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion)
+configure_package_config_file(
+    cmake/${PROJECT_NAME}Config.cmake.in
+    cmake/${PROJECT_NAME}Config.cmake
+    INSTALL_DESTINATION lib/cmake/${PROJECT_NAME})
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake
+    DESTINATION lib/cmake/${PROJECT_NAME})
 
 # Optional additional targets:
 
@@ -285,14 +322,11 @@ option(SQLITECPP_BUILD_EXAMPLES "Build examples." OFF)
 if (SQLITECPP_BUILD_EXAMPLES)
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
-    target_link_libraries(SQLiteCpp_example1 SQLiteCpp sqlite3)
-    # Link target with pthread and dl for linux
-    if (UNIX)
-        target_link_libraries(SQLiteCpp_example1 pthread)
-        if (NOT APPLE)
-            target_link_libraries(SQLiteCpp_example1 dl)
-        endif ()
-    elseif (MSYS OR MINGW)
+    target_link_libraries(SQLiteCpp_example1 SQLiteCpp)
+    target_include_directories(SQLiteCpp_example1 PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3>)
+    if (MSYS OR MINGW)
         target_link_libraries(SQLiteCpp_example1 ssp)
     endif ()
 else (SQLITECPP_BUILD_EXAMPLES)
@@ -301,36 +335,43 @@ endif (SQLITECPP_BUILD_EXAMPLES)
 
 option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 if (SQLITECPP_BUILD_TESTS)
-    # deactivate some warnings for compiling the gtest library
-    if (NOT MSVC)
-        add_compile_options(-Wno-variadic-macros -Wno-long-long -Wno-switch-enum -Wno-float-equal -Wno-conversion-null -Wno-switch-default -Wno-pedantic)
-    endif (NOT MSVC)
-
-    # add the subdirectory containing the CMakeLists.txt for the gtest library
-    # TODO: under Linux, uses libgtest-dev if found
-    if (NOT EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
-        message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git submodule init' and 'git submodule update' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
-    endif ()
-    add_subdirectory(googletest)
-    include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
-
-    # Add definitions to keep googletest from making the compilation fail
-    if (MSVC)
-        if (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919) # OR MSVC_TOOLSET_VERSION EQUAL 141)
-            target_compile_definitions(gtest PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-            target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-            target_compile_definitions(gmock PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-            target_compile_definitions(gmock_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-        endif (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919)
-    endif (MSVC)
-
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})
-    target_link_libraries(SQLiteCpp_tests gtest_main SQLiteCpp sqlite3)
-    # Link target with dl for linux
-    if (UNIX AND NOT APPLE)
-        target_link_libraries(SQLiteCpp_tests dl)
-    endif ()
+    target_link_libraries(SQLiteCpp_tests SQLiteCpp)
+    target_include_directories(SQLiteCpp_tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3>)
+
+    find_package(GTest)
+    if (GTEST_FOUND)
+        message(STATUS "Link to GTest system library")
+        target_link_libraries(SQLiteCpp_tests GTest::GTest GTest::Main)
+    else (GTEST_FOUND)
+        message(STATUS "Compile googletest from source in submodule")
+        # deactivate some warnings for compiling the googletest library
+        if (NOT MSVC)
+            add_compile_options(-Wno-switch-enum)
+        endif (NOT MSVC)
+
+        # add the subdirectory containing the CMakeLists.txt for the googletest library
+        if (NOT EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
+            message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git submodule init' and 'git submodule update' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
+        endif ()
+        add_subdirectory(googletest)
+        include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
+
+        # Add definitions to keep googletest from making the compilation fail
+        if (MSVC)
+            if (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919) # OR MSVC_TOOLSET_VERSION EQUAL 141)
+                target_compile_definitions(gtest PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+                target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+                target_compile_definitions(gmock PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+                target_compile_definitions(gmock_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+            endif (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919)
+        endif (MSVC)
+
+        target_link_libraries(SQLiteCpp_tests gtest_main)
+    endif (GTEST_FOUND)
 
     # add a "test" target:
     enable_testing()
@@ -345,3 +386,6 @@ if (SQLITECPP_BUILD_TESTS)
 else (SQLITECPP_BUILD_TESTS)
     message(STATUS "SQLITECPP_BUILD_TESTS OFF")
 endif (SQLITECPP_BUILD_TESTS)
+
+# API version for SQLiteCpp shared library.
+set_property(TARGET SQLiteCpp PROPERTY SOVERSION 0)

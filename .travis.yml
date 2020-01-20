@@ -1,256 +1,141 @@
-# Copyright (c) 2012-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+# Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 
-# request for Ubuntu 14.04 Trusty VM
-sudo: true
-dist: trusty
+language: cpp
+sudo: false
+
+# Use Linux unless specified otherwise
+os: linux
 
 cache:
   apt: true
 
-# NOTE: no language, so that we can set CXX and CC env vars as required
-#language: cpp
+env:
+  global:
+    - BUILD_TYPE=Debug
+    - ASAN=ON
+    - INTERNAL_SQLITE=ON
+    - VALGRIND=OFF
 
+# Build variants (should test a reasonable number of combination of CMake options)
+# TODO GCC 8+ using ubuntu-toolchain-r-test packages
+# TODO cppcheck
+# TODO Doxygen
+# TODO link against googletest system library
 matrix:
   include:
-    # gcc default (4.8)
-    - compiler: gcc
+
+    ##########################################################################
+    # GCC on Linux
+    ##########################################################################
+
+    # Coverity static code analysis
+    - dist: bionic
       env:
-        - CC=gcc
-        - CXX=g++
-        - CXXFLAGS="-Wall -Wextra -pedantic"
-    # gcc 4.9 std=default
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
+        - COVERITY_SCAN_PROJECT_NAME=SRombauts/SQLiteCpp
+        - COVERITY_SCAN_BRANCH_PATTERN=master
+        - COVERITY_SCAN_NOTIFICATION_EMAIL=sebastien.rombauts@gmail.com
+        - COVERITY_SCAN_BUILD_COMMAND_PREPEND="cmake ."
+        - COVERITY_SCAN_BUILD_COMMAND="make -j8"
+        # Encrypted COVERITY_SCAN_TOKEN, created via the "travis encrypt" command using the project repo's public key
+        - secure: "Qm4d8NEDPBtYZCYav46uPEvDCtaRsjLXlkVS+C+WCJAPcwXCGkrr96wEi7RWcq2xD86QCh0XiqaPT+xdUmlohOYIovRhaaBmZ1lwIJ4GsG/ZR6xoFr3DYsZ3o4GyXk2vNXNxEl82AC+Xs6e6gkLOV9XRkBcjpVIvoIXgNlKWeGY="
+
+    # GCC 7.4.0 Debug build with GCov for coverage build
+    - dist: bionic
       env:
-        - CC=gcc-4.9
-        - CXX=g++-4.9
-        - CXXFLAGS="-Wall -Wextra -pedantic"
-    # gcc 5 std=c++03
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
+        - cc=gcc cxx=g++
+        - GCOV=ON
+        - COVERALLS=true
+
+    # GCC 7.4.0 Debug build with Valgrind instead of Address Sanitizer
+    - dist: bionic
       env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-std=c++03 -Wall -Wextra -pedantic"
-    # gcc 5 std=c++11
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
+        - cc=gcc cxx=g++
+        - ASAN=OFF
+        - VALGRIND=true
+
+    # GCC 7.4.0 Release build
+    - dist: bionic
       env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-std=c++11 -Wall -Wextra -pedantic"
-    # gcc 5 default
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
+        - cc=gcc cxx=g++
+        - BUILD_TYPE=Release
+
+    # GCC 7.4.0 test linking with libsqlite3-dev package
+    - dist: bionic
       env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-Wall -Wextra -pedantic"
-    # gcc 5 std=c++11
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
+        - cc=gcc cxx=g++
+        - INTERNAL_SQLITE=OFF
+
+    # GCC 5.4.0
+    - dist: xenial
       env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-std=c++11 -Wall -Wextra -pedantic"
-    # gcc 5 std=c++14
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
+        - cc=gcc cxx=g++
+
+    # GCC 4.8.4
+    - dist: trusty
       env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
-    # gcc 5 std=c++1z
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
+        - cc=gcc cxx=g++
+
+    ##########################################################################
+    # Clang on Linux
+    ##########################################################################
+
+    # Clang 7.0.0
+    - dist: bionic
       env:
-        - CC=gcc-5
-        - CXX=g++-5
-        - CXXFLAGS="-std=c++1z -Wall -Wextra -pedantic"
-    # gcc 6.5 std=c++14 (default standard)
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
+        - cc=clang cxx=clang++
+
+    # Clang 7.0.0
+    - dist: xenial
       env:
-        - CC=gcc-6
-        - CXX=g++-6
-        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
-    # gcc 6.5 std=c++1z
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
+        - cc=clang cxx=clang++
+
+    # Clang 5.0.0
+    - dist: trusty
       env:
-        - CC=gcc-6
-        - CXX=g++-6
-        - CXXFLAGS="-std=c++1z -Wall -Wextra -pedantic"
-    # gcc 7.4 std=c++14 (default standard)
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
+        - cc=clang cxx=clang++
+
+    ##########################################################################
+    # Clang on OSX
+    ##########################################################################
+
+    # Latest XCode - AppleClang 9.1.0
+    - os: osx
       env:
-        - CC=gcc-7
-        - CXX=g++-7
-        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
-    # gcc 7.4 std=c++17
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
+        - cc=clang cxx=clang++
+
+    # XCode 8.3 - AppleClang 8.1.0
+    - os: osx
+      osx_image: xcode8.3
       env:
-        - CC=gcc-7
-        - CXX=g++-7
-        - CXXFLAGS="-std=c++17 -Wall -Wextra -pedantic"
-    # gcc 8 std=c++14 (default standard)
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-        - CC=gcc-8
-        - CXX=g++-8
-        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
-    # gcc 8 std=c++17
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-        - CC=gcc-8
-        - CXX=g++-8
-        - CXXFLAGS="-std=c++17 -Wall -Wextra -pedantic"
-    # gcc 8 std=c++2a
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-8
-      env:
-        - CC=gcc-8
-        - CXX=g++-8
-        - CXXFLAGS="-std=c++2a -Wall -Wextra -pedantic"
-    # gcc 9 std=c++14 (default standard)
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-9
-      env:
-        - CC=gcc-9
-        - CXX=g++-9
-        - CXXFLAGS="-std=c++14 -Wall -Wextra -pedantic"
-# TODO: issue with ExecuteMany and Bind helper function
-#    # gcc 9 std=c++17
-#    - compiler: gcc
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-9
-#      env:
-#        - CC=gcc-9
-#        - CXX=g++-9
-#        - CXXFLAGS="-std=c++17 -Wall -Wextra -pedantic"
-#    # gcc 9 std=c++2a
-#    - compiler: gcc
-#      addons:
-#        apt:
-#          sources:
-#            - ubuntu-toolchain-r-test
-#          packages:
-#            - g++-9
-#      env:
-#        - CC=gcc-9
-#        - CXX=g++-9
-#        - CXXFLAGS="-std=c++2a -Wall -Wextra -pedantic"
-    # clang default
-    - compiler: clang
-      env:
-        - CC=clang
-        - CXX=clang++
-    # os x
-    - compiler: clang
-      os: osx
-      env:
-        - CC=clang
-        - CXX=clang
-        - CXXFLAGS=-lstdc++
+        - cc=clang cxx=clang++
 
 before_install:
-  # coveralls test coverage:
-  - if [[ "$CXX" == "g++" ]]; then pip install --user cpp-coveralls ; fi
+  # Coverity: don't use addons.coverity_scan since it run on every job of the build matrix, which waste resources and exhausts quotas
+  # Note: the job dedicated to Coverity need to only run the shell script and then exit (to not try to build and run unit tests etc.)
+  - if [[ -n "$COVERITY_SCAN_PROJECT_NAME" ]] ; then curl -s https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh | bash ; exit 0 ; fi
+
+  - if [[ "$INTERNAL_SQLITE" == "OFF" ]]; then sudo apt-get install libsqlite3-dev ; fi
+  - if [[ "$VALGRIND" == "true" ]]; then sudo apt-get install valgrind ; fi
+  - if [[ "$COVERALLS" == "true" ]]; then pip install --user cpp-coveralls ; fi
+
+    # Set the compiler environment variables properly
+  - export CC=${cc}
+  - export CXX=${cxx}
 
 # scripts to run before build
 before_script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Debug -DSQLITECPP_USE_ASAN=ON -DSQLITECPP_USE_GCOV=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
+  - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSQLITECPP_INTERNAL_SQLITE=$INTERNAL_SQLITE -DSQLITECPP_USE_ASAN=$ASAN -DSQLITECPP_USE_GCOV=$GCOV -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
 
 # build examples, and run tests (ie make & make test)
 script:
   - cmake --build .
+  - export ASAN_OPTIONS=verbosity=1:debug=1
   - ctest --verbose --output-on-failure
+  - if [[ "$VALGRIND" == "true" ]]; then valgrind --leak-check=full --error-exitcode=1 ./SQLiteCpp_example1 ; fi
+  - if [[ "$VALGRIND" == "true" ]]; then valgrind --leak-check=full --error-exitcode=1 ./SQLiteCpp_tests ; fi
 
 # generate and publish GCov coveralls results
 after_success:
-  - if [[ "$CXX" == "g++" ]]; then coveralls --root .. -e examples -e googletest -e sqlite3 -e tests -E ".*feature_tests.*" -E ".*CompilerId.*" --gcov-options '\-lp' ; fi
+  - if [[ "$COVERALLS" == "true" ]]; then coveralls --root .. -e examples -e googletest -e sqlite3 -e tests -E ".*feature_tests.*" -E ".*CompilerId.*" --gcov-options '\-lp' ; fi

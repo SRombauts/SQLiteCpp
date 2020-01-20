@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   A Transaction is way to group multiple SQL statements into an atomic secured operation.
  *
- * Copyright (c) 2012-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -52,6 +52,10 @@ public:
      */
     explicit Transaction(Database& aDatabase);
 
+    // Transaction is non-copyable
+    Transaction(const Transaction&) = delete;
+    Transaction& operator=(const Transaction&) = delete;
+
     /**
      * @brief Safely rollback the transaction if it has not been committed.
      */
@@ -61,12 +65,6 @@ public:
      * @brief Commit the transaction.
      */
     void commit();
-
-private:
-    // Transaction must be non-copyable
-    Transaction(const Transaction&);
-    Transaction& operator=(const Transaction&);
-    /// @}
 
 private:
     Database&   mDatabase;  ///< Reference to the SQLite Database Connection

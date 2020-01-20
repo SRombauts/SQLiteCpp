@@ -1,10 +1,10 @@
 #!/bin/sh
-# Copyright (c) 2012-2019 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+# Copyright (c) 2012-2020 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
 
-# exit on firts error
+# exit on first error
 set -e
 
 mkdir -p build
@@ -18,3 +18,7 @@ cmake --build .
 
 # Build and run unit-tests (ie 'make test')
 ctest --output-on-failure
+
+# And with Valgrind
+#valgrind --leak-check=full --error-exitcode=1 ./SQLiteCpp_example1
+#valgrind --leak-check=full --error-exitcode=1 ./SQLiteCpp_tests

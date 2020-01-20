@@ -3,16 +3,17 @@
  * @ingroup SQLiteCpp
  * @brief   Management of a SQLite Database Connection.
  *
- * Copyright (c) 2012-2019 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
 #include <SQLiteCpp/Database.h>
 
-#include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Assertion.h>
+#include <SQLiteCpp/Backup.h>
 #include <SQLiteCpp/Exception.h>
+#include <SQLiteCpp/Statement.h>
 
 #include <sqlite3.h>
 #include <fstream>
@@ -37,13 +38,13 @@ const char* VERSION         = SQLITE_VERSION;
 const int   VERSION_NUMBER  = SQLITE_VERSION_NUMBER;
 
 // Return SQLite version string using runtime call to the compiled library
-const char* getLibVersion() noexcept // nothrow
+const char* getLibVersion() noexcept
 {
     return sqlite3_libversion();
 }
 
 // Return SQLite version number using runtime call to the compiled library
-int getLibVersionNumber() noexcept // nothrow
+int getLibVersionNumber() noexcept
 {
     return sqlite3_libversion_number();
 }
@@ -54,15 +55,14 @@ Database::Database(const char* apFilename,
                    const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
                    const char* apVfs          /* = nullptr*/) :
-    mpSQLite(nullptr),
     mFilename(apFilename)
 {
-    const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
+    sqlite3* handle;
+    const int ret = sqlite3_open_v2(apFilename, &handle, aFlags, apVfs);
+    mSQLitePtr.reset(handle);
     if (SQLITE_OK != ret)
     {
-        const SQLite::Exception exception(mpSQLite, ret); // must create before closing
-        sqlite3_close(mpSQLite); // close is required even in case of error on opening
-        throw exception;
+        throw SQLite::Exception(handle, ret);
     }
     if (aBusyTimeoutMs > 0)
     {
@@ -70,31 +70,10 @@ Database::Database(const char* apFilename,
     }
 }
 
-// Open the provided database UTF-8 filename with SQLite::OPEN_xxx provided flags.
-Database::Database(const std::string& aFilename,
-                   const int          aFlags         /* = SQLite::OPEN_READONLY*/,
-                   const int          aBusyTimeoutMs /* = 0 */,
-                   const std::string& aVfs           /* = "" */) :
-    mpSQLite(nullptr),
-    mFilename(aFilename)
+// Deleter functor to use with smart pointers to close the SQLite database connection in an RAII fashion.
+void Database::Deleter::operator()(sqlite3* apSQLite)
 {
-    const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? nullptr : aVfs.c_str());
-    if (SQLITE_OK != ret)
-    {
-        const SQLite::Exception exception(mpSQLite, ret); // must create before closing
-        sqlite3_close(mpSQLite); // close is required even in case of error on opening
-        throw exception;
-    }
-    if (aBusyTimeoutMs > 0)
-    {
-        setBusyTimeout(aBusyTimeoutMs);
-    }
-}
-
-// Close the SQLite database connection.
-Database::~Database()
-{
-    const int ret = sqlite3_close(mpSQLite);
+    const int ret = sqlite3_close(apSQLite); // Calling sqlite3_close() with a nullptr argument is a harmless no-op.
 
     // Avoid unreferenced variable warning when build in release mode
     (void) ret;
@@ -119,18 +98,18 @@ Database::~Database()
  */
 void Database::setBusyTimeout(const int aBusyTimeoutMs)
 {
-    const int ret = sqlite3_busy_timeout(mpSQLite, aBusyTimeoutMs);
+    const int ret = sqlite3_busy_timeout(getHandle(), aBusyTimeoutMs);
     check(ret);
 }
 
 // Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT, CREATE...).
 int Database::exec(const char* apQueries)
 {
-    const int ret = sqlite3_exec(mpSQLite, apQueries, nullptr, nullptr, nullptr);
+    const int ret = sqlite3_exec(getHandle(), apQueries, nullptr, nullptr, nullptr);
     check(ret);
 
     // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE only)
-    return sqlite3_changes(mpSQLite);
+    return sqlite3_changes(getHandle());
 }
 
 // Shortcut to execute a one step query and fetch the first column of the result.
@@ -156,33 +135,33 @@ bool Database::tableExists(const char* apTableName)
 }
 
 // Get the rowid of the most recent successful INSERT into the database from the current connection.
-long long Database::getLastInsertRowid() const noexcept // nothrow
+long long Database::getLastInsertRowid() const noexcept
 {
-    return sqlite3_last_insert_rowid(mpSQLite);
+    return sqlite3_last_insert_rowid(getHandle());
 }
 
 // Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection.
-int Database::getTotalChanges() const noexcept // nothrow
+int Database::getTotalChanges() const noexcept
 {
-    return sqlite3_total_changes(mpSQLite);
+    return sqlite3_total_changes(getHandle());
 }
 
 // Return the numeric result code for the most recent failed API call (if any).
-int Database::getErrorCode() const noexcept // nothrow
+int Database::getErrorCode() const noexcept
 {
-    return sqlite3_errcode(mpSQLite);
+    return sqlite3_errcode(getHandle());
 }
 
 // Return the extended numeric result code for the most recent failed API call (if any).
-int Database::getExtendedErrorCode() const noexcept // nothrow
+int Database::getExtendedErrorCode() const noexcept
 {
-    return sqlite3_extended_errcode(mpSQLite);
+    return sqlite3_extended_errcode(getHandle());
 }
 
 // Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-const char* Database::getErrorMsg() const noexcept // nothrow
+const char* Database::getErrorMsg() const noexcept
 {
-    return sqlite3_errmsg(mpSQLite);
+    return sqlite3_errmsg(getHandle());
 }
 
 // Attach a custom function to your sqlite database. Assumes UTF8 text representation.
@@ -192,17 +171,17 @@ void Database::createFunction(const char*   apFuncName,
                               bool          abDeterministic,
                               void*         apApp,
                               void        (*apFunc)(sqlite3_context *, int, sqlite3_value **),
-                              void        (*apStep)(sqlite3_context *, int, sqlite3_value **),
-                              void        (*apFinal)(sqlite3_context *),   // NOLINT(readability/casting)
-                              void        (*apDestroy)(void *))
+                              void        (*apStep)(sqlite3_context *, int, sqlite3_value **) /* = nullptr */,
+                              void        (*apFinal)(sqlite3_context *) /* = nullptr */, // NOLINT(readability/casting)
+                              void        (*apDestroy)(void *) /* = nullptr */)
 {
-    int TextRep = SQLITE_UTF8;
+    int textRep = SQLITE_UTF8;
     // optimization if deterministic function (e.g. of nondeterministic function random())
     if (abDeterministic)
     {
-        TextRep = TextRep|SQLITE_DETERMINISTIC;
+        textRep = textRep | SQLITE_DETERMINISTIC;
     }
-    const int ret = sqlite3_create_function_v2(mpSQLite, apFuncName, aNbArg, TextRep,
+    const int ret = sqlite3_create_function_v2(getHandle(), apFuncName, aNbArg, textRep,
                                                apApp, apFunc, apStep, apFinal, apDestroy);
     check(ret);
 }
@@ -216,7 +195,7 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
     (void)apExtensionName;
     (void)apEntryPointName;
 
-    throw std::runtime_error("sqlite extensions are disabled");
+    throw SQLite::Exception("sqlite extensions are disabled");
 #else
 #ifdef SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION // Since SQLite 3.13 (2016-05-18):
     // Security warning:
@@ -224,13 +203,13 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
     // The use of the sqlite3_enable_load_extension() interface should be avoided to keep the SQL load_extension()
     // disabled and prevent SQL injections from giving attackers access to extension loading capabilities.
     // (NOTE: not using nullptr: cannot pass object of non-POD type 'std::__1::nullptr_t' through variadic function)
-    int ret = sqlite3_db_config(mpSQLite, SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, 1, NULL); // NOTE: not using nullptr
+    int ret = sqlite3_db_config(getHandle(), SQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION, 1, NULL); // NOTE: not using nullptr
 #else
-    int ret = sqlite3_enable_load_extension(mpSQLite, 1);
+    int ret = sqlite3_enable_load_extension(getHandle(), 1);
 #endif
     check(ret);
 
-    ret = sqlite3_load_extension(mpSQLite, apExtensionName, apEntryPointName, 0);
+    ret = sqlite3_load_extension(getHandle(), apExtensionName, apEntryPointName, 0);
     check(ret);
 #endif
 }
@@ -242,14 +221,13 @@ void Database::key(const std::string& aKey) const
 #ifdef SQLITE_HAS_CODEC
     if (passLen > 0)
     {
-        const int ret = sqlite3_key(mpSQLite, aKey.c_str(), passLen);
+        const int ret = sqlite3_key(getHandle(), aKey.c_str(), passLen);
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
     if (passLen > 0)
     {
-        const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
-        throw exception;
+        throw SQLite::Exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
     }
 #endif // SQLITE_HAS_CODEC
 }
@@ -261,87 +239,191 @@ void Database::rekey(const std::string& aNewKey) const
     int passLen = aNewKey.length();
     if (passLen > 0)
     {
-        const int ret = sqlite3_rekey(mpSQLite, aNewKey.c_str(), passLen);
+        const int ret = sqlite3_rekey(getHandle(), aNewKey.c_str(), passLen);
         check(ret);
     }
     else
     {
-        const int ret = sqlite3_rekey(mpSQLite, nullptr, 0);
+        const int ret = sqlite3_rekey(getHandle(), nullptr, 0);
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
     static_cast<void>(aNewKey); // silence unused parameter warning
-    const SQLite::Exception exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
-    throw exception;
+    throw SQLite::Exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
 #endif // SQLITE_HAS_CODEC
 }
 
 // Test if a file contains an unencrypted database.
 bool Database::isUnencrypted(const std::string& aFilename)
 {
-    if (aFilename.length() > 0)
+    if (aFilename.empty())
+    {
+        throw SQLite::Exception("Could not open database, the aFilename parameter was empty.");
+    }
+
+    std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
+    char header[16];
+    if (fileBuffer.is_open())
+    {
+        fileBuffer.seekg(0, std::ios::beg);
+        fileBuffer.getline(header, 16);
+        fileBuffer.close();
+    }
+    else
+    {
+        throw SQLite::Exception("Error opening file: " + aFilename);
+    }
+
+    return strncmp(header, "SQLite format 3\000", 16) == 0;
+}
+
+// Parse header data from a database.
+Header Database::getHeaderInfo(const std::string& aFilename)
+{
+    Header h;
+    unsigned char buf[100];
+    char* pBuf = reinterpret_cast<char*>(&buf[0]);
+    char* pHeaderStr = reinterpret_cast<char*>(&h.headerStr[0]);
+
+    if (aFilename.empty())
+    {
+        throw SQLite::Exception("Filename parameter is empty");
+    }
+
     {
         std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
-        char header[16];
         if (fileBuffer.is_open())
         {
             fileBuffer.seekg(0, std::ios::beg);
-            fileBuffer.getline(header, 16);
+            fileBuffer.read(pBuf, 100);
             fileBuffer.close();
+            if (fileBuffer.gcount() < 100)
+            {
+                throw SQLite::Exception("File " + aFilename + " is too short");
+            }
         }
         else
         {
-            const SQLite::Exception exception("Error opening file: " + aFilename);
-            throw exception;
+            throw SQLite::Exception("Error opening file " + aFilename);
         }
-        return strncmp(header, "SQLite format 3\000", 16) == 0;
     }
-    const SQLite::Exception exception("Could not open database, the aFilename parameter was empty.");
-    throw exception;
+
+    // If the "magic string" can't be found then header is invalid, corrupt or unreadable
+    strncpy(pHeaderStr, pBuf, 16);
+    if (strncmp(pHeaderStr, "SQLite format 3", 15) != 0)
+    {
+        throw SQLite::Exception("Invalid or encrypted SQLite header in file " + aFilename);
+    }
+
+    h.pageSizeBytes = (buf[16] << 8) | buf[17];
+    h.fileFormatWriteVersion = buf[18];
+    h.fileFormatReadVersion = buf[19];
+    h.reservedSpaceBytes = buf[20];
+    h.maxEmbeddedPayloadFrac = buf[21];
+    h.minEmbeddedPayloadFrac = buf[22];
+    h.leafPayloadFrac = buf[23];
+
+    h.fileChangeCounter =
+        (buf[24] << 24) |
+        (buf[25] << 16) |
+        (buf[26] << 8)  |
+        (buf[27] << 0);
+
+    h.databaseSizePages =
+        (buf[28] << 24) |
+        (buf[29] << 16) |
+        (buf[30] << 8)  |
+        (buf[31] << 0);
+
+    h.firstFreelistTrunkPage =
+        (buf[32] << 24) |
+        (buf[33] << 16) |
+        (buf[34] << 8)  |
+        (buf[35] << 0);
+
+    h.totalFreelistPages =
+        (buf[36] << 24) |
+        (buf[37] << 16) |
+        (buf[38] << 8)  |
+        (buf[39] << 0);
+
+    h.schemaCookie =
+        (buf[40] << 24) |
+        (buf[41] << 16) |
+        (buf[42] << 8)  |
+        (buf[43] << 0);
+
+    h.schemaFormatNumber =
+        (buf[44] << 24) |
+        (buf[45] << 16) |
+        (buf[46] << 8)  |
+        (buf[47] << 0);
+
+    h.defaultPageCacheSizeBytes =
+        (buf[48] << 24) |
+        (buf[49] << 16) |
+        (buf[50] << 8)  |
+        (buf[51] << 0);
+
+    h.largestBTreePageNumber =
+        (buf[52] << 24) |
+        (buf[53] << 16) |
+        (buf[54] << 8)  |
+        (buf[55] << 0);
+
+    h.databaseTextEncoding =
+        (buf[56] << 24) |
+        (buf[57] << 16) |
+        (buf[58] << 8)  |
+        (buf[59] << 0);
+
+    h.userVersion =
+        (buf[60] << 24) |
+        (buf[61] << 16) |
+        (buf[62] << 8)  |
+        (buf[63] << 0);
+
+    h.incrementalVaccumMode =
+        (buf[64] << 24) |
+        (buf[65] << 16) |
+        (buf[66] << 8)  |
+        (buf[67] << 0);
+
+    h.applicationId =
+        (buf[68] << 24) |
+        (buf[69] << 16) |
+        (buf[70] << 8)  |
+        (buf[71] << 0);
+
+    h.versionValidFor =
+        (buf[92] << 24) |
+        (buf[93] << 16) |
+        (buf[94] << 8)  |
+        (buf[95] << 0);
+
+    h.sqliteVersion =
+        (buf[96] << 24) |
+        (buf[97] << 16) |
+        (buf[98] << 8)  |
+        (buf[99] << 0);
+
+    return h;
 }
 
-// This is a reference implementation of live backup taken from the official sit:
-// https://www.sqlite.org/backup.html
+void Database::backup(const char* apFilename, BackupType aType)
+{
+    // Open the database file identified by apFilename
+    Database otherDatabase(apFilename, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
-int Database::backup(const char* zFilename, BackupType type) {
-    /* Open the database file identified by zFilename. Exit early if this fails. */
-    sqlite3* pFile;
-    int rc = sqlite3_open(zFilename, &pFile);
-    if (rc == SQLITE_OK)
-    {
-        /* If this is a 'load' operation (isSave==0), then data is copied
-        ** from the database file just opened to database mpSQLite.
-        ** Otherwise, if this is a 'save' operation (isSave==1), then data
-        ** is copied from mpSQLite to pFile.  Set the variables pFrom and
-        ** pTo accordingly. */
-        sqlite3* pFrom = (type == Save ? mpSQLite : pFile);
-        sqlite3* pTo = (type == Save ? pFile : mpSQLite);
+    // For a 'Save' operation, data is copied from the current Database to the other. A 'Load' is the reverse.
+    Database& src = (aType == Save ? *this : otherDatabase);
+    Database& dest = (aType == Save ? otherDatabase : *this);
 
-        /* Set up the backup procedure to copy from the "main" database of
-        ** connection pFile to the main database of connection mpSQLite.
-        ** If something goes wrong, pBackup will be set to NULL and an error
-        ** code and message left in connection pTo.
-        **
-        ** If the backup object is successfully created, call backup_step()
-        ** to copy data from pFile to mpSQLite. Then call backup_finish()
-        ** to release resources associated with the pBackup object.  If an
-        ** error occurred, then an error code and message will be left in
-        ** connection pTo. If no error occurred, then the error code belonging
-        ** to pTo is set to SQLITE_OK.
-        */
-        sqlite3_backup *pBackup = sqlite3_backup_init(pTo, "main", pFrom, "main");
-        if (pBackup)
-        {
-            sqlite3_backup_step(pBackup, -1);
-            sqlite3_backup_finish(pBackup);
-        }
-        rc = sqlite3_errcode(pTo);
-    }
+    // Set up the backup procedure to copy between the "main" databases of each connection
+    Backup bkp(dest, src);
+    bkp.executeStep(); // Execute all steps at once
 
-    /* Close the database connection opened on database file zFilename
-    ** and return the result of this function. */
-    sqlite3_close(pFile);
-    return rc;
+    // RAII Finish Backup an Close the other Database
 }
 
 }  // namespace SQLite

@@ -341,8 +341,8 @@ TEST(Statement, bindings)
 
     // Fifth row with binary buffer and a null parameter
     {
-        const char buffer[] = "binary";
-        insert.bind(1, buffer, sizeof(buffer));
+        char buffer[] = "binary";
+        insert.bind(1, static_cast<void*>(buffer), sizeof(buffer));
         insert.bind(2);
         EXPECT_EQ(1, insert.exec());
 
@@ -406,25 +406,26 @@ TEST(Statement, bindNoCopy)
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a new table
-    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, txt1 TEXT, txt2 TEXT, binary BLOB)"));
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, txt1 TEXT, txt2 TEXT, txt3 TEXT, binary BLOB)"));
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Insertion with bindable parameters
-    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?)");
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?, ?)");
 
     // Compile a SQL query to check the results
     SQLite::Statement query(db, "SELECT * FROM test");
     EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
-    EXPECT_EQ(4, query.getColumnCount());
+    EXPECT_EQ(5, query.getColumnCount());
 
     // Insert one row with all variants of bindNoCopy()
     {
         const char*         txt1   = "first";
         const std::string   txt2   = "sec\0nd";
-        const char          blob[] = {'b','l','\0','b'};
+        char                blob[] = {'b','l','\0','b'};
         insert.bindNoCopy(1, txt1);
         insert.bindNoCopy(2, txt2);
-        insert.bindNoCopy(3, blob, sizeof(blob));
+        insert.bindNoCopy(3, txt2.c_str(), static_cast<int>(txt2.size()));
+        insert.bindNoCopy(4, static_cast<void*>(blob), sizeof(blob));
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
@@ -435,7 +436,8 @@ TEST(Statement, bindNoCopy)
         EXPECT_EQ(1, query.getColumn(0).getInt64());
         EXPECT_STREQ(txt1, query.getColumn(1).getText());
         EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
-        EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
+        EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(3).getString()[0], txt2.size()));
+        EXPECT_EQ(0, memcmp(blob, &query.getColumn(4).getString()[0], sizeof(blob)));
     }
 }
 
@@ -621,8 +623,8 @@ TEST(Statement, bindByNameString)
 
     // Third row with binary buffer and a null parameter
     {
-        const char buffer[] = "binary";
-        insert.bind(amsg, buffer, sizeof(buffer));
+        char buffer[] = "binary";
+        insert.bind(amsg, static_cast<void*>(buffer), sizeof(buffer));
         insert.bind(aint);
         EXPECT_EQ(1, insert.exec());
 
@@ -709,10 +711,10 @@ TEST(Statement, bindNoCopyByName)
         const std::string   ablob = "@blob";
         const char*         txt1 = "first2";
         const std::string   txt2 = "sec\0nd2";
-        const char          blob[] = { 'b','l','\0','b','2' };
+        char                blob[] = { 'b','l','\0','b','2' };
         insert.bindNoCopy(atxt1, txt1);
         insert.bindNoCopy(atxt2, txt2);
-        insert.bindNoCopy(ablob, blob, sizeof(blob));
+        insert.bindNoCopy(ablob, static_cast<void*>(blob), sizeof(blob));
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(2, db.getLastInsertRowid());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());

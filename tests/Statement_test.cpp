@@ -730,7 +730,7 @@ TEST(Statement, bindNoCopyByName)
         const std::string   txt2 = "sec\0nd2";
         const unsigned char blob[] = { 'b','l','\0','b','2' };
         insert.bindNoCopy(atxt1, txt1);
-        insert.bindNoCopy(atxt2, txt2.c_str(), static_cast<int>(atxt2.size()));
+        insert.bindNoCopy(atxt2, txt2.c_str(), static_cast<int>(txt2.size()));
         insert.bindNoCopy(ablob, blob, sizeof(blob));
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(2, db.getLastInsertRowid());
@@ -745,6 +745,27 @@ TEST(Statement, bindNoCopyByName)
         EXPECT_STREQ(txt1, query.getColumn(1).getText());
         EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
         EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
+    }
+    
+    insert.reset();
+    query.reset();
+    
+    // Insert a third row with some more variants of bindNoCopy() using std::string names
+    {
+        const std::string   atxt1 = "@txt1";
+        const std::string   txt1 = "fir\0st";
+        insert.bindNoCopy(atxt1, txt1);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(3, db.getLastInsertRowid());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep(); // pass on the first row
+        query.executeStep(); // pass on the second row as well
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(txt1, query.getColumn(1).getString());
     }
 }
 

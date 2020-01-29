@@ -6,7 +6,7 @@
 # or copy at http://opensource.org/licenses/MIT)
 cmake_minimum_required(VERSION 3.1) # for "CMAKE_CXX_STANDARD" version
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # custom CMake modules like FindSQLiteCpp
-project(SQLiteCpp VERSION "2.99")
+project(SQLiteCpp VERSION 2.99)
 
 # SQLiteC++ 3.x now requires C++11 compiler
 set(CMAKE_CXX_STANDARD 11)
@@ -145,7 +145,8 @@ source_group(doc FILES ${SQLITECPP_DOC})
 set(SQLITECPP_SCRIPT
  .editorconfig
  .gitbugtraq
- .github/workflows/actions.yml
+ .github/workflows/build.yml
+ .github/workflows/subdir_example.yml
  .gitignore
  .gitmodules
  .travis.yml

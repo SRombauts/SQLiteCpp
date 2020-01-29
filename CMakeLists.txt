@@ -240,9 +240,10 @@ endif (UNIX)
 
 target_include_directories(SQLiteCpp
   PRIVATE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<$<BOOL:${SQLITECPP_INTERNAL_SQLITE}>:${CMAKE_CURRENT_SOURCE_DIR}/sqlite3>
-  PUBLIC $<INSTALL_INTERFACE:include/>)
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include/>)
 
 # Allow the library to be installed via "make install" and found with "find_package"
 
@@ -252,9 +253,6 @@ install(TARGETS SQLiteCpp
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     COMPONENT libraries)
-target_include_directories(SQLiteCpp PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/>)
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
 install(EXPORT ${PROJECT_NAME}Targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 

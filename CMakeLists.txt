@@ -8,8 +8,13 @@ cmake_minimum_required(VERSION 3.1) # for "CMAKE_CXX_STANDARD" version
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # custom CMake modules like FindSQLiteCpp
 project(SQLiteCpp VERSION 2.99)
 
-# SQLiteC++ 3.x now requires C++11 compiler
-set(CMAKE_CXX_STANDARD 11)
+# SQLiteC++ 3.x requires C++11 features
+if (NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 11)
+elseif (CMAKE_CXX_STANDARD LESS 11)
+    message(WARNING "CMAKE_CXX_STANDARD has been set to '${CMAKE_CXX_STANDARD}' which is lower than the minimum required standard (c++11).")
+endif ()
+message(STATUS "Using c++ standard c++${CMAKE_CXX_STANDARD}")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 message (STATUS "CMake version: ${CMAKE_VERSION}")

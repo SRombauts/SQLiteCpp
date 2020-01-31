@@ -156,7 +156,7 @@ Version 2.5.0 - December 31 2019
 
 - #251 Added example for getHeaderInfo()
 
-Version 3.0.0 - January 1 2020
+Version 3.0.0 - January 31 2020
 - C++11 is now required
 - CMake 3.1 minimum
 - Visual Studio 2015 minimum
@@ -165,7 +165,14 @@ Version 3.0.0 - January 1 2020
 - Add Valgrind memcheck tool to Travis CI
 - Remove Statement::isOk() deprecated in 2.2.0 when renamed to Statement::hasRow()
 - Replace Database::backup() "C" implementation by calling the Backup class
-- Run Valgrind memcheck on Travis CI #252
-- Keep inline functions for GCov code coverage #253
-- Re-enable Coverity static analysis #254
-- Fix linking with system library (libsqlite3) #256
+- #252 Run Valgrind memcheck on Travis CI
+- #253 Keep inline functions for GCov code coverage
+- #254 Re-enable Coverity static analysis
+- #256 Fix linking with system library (libsqlite3)
+- #242 Added a `getIndex` method and used it (KOLANICH)
+- #257 Improve Statement unit tests coverage (bind by name with a std::string)
+- #234 support for external sqlite3 (BioDataAnalysis/emmenlau)
+- #243 adding a pure attribute to getIndex() (KOLANICH)
+
+
+

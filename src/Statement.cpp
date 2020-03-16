@@ -296,6 +296,20 @@ int Statement::getColumnIndex(const char* apName) const
     return (*iIndex).second;
 }
 
+const char * Statement::getDeclaredType(const int aIndex) const
+{
+    checkIndex(aIndex);
+    const char * result = sqlite3_column_decltype(mStmtPtr, aIndex);
+    if (!result)
+    {
+        throw SQLite::Exception("Could not determine declared column type.");
+    }
+    else
+    {
+        return result;
+    }
+}
+
 int Statement::getBindParameterCount() const noexcept
 {
     return sqlite3_bind_parameter_count(mStmtPtr);

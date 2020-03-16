@@ -643,6 +643,22 @@ public:
      */
     int getColumnIndex(const char* apName) const;
 
+
+    /**
+     * @brief Return the declared type of the specified result column for a SELECT statement.
+     *
+     *  This is the type given at creation of the column and not the actual data type.
+     *  SQLite stores data types dynamically for each value and not per column.
+     *
+     * @param[in] aIndex    Index of the column in the range [0, getColumnCount()).
+     * 
+     *  Throw an exception if the specified index is out of the [0, getColumnCount()) range
+     *  or if the current statement is not a SELECT statement.
+     */
+    const char * getDeclaredType(const int aIndex) const;
+
+
+
     ////////////////////////////////////////////////////////////////////////////
 
     /// Return the UTF-8 SQL Query.

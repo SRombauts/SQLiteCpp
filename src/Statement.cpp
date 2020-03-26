@@ -296,7 +296,7 @@ int Statement::getColumnIndex(const char* apName) const
     return (*iIndex).second;
 }
 
-const char * Statement::getDeclaredType(const int aIndex) const
+const char * Statement::getColumnDeclaredType(const int aIndex) const
 {
     checkIndex(aIndex);
     const char * result = sqlite3_column_decltype(mStmtPtr, aIndex);

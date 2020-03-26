@@ -652,10 +652,12 @@ public:
      *
      * @param[in] aIndex    Index of the column in the range [0, getColumnCount()).
      * 
-     *  Throw an exception if the specified index is out of the [0, getColumnCount()) range
-     *  or if the current statement is not a SELECT statement.
+     *  Throw an exception if the type can't be determined because:
+     *  - the specified index is out of the [0, getColumnCount()) range
+     *  - the statement is not a SELECT query
+     *  - the column at aIndex is not a table column but an expression or subquery
      */
-    const char * getDeclaredType(const int aIndex) const;
+    const char * getColumnDeclaredType(const int aIndex) const;
 
 
 

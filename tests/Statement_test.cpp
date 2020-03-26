@@ -918,27 +918,30 @@ TEST(Statement, getName)
 #endif
 }
 
-TEST(Statement, getDeclaredType)
+TEST(Statement, getColumnDeclaredType)
 {
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, value DOUBLE)"));
-    
-    SQLite::Statement query(db, "SELECT * FROM test");
-    
-    const std::string decltype0 = query.getDeclaredType(0);
-    const std::string decltype1 = query.getDeclaredType(1);
-    const std::string decltype2 = query.getDeclaredType(2);
+
+    SQLite::Statement query(db, "SELECT *, 1 FROM test");
+
+    const std::string decltype0 = query.getColumnDeclaredType(0);
+    const std::string decltype1 = query.getColumnDeclaredType(1);
+    const std::string decltype2 = query.getColumnDeclaredType(2);
     EXPECT_EQ("INTEGER", decltype0);
     EXPECT_EQ("TEXT", decltype1);
     EXPECT_EQ("DOUBLE", decltype2);
 
-    // Index out of bounds.
-    EXPECT_THROW(query.getDeclaredType(3), SQLite::Exception);
+    // The column at index 3 is not a table column.
+    EXPECT_THROW(query.getColumnDeclaredType(3), SQLite::Exception);
 
-    // Not a SELECT statement.
-    SQLite::Statement insert(db, "INSERT INTO test VALUES (1, 'Hello', 3.1415)");
-    EXPECT_THROW(insert.getDeclaredType(0), SQLite::Exception);
+    // Index out of bounds.
+    EXPECT_THROW(query.getColumnDeclaredType(4), SQLite::Exception);
+
+    // Not a select statement.
+    SQLite::Statement pragma(db,"PRAGMA compile_options");
+    EXPECT_THROW(pragma.getColumnDeclaredType(0), SQLite::Exception);
 }
 
 #if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)

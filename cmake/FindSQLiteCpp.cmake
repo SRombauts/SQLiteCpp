@@ -2,8 +2,6 @@
 # @ingroup SQLiteCpp
 # @brief   SQLiteCpp CMake module.
 #
-# Copyright (c) 2010-2014 Kartik Kumar (me@kartikkumar.com)
-#
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
 
@@ -13,16 +11,23 @@ macro(_sqlitecpp_check_version)
   string(REGEX MATCH "define[ \t]+SQLITECPP_VERSION_NUMBER[ \t]+([0-9]+)" 
          _sqlitecpp_version_match "${_sqlitecpp_header}")
   set(SQLITECPP_VERSION "${CMAKE_MATCH_1}")
-  if(${SQLITECPP_VERSION} VERSION_LESS ${SQLiteCpp_FIND_VERSION})
-    set(SQLITECPP_VERSION_OK FALSE)
-  else(${SQLITECPP_VERSION} VERSION_LESS ${SQLiteCpp_FIND_VERSION})
-    set(SQLITECPP_VERSION_OK TRUE)
-  endif(${SQLITECPP_VERSION} VERSION_LESS ${SQLiteCpp_FIND_VERSION})
 
-  if(NOT SQLITECPP_VERSION_OK)
-    message(STATUS "SQLiteCpp version ${SQLITECPP_VERSION} found in ${SQLITECPP_INCLUDE_DIR}, "
-                   "but at least version ${SQLiteCpp_FIND_VERSION} is required!")
-  endif(NOT SQLITECPP_VERSION_OK)
+  if(SQLiteCpp_FIND_VERSION)
+    if(${SQLITECPP_VERSION} VERSION_LESS ${SQLiteCpp_FIND_VERSION})
+      set(SQLITECPP_VERSION_OK FALSE)
+    else(${SQLITECPP_VERSION} VERSION_LESS ${SQLiteCpp_FIND_VERSION})
+      set(SQLITECPP_VERSION_OK TRUE)
+    endif(${SQLITECPP_VERSION} VERSION_LESS ${SQLiteCpp_FIND_VERSION})
+
+    if(NOT SQLITECPP_VERSION_OK)
+      message(STATUS "SQLiteCpp version ${SQLITECPP_VERSION} found in ${SQLITECPP_INCLUDE_DIR}, "
+                     "but at least version ${SQLiteCpp_FIND_VERSION} is required!")
+    endif(NOT SQLITECPP_VERSION_OK)
+  else(SQLiteCpp_FIND_VERSION)
+    if(SQLITECPP_VERSION)
+      set(SQLITECPP_VERSION_OK TRUE)
+    endif(SQLITECPP_VERSION)
+  endif(SQLiteCpp_FIND_VERSION)
 
   set(SQLITECPP_LIBRARY "SQLiteCpp")
   link_directories(${SQLITECPP_LIBRARY_DIR})

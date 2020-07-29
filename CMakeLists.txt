@@ -228,6 +228,7 @@ endif ()
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
 if (SQLITECPP_INTERNAL_SQLITE)
     message(STATUS "Compile sqlite3 from source in subdirectory")
+    option(SQLITE_ENABLE_JSON1 "Enable JSON1 extension when building internal sqlite3 library." ON)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
     target_link_libraries(SQLiteCpp PUBLIC sqlite3)

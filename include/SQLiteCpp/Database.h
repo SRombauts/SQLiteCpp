@@ -38,6 +38,8 @@ extern const int OPEN_READONLY;     // SQLITE_OPEN_READONLY
 extern const int OPEN_READWRITE;    // SQLITE_OPEN_READWRITE
 /// With OPEN_READWRITE: The database is opened for reading and writing, and is created if it does not already exist.
 extern const int OPEN_CREATE;       // SQLITE_OPEN_CREATE
+/// Open database with thread-safety
+extern const int OPEN_FULLMUTEX;    // SQLITE_OPEN_FULLMUTEX
 
 /// Enable URI filename interpretation, parsed according to RFC 3986 (ex. "file:data.db?mode=ro&cache=private")
 extern const int OPEN_URI;          // SQLITE_OPEN_URI

@@ -175,5 +175,5 @@ Version 3.0.0 - January 31 2020
 - #243 adding a pure attribute to getIndex() (KOLANICH)
 
 Version 3.x.x
-- Update SQLite3 from 3.30.1 to 3.32.1 (2020-05-25)
+- Update SQLite3 from 3.30.1 to 3.32.3 (2020-06-18)
 

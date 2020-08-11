@@ -174,6 +174,11 @@ Version 3.0.0 - January 31 2020
 - #234 support for external sqlite3 (BioDataAnalysis/emmenlau)
 - #243 adding a pure attribute to getIndex() (KOLANICH)
 
-Version 3.x.x
+Version 3.1.0 - August 11 2020
 - Update SQLite3 from 3.30.1 to 3.32.3 (2020-06-18)
-
+- #274 Install both cmake files into same lib directory from tcraigtyler/master
+- #275 Add a method on Statement to get the declared type of a column. from daniel-schmidt/master
+- #284 Add SQLITE_OPEN_FULLMUTEX flag from rwrx/fullmutex-flag
+- #286 Add CMake option to toggle stack protection from chrisdalke/master
+- #287 Fixed installation on other than Ubuntu distributions from xvitaly/fix-installation
+- #288 Allow building of sqlite JSON1 extension when building internal sqlite library from zxey/feature-json1-extension

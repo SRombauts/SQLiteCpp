@@ -239,6 +239,45 @@ else (SQLITECPP_INTERNAL_SQLITE)
     if(SQLite3_VERSION VERSION_LESS "3.19")
         set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
     endif()
+
+    # When using the SQLite codec, we need to link against the sqlcipher lib & include <sqlcipher/sqlite3.h>
+    # So this gets the lib & header, and links/includes everything
+    if(SQLITE_HAS_CODEC)
+        # Make PkgConfig optional since Windows doesn't usually have it installed.
+        find_package(PkgConfig QUIET)
+        if(PKG_CONFIG_FOUND)
+            # IMPORTED_TARGET was added in 3.6.3
+            if(CMAKE_VERSION VERSION_LESS 3.6.3)
+                pkg_check_modules(sqlcipher REQUIRED sqlcipher)
+                # Only used in Database.cpp so PRIVATE to hide from end-user
+                # Since we can't use IMPORTED_TARGET on this older Cmake version, manually link libs & includes
+                target_link_libraries(SQLiteCpp PRIVATE ${sqlcipher_LIBRARIES})
+                target_include_directories(SQLiteCpp PRIVATE ${sqlcipher_INCLUDE_DIRS})
+            else()
+                pkg_check_modules(sqlcipher REQUIRED IMPORTED_TARGET sqlcipher)
+                # Only used in Database.cpp so PRIVATE to hide from end-user
+                target_link_libraries(SQLiteCpp PRIVATE PkgConfig::sqlcipher)
+            endif()
+        else()
+            # Since we aren't using pkgconf here, find it manually
+            find_library(sqlcipher_LIBRARY "sqlcipher")
+            find_path(sqlcipher_INCLUDE_DIR "sqlcipher/sqlite3.h"
+                PATH_SUFFIXES
+                    "include"
+                    "includes"
+            )
+            # Hides it from the GUI
+            mark_as_advanced(sqlcipher_LIBRARY sqlcipher_INCLUDE_DIR)
+            if(NOT sqlcipher_INCLUDE_DIR)
+                message(FATAL_ERROR "${PROJECT_NAME} requires the \"<sqlcipher/sqlite3.h>\" header to use the codec functionality but it wasn't found.")
+            elseif(NOT sqlcipher_LIBRARY)
+                message(FATAL_ERROR "${PROJECT_NAME} requires the sqlcipher library to use the codec functionality but it wasn't found.")
+            endif()
+            # Only used in Database.cpp so PRIVATE to hide from end-user
+            target_include_directories(SQLiteCpp PRIVATE "${sqlcipher_INCLUDE_DIR}/sqlcipher")
+            target_link_libraries(SQLiteCpp PRIVATE ${sqlcipher_LIBRARY})
+        endif()
+    endif()
 endif (SQLITECPP_INTERNAL_SQLITE)
 
 # Link target with pthread and dl for Unix

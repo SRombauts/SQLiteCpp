@@ -182,3 +182,7 @@ Version 3.1.0 - August 11 2020
 - #286 Add CMake option to toggle stack protection from chrisdalke/master
 - #287 Fixed installation on other than Ubuntu distributions from xvitaly/fix-installation
 - #288 Allow building of sqlite JSON1 extension when building internal sqlite library from zxey/feature-json1-extension
+
+Version 3.1.1 - August 19 2020
+- #292 Fix compilation if using SQLITE_HAS_CODEC from sum01/fix_sqlcipher_compile
+- #293 Remove FindSQLiteCpp.cmake from sum01/fix_283

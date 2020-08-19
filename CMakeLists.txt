@@ -165,7 +165,6 @@ set(SQLITECPP_SCRIPT
  build.sh
  cpplint.py
  Doxyfile
- cmake/FindSQLiteCpp.cmake
  cmake/FindSQLite3.cmake
  cmake/SQLiteCppConfig.cmake.in
 )

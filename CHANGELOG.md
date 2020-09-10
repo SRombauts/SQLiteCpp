@@ -186,3 +186,6 @@ Version 3.1.0 - August 11 2020
 Version 3.1.1 - August 19 2020
 - #292 Fix compilation if using SQLITE_HAS_CODEC from sum01/fix_sqlcipher_compile
 - #293 Remove FindSQLiteCpp.cmake from sum01/fix_283
+
+Version 3.2.0 - September 10 2020
+- Added Savepoint support

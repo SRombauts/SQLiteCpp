@@ -103,6 +103,7 @@ set(SQLITECPP_SRC
  ${PROJECT_SOURCE_DIR}/src/Column.cpp
  ${PROJECT_SOURCE_DIR}/src/Database.cpp
  ${PROJECT_SOURCE_DIR}/src/Exception.cpp
+ ${PROJECT_SOURCE_DIR}/src/Savepoint.cpp
  ${PROJECT_SOURCE_DIR}/src/Statement.cpp
  ${PROJECT_SOURCE_DIR}/src/Transaction.cpp
 )
@@ -116,6 +117,7 @@ set(SQLITECPP_INC
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Column.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Database.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Exception.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Savepoint.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Statement.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Transaction.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/VariadicBind.h
@@ -127,6 +129,7 @@ source_group(include FILES ${SQLITECPP_INC})
 set(SQLITECPP_TESTS
  tests/Column_test.cpp
  tests/Database_test.cpp
+ tests/Savepoint_test.cpp
  tests/Statement_test.cpp
  tests/Backup_test.cpp
  tests/Transaction_test.cpp

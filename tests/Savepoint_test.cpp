@@ -42,6 +42,7 @@ TEST(Savepoint, commitRollback) {
 
         // Commit again throw an exception
         EXPECT_THROW(savepoint.release(), SQLite::Exception);
+        EXPECT_THROW(savepoint.rollback(), SQLite::Exception);
     }
 
     // Auto rollback if no release() before the end of scope

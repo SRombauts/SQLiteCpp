@@ -188,4 +188,5 @@ Version 3.1.1 - August 19 2020
 - #293 Remove FindSQLiteCpp.cmake from sum01/fix_283
 
 Version 3.2.0 - September 10 2020
+- Updated SQLite3 from 3.32.3 to 3.33.0 (2020-08-14)
 - Added Savepoint support

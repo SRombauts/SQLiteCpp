@@ -55,7 +55,7 @@ else (MSVC)
         message (STATUS "Using Stack Protection hardening")
         add_compile_options(-fstack-protector)
     endif()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wswitch-enum -Wshadow -Wno-long-long") # C++ only, don't bother with sqlite3
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wswitch-enum -Wshadow -Wno-long-long -Wno-stringop-truncation") # C++ only, don't bother with sqlite3
     if (CMAKE_COMPILER_IS_GNUCXX)
         # GCC flags
         option(SQLITECPP_USE_GCOV "USE GCov instrumentation." OFF)

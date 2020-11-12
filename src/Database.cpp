@@ -106,11 +106,16 @@ void Database::setBusyTimeout(const int aBusyTimeoutMs)
 // Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT, CREATE...).
 int Database::exec(const char* apQueries)
 {
-    const int ret = sqlite3_exec(getHandle(), apQueries, nullptr, nullptr, nullptr);
+    const int ret = tryExec(apQueries);
     check(ret);
 
     // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE only)
     return sqlite3_changes(getHandle());
+}
+
+int Database::tryExec(const char* apQueries) noexcept
+{
+    return sqlite3_exec(getHandle(), apQueries, nullptr, nullptr, nullptr);
 }
 
 // Shortcut to execute a one step query and fetch the first column of the result.

@@ -197,6 +197,7 @@ public:
      *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
      *  - Data Control Language (DCL) statements "GRANT", "REVOKE", "COMMIT" and "ROLLBACK"
      *
+     * @see Database::tryExec() to execute, returning the sqlite result code
      * @see Statement::exec() to handle precompiled statements (for better performances) without results
      * @see Statement::executeStep() to handle "SELECT" queries with results
      *
@@ -217,6 +218,7 @@ public:
      *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
      *  - Data Control Language (DCL) statements "GRANT", "REVOKE", "COMMIT" and "ROLLBACK"
      *
+     * @see Database::tryExec() to execute, returning the sqlite result code
      * @see Statement::exec() to handle precompiled statements (for better performances) without results
      * @see Statement::executeStep() to handle "SELECT" queries with results
      *
@@ -230,6 +232,41 @@ public:
     int exec(const std::string& aQueries)
     {
         return exec(aQueries.c_str());
+    }
+
+    /**
+     * @brief Try to execute one or multiple statements, returning the sqlite result code.
+     *
+     *  This is useful for any kind of statements other than the Data Query Language (DQL) "SELECT" :
+     *  - Data Manipulation Language (DML) statements "INSERT", "UPDATE" and "DELETE"
+     *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
+     *  - Data Control Language (DCL) statements "GRANT", "REVOKE", "COMMIT" and "ROLLBACK"
+     *
+     * @see exec() to execute, returning number of rows modified
+     *
+     * @param[in] aQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
+     * 
+     * @return the sqlite result code.
+     */
+    int tryExec(const char* apQueries) noexcept;
+
+    /**
+     * @brief Try to execute one or multiple statements, returning the sqlite result code.
+     *
+     *  This is useful for any kind of statements other than the Data Query Language (DQL) "SELECT" :
+     *  - Data Manipulation Language (DML) statements "INSERT", "UPDATE" and "DELETE"
+     *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
+     *  - Data Control Language (DCL) statements "GRANT", "REVOKE", "COMMIT" and "ROLLBACK"
+     *
+     * @see exec() to execute, returning number of rows modified
+     *
+     * @param[in] aQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
+     * 
+     * @return the sqlite result code.
+     */
+    int tryExec(const std::string aQueries) noexcept
+    {
+        return tryExec(aQueries.c_str());
     }
 
     /**

@@ -176,16 +176,19 @@ Version 3.0.0 - January 31 2020
 
 Version 3.1.0 - August 11 2020
 - Update SQLite3 from 3.30.1 to 3.32.3 (2020-06-18)
-- #274 Install both cmake files into same lib directory from tcraigtyler/master
-- #275 Add a method on Statement to get the declared type of a column. from daniel-schmidt/master
-- #284 Add SQLITE_OPEN_FULLMUTEX flag from rwrx/fullmutex-flag
-- #286 Add CMake option to toggle stack protection from chrisdalke/master
-- #287 Fixed installation on other than Ubuntu distributions from xvitaly/fix-installation
-- #288 Allow building of sqlite JSON1 extension when building internal sqlite library from zxey/feature-json1-extension
+- #274 Install both cmake files into same lib directory from tcraigtyler
+- #275 Add a method on Statement to get the declared type of a column. from daniel-schmidt
+- #284 Add SQLITE_OPEN_FULLMUTEX flag from rwrx
+- #286 Add CMake option to toggle stack protection from chrisdalke
+- #287 Fixed installation on other than Ubuntu distributions from xvitaly
+- #288 Allow building of sqlite JSON1 extension when building internal sqlite library from zxey
 
 Version 3.1.1 - August 19 2020
-- #292 Fix compilation if using SQLITE_HAS_CODEC from sum01/fix_sqlcipher_compile
-- #293 Remove FindSQLiteCpp.cmake from sum01/fix_283
+- #292 Fix compilation if using SQLITE_HAS_CODEC from sum01
+- #293 Remove FindSQLiteCpp.cmake from sum01
 
-Version 3.2.0 - September 10 2020
-- Updated SQLite3 from 3.32.3 to 3.33.0 (2020-08-14)
+Version 3.x - 2020
+- #300 Updated SQLite3 from 3.32.3 to 3.33.0 (2020-08-14) from catalogm
+- #236 Disable explicit setting of MSVC runtime from BioDataAnalysis/emmenlau
+- #308 Fix build warning due to string truncation from stauffer-garmin
+- #311 Add Database::tryExec() from kcowolf

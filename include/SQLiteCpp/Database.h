@@ -155,7 +155,7 @@ public:
     {
     }
 
-    #if (__cplusplus >= 201703L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++17: Visual Studio 2017 Update 3
+    #if (__cplusplus >= 201703L) || ( defined(_MSC_VER) && (_MSC_VER >= 1911) ) // c++17: Visual Studio 2017 Update 3
     /**
      * @brief Open the provided database std::filesystem::path.
      *

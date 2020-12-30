@@ -12,7 +12,7 @@
 
 #include <SQLiteCpp/Column.h>
 
-#if (__cplusplus >= 201703L) || ( defined(_MSC_VER) && (_MSC_VER >= 1911) ) // c++17: Visual Studio 2017 Update 3
+#if (__cplusplus >= 201703L) || ( defined(_MSC_VER) && (_MSC_VER >= 1914) ) // c++17: Visual Studio 2017 version 15.7
 #include  <filesystem>
 #endif // c++17
 
@@ -155,7 +155,7 @@ public:
     {
     }
 
-    #if (__cplusplus >= 201703L) || ( defined(_MSC_VER) && (_MSC_VER >= 1911) ) // c++17: Visual Studio 2017 Update 3
+    #if (__cplusplus >= 201703L) || ( defined(_MSC_VER) && (_MSC_VER >= 1914) ) // c++17: Visual Studio 2017 version 15.7
     /**
      * @brief Open the provided database std::filesystem::path.
      *

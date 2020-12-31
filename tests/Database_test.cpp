@@ -15,7 +15,7 @@
 
 #include <gtest/gtest.h>
 
-#if (__cplusplus >= 201703L) || ( defined(_MSC_VER) && (_MSC_VER >= 1914) ) // c++17: Visual Studio 2017 version 15.7
+#if (__cplusplus >= 201703L) || ( defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // c++17: Visual Studio 2017 version 15.7
 #include  <filesystem>
 #endif // c++17
 
@@ -51,10 +51,10 @@ TEST(Database, ctorExecCreateDropExist)
         EXPECT_THROW(SQLite::Database not_found(filename), SQLite::Exception);
 
         // Create a new database using a string or a std::filesystem::path if using c++17
-        #if (__cplusplus < 201703L) || ( defined(_MSC_VER) && (_MSC_VER < 1914) ) // c++17: Visual Studio 2017 version 15.7
-            SQLite::Database db("test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
-        #else
+        #if (__cplusplus >= 201703L) || ( defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // c++17: Visual Studio 2017 version 15.7
             SQLite::Database db(std::filesystem::path("test.db3"), SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+        #else
+            SQLite::Database db("test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         #endif // c++17
 
         EXPECT_STREQ("test.db3", db.getFilename().c_str());

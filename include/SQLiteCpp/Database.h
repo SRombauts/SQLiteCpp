@@ -12,7 +12,7 @@
 
 #include <SQLiteCpp/Column.h>
 
-#if (__cplusplus >= 201703L) || ( defined(_MSC_VER) && (_MSC_VER >= 1914) ) // c++17: Visual Studio 2017 version 15.7
+#if (__cplusplus >= 201703L) || ( defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // c++17: Visual Studio 2017 version 15.7
 #include  <filesystem>
 #endif // c++17
 
@@ -155,11 +155,11 @@ public:
     {
     }
 
-    #if (__cplusplus >= 201703L) || ( defined(_MSC_VER) && (_MSC_VER >= 1914) ) // c++17: Visual Studio 2017 version 15.7
+    #if (__cplusplus >= 201703L) || ( defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // c++17: Visual Studio 2017 version 15.7
     /**
      * @brief Open the provided database std::filesystem::path.
      *
-     * This feature requires a c++17 capable compiler.
+     * @note This feature requires std=C++17
      * 
      * Uses sqlite3_open_v2() with readonly default flag, which is the opposite behavior
      * of the old sqlite3_open() function (READWRITE+CREATE).

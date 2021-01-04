@@ -153,24 +153,27 @@ set(SQLITECPP_DOC
 )
 source_group(doc FILES ${SQLITECPP_DOC})
 
-# list of config & script files of the library
-set(SQLITECPP_SCRIPT
- .editorconfig
- .gitbugtraq
- .github/workflows/build.yml
- .github/workflows/subdir_example.yml
- .gitignore
- .gitmodules
- .travis.yml
- appveyor.yml
- build.bat
- build.sh
- cpplint.py
- Doxyfile
- cmake/FindSQLite3.cmake
- cmake/SQLiteCppConfig.cmake.in
-)
-source_group(scripts FILES ${SQLITECPP_SCRIPT})
+option(SQLITECPP_INCLUDE_SCRIPT "Include config & script files." ON)
+if (SQLITECPP_INCLUDE_SCRIPT)
+    # list of config & script files of the library
+    set(SQLITECPP_SCRIPT
+     .editorconfig
+     .gitbugtraq
+     .github/workflows/build.yml
+     .github/workflows/subdir_example.yml
+     .gitignore
+     .gitmodules
+     .travis.yml
+     appveyor.yml
+     build.bat
+     build.sh
+     cpplint.py
+     Doxyfile
+     cmake/FindSQLite3.cmake
+     cmake/SQLiteCppConfig.cmake.in
+    )
+    source_group(scripts FILES ${SQLITECPP_SCRIPT})
+endif()
 
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})

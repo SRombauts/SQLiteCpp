@@ -155,7 +155,8 @@ public:
     {
     }
 
-    #if (__cplusplus >= 201703L) || ( defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // c++17: Visual Studio 2017 version 15.7
+    #if (__cplusplus >= 201703L)
+
     /**
      * @brief Open the provided database std::filesystem::path.
      *

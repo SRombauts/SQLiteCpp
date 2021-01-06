@@ -192,6 +192,6 @@ Version 3.x - 2021
 - #236 Disable explicit setting of MSVC runtime from BioDataAnalysis/emmenlau
 - #308 Fix build warning due to string truncation from stauffer-garmin
 - #311 Add Database::tryExec() from kcowolf
-- #313 [CMake] Add SQLITECPP_INCLUDE_SCRIPT option from past-due/master
+- #313 [CMake] Add SQLITECPP_INCLUDE_SCRIPT option from past-due
 - #314 Add Database constructor for filesystem::path (#296) from ptrks
-
+- #295 Compile internal SQLite library with -ffunction-sections from smichaku

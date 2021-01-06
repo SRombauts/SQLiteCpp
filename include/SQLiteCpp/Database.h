@@ -11,6 +11,11 @@
 #pragma once
 
 #include <SQLiteCpp/Column.h>
+
+#if (__cplusplus >= 201703L) || ( defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // c++17: Visual Studio 2017 version 15.7
+#include  <filesystem>
+#endif // c++17
+
 #include <memory>
 #include <string.h>
 
@@ -149,6 +154,36 @@ public:
         Database(aFilename.c_str(), aFlags, aBusyTimeoutMs, aVfs.empty() ? nullptr : aVfs.c_str())
     {
     }
+
+    #if (__cplusplus >= 201703L) || ( defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // c++17: Visual Studio 2017 version 15.7
+    /**
+     * @brief Open the provided database std::filesystem::path.
+     *
+     * @note This feature requires std=C++17
+     * 
+     * Uses sqlite3_open_v2() with readonly default flag, which is the opposite behavior
+     * of the old sqlite3_open() function (READWRITE+CREATE).
+     * This makes sense if you want to use it on a readonly filesystem
+     * or to prevent creation of a void file when a required file is missing.
+     *
+     * Exception is thrown in case of error, then the Database object is NOT constructed.
+     *
+     * @param[in] apFilename        Path/uri to the database file ("filename" sqlite3 parameter)
+     * @param[in] aFlags            SQLite::OPEN_READONLY/SQLite::OPEN_READWRITE/SQLite::OPEN_CREATE...
+     * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
+     * @param[in] apVfs             UTF-8 name of custom VFS to use, or nullptr for sqlite3 default
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    Database(const std::filesystem::path& apFilename,
+             const int   aFlags         = SQLite::OPEN_READONLY,
+             const int   aBusyTimeoutMs = 0,
+             const std::string& aVfs            = "") :
+        Database(apFilename.c_str(), aFlags, aBusyTimeoutMs, aVfs.empty() ? nullptr : aVfs.c_str())
+    {
+    }
+
+    #endif // c++17
 
     // Database is non-copyable
     Database(const Database&) = delete;

@@ -1,7 +1,6 @@
 # Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 
 language: cpp
-sudo: false
 
 # Use Linux unless specified otherwise
 os: linux
@@ -17,11 +16,7 @@ env:
     - VALGRIND=OFF
 
 # Build variants (should test a reasonable number of combination of CMake options)
-# TODO GCC 8+ using ubuntu-toolchain-r-test packages
-# TODO cppcheck
-# TODO Doxygen
-# TODO link against googletest system library
-matrix:
+jobs:
   include:
 
     ##########################################################################

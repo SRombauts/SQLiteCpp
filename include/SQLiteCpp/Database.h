@@ -12,7 +12,9 @@
 
 #include <SQLiteCpp/Column.h>
 
-#if (__cplusplus >= 201703L) || ( defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // c++17: Visual Studio 2017 version 15.7
+// c++17: MinGW GCC version > 8
+// c++17: Visual Studio 2017 version 15.7
+#if ((__cplusplus >= 201703L) && ((!defined(__MINGW32__) && !defined(__MINGW64__)) || (__GNUC__ > 8))) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))
 #include  <filesystem>
 #endif // c++17
 
@@ -155,13 +157,15 @@ public:
     {
     }
 
-    #if (__cplusplus >= 201703L)
+    // c++17: MinGW GCC version > 8
+    // c++17: Visual Studio 2017 version 15.7
+    #if ((__cplusplus >= 201703L) && ((!defined(__MINGW32__) && !defined(__MINGW64__)) || (__GNUC__ > 8))) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))
 
     /**
      * @brief Open the provided database std::filesystem::path.
      *
      * @note This feature requires std=C++17
-     * 
+     *
      * Uses sqlite3_open_v2() with readonly default flag, which is the opposite behavior
      * of the old sqlite3_open() function (READWRITE+CREATE).
      * This makes sense if you want to use it on a readonly filesystem
@@ -281,7 +285,7 @@ public:
      * @see exec() to execute, returning number of rows modified
      *
      * @param[in] aQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
-     * 
+     *
      * @return the sqlite result code.
      */
     int tryExec(const char* apQueries) noexcept;
@@ -297,7 +301,7 @@ public:
      * @see exec() to execute, returning number of rows modified
      *
      * @param[in] aQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
-     * 
+     *
      * @return the sqlite result code.
      */
     int tryExec(const std::string aQueries) noexcept
@@ -511,7 +515,7 @@ public:
     *  This function reads the first 100 bytes of a SQLite database file
     *  and reconstructs groups of individual bytes into the associated fields
     *  in a Header object.
-    *  
+    *
     * @param[in] aFilename path/uri to a file
     *
     * @return Header object containing file data

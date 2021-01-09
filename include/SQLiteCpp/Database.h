@@ -184,7 +184,8 @@ public:
              const int   aFlags         = SQLite::OPEN_READONLY,
              const int   aBusyTimeoutMs = 0,
              const std::string& aVfs            = "") :
-        Database(apFilename.c_str(), aFlags, aBusyTimeoutMs, aVfs.empty() ? nullptr : aVfs.c_str())
+        Database(reinterpret_cast<const char*>(apFilename.u8string().c_str()),
+                 aFlags, aBusyTimeoutMs, aVfs.empty() ? nullptr : aVfs.c_str())
     {
     }
 

@@ -57,7 +57,7 @@ extern const int OPEN_FULLMUTEX;    // SQLITE_OPEN_FULLMUTEX
 extern const int OPEN_SHAREDCACHE;  // SQLITE_OPEN_SHAREDCACHE
 /// Open database with shared cache disabled
 extern const int OPEN_PRIVATECACHE; // SQLITE_OPEN_PRIVATECACHE
-/// Database filename is not allowed to be a symbolic link
+/// Database filename is not allowed to be a symbolic link (Note: only since SQlite 3.31.0 from 2020-01-22)
 extern const int OPEN_NOFOLLOW;     // SQLITE_OPEN_NOFOLLOW
 
 

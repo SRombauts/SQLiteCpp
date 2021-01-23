@@ -201,6 +201,21 @@ public:
 
     #endif // c++17
 
+    /**
+     * @brief Wrap an existing sqlite3* connection opened by other means.
+     *
+     * When the Database object is constructed as a wrapper, its destruction does NOT automatically
+     * sqlite3_close() the connection. In this case (only), Statement objects may outlive the Database object with
+     * which they were constructed, so long as the underlying connection remains open.
+     *
+     * @param[in] apSQLite          Existing sqlite3* connection to be wrapped
+     * @param[in] aBusyTimeoutMs    Amount of milliseconds to wait before returning SQLITE_BUSY (see setBusyTimeout())
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    Database(sqlite3*  apSQLite,
+             const int aBusyTimeoutMs = 0);
+
     // Database is non-copyable
     Database(const Database&) = delete;
     Database& operator=(const Database&) = delete;
@@ -217,7 +232,12 @@ public:
      *
      * @warning assert in case of error
      */
-    ~Database() = default;
+    ~Database()
+    {
+        if (!mCloseOnDestruct) {
+            mSQLitePtr.release();  // prevent Deleter
+        }
+    }
 
     // Deleter functor to use with smart pointers to close the SQLite database connection in an RAII fashion.
     struct Deleter
@@ -414,7 +434,7 @@ public:
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
     const char* getErrorMsg() const noexcept;
 
-    /// Return the filename used to open the database.
+    /// Return the filename used to open the database; empty if the Database wrapped existing sqlite3*
     const std::string& getFilename() const noexcept
     {
         return mFilename;
@@ -536,10 +556,7 @@ public:
     static Header getHeaderInfo(const std::string& aFilename);
 
     // Parse SQLite header data from a database file.
-    Header getHeaderInfo()
-    {
-        return getHeaderInfo(mFilename);
-    }
+    Header getHeaderInfo();
 
     /**
      * @brief BackupType for the backup() method
@@ -571,6 +588,7 @@ public:
 private:
     // TODO: perhaps switch to having Statement sharing a pointer to the Connexion
     std::unique_ptr<sqlite3, Deleter> mSQLitePtr;   ///< Pointer to SQLite Database Connection Handle
+    bool mCloseOnDestruct;                          ///< true iff ~Database() is to use sqlite3_close() on mSQLitePtr
     std::string mFilename;                          ///< UTF-8 filename used to open the database
 };
 

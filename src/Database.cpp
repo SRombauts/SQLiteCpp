@@ -71,6 +71,7 @@ Database::Database(const char* apFilename,
                    const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
                    const char* apVfs          /* = nullptr*/) :
+    mCloseOnDestruct(true),
     mFilename(apFilename)
 {
     sqlite3* handle;
@@ -80,6 +81,19 @@ Database::Database(const char* apFilename,
     {
         throw SQLite::Exception(handle, ret);
     }
+    if (aBusyTimeoutMs > 0)
+    {
+        setBusyTimeout(aBusyTimeoutMs);
+    }
+}
+
+// Wrap an existing sqlite3* connection opened by other means.
+Database::Database(sqlite3*  apSQLite,
+                   const int aBusyTimeoutMs /* = 0 */) :
+    mCloseOnDestruct(false)
+{
+    SQLITECPP_ASSERT(apSQLite != nullptr, "Database(nullptr)");
+    mSQLitePtr.reset(apSQLite);
     if (aBusyTimeoutMs > 0)
     {
         setBusyTimeout(aBusyTimeoutMs);
@@ -431,6 +445,18 @@ Header Database::getHeaderInfo(const std::string& aFilename)
 
     return h;
 }
+
+Header Database::getHeaderInfo()
+{
+    if (!mFilename.empty())
+    {
+        return getHeaderInfo(mFilename);
+    }
+    const char *zFilename = sqlite3_db_filename(mSQLitePtr.get(), nullptr);
+    return getHeaderInfo(std::string(zFilename ? zFilename : ""));
+}
+
+
 
 void Database::backup(const char* apFilename, BackupType aType)
 {

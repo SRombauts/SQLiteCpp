@@ -103,10 +103,6 @@ Example for Linux:
 ```cmake
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/thirdparty/SQLiteCpp)
 
-include_directories(
-  ${CMAKE_CURRENT_LIST_DIR}/thirdparty/SQLiteCpp/include
-)
-
 add_executable(main src/main.cpp)
 target_link_libraries(main
   SQLiteCpp

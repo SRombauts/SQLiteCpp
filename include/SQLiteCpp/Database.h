@@ -434,7 +434,7 @@ public:
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
     const char* getErrorMsg() const noexcept;
 
-    /// Return the filename used to open the database; empty if the Database wrapped existing sqlite3*
+    /// Return the filename used to open the database.
     const std::string& getFilename() const noexcept
     {
         return mFilename;
@@ -556,7 +556,10 @@ public:
     static Header getHeaderInfo(const std::string& aFilename);
 
     // Parse SQLite header data from a database file.
-    Header getHeaderInfo();
+    Header getHeaderInfo()
+    {
+        return getHeaderInfo(mFilename);
+    }
 
     /**
      * @brief BackupType for the backup() method

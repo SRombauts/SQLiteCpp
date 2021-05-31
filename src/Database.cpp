@@ -94,6 +94,11 @@ Database::Database(sqlite3*  apSQLite,
 {
     SQLITECPP_ASSERT(apSQLite != nullptr, "Database(nullptr)");
     mSQLitePtr.reset(apSQLite);
+    const char *zFilename = sqlite3_db_filename(mSQLitePtr.get(), nullptr);
+    if (zFilename)
+    {
+        mFilename = zFilename;
+    }
     if (aBusyTimeoutMs > 0)
     {
         setBusyTimeout(aBusyTimeoutMs);
@@ -445,18 +450,6 @@ Header Database::getHeaderInfo(const std::string& aFilename)
 
     return h;
 }
-
-Header Database::getHeaderInfo()
-{
-    if (!mFilename.empty())
-    {
-        return getHeaderInfo(mFilename);
-    }
-    const char *zFilename = sqlite3_db_filename(mSQLitePtr.get(), nullptr);
-    return getHeaderInfo(std::string(zFilename ? zFilename : ""));
-}
-
-
 
 void Database::backup(const char* apFilename, BackupType aType)
 {

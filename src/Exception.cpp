@@ -10,7 +10,12 @@
  */
 #include <SQLiteCpp/Exception.h>
 
+#if !defined(SQLITECPP_IN_EXTENSION) || defined(SQLITE_CORE)
 #include <sqlite3.h>
+#else
+#include <sqlite3ext.h>
+extern "C" const sqlite3_api_routines *sqlite3_api;
+#endif
 
 
 namespace SQLite

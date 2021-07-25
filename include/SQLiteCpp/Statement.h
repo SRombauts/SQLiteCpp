@@ -471,7 +471,7 @@ public:
     int tryExecuteStep() noexcept;
 
     /**
-     * @brief Execute a one-step query with no expected result.
+     * @brief Execute a one-step query with no expected result, and return the number of changes.
      *
      *  This method is useful for any kind of statements other than the Data Query Language (DQL) "SELECT" :
      *  - Data Definition Language (DDL) statements "CREATE", "ALTER" and "DROP"
@@ -488,7 +488,7 @@ public:
      *
      * @return number of row modified by this SQL statement (INSERT, UPDATE or DELETE)
      *
-     * @throw SQLite::Exception in case of error, or if row of results are returned !
+     * @throw SQLite::Exception in case of error, or if row of results are returned while they are not expected!
      */
     int exec();
 
@@ -659,6 +659,9 @@ public:
      */
     const char * getColumnDeclaredType(const int aIndex) const;
 
+
+    /// Get number of rows modified by last INSERT, UPDATE or DELETE statement (not DROP table).
+    int getChanges() const noexcept;
 
 
     ////////////////////////////////////////////////////////////////////////////

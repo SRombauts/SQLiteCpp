@@ -112,7 +112,7 @@ void Database::setBusyTimeout(const int aBusyTimeoutMs)
     check(ret);
 }
 
-// Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT, CREATE...).
+// Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT, CREATE...). Return the number of changes.
 int Database::exec(const char* apQueries)
 {
     const int ret = tryExec(apQueries);
@@ -153,6 +153,12 @@ bool Database::tableExists(const char* apTableName)
 long long Database::getLastInsertRowid() const noexcept
 {
     return sqlite3_last_insert_rowid(getHandle());
+}
+
+// Get number of rows modified by last INSERT, UPDATE or DELETE statement (not DROP table).
+int Database::getChanges() const noexcept
+{
+    return sqlite3_changes(getHandle());
 }
 
 // Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection.

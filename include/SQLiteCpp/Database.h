@@ -14,7 +14,7 @@
 
 // c++17: MinGW GCC version > 8
 // c++17: Visual Studio 2017 version 15.7
-#if ((__cplusplus >= 201703L) && ((!defined(__MINGW32__) && !defined(__MINGW64__)) || (__GNUC__ > 8))) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))
+#if ((__cplusplus >= 201703L) && ((!defined(__MINGW32__) && !defined(__MINGW64__)) || (__GNUC__ > 8))) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // NOLINT
 #include  <filesystem>
 #endif // c++17
 
@@ -169,7 +169,7 @@ public:
 
     // c++17: MinGW GCC version > 8
     // c++17: Visual Studio 2017 version 15.7
-    #if ((__cplusplus >= 201703L) && ((!defined(__MINGW32__) && !defined(__MINGW64__)) || (__GNUC__ > 8))) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))
+    #if ((__cplusplus >= 201703L) && ((!defined(__MINGW32__) && !defined(__MINGW64__)) || (__GNUC__ > 8))) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // NOLINT
 
     /**
      * @brief Open the provided database std::filesystem::path.
@@ -241,7 +241,7 @@ public:
     void setBusyTimeout(const int aBusyTimeoutMs);
 
     /**
-     * @brief Shortcut to execute one or multiple statements without results.
+     * @brief Shortcut to execute one or multiple statements without results. Return the number of changes.
      *
      *  This is useful for any kind of statements other than the Data Query Language (DQL) "SELECT" :
      *  - Data Manipulation Language (DML) statements "INSERT", "UPDATE" and "DELETE"
@@ -403,6 +403,9 @@ public:
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */
     long long getLastInsertRowid() const noexcept;
+
+    /// Get number of rows modified by last INSERT, UPDATE or DELETE statement (not DROP table).
+    int getChanges() const noexcept;
 
     /// Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection (not DROP table).
     int getTotalChanges() const noexcept;

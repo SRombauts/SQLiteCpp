@@ -3,7 +3,7 @@
  * @ingroup tests
  * @brief   Test of a SQLiteCpp Database.
  *
- * Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -211,32 +211,38 @@ TEST(Database, exec)
     // NOTE: here exec() returns 0 only because it is the first statements since database connexion,
     //       but its return is an undefined value for "CREATE TABLE" statements.
     db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+    EXPECT_EQ(0, db.getChanges());
     EXPECT_EQ(0, db.getLastInsertRowid());
     EXPECT_EQ(0, db.getTotalChanges());
 
     // first row : insert the "first" text value into new row of id 1
     EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\")"));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(1, db.getLastInsertRowid());
     EXPECT_EQ(1, db.getTotalChanges());
 
     // second row : insert the "second" text value into new row of id 2
     EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"second\")"));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(2, db.getLastInsertRowid());
     EXPECT_EQ(2, db.getTotalChanges());
 
     // third row : insert the "third" text value into new row of id 3
     const std::string insert("INSERT INTO test VALUES (NULL, \"third\")");
     EXPECT_EQ(1, db.exec(insert));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(3, db.getLastInsertRowid());
     EXPECT_EQ(3, db.getTotalChanges());
 
     // update the second row : update text value to "second_updated"
     EXPECT_EQ(1, db.exec("UPDATE test SET value=\"second-updated\" WHERE id='2'"));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(3, db.getLastInsertRowid()); // last inserted row ID is still 3
     EXPECT_EQ(4, db.getTotalChanges());
 
     // delete the third row
     EXPECT_EQ(1, db.exec("DELETE FROM test WHERE id='3'"));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(3, db.getLastInsertRowid());
     EXPECT_EQ(5, db.getTotalChanges());
 
@@ -253,12 +259,14 @@ TEST(Database, exec)
 
     // insert two rows with two *different* statements => returns only 1, ie. for the second INSERT statement
     EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\");INSERT INTO test VALUES (NULL, \"second\");"));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(2, db.getLastInsertRowid());
     EXPECT_EQ(7, db.getTotalChanges());
 
 #if (SQLITE_VERSION_NUMBER >= 3007011)
     // insert two rows with only one statement (starting with SQLite 3.7.11) => returns 2
     EXPECT_EQ(2, db.exec("INSERT INTO test VALUES (NULL, \"third\"), (NULL, \"fourth\");"));
+    EXPECT_EQ(2, db.getChanges());
     EXPECT_EQ(4, db.getLastInsertRowid());
     EXPECT_EQ(9, db.getTotalChanges());
 #endif
@@ -271,32 +279,38 @@ TEST(Database, tryExec)
 
     // Create a new table with an explicit "id" column aliasing the underlying rowid
     EXPECT_EQ(SQLite::OK, db.tryExec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
+    EXPECT_EQ(0, db.getChanges());
     EXPECT_EQ(0, db.getLastInsertRowid());
     EXPECT_EQ(0, db.getTotalChanges());
 
     // first row : insert the "first" text value into new row of id 1
     EXPECT_EQ(SQLite::OK, db.tryExec("INSERT INTO test VALUES (NULL, \"first\")"));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(1, db.getLastInsertRowid());
     EXPECT_EQ(1, db.getTotalChanges());
 
     // second row : insert the "second" text value into new row of id 2
     EXPECT_EQ(SQLite::OK, db.tryExec("INSERT INTO test VALUES (NULL, \"second\")"));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(2, db.getLastInsertRowid());
     EXPECT_EQ(2, db.getTotalChanges());
 
     // third row : insert the "third" text value into new row of id 3
     const std::string insert("INSERT INTO test VALUES (NULL, \"third\")");
     EXPECT_EQ(SQLite::OK, db.tryExec(insert));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(3, db.getLastInsertRowid());
     EXPECT_EQ(3, db.getTotalChanges());
 
     // update the second row : update text value to "second_updated"
     EXPECT_EQ(SQLite::OK, db.tryExec("UPDATE test SET value=\"second-updated\" WHERE id='2'"));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(3, db.getLastInsertRowid()); // last inserted row ID is still 3
     EXPECT_EQ(4, db.getTotalChanges());
 
     // delete the third row
     EXPECT_EQ(SQLite::OK, db.tryExec("DELETE FROM test WHERE id='3'"));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(3, db.getLastInsertRowid());
     EXPECT_EQ(5, db.getTotalChanges());
 
@@ -309,14 +323,16 @@ TEST(Database, tryExec)
     EXPECT_EQ(SQLite::OK, db.tryExec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
     EXPECT_EQ(5, db.getTotalChanges());
 
-    // insert two rows with two *different* statements => returns only 1, ie. for the second INSERT statement
+    // insert two rows with two *different* statements => only 1 change, ie. for the second INSERT statement
     EXPECT_EQ(SQLite::OK, db.tryExec("INSERT INTO test VALUES (NULL, \"first\");INSERT INTO test VALUES (NULL, \"second\");"));
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(2, db.getLastInsertRowid());
     EXPECT_EQ(7, db.getTotalChanges());
 
 #if (SQLITE_VERSION_NUMBER >= 3007011)
     // insert two rows with only one statement (starting with SQLite 3.7.11)
     EXPECT_EQ(SQLite::OK, db.tryExec("INSERT INTO test VALUES (NULL, \"third\"), (NULL, \"fourth\");"));
+    EXPECT_EQ(2, db.getChanges());
     EXPECT_EQ(4, db.getLastInsertRowid());
     EXPECT_EQ(9, db.getTotalChanges());
 #endif

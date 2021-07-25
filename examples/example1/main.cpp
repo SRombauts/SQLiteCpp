@@ -4,7 +4,7 @@
  *
  *  Demonstrates how-to use the SQLite++ wrapper
  *
- * Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -307,6 +307,9 @@ int main ()
         // update the second row
         nb = db.exec("UPDATE test SET value=\"second-updated\" WHERE id='2'");
         std::cout << "UPDATE test SET value=\"second-updated\" WHERE id='2', returned " << nb << std::endl;
+
+        nb = db.getTotalChanges();
+        std::cout << "Nb of total changes since connection: " << nb << std::endl;
 
         // Check the results : expect two row of result
         SQLite::Statement   query(db, "SELECT * FROM test");

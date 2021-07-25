@@ -3,7 +3,7 @@
  * @ingroup tests
  * @brief   Test of a SQLiteCpp Column.
  *
- * Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -44,6 +44,7 @@ TEST(Column, basis)
     // Execute the one-step query to insert the row
     EXPECT_EQ(1, insert.exec());
     EXPECT_EQ(1, db.getLastInsertRowid());
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(1, db.getTotalChanges());
 
     EXPECT_THROW(insert.exec(), SQLite::Exception); // exec() shall throw as it needs to be reseted
@@ -230,6 +231,7 @@ TEST(Column, stream)
     insert.bind(1, str);
     // Execute the one-step query to insert the row
     EXPECT_EQ(1, insert.exec());
+    EXPECT_EQ(1, db.getChanges());
     EXPECT_EQ(1, db.getTotalChanges());
 
     SQLite::Statement query(db, "SELECT * FROM test");

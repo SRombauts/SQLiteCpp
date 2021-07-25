@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
  *
- * Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -167,7 +167,7 @@ bool Statement::executeStep()
     return mbHasRow; // true only if one row is accessible by getColumn(N)
 }
 
-// Execute a one-step query with no expected result
+// Execute a one-step query with no expected result, and return the number of changes.
 int Statement::exec()
 {
     const int ret = tryExecuteStep();
@@ -308,6 +308,12 @@ const char * Statement::getColumnDeclaredType(const int aIndex) const
     {
         return result;
     }
+}
+
+// Get number of rows modified by last INSERT, UPDATE or DELETE statement (not DROP table).
+int Statement::getChanges() const noexcept
+{
+    return sqlite3_changes(mStmtPtr);
 }
 
 int Statement::getBindParameterCount() const noexcept

@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Management of a SQLite Database Connection.
  *
- * Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -113,6 +113,7 @@ void Database::setBusyTimeout(const int aBusyTimeoutMs)
 }
 
 // Shortcut to execute one or multiple SQL statements without results (UPDATE, INSERT, ALTER, COMMIT, CREATE...).
+// Return the number of changes.
 int Database::exec(const char* apQueries)
 {
     const int ret = tryExec(apQueries);
@@ -153,6 +154,12 @@ bool Database::tableExists(const char* apTableName)
 long long Database::getLastInsertRowid() const noexcept
 {
     return sqlite3_last_insert_rowid(getHandle());
+}
+
+// Get number of rows modified by last INSERT, UPDATE or DELETE statement (not DROP table).
+int Database::getChanges() const noexcept
+{
+    return sqlite3_changes(getHandle());
 }
 
 // Get total number of rows modified by all INSERT, UPDATE or DELETE statement since connection.

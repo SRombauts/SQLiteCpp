@@ -196,3 +196,4 @@ Version 3.x - 2021
 - #314 Add Database constructor for filesystem::path (#296) from ptrks
 - #295 Compile internal SQLite library with -ffunction-sections from smichaku
 - #299 Added Savepoint support from catalogm
+- #333 Added Database and Statement getChanges()

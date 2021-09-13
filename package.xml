@@ -14,4 +14,8 @@
 
   <depend>libsqlite3-dev</depend>
 
+  <export>
+    <build_type>cmake</build_type>
+  </export>
+
 </package>

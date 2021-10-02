@@ -14,9 +14,24 @@
 
 // c++17: MinGW GCC version > 8
 // c++17: Visual Studio 2017 version 15.7
-#if ((__cplusplus >= 201703L) && ((!defined(__MINGW32__) && !defined(__MINGW64__)) || (__GNUC__ > 8))) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // NOLINT
+// c++17: macOS unless targetting compatibility with macOS < 10.15
+#if __cplusplus >= 201703L
+    #if defined(__MINGW32__) || defined(__MINGW64__)
+        #if __GNUC__ > 8 // MinGW requires GCC version > 8 for std::filesystem
+            #define SQLITECPP_HAVE_STD_FILESYSTEM
+        #endif
+    #elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
+        // macOS clang won't less us touch std::filesystem if we're targetting earlier than 10.15
+    #else
+        #define SQLITECPP_HAVE_STD_FILESYSTEM
+    #endif
+#elif defined(_MSVC_LANG) && _MSVC_LANG >= 201703L
+    #define SQLITECPP_HAVE_STD_FILESYSTEM
+#endif
+
+#ifdef SQLITECPP_HAVE_STD_FILESYSTEM
 #include  <filesystem>
-#endif // c++17
+#endif // c++17 and a suitable compiler
 
 #include <memory>
 #include <string.h>
@@ -167,9 +182,7 @@ public:
     {
     }
 
-    // c++17: MinGW GCC version > 8
-    // c++17: Visual Studio 2017 version 15.7
-    #if ((__cplusplus >= 201703L) && ((!defined(__MINGW32__) && !defined(__MINGW64__)) || (__GNUC__ > 8))) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)) // NOLINT
+    #ifdef SQLITECPP_HAVE_STD_FILESYSTEM
 
     /**
      * @brief Open the provided database std::filesystem::path.
@@ -199,7 +212,7 @@ public:
     {
     }
 
-    #endif // c++17
+    #endif // have std::filesystem
 
     // Database is non-copyable
     Database(const Database&) = delete;

@@ -209,6 +209,12 @@ if (SQLITE_USE_LEGACY_STRUCT)
     target_compile_definitions(SQLiteCpp PUBLIC SQLITE_USE_LEGACY_STRUCT)
 endif (SQLITE_USE_LEGACY_STRUCT)
 
+option(SQLITE_OMIT_LOAD_EXTENSION "Enable omit load extension" OFF)
+if (SQLITE_OMIT_LOAD_EXTENSION)
+    # Enable the user definition of load_extension().
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITE_OMIT_LOAD_EXTENSION)
+endif (SQLITE_OMIT_LOAD_EXTENSION)
+
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
 endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))

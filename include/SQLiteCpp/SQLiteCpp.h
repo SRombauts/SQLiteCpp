@@ -5,7 +5,7 @@
  *
  * Include this main header file in your project to gain access to all functionality provided by the wrapper.
  *
- * Copyright (c) 2012-2020 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)

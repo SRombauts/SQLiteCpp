@@ -12,7 +12,8 @@ SQLiteC++
 
 SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
 
-Keywords: sqlite, sqlite3, C, library, wrapper C++
+<!--Keywords: sqlite, sqlite3, C, library, wrapper C++-->
+<meta name="keywords" content="sqlite, sqlite3, C, library, wrapper C++">
 
 ## About SQLiteC++:
 
@@ -21,7 +22,7 @@ with a few intuitive and well documented C++ classes.
 
 ### License:
 
-Copyright (c) 2012-2020 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+Copyright (c) 2012-2021 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 <a href="https://www.paypal.me/SRombauts" title="Pay Me a Beer! Donate with PayPal :)"><img src="https://www.paypalobjects.com/webstatic/paypalme/images/pp_logo_small.png" width="118"></a>
 
 Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
@@ -40,7 +41,7 @@ but none of those are mandatory.
 SQLite is a library that implements a serverless transactional SQL database engine.
 It is the most widely deployed SQL database engine in the world.
 All of the code and documentation in SQLite has been dedicated to the public domain by the authors.
-http://www.sqlite.org/about.html
+[http://www.sqlite.org/about.html](http://www.sqlite.org/about.html)
 
 ### The goals of SQLiteC++ are:
 
@@ -57,7 +58,7 @@ http://www.sqlite.org/about.html
 - to use a permissive MIT license, similar to BSD or Boost, for proprietary/commercial usage
 
 It is designed using the Resource Acquisition Is Initialization (RAII) idiom
-(see http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization),
+(see [http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization](http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization)),
 and throwing exceptions in case of SQLite errors (except in destructors,
 where assert() are used instead).
 Each SQLiteC++ object must be constructed with a valid SQLite database connection,
@@ -188,7 +189,7 @@ it's that you lack the "sqlite3" library: install the libsqlite3-dev package.
 
 If you get a single linker error "Column.cpp: undefined reference to sqlite3_column_origin_name",
 it's that your "sqlite3" library was not compiled with
-the SQLITE_ENABLE_COLUMN_METADATA macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).
+the SQLITE_ENABLE_COLUMN_METADATA macro defined (see [http://www.sqlite.org/compile.html#enable_column_metadata](http://www.sqlite.org/compile.html#enable_column_metadata)).
 You can either recompile it yourself (seek help online) or you can comment out the following line in src/Column.h:
 
 ```C++
@@ -203,13 +204,13 @@ It is also tested in the same way under Windows Server 2012 R2 with Visual Studi
 using the AppVeyor continuous integration service.
 
 Detailed results can be seen online:
- - https://travis-ci.org/SRombauts/SQLiteCpp
- - https://ci.appveyor.com/project/SbastienRombauts/SQLiteCpp
+ - [https://travis-ci.org/SRombauts/SQLiteCpp](https://travis-ci.org/SRombauts/SQLiteCpp)
+ - [https://ci.appveyor.com/project/SbastienRombauts/SQLiteCpp](https://ci.appveyor.com/project/SbastienRombauts/SQLiteCpp)
 
 ### Thread-safety
 
 SQLite supports three modes of thread safety, as describe in "SQLite And Multiple Threads":
-see http://www.sqlite.org/threadsafe.html
+see [http://www.sqlite.org/threadsafe.html](http://www.sqlite.org/threadsafe.html)
 
 This SQLiteC++ wrapper does no add any locks (no mutexes) nor any other thread-safety mechanism
 above the SQLite library itself, by design, for lightness and speed.
@@ -304,7 +305,7 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 ### GitHub website
 The most efficient way to help and contribute to this wrapper project is to
 use the tools provided by GitHub:
-- please fill bug reports and feature requests here: https://github.com/SRombauts/SQLiteCpp/issues
+- please fill bug reports and feature requests here: [https://github.com/SRombauts/SQLiteCpp/issues](https://github.com/SRombauts/SQLiteCpp/issues)
 - fork the repository, make some small changes and submit them with pull-request
 
 ### Contact
@@ -318,7 +319,7 @@ The source code use the CamelCase naming style variant where:
 - member variables begin with a 'm', function arguments begin with a 'a', booleans with a 'b', pointers with a 'p'
 - each file, class, method and member variable is documented using Doxygen tags
 - braces on their own line
-See also http://www.appinf.com/download/CppCodingStyleGuide.pdf for good guidelines
+See also [http://www.appinf.com/download/CppCodingStyleGuide.pdf](http://www.appinf.com/download/CppCodingStyleGuide.pdf) for good guidelines
 
 ## See also - Some other simple C++ SQLite wrappers:
 

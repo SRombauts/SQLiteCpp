@@ -22,7 +22,7 @@ with a few intuitive and well documented C++ classes.
 
 ### License:
 
-Copyright (c) 2012-2020 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+Copyright (c) 2012-2021 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 <a href="https://www.paypal.me/SRombauts" title="Pay Me a Beer! Donate with PayPal :)"><img src="https://www.paypalobjects.com/webstatic/paypalme/images/pp_logo_small.png" width="118"></a>
 
 Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
@@ -104,10 +104,6 @@ Example for Linux:
 ```cmake
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/thirdparty/SQLiteCpp)
 
-include_directories(
-  ${CMAKE_CURRENT_LIST_DIR}/thirdparty/SQLiteCpp/include
-)
-
 add_executable(main src/main.cpp)
 target_link_libraries(main
   SQLiteCpp
@@ -130,6 +126,20 @@ git clone https://github.com/SRombauts/SQLiteCpp.git
 cd SQLiteCpp
 git submodule init
 git submodule update
+```
+
+#### Using SQLiteCpp on a system-wide installation
+
+If you installed this package to your system, a `SQLiteCppConfig.cmake` file will be generated & installed to your system.  
+This file lets you link against the SQLiteCpp library for use in your Cmake project.
+
+Here's an example of using this in your CMakeLists.txt
+```cmake
+# You can optionally define a minimum version in this call
+find_package(SQLiteCpp REQUIRED)
+# For this example, lets say you created an target with add_executable (or add_library) called "my_target"
+# You can optionally declare PUBLIC or PRIVATE linkage here, depending on your needs.
+target_link_libraries(my_target PRIVATE SQLiteCpp)
 ```
 
 #### CMake and tests

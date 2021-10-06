@@ -13,13 +13,36 @@
 #include <SQLiteCpp/Database.h>
 #include <SQLiteCpp/Assertion.h>
 
+#include <sqlite3.h>
 
 namespace SQLite
 {
 
 
 // Begins the SQLite transaction
-Transaction::Transaction(Database& aDatabase) :
+Transaction::Transaction(Database& aDatabase, TransactionBehavior behavior) :
+    mDatabase(aDatabase),
+    mbCommited(false)
+{
+    const char *stmt;
+    switch (behavior) {
+        case TransactionBehavior::DEFERRED:
+            stmt = "BEGIN DEFERRED";
+            break;
+        case TransactionBehavior::IMMEDIATE:
+            stmt = "BEGIN IMMEDIATE";
+            break;
+        case TransactionBehavior::EXCLUSIVE:
+            stmt = "BEGIN EXCLUSIVE";
+            break;
+        default:
+            throw SQLite::Exception("invalid/unknown transaction behavior", SQLITE_ERROR);
+    }
+    mDatabase.exec(stmt);
+}
+
+// Begins the SQLite transaction
+Transaction::Transaction(Database &aDatabase) :
     mDatabase(aDatabase),
     mbCommited(false)
 {

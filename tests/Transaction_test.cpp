@@ -42,6 +42,20 @@ TEST(Transaction, commitRollback)
         EXPECT_THROW(transaction.commit(), SQLite::Exception);
     }
 
+    // ensure transactions with different types are well-formed
+    {
+        for (auto behavior : {
+            SQLite::TransactionBehavior::DEFERRED,
+            SQLite::TransactionBehavior::IMMEDIATE,
+            SQLite::TransactionBehavior::EXCLUSIVE })
+        {
+            SQLite::Transaction transaction(db, behavior);
+            transaction.commit();
+        }
+
+        EXPECT_THROW(SQLite::Transaction(db, static_cast<SQLite::TransactionBehavior>(-1)), SQLite::Exception);
+    }
+
     // Auto rollback if no commit() before the end of scope
     {
         // Begin transaction

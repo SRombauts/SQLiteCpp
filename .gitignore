@@ -5,6 +5,7 @@ example1
 *.a
 
 .vscode/
+.vs/
 /SQLiteCpp.sln
 *.ncb
 *.suo

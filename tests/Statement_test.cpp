@@ -944,8 +944,72 @@ TEST(Statement, getColumnDeclaredType)
     EXPECT_THROW(pragma.getColumnDeclaredType(0), SQLite::Exception);
 }
 
-#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
 TEST(Statement, getColumns)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
+
+    // Create a new table
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL)"));
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
+
+    // Create a first row
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"));
+    EXPECT_EQ(1, db.getLastInsertRowid());
+    EXPECT_EQ(1, db.getTotalChanges());
+
+    // Compile a SQL query
+    SQLite::Statement query(db, "SELECT * FROM test");
+    EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
+    EXPECT_EQ(4, query.getColumnCount());
+    query.executeStep();
+    EXPECT_TRUE(query.hasRow());
+    EXPECT_FALSE(query.isDone());
+
+    // Get all columns
+    auto row = query.getColumns();
+    EXPECT_EQ(1, row[0].getInt());
+    EXPECT_EQ("first", row[1].getString());
+    EXPECT_EQ(123, row[2].getInt());
+    EXPECT_EQ(0.123, row[3].getDouble());
+    EXPECT_EQ(4, row.size());
+
+    // Get only the first 2 columns
+    auto row2 = query.getColumns(2);
+    EXPECT_EQ(1, row2[0].getInt());
+    EXPECT_EQ("first", row2[1].getString());
+    EXPECT_EQ(2, row2.size());
+
+    // Get the first 3 columns into a buffer
+    std::vector<SQLite::Column> row3;
+    query.getColumns(row3, 3);
+    EXPECT_EQ(1, row3[0].getInt());
+    EXPECT_EQ("first", row3[1].getString());
+    EXPECT_EQ(123, row3[2].getInt());
+    EXPECT_EQ(3, row3.size());
+
+    // Get the first 2 columns into an existing buffer
+    auto& row4 = query.getColumns(row3, 2);
+    EXPECT_EQ(1, row4[0].getInt());
+    EXPECT_EQ("first", row4[1].getString());
+    EXPECT_EQ(2, row4.size());
+    EXPECT_GE(3, row4.capacity());
+
+    // Get all columns into an existing buffer
+    auto& row5 = query.getColumns(row4);
+    EXPECT_EQ(1, row5[0].getInt());
+    EXPECT_STREQ("first", row5[1].getText());
+    EXPECT_EQ(123, row5[2].getInt());
+    EXPECT_EQ(0.123, row5[3].getDouble());
+    EXPECT_EQ(4, row5.size());
+    EXPECT_GE(4, row5.capacity());
+}
+
+#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
+TEST(Statement, getColumnsTemplate)
 {
     struct GetRowTestStruct
     {

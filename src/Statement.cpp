@@ -347,6 +347,35 @@ std::string Statement::getExpandedSQL() {
     return expandedString;
 }
 
+// Return a std::vector of the columns data with an option to limit result to specified number of the first columns
+// (use the Column copy-constructor)
+std::vector<Column> Statement::getColumns(const int aNumber)
+{
+    checkRow();
+    std::vector<Column> row;
+    getColumns(row, aNumber);
+    return row;
+}
+
+// Return a reference to given std::vector filled with columns with an option to limit result to specified number of the first columns
+// (use the Column copy-constructor)
+std::vector<Column>& Statement::getColumns(std::vector<Column>& arBuffer, const int aNumber)
+{
+    checkRow();
+    int columns_amount = aNumber;
+    if (columns_amount <= 0) {
+        columns_amount = mColumnCount;
+    }
+    checkIndex(columns_amount - 1);
+
+    arBuffer.clear();
+    arBuffer.reserve(columns_amount);
+    for (int i = 0; i < columns_amount; ++i) {
+        arBuffer.emplace_back(mStmtPtr, i);
+    }
+    return arBuffer;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Internal class : shared pointer to the sqlite3_stmt SQLite Statement Object
 ////////////////////////////////////////////////////////////////////////////////

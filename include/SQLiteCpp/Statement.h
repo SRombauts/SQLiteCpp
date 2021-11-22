@@ -14,6 +14,7 @@
 #include <SQLiteCpp/Utils.h> // SQLITECPP_PURE_FUNC
 
 #include <string>
+#include <vector>
 #include <map>
 #include <climits> // For INT_MAX
 
@@ -551,6 +552,69 @@ public:
      *  Throw an exception if the specified name is not one of the aliased name of the columns in the result.
      */
     Column  getColumn(const char* apName);
+
+    /**
+     * @brief Return a vector of the single row columns objects
+     *
+     *  Can be used to access the data of the current row of result when applicable,
+     * while the executeStep() method returns true.
+     *
+     *  Throw an exception if there is no row to return a Column from :
+     * - if provided index is out of bound
+     * - before any executeStep() call
+     * - after the last executeStep() returned false
+     * - after a reset() call
+     *
+     *  Throw an exception if the specified column count is out of the [0, getColumnCount()) range.
+     *
+     * @param[in] aNumber   Number of the first columns to get (leave as 0 to get all columns)
+     *
+     * @note    Creates an instance of std::vector. You should prefer invoking getColumns with a reference
+     *          to existing std::vector<SQLite::Columns> when you invoke this method more than once 
+     *          for statement to avoid unnecessary allocations.
+     *
+     * @note    This method is not const, reflecting the fact that the returned Column object will
+     *          share the ownership of the underlying sqlite3_stmt.
+     *
+     * @warning The resulting Column object must not be memorized "as-is".
+     *          Is is only a wrapper around the current result row, so it is only valid
+     *          while the row from the Statement remains valid, that is only until next executeStep() call.
+     *          Thus, you should instead extract immediately its data (getInt(), getText()...)
+     *          and use or copy this data for any later usage.
+     */
+    std::vector<Column> getColumns(const int aNumber = 0);
+
+    /**
+     * @brief Return and fills the given vector of the single row columns objects
+     *
+     *  Can be used to access the data of the current row of result when applicable,
+     * while the executeStep() method returns true.
+     *
+     *  Throw an exception if there is no row to return a Column from :
+     * - if provided index is out of bound
+     * - before any executeStep() call
+     * - after the last executeStep() returned false
+     * - after a reset() call
+     *
+     *  Throw an exception if the specified column count is out of the [0, getColumnCount()) range.
+     *
+     * @param[in] arBuffer  Reference to std::vector<SQLite::Columns> to be cleared and filled with columns
+     * @param[in] aNumber   Number of the first columns to get (leave as 0 to get all columns)
+     *
+     * @note    This metod is using an exisitng of std::vector. You can use getColumns without this reference
+     *          for simple uses cases or to get the instance of std::vector<SQLite::Columns> to use
+     *          with this method.
+     *
+     * @note    This method is not const, reflecting the fact that the returned Column object will
+     *          share the ownership of the underlying sqlite3_stmt.
+     *
+     * @warning The resulting Column object must not be memorized "as-is".
+     *          Is is only a wrapper around the current result row, so it is only valid
+     *          while the row from the Statement remains valid, that is only until next executeStep() call.
+     *          Thus, you should instead extract immediately its data (getInt(), getText()...)
+     *          and use or copy this data for any later usage.
+     */
+    std::vector<Column>& getColumns(std::vector<Column>& arBuffer, const int aNumber = 0);
 
 #if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900) // c++14: Visual Studio 2015
      /**

@@ -18,6 +18,7 @@
 
 #include <cstdio>
 #include <stdint.h>
+#include <array>
 
 #include <climits> // For INT_MAX
 
@@ -1062,6 +1063,12 @@ TEST(Statement, getColumnsTemplate)
     EXPECT_EQ("first", testStruct2.msg);
     EXPECT_EQ(-1, testStruct2.integer);
     EXPECT_EQ(0.0, testStruct2.real);
+    
+    // Get std::array of only the first 2 columns
+    auto testArray = query.getColumns<2>();
+    EXPECT_EQ(1, testArray[0].getInt());
+    EXPECT_EQ("first", testArray[1].getString());
+    EXPECT_EQ(2, testArray.size());
 }
 #endif
 

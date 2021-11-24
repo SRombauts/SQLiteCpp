@@ -621,7 +621,7 @@ public:
      * @brief Return an instance of T constructed from copies of the first N columns
      *
      *  Can be used to access the data of the current row of result when applicable,
-     * while the executeStep() method returns true.
+     *  while the executeStep() method returns true.
      *
      *  Throw an exception if there is no row to return a Column from:
      * - if provided column count is out of bound
@@ -638,6 +638,30 @@ public:
      */
     template<typename T, int N>
     T       getColumns();
+
+    /**
+     * @brief Return an std::array of Column objects of the first N columns
+     *
+     *  Can be used to access the data of the current row of result when applicable,
+     *  while the executeStep() method returns true.
+     *
+     *  Throw an exception if there is no row to return a Column from:
+     * - if provided column count is out of bound
+     * - before any executeStep() call
+     * - after the last executeStep() returned false
+     * - after a reset() call
+     *
+     *  Throw an exception if the specified column count is out of the [0, getColumnCount()) range.
+     *
+     * @tparam  N   Number of columns
+     *
+     * @note Requires std=C++14
+     */
+    template<int N>
+    std::array<SQLite::Column, N>  getColumns()
+    {
+        return getColumns<std::array<SQLite::Column, N>, N>();
+    }
 
 private:
     /**

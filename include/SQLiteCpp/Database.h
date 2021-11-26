@@ -15,6 +15,7 @@
 // c++17: MinGW GCC version > 8
 // c++17: Visual Studio 2017 version 15.7
 // c++17: macOS unless targetting compatibility with macOS < 10.15
+#ifndef SQLITECPP_HAVE_STD_EXPERIMENTAL_FILESYSTEM
 #if __cplusplus >= 201703L
     #if defined(__MINGW32__) || defined(__MINGW64__)
         #if __GNUC__ > 8 // MinGW requires GCC version > 8 for std::filesystem
@@ -32,6 +33,15 @@
 #ifdef SQLITECPP_HAVE_STD_FILESYSTEM
 #include  <filesystem>
 #endif // c++17 and a suitable compiler
+
+#else // SQLITECPP_HAVE_STD_EXPERIMENTAL_FILESYSTEM
+
+#include  <experimental/filesystem>
+namespace std {
+namespace filesystem = std::experimental::filesystem;
+}
+
+#endif // SQLITECPP_HAVE_STD_EXPERIMENTAL_FILESYSTEM
 
 #include <memory>
 #include <string.h>

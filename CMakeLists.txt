@@ -319,6 +319,7 @@ install(TARGETS SQLiteCpp
     COMPONENT libraries)
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
 install(EXPORT ${PROJECT_NAME}Targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+install(FILES ${PROJECT_SOURCE_DIR}/package.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(

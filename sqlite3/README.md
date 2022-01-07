@@ -1,7 +1,9 @@
 sqlite3
 -------
 
-"sqlite3.c" and "sqlite3.h" files from sqlite-amalgamation-3300100.zip (SQLite 3.30.1 2019-10-10)
+Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+
+"sqlite3.c" and "sqlite3.h" files from sqlite-amalgamation-3370200.zip (SQLite 3.37.2 2022-01-06)
 
 Those files are provided for easy setup and compatibility under Windows/Linux/MacOS.
 They are used by default by the CMake build.

@@ -21,11 +21,6 @@ jobs:
             build_type: "Debug", cc: "gcc", cxx: "g++"
           }
         - {
-            name: "Ubuntu 16.04 GCC",
-            os: ubuntu-16.04,
-            build_type: "Debug", cc: "gcc", cxx: "g++"
-          }
-        - {
             name: "macOS Latest Clang",
             os: macos-latest,
             build_type: "Debug", cc: "clang", cxx: "clang++"

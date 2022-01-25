@@ -60,7 +60,7 @@ public:
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    Statement(Database& aDatabase, const char* apQuery);
+    Statement(const Database& aDatabase, const char* apQuery);
 
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
@@ -70,7 +70,7 @@ public:
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    Statement(Database &aDatabase, const std::string& aQuery) :
+    Statement(const Database& aDatabase, const std::string& aQuery) :
         Statement(aDatabase, aQuery.c_str())
     {}
 
@@ -122,7 +122,7 @@ public:
     // => if you know what you are doing, use bindNoCopy() instead of bind()
 
     SQLITECPP_PURE_FUNC
-    int getIndex(const char * const apName);
+    int getIndex(const char * const apName) const;
 
     /**
      * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
@@ -463,7 +463,7 @@ public:
      *          Thus, you should instead extract immediately its data (getInt(), getText()...)
      *          and use or copy this data for any later usage.
      */
-    Column  getColumn(const int aIndex);
+    Column  getColumn(const int aIndex) const;
 
     /**
      * @brief Return a copy of the column data specified by its column name (less efficient than using an index)
@@ -494,7 +494,7 @@ public:
      *
      *  Throw an exception if the specified name is not one of the aliased name of the columns in the result.
      */
-    Column  getColumn(const char* apName);
+    Column  getColumn(const char* apName) const;
 
 #if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900) // c++14: Visual Studio 2015
      /**
@@ -617,7 +617,7 @@ public:
     }
 
     // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
-    std::string getExpandedSQL();
+    std::string getExpandedSQL() const;
 
     /// Return the number of columns in the result set returned by the prepared statement
     int getColumnCount() const
@@ -646,7 +646,7 @@ public:
     const char* getErrorMsg() const noexcept;
 
     /// Shared pointer to SQLite Prepared Statement Object
-    typedef std::shared_ptr<sqlite3_stmt> TStatementPtr;
+    using TStatementPtr = std::shared_ptr<sqlite3_stmt>;
 
 private:
     /**
@@ -699,11 +699,10 @@ private:
      */
     sqlite3_stmt* getPreparedStatement() const;
 
-private:
-    /// Map of columns index by name (mutable so getColumnIndex can be const)
-    typedef std::map<std::string, int> TColumnNames;
 
-private:
+    /// Map of columns index by name (mutable so getColumnIndex can be const)
+    using TColumnNames = std::map<std::string, int>;
+
     std::string             mQuery;                 //!< UTF-8 SQL Query
     sqlite3*                mpSQLite;               //!< Pointer to SQLite Database Connection Handle
     TStatementPtr           mpPreparedStatement;    //!< Shared Pointer to the prepared SQLite Statement Object

@@ -20,7 +20,7 @@
 namespace SQLite
 {
 
-Statement::Statement(Database &aDatabase, const char* apQuery) :
+Statement::Statement(const Database& aDatabase, const char* apQuery) :
     mQuery(apQuery),
     mpSQLite(aDatabase.getHandle()),
     mpPreparedStatement(prepareStatement()) // prepare the SQL query (needs Database friendship)
@@ -49,7 +49,7 @@ void Statement::clearBindings()
     check(ret);
 }
 
-int Statement::getIndex(const char * const apName)
+int Statement::getIndex(const char * const apName) const
 {
     return sqlite3_bind_parameter_index(getPreparedStatement(), apName);
 }
@@ -200,7 +200,7 @@ int Statement::tryExecuteStep() noexcept
 
 // Return a copy of the column data specified by its index starting at 0
 // (use the Column copy-constructor)
-Column Statement::getColumn(const int aIndex)
+Column Statement::getColumn(const int aIndex) const
 {
     checkRow();
     checkIndex(aIndex);
@@ -211,7 +211,7 @@ Column Statement::getColumn(const int aIndex)
 
 // Return a copy of the column data specified by its column name starting at 0
 // (use the Column copy-constructor)
-Column  Statement::getColumn(const char* apName)
+Column Statement::getColumn(const char* apName) const
 {
     checkRow();
     const int index = getColumnIndex(apName);
@@ -317,7 +317,7 @@ const char* Statement::getErrorMsg() const noexcept
 }
 
 // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
-std::string Statement::getExpandedSQL() {
+std::string Statement::getExpandedSQL() const {
     char* expanded = sqlite3_expanded_sql(getPreparedStatement());
     std::string expandedString(expanded);
     sqlite3_free(expanded);

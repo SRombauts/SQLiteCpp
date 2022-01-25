@@ -15,7 +15,6 @@
 
 #include <string>
 #include <map>
-#include <climits> // For INT_MAX
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
@@ -128,34 +127,15 @@ public:
     /**
      * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const int           aValue);
+    void bind(const int aIndex, const int32_t       aValue);
     /**
      * @brief Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const unsigned      aValue);
-
-#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
-    /**
-     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const int aIndex, const long          aValue)
-    {
-        bind(aIndex, static_cast<int>(aValue));
-    }
-#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
-    /**
-     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const int aIndex, const long          aValue)
-    {
-        bind(aIndex, static_cast<long long>(aValue));
-    }
-#endif
-
+    void bind(const int aIndex, const uint32_t      aValue);
     /**
      * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const long long     aValue);
+    void bind(const int aIndex, const int64_t       aValue);
     /**
      * @brief Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -210,39 +190,21 @@ public:
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const int             aValue)
+    void bind(const char* apName, const int32_t         aValue)
     {
         bind(getIndex(apName), aValue);
     }
     /**
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const unsigned        aValue)
+    void bind(const char* apName, const uint32_t        aValue)
     {
         bind(getIndex(apName), aValue);
     }
-
-#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
-    /**
-     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const long           aValue)
-    {
-        bind(apName, static_cast<int>(aValue));
-    }
-#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
-    /**
-     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const long           aValue)
-    {
-        bind(apName, static_cast<long long>(aValue));
-    }
-#endif
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const long long       aValue)
+    void bind(const char* apName, const int64_t         aValue)
     {
         bind(getIndex(apName), aValue);
     }
@@ -325,46 +287,28 @@ public:
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const int            aValue)
+    void bind(const std::string& aName, const int32_t         aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const unsigned       aValue)
+    void bind(const std::string& aName, const uint32_t        aValue)
     {
         bind(aName.c_str(), aValue);
     }
-
-#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
-    /**
-     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const std::string& aName, const long                  aValue)
-    {
-        bind(aName.c_str(), static_cast<int>(aValue));
-    }
-#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
-    /**
-     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const std::string& aName, const long                   aValue)
-    {
-        bind(aName.c_str(), static_cast<long long>(aValue));
-    }
-#endif
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const long long      aValue)
+    void bind(const std::string& aName, const int64_t         aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
      * @brief Bind a double (64bits float) value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const double         aValue)
+    void bind(const std::string& aName, const double          aValue)
     {
         bind(aName.c_str(), aValue);
     }

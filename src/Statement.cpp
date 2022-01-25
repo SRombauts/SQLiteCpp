@@ -28,20 +28,6 @@ Statement::Statement(Database &aDatabase, const char* apQuery) :
     mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
 }
 
-Statement::Statement(Statement&& aStatement) noexcept :
-    mQuery(std::move(aStatement.mQuery)),
-    mpSQLite(aStatement.mpSQLite),
-    mpPreparedStatement(std::move(aStatement.mpPreparedStatement)),
-    mColumnCount(aStatement.mColumnCount),
-    mbHasRow(aStatement.mbHasRow),
-    mbDone(aStatement.mbDone)
-{
-    aStatement.mpSQLite = nullptr;
-    aStatement.mColumnCount = 0;
-    aStatement.mbHasRow = false;
-    aStatement.mbDone = false;
-}
-
 // Reset the statement to make it ready for a new execution (see also #clearBindings() bellow)
 void Statement::reset()
 {
@@ -342,7 +328,7 @@ std::string Statement::getExpandedSQL() {
 Statement::TStatementPtr Statement::prepareStatement()
 {
     sqlite3_stmt* statement;
-    const int ret = sqlite3_prepare_v2(mpSQLite, mQuery.c_str(), static_cast<int>(mQuery.size()), &statement, NULL);
+    const int ret = sqlite3_prepare_v2(mpSQLite, mQuery.c_str(), static_cast<int>(mQuery.size()), &statement, nullptr);
     if (SQLITE_OK != ret)
     {
         throw SQLite::Exception(mpSQLite, ret);

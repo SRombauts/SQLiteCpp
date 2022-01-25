@@ -79,7 +79,8 @@ public:
      *
      * @param[in] aStatement    Statement to move
      */
-    Statement(Statement&& aStatement) noexcept;
+    Statement(Statement&& aStatement) noexcept = default;
+    Statement& operator=(Statement&& aStatement) noexcept = default;
 
     // Statement is non-copyable
     Statement(const Statement&) = delete;

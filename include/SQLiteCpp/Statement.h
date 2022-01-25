@@ -15,6 +15,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
@@ -50,8 +51,6 @@ extern const int OK; ///< SQLITE_OK
  */
 class Statement
 {
-    friend class Column; // For access to Statement::Ptr inner class
-
 public:
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
@@ -645,52 +644,8 @@ public:
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
     const char* getErrorMsg() const noexcept;
 
-private:
-    /**
-     * @brief Shared pointer to the sqlite3_stmt SQLite Statement Object.
-     *
-     * Manage the finalization of the sqlite3_stmt with a reference counter.
-     *
-     * This is a internal class, not part of the API (hence full documentation is in the cpp).
-     */
-    // TODO Convert this whole custom pointer to a C++11 std::shared_ptr with a custom deleter
-    class Ptr
-    {
-    public:
-        // Prepare the statement and initialize its reference counter
-        Ptr(sqlite3* apSQLite, std::string& aQuery);
-        // Copy constructor increments the ref counter
-        Ptr(const Ptr& aPtr);
-
-        // Move constructor
-        Ptr(Ptr&& aPtr);
-
-        // Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
-        ~Ptr();
-
-        /// Inline cast operator returning the pointer to SQLite Database Connection Handle
-        operator sqlite3*() const
-        {
-            return mpSQLite;
-        }
-
-        /// Inline cast operator returning the pointer to SQLite Statement Object
-        operator sqlite3_stmt*() const
-        {
-            return mpStmt;
-        }
-
-    private:
-        /// @{ Unused/forbidden copy/assignment operator
-        Ptr& operator=(const Ptr& aPtr);
-        /// @}
-
-    private:
-        sqlite3*        mpSQLite;    //!< Pointer to SQLite Database Connection Handle
-        sqlite3_stmt*   mpStmt;      //!< Pointer to SQLite Statement Object
-        unsigned int*   mpRefCount;  //!< Pointer to the heap allocated reference counter of the sqlite3_stmt
-                                     //!< (to share it with Column objects)
-    };
+    /// Shared pointer to SQLite Prepared Statement Object
+    typedef std::shared_ptr<sqlite3_stmt> TStatementPtr;
 
 private:
     /**
@@ -702,7 +657,7 @@ private:
     {
         if (SQLite::OK != aRet)
         {
-            throw SQLite::Exception(mStmtPtr, aRet);
+            throw SQLite::Exception(mpSQLite, aRet);
         }
     }
 
@@ -728,17 +683,33 @@ private:
         }
     }
 
+    /**
+     * @brief Prepare statement object.
+     * 
+     * @return Shared pointer to prepared statement object
+     */
+    TStatementPtr prepareStatement();
+
+    /**
+     * @brief Return a prepared statement object.
+     * 
+     * Throw an exception if the statement object was not prepared.
+     * @return raw pointer to Prepared Statement Object
+     */
+    sqlite3_stmt* getPreparedStatement() const;
+
 private:
     /// Map of columns index by name (mutable so getColumnIndex can be const)
     typedef std::map<std::string, int> TColumnNames;
 
 private:
-    std::string             mQuery;         //!< UTF-8 SQL Query
-    Ptr                     mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
-    int                     mColumnCount;   //!< Number of columns in the result of the prepared statement
-    mutable TColumnNames    mColumnNames;   //!< Map of columns index by name (mutable so getColumnIndex can be const)
-    bool                    mbHasRow;       //!< true when a row has been fetched with executeStep()
-    bool                    mbDone;         //!< true when the last executeStep() had no more row to fetch
+    std::string             mQuery;                 //!< UTF-8 SQL Query
+    sqlite3*                mpSQLite;               //!< Pointer to SQLite Database Connection Handle
+    TStatementPtr           mpPreparedStatement;    //!< Shared Pointer to the prepared SQLite Statement Object
+    int                     mColumnCount{0};        //!< Number of columns in the result of the prepared statement
+    mutable TColumnNames    mColumnNames;           //!< Map of columns index by name (mutable so getColumnIndex can be const)
+    bool                    mbHasRow{false};        //!< true when a row has been fetched with executeStep()
+    bool                    mbDone{false};          //!< true when the last executeStep() had no more row to fetch
 };
 
 

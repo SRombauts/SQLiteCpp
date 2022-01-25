@@ -341,7 +341,7 @@ TEST(Statement, bindings)
 
     // Fifth row with binary buffer and a null parameter
     {
-        const char buffer[] = "binary";
+        const unsigned char buffer[] = "binary";
         insert.bind(1, buffer, sizeof(buffer));
         insert.bind(2);
         EXPECT_EQ(1, insert.exec());
@@ -351,7 +351,7 @@ TEST(Statement, bindings)
         EXPECT_TRUE (query.hasRow());
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(5,                query.getColumn(0).getInt64());
-        EXPECT_STREQ(buffer,        query.getColumn(1).getText());
+        EXPECT_EQ(0, memcmp(buffer, &query.getColumn(1).getString()[0], sizeof(buffer)));
         EXPECT_TRUE (query.isColumnNull(2));
         EXPECT_EQ(0,                query.getColumn(2).getInt());
         EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
@@ -406,25 +406,26 @@ TEST(Statement, bindNoCopy)
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a new table
-    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, txt1 TEXT, txt2 TEXT, binary BLOB)"));
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, txt1 TEXT, txt2 TEXT, txt3 TEXT, binary BLOB)"));
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Insertion with bindable parameters
-    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?)");
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?, ?)");
 
     // Compile a SQL query to check the results
     SQLite::Statement query(db, "SELECT * FROM test");
     EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
-    EXPECT_EQ(4, query.getColumnCount());
+    EXPECT_EQ(5, query.getColumnCount());
 
     // Insert one row with all variants of bindNoCopy()
     {
         const char*         txt1   = "first";
         const std::string   txt2   = "sec\0nd";
-        const char          blob[] = {'b','l','\0','b'};
+        const unsigned char blob[] = {'b','l','\0','b'};
         insert.bindNoCopy(1, txt1);
         insert.bindNoCopy(2, txt2);
-        insert.bindNoCopy(3, blob, sizeof(blob));
+        insert.bindNoCopy(3, txt2.c_str(), static_cast<int>(txt2.size()));
+        insert.bindNoCopy(4, blob, sizeof(blob));
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
@@ -435,7 +436,8 @@ TEST(Statement, bindNoCopy)
         EXPECT_EQ(1, query.getColumn(0).getInt64());
         EXPECT_STREQ(txt1, query.getColumn(1).getText());
         EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
-        EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
+        EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(3).getString()[0], txt2.size()));
+        EXPECT_EQ(0, memcmp(blob, &query.getColumn(4).getString()[0], sizeof(blob)));
     }
 }
 
@@ -621,7 +623,7 @@ TEST(Statement, bindByNameString)
 
     // Third row with binary buffer and a null parameter
     {
-        const char buffer[] = "binary";
+        const unsigned char buffer[] = "binary";
         insert.bind(amsg, buffer, sizeof(buffer));
         insert.bind(aint);
         EXPECT_EQ(1, insert.exec());
@@ -631,7 +633,7 @@ TEST(Statement, bindByNameString)
         EXPECT_TRUE(query.hasRow());
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(3, query.getColumn(0).getInt64());
-        EXPECT_STREQ(buffer, query.getColumn(1).getText());
+        EXPECT_EQ(0, memcmp(buffer, query.getColumn(1).getText(), 6));
         EXPECT_TRUE(query.isColumnNull(2));
         EXPECT_EQ(0, query.getColumn(2).getInt());
         EXPECT_EQ(0.234f, query.getColumn(3).getDouble());
@@ -656,6 +658,23 @@ TEST(Statement, bindByNameString)
         EXPECT_EQ(4, query.getColumn(0).getInt64());
         EXPECT_EQ(4294967295U, query.getColumn(2).getUInt());
         EXPECT_EQ(12345678900000LL, query.getColumn(4).getInt64());
+    }
+    
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Fifth row with string
+    {
+        const std::string first = "fir\0st";
+        insert.bind(amsg, first.c_str(), static_cast<int>(first.size()));
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(first, query.getColumn(1).getString());
     }
 }
 
@@ -709,9 +728,9 @@ TEST(Statement, bindNoCopyByName)
         const std::string   ablob = "@blob";
         const char*         txt1 = "first2";
         const std::string   txt2 = "sec\0nd2";
-        const char          blob[] = { 'b','l','\0','b','2' };
+        const unsigned char blob[] = { 'b','l','\0','b','2' };
         insert.bindNoCopy(atxt1, txt1);
-        insert.bindNoCopy(atxt2, txt2);
+        insert.bindNoCopy(atxt2, txt2.c_str(), static_cast<int>(txt2.size()));
         insert.bindNoCopy(ablob, blob, sizeof(blob));
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(2, db.getLastInsertRowid());
@@ -726,6 +745,28 @@ TEST(Statement, bindNoCopyByName)
         EXPECT_STREQ(txt1, query.getColumn(1).getText());
         EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
         EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
+    }
+    
+    insert.reset();
+    insert.clearBindings();
+    query.reset();
+    
+    // Insert a third row with some more variants of bindNoCopy() using std::string names
+    {
+        const std::string   atxt1 = "@txt1";
+        const std::string   txt1 = "fir\0st";
+        insert.bindNoCopy(atxt1, txt1);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(3, db.getLastInsertRowid());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep(); // pass on the first row
+        query.executeStep(); // pass on the second row as well
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(txt1, query.getColumn(1).getString());
     }
 }
 

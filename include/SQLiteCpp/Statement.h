@@ -699,17 +699,15 @@ private:
      */
     sqlite3_stmt* getPreparedStatement() const;
 
-
-    /// Map of columns index by name (mutable so getColumnIndex can be const)
-    using TColumnNames = std::map<std::string, int>;
-
     std::string             mQuery;                 //!< UTF-8 SQL Query
     sqlite3*                mpSQLite;               //!< Pointer to SQLite Database Connection Handle
     TStatementPtr           mpPreparedStatement;    //!< Shared Pointer to the prepared SQLite Statement Object
     int                     mColumnCount{0};        //!< Number of columns in the result of the prepared statement
-    mutable TColumnNames    mColumnNames;           //!< Map of columns index by name (mutable so getColumnIndex can be const)
     bool                    mbHasRow{false};        //!< true when a row has been fetched with executeStep()
     bool                    mbDone{false};          //!< true when the last executeStep() had no more row to fetch
+    
+    /// Map of columns index by name (mutable so getColumnIndex can be const)
+    mutable std::map<std::string, int>  mColumnNames{};
 };
 
 

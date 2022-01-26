@@ -264,13 +264,13 @@ int Statement::getColumnIndex(const char* apName) const
         }
     }
 
-    const TColumnNames::const_iterator iIndex = mColumnNames.find(apName);
+    const auto iIndex = mColumnNames.find(apName);
     if (iIndex == mColumnNames.end())
     {
         throw SQLite::Exception("Unknown column name.");
     }
 
-    return (*iIndex).second;
+    return iIndex->second;
 }
 
 const char * Statement::getColumnDeclaredType(const int aIndex) const

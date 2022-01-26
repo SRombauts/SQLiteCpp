@@ -246,7 +246,7 @@ public:
      *
      * @see getString
      */
-    explicit operator std::string() const
+    operator std::string() const
     {
         return getString();
     }

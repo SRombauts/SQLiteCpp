@@ -119,7 +119,6 @@ TEST(Statement, moveConstructor)
     EXPECT_EQ(2, query.getColumnCount());
     SQLite::Statement moved = std::move(query);
     EXPECT_TRUE(query.getQuery().empty());
-    EXPECT_EQ(0, query.getColumnCount());
     EXPECT_FALSE(moved.getQuery().empty());
     EXPECT_EQ(2, moved.getColumnCount());
     // Execute
@@ -128,6 +127,16 @@ TEST(Statement, moveConstructor)
     EXPECT_FALSE(moved.isDone());
     EXPECT_FALSE(query.hasRow());
     EXPECT_FALSE(query.isDone());
+
+    // Const statement lookup
+    const auto const_query = std::move(moved);
+    auto index = const_query.getColumnIndex("value");
+    EXPECT_EQ(1, index);
+    EXPECT_NO_THROW(const_query.getColumn(index));
+
+    // Moved statements should throw
+    EXPECT_THROW(query.getColumnIndex("value"), SQLite::Exception);
+    EXPECT_THROW(query.getColumn(index), SQLite::Exception);
 }
 
 #endif

@@ -30,6 +30,10 @@ Column::Column(const Statement::TStatementPtr& aStmtPtr, int aIndex) noexcept :
     mStmtPtr(aStmtPtr),
     mIndex(aIndex)
 {
+    if (!aStmtPtr)
+    {
+        throw SQLite::Exception("Statement was destroyed");
+    }
 }
 
 // Return the named assigned to this result column (potentially aliased)

@@ -79,7 +79,7 @@ public:
      *
      * @param[in] aStatement    Statement to move
      */
-    Statement(Statement&& aStatement) noexcept = default;
+    Statement(Statement&& aStatement) noexcept;
     Statement& operator=(Statement&& aStatement) noexcept = default;
 
     // Statement is non-copyable

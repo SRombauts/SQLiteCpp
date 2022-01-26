@@ -54,7 +54,7 @@ public:
      * @param[in] aStmtPtr  Shared pointer to the prepared SQLite Statement Object.
      * @param[in] aIndex    Index of the column in the row of result, starting at 0
      */
-    explicit Column(const Statement::TStatementPtr& aStmtPtr, int aIndex) noexcept;
+    explicit Column(const Statement::TStatementPtr& aStmtPtr, int aIndex);
 
     // default destructor: the finalization will be done by the destructor of the last shared pointer
     // default copy constructor and assignment operator are perfectly suited :

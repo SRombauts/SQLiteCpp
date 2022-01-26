@@ -241,3 +241,39 @@ TEST(Column, stream)
     std::string content = ss.str();
     EXPECT_EQ(content, str);
 }
+
+TEST(Column, shared_ptr)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT)"));
+    EXPECT_EQ(1, db.exec(R"(INSERT INTO test VALUES (42, "fortytwo"))"));
+    const char* query_str = "SELECT id, msg FROM test";
+
+    std::unique_ptr<SQLite::Statement> query{ new SQLite::Statement(db, query_str) };
+    query->executeStep();
+    
+    auto column0 = query->getColumn(0);
+    auto column1 = query->getColumn(1);
+    query.reset();
+
+    EXPECT_EQ(42, column0.getInt());
+    EXPECT_STREQ("fortytwo", column1.getText());
+
+    query.reset(new SQLite::Statement(db, query_str));
+    query->executeStep();
+    column0 = query->getColumn(0);
+    EXPECT_EQ(true, column0.isInteger());
+    query->executeStep(); // query is done
+    
+    // Undefined behavior
+    // auto x = column0.getInt();
+
+    query.reset();
+
+    // Undefined behavior
+    // auto x = column0.getInt();
+    // bool isInt = column0.isInteger();
+
+    EXPECT_STREQ("id", column0.getName());
+}

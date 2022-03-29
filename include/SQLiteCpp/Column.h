@@ -14,8 +14,11 @@
 #include <SQLiteCpp/Exception.h>
 
 #include <string>
+#include <memory>
 #include <climits> // For INT_MAX
 
+// Forward declarations to avoid inclusion of <sqlite3.h> in a header
+struct sqlite3_stmt;
 
 namespace SQLite
 {
@@ -25,7 +28,6 @@ extern const int FLOAT;     ///< SQLITE_FLOAT
 extern const int TEXT;      ///< SQLITE_TEXT
 extern const int BLOB;      ///< SQLITE_BLOB
 extern const int Null;      ///< SQLITE_NULL
-
 
 /**
  * @brief Encapsulation of a Column in a row of the result pointed by the prepared Statement.
@@ -52,7 +54,7 @@ public:
      * @param[in] aStmtPtr  Shared pointer to the prepared SQLite Statement Object.
      * @param[in] aIndex    Index of the column in the row of result, starting at 0
      */
-    Column(Statement::Ptr& aStmtPtr, int aIndex) noexcept;
+    explicit Column(const Statement::TStatementPtr& aStmtPtr, int aIndex);
 
     // default destructor: the finalization will be done by the destructor of the last shared pointer
     // default copy constructor and assignment operator are perfectly suited :
@@ -250,8 +252,8 @@ public:
     }
 
 private:
-    Statement::Ptr  mStmtPtr;   ///< Shared Pointer to the prepared SQLite Statement Object
-    int             mIndex;     ///< Index of the column in the row of result, starting at 0
+    Statement::TStatementPtr    mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
+    int                         mIndex;    ///< Index of the column in the row of result, starting at 0
 };
 
 /**
@@ -281,7 +283,7 @@ T Statement::getColumns()
 template<typename T, const int... Is>
 T Statement::getColumns(const std::integer_sequence<int, Is...>)
 {
-    return T{Column(mStmtPtr, Is)...};
+    return T{Column(mpPreparedStatement, Is)...};
 }
 
 #endif

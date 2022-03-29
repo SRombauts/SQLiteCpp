@@ -15,7 +15,7 @@
 
 #include <string>
 #include <map>
-#include <climits> // For INT_MAX
+#include <memory>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
@@ -51,8 +51,6 @@ extern const int OK; ///< SQLITE_OK
  */
 class Statement
 {
-    friend class Column; // For access to Statement::Ptr inner class
-
 public:
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
@@ -62,7 +60,7 @@ public:
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    Statement(Database& aDatabase, const char* apQuery);
+    Statement(const Database& aDatabase, const char* apQuery);
 
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
@@ -72,7 +70,7 @@ public:
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    Statement(Database &aDatabase, const std::string& aQuery) :
+    Statement(const Database& aDatabase, const std::string& aQuery) :
         Statement(aDatabase, aQuery.c_str())
     {}
 
@@ -82,6 +80,7 @@ public:
      * @param[in] aStatement    Statement to move
      */
     Statement(Statement&& aStatement) noexcept;
+    Statement& operator=(Statement&& aStatement) noexcept = default;
 
     // Statement is non-copyable
     Statement(const Statement&) = delete;
@@ -123,39 +122,20 @@ public:
     // => if you know what you are doing, use bindNoCopy() instead of bind()
 
     SQLITECPP_PURE_FUNC
-    int getIndex(const char * const apName);
+    int getIndex(const char * const apName) const;
 
     /**
      * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const int           aValue);
+    void bind(const int aIndex, const int32_t       aValue);
     /**
      * @brief Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const unsigned      aValue);
-
-#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
-    /**
-     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const int aIndex, const long          aValue)
-    {
-        bind(aIndex, static_cast<int>(aValue));
-    }
-#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
-    /**
-     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const int aIndex, const long          aValue)
-    {
-        bind(aIndex, static_cast<long long>(aValue));
-    }
-#endif
-
+    void bind(const int aIndex, const uint32_t      aValue);
     /**
      * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const long long     aValue);
+    void bind(const int aIndex, const int64_t       aValue);
     /**
      * @brief Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -210,39 +190,21 @@ public:
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const int             aValue)
+    void bind(const char* apName, const int32_t         aValue)
     {
         bind(getIndex(apName), aValue);
     }
     /**
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const unsigned        aValue)
+    void bind(const char* apName, const uint32_t        aValue)
     {
         bind(getIndex(apName), aValue);
     }
-
-#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
-    /**
-     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const long           aValue)
-    {
-        bind(apName, static_cast<int>(aValue));
-    }
-#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
-    /**
-     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const char* apName, const long           aValue)
-    {
-        bind(apName, static_cast<long long>(aValue));
-    }
-#endif
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const long long       aValue)
+    void bind(const char* apName, const int64_t         aValue)
     {
         bind(getIndex(apName), aValue);
     }
@@ -325,46 +287,28 @@ public:
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const int            aValue)
+    void bind(const std::string& aName, const int32_t         aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const unsigned       aValue)
+    void bind(const std::string& aName, const uint32_t        aValue)
     {
         bind(aName.c_str(), aValue);
     }
-
-#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
-    /**
-     * @brief Bind a 32bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const std::string& aName, const long                  aValue)
-    {
-        bind(aName.c_str(), static_cast<int>(aValue));
-    }
-#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
-    /**
-     * @brief Bind a 64bits long value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
-     */
-    void bind(const std::string& aName, const long                   aValue)
-    {
-        bind(aName.c_str(), static_cast<long long>(aValue));
-    }
-#endif
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const long long      aValue)
+    void bind(const std::string& aName, const int64_t         aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
      * @brief Bind a double (64bits float) value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const double         aValue)
+    void bind(const std::string& aName, const double          aValue)
     {
         bind(aName.c_str(), aValue);
     }
@@ -519,7 +463,7 @@ public:
      *          Thus, you should instead extract immediately its data (getInt(), getText()...)
      *          and use or copy this data for any later usage.
      */
-    Column  getColumn(const int aIndex);
+    Column  getColumn(const int aIndex) const;
 
     /**
      * @brief Return a copy of the column data specified by its column name (less efficient than using an index)
@@ -550,7 +494,7 @@ public:
      *
      *  Throw an exception if the specified name is not one of the aliased name of the columns in the result.
      */
-    Column  getColumn(const char* apName);
+    Column  getColumn(const char* apName) const;
 
 #if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900) // c++14: Visual Studio 2015
      /**
@@ -673,7 +617,7 @@ public:
     }
 
     // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
-    std::string getExpandedSQL();
+    std::string getExpandedSQL() const;
 
     /// Return the number of columns in the result set returned by the prepared statement
     int getColumnCount() const
@@ -701,52 +645,8 @@ public:
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
     const char* getErrorMsg() const noexcept;
 
-private:
-    /**
-     * @brief Shared pointer to the sqlite3_stmt SQLite Statement Object.
-     *
-     * Manage the finalization of the sqlite3_stmt with a reference counter.
-     *
-     * This is a internal class, not part of the API (hence full documentation is in the cpp).
-     */
-    // TODO Convert this whole custom pointer to a C++11 std::shared_ptr with a custom deleter
-    class Ptr
-    {
-    public:
-        // Prepare the statement and initialize its reference counter
-        Ptr(sqlite3* apSQLite, std::string& aQuery);
-        // Copy constructor increments the ref counter
-        Ptr(const Ptr& aPtr);
-
-        // Move constructor
-        Ptr(Ptr&& aPtr);
-
-        // Decrement the ref counter and finalize the sqlite3_stmt when it reaches 0
-        ~Ptr();
-
-        /// Inline cast operator returning the pointer to SQLite Database Connection Handle
-        operator sqlite3*() const
-        {
-            return mpSQLite;
-        }
-
-        /// Inline cast operator returning the pointer to SQLite Statement Object
-        operator sqlite3_stmt*() const
-        {
-            return mpStmt;
-        }
-
-    private:
-        /// @{ Unused/forbidden copy/assignment operator
-        Ptr& operator=(const Ptr& aPtr);
-        /// @}
-
-    private:
-        sqlite3*        mpSQLite;    //!< Pointer to SQLite Database Connection Handle
-        sqlite3_stmt*   mpStmt;      //!< Pointer to SQLite Statement Object
-        unsigned int*   mpRefCount;  //!< Pointer to the heap allocated reference counter of the sqlite3_stmt
-                                     //!< (to share it with Column objects)
-    };
+    /// Shared pointer to SQLite Prepared Statement Object
+    using TStatementPtr = std::shared_ptr<sqlite3_stmt>;
 
 private:
     /**
@@ -758,7 +658,7 @@ private:
     {
         if (SQLite::OK != aRet)
         {
-            throw SQLite::Exception(mStmtPtr, aRet);
+            throw SQLite::Exception(mpSQLite, aRet);
         }
     }
 
@@ -784,17 +684,30 @@ private:
         }
     }
 
-private:
-    /// Map of columns index by name (mutable so getColumnIndex can be const)
-    typedef std::map<std::string, int> TColumnNames;
+    /**
+     * @brief Prepare statement object.
+     * 
+     * @return Shared pointer to prepared statement object
+     */
+    TStatementPtr prepareStatement();
 
-private:
-    std::string             mQuery;         //!< UTF-8 SQL Query
-    Ptr                     mStmtPtr;       //!< Shared Pointer to the prepared SQLite Statement Object
-    int                     mColumnCount;   //!< Number of columns in the result of the prepared statement
-    mutable TColumnNames    mColumnNames;   //!< Map of columns index by name (mutable so getColumnIndex can be const)
-    bool                    mbHasRow;       //!< true when a row has been fetched with executeStep()
-    bool                    mbDone;         //!< true when the last executeStep() had no more row to fetch
+    /**
+     * @brief Return a prepared statement object.
+     * 
+     * Throw an exception if the statement object was not prepared.
+     * @return raw pointer to Prepared Statement Object
+     */
+    sqlite3_stmt* getPreparedStatement() const;
+
+    std::string             mQuery;                 //!< UTF-8 SQL Query
+    sqlite3*                mpSQLite;               //!< Pointer to SQLite Database Connection Handle
+    TStatementPtr           mpPreparedStatement;    //!< Shared Pointer to the prepared SQLite Statement Object
+    int                     mColumnCount{0};        //!< Number of columns in the result of the prepared statement
+    bool                    mbHasRow{false};        //!< true when a row has been fetched with executeStep()
+    bool                    mbDone{false};          //!< true when the last executeStep() had no more row to fetch
+    
+    /// Map of columns index by name (mutable so getColumnIndex can be const)
+    mutable std::map<std::string, int>  mColumnNames{};
 };
 
 

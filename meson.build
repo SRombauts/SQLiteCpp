@@ -84,7 +84,14 @@ if not (host_machine.system() == 'windows' and cxx.get_id() == 'msvc')
         '-Wno-long-long',
     ]
 endif
-
+## using MSVC headers requires c++14, if not will show an error on xstddef as: 
+## 'auto' return without trailing return type; deduced return types are a C++14 extension
+if host_machine.system() == 'windows'
+    message('[WINDOWS] using c++14 standard')
+    sqlitecpp_opts += [
+        'cpp_std=c++14',
+    ]
+endif
 # Options relative to SQLite and SQLiteC++ functions
 
 if get_option('SQLITE_ENABLE_COLUMN_METADATA')

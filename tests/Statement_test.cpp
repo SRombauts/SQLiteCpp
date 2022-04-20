@@ -374,7 +374,12 @@ TEST(Statement, bindings)
     // Sixth row with uint32_t unsigned value and a long value (which is either a 32b int or a 64b long long)
     {
         const uint32_t  uint32 = 4294967295U;
+        // preprocessor define to force not use long and use instead uint
+        #if NON_AMBIGOUS_OVERLOAD
+        const int       integer = -123;
+        #else
         const long      integer = -123;
+        #endif
         insert.bind(2, uint32);
         insert.bind(3, integer);
         EXPECT_EQ(1, insert.exec());
@@ -493,7 +498,11 @@ TEST(Statement, bindByName)
     {
         const std::string   second("second");
         const int64_t       int64 = 12345678900000LL;
+        #if NON_AMBIGOUS_OVERLOAD
+        const int           integer = -123;
+        #else
         const long          integer = -123;
+        #endif
         const float         float32 = 0.234f;
         insert.bind("@msg",      second);
         insert.bind("@int",      int64);
@@ -606,7 +615,11 @@ TEST(Statement, bindByNameString)
     {
         const std::string   second("second");
         const int64_t       int64 = 12345678900000LL;
+        #if NON_AMBIGOUS_OVERLOAD
+        const int           integer = -123;
+        #else
         const long          integer = -123;
+        #endif
         const float         float32 = 0.234f;
         insert.bind(amsg, second);
         insert.bind(aint, int64);

@@ -46,6 +46,8 @@ sqlitecpp_deps = [
     sqlite3_dep,
     thread_dep,
 ]
+## used to override the default sqlitecpp options like cpp standard
+sqlitecpp_opts = []
 
 ## tests
 
@@ -58,6 +60,10 @@ sqlitecpp_test_srcs = [
     'tests/VariadicBind_test.cpp',
     'tests/Exception_test.cpp',
     'tests/ExecuteMany_test.cpp',
+]
+sqlitecpp_test_args = [
+    # do not use ambiguous overloads by default
+    '-DNON_AMBIGOUS_OVERLOAD'
 ]
 
 ## samples
@@ -131,10 +137,11 @@ libsqlitecpp = library(
     include_directories: sqlitecpp_incl,
     cpp_args: sqlitecpp_args,
     dependencies: sqlitecpp_deps,
+    # override the default options
+    override_options: sqlitecpp_opts,
     # install: true,
     # API version for SQLiteCpp shared library.
-    version: '0',
-)
+    version: '0',)
 
 install_headers(
     'include/SQLiteCpp/SQLiteCpp.h',
@@ -164,10 +171,12 @@ if get_option('SQLITECPP_BUILD_TESTS')
         sqlitecpp_dep,
         sqlite3_dep,
     ]
-    sqlitecpp_test_args = []
 
     testexe = executable('testexe', sqlitecpp_test_srcs,
-                     dependencies: sqlitecpp_test_dependencies)
+                     dependencies: sqlitecpp_test_dependencies,
+                     cpp_args: sqlitecpp_test_args,
+                     # override the default options
+                     override_options: sqlitecpp_opts,)
 
     test_args = []
 
@@ -177,7 +186,9 @@ if get_option('SQLITECPP_BUILD_EXAMPLES')
     ## demo executable
     sqlitecpp_demo_exe = executable('SQLITECPP_sample_demo',
                             sqlitecpp_sample_srcs,
-                            dependencies: sqlitecpp_dep)
+                            dependencies: sqlitecpp_dep,
+                            # override the default options
+                            override_options: sqlitecpp_opts,)
 endif
 
 pkgconfig = import('pkgconfig')

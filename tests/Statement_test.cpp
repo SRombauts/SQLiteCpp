@@ -12,6 +12,7 @@
 #include <SQLiteCpp/Database.h>
 #include <SQLiteCpp/Statement.h>
 
+#include <cstdint>   // for int64_t
 #include <sqlite3.h> // for SQLITE_DONE
 
 #include <gtest/gtest.h>
@@ -327,7 +328,7 @@ TEST(Statement, bindings)
     // Fourth row with string/int64/float
     {
         const std::string   fourth("fourth");
-        const long long     int64 = 12345678900000LL;
+        const int64_t       int64 = 12345678900000LL;
         const float         float32 = 0.234f;
         insert.bind(1, fourth);
         insert.bind(2, int64);
@@ -491,7 +492,7 @@ TEST(Statement, bindByName)
     // Second row with string/int64/float
     {
         const std::string   second("second");
-        const long long     int64 = 12345678900000LL;
+        const int64_t       int64 = 12345678900000LL;
         const long          integer = -123;
         const float         float32 = 0.234f;
         insert.bind("@msg",      second);
@@ -604,7 +605,7 @@ TEST(Statement, bindByNameString)
     // Second row with string/int64/float
     {
         const std::string   second("second");
-        const long long     int64 = 12345678900000LL;
+        const int64_t       int64 = 12345678900000LL;
         const long          integer = -123;
         const float         float32 = 0.234f;
         insert.bind(amsg, second);

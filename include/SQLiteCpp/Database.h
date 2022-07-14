@@ -22,9 +22,6 @@
         #endif
     #elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
         // macOS clang won't less us touch std::filesystem if we're targetting earlier than 10.15
-    #elif defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-        // iOS clang won't less us touch std::filesystem if we're targetting earlier than iOS 13
     #else
         #define SQLITECPP_HAVE_STD_FILESYSTEM
     #endif

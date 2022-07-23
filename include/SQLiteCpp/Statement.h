@@ -703,7 +703,7 @@ private:
     bool                    mbDone{false};          //!< true when the last executeStep() had no more row to fetch
 
     /// Map of columns index by name (mutable so getColumnIndex can be const)
-    mutable std::map<std::string, int>  mColumnNames{};
+    mutable std::map<std::string, int, std::less<>>  mColumnNames{};
 };
 
 

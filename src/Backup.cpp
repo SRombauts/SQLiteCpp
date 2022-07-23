@@ -24,10 +24,10 @@ Backup::Backup(Database&    aDestDatabase,
                Database&    aSrcDatabase,
                const char*  apSrcDatabaseName)
 {
-    mpSQLiteBackup = sqlite3_backup_init(aDestDatabase.getHandle(),
+    mpSQLiteBackup.reset(sqlite3_backup_init(aDestDatabase.getHandle(),
                                          apDestDatabaseName,
                                          aSrcDatabase.getHandle(),
-                                         apSrcDatabaseName);
+                                         apSrcDatabaseName));
     if (nullptr == mpSQLiteBackup)
     {
         // If an error occurs, the error code and message are attached to the destination database connection.
@@ -48,19 +48,10 @@ Backup::Backup(Database &aDestDatabase, Database &aSrcDatabase) :
 {
 }
 
-// Release resource for SQLite database backup
-Backup::~Backup()
-{
-    if (mpSQLiteBackup)
-    {
-        sqlite3_backup_finish(mpSQLiteBackup);
-    }
-}
-
 // Execute backup step with a given number of source pages to be copied
 int Backup::executeStep(const int aNumPage /* = -1 */)
 {
-    const int res = sqlite3_backup_step(mpSQLiteBackup, aNumPage);
+    const int res = sqlite3_backup_step(mpSQLiteBackup.get(), aNumPage);
     if (SQLITE_OK != res && SQLITE_DONE != res && SQLITE_BUSY != res && SQLITE_LOCKED != res)
     {
         throw SQLite::Exception(sqlite3_errstr(res), res);
@@ -71,13 +62,22 @@ int Backup::executeStep(const int aNumPage /* = -1 */)
 // Get the number of remaining source pages to be copied in this backup process
 int Backup::getRemainingPageCount() const
 {
-    return sqlite3_backup_remaining(mpSQLiteBackup);
+    return sqlite3_backup_remaining(mpSQLiteBackup.get());
 }
 
 // Get the number of total source pages to be copied in this backup process
 int Backup::getTotalPageCount() const
 {
-    return sqlite3_backup_pagecount(mpSQLiteBackup);
+    return sqlite3_backup_pagecount(mpSQLiteBackup.get());
+}
+
+// Release resource for SQLite database backup
+void SQLite::Backup::Deleter::operator()(sqlite3_backup* apBackup)
+{
+    if (apBackup)
+    {
+        sqlite3_backup_finish(apBackup);
+    }
 }
 
 

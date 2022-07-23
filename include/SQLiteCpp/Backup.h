@@ -96,9 +96,6 @@ public:
     Backup(const Backup&) = delete;
     Backup& operator=(const Backup&) = delete;
 
-    /// Release the SQLite Backup resource.
-    ~Backup();
-
     /**
      * @brief Execute a step of backup with a given number of source pages to be copied
      *
@@ -121,7 +118,13 @@ public:
     int getTotalPageCount() const;
 
 private:
-    sqlite3_backup* mpSQLiteBackup = nullptr;   ///< Pointer to SQLite Database Backup Handle
+    // Deleter functor to use with smart pointers to close the SQLite database backup in an RAII fashion.
+    struct Deleter
+    {
+        void operator()(sqlite3_backup* apBackup);
+    };
+
+    std::unique_ptr<sqlite3_backup, Deleter> mpSQLiteBackup{};   ///< Pointer to SQLite Database Backup Handle
 };
 
 }  // namespace SQLite

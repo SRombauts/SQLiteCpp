@@ -21,8 +21,7 @@ namespace SQLite
 
 // Begins the SQLite transaction
 Transaction::Transaction(Database& aDatabase, TransactionBehavior behavior) :
-    mDatabase(aDatabase),
-    mbCommited(false)
+    mDatabase(aDatabase)
 {
     const char *stmt;
     switch (behavior) {
@@ -43,8 +42,7 @@ Transaction::Transaction(Database& aDatabase, TransactionBehavior behavior) :
 
 // Begins the SQLite transaction
 Transaction::Transaction(Database &aDatabase) :
-    mDatabase(aDatabase),
-    mbCommited(false)
+    mDatabase(aDatabase)
 {
     mDatabase.exec("BEGIN");
 }

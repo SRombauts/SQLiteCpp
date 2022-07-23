@@ -87,8 +87,8 @@ public:
     void commit();
 
 private:
-    Database&   mDatabase;  ///< Reference to the SQLite Database Connection
-    bool        mbCommited; ///< True when commit has been called
+    Database&   mDatabase;              ///< Reference to the SQLite Database Connection
+    bool        mbCommited{ false };    ///< True when commit has been called
 };
 
 

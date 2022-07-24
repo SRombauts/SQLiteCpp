@@ -56,10 +56,6 @@ public:
      */
     explicit Column(const Statement::TStatementPtr& aStmtPtr, int aIndex);
 
-    // default destructor: the finalization will be done by the destructor of the last shared pointer
-    // default copy constructor and assignment operator are perfectly suited :
-    // they copy the Statement::Ptr which in turn increments the reference counter.
-
     /**
      * @brief Return a pointer to the named assigned to this result column (potentially aliased)
      *

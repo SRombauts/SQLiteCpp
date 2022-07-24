@@ -90,6 +90,6 @@ class Savepoint {
    private:
     Database& mDatabase;        ///< Reference to the SQLite Database Connection
     std::string msName;         ///< Name of the Savepoint
-    bool mbReleased{ false };   ///< True when release has been called
+    bool mbReleased = false;    ///< True when release has been called
 };
 }  // namespace SQLite

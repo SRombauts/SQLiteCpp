@@ -167,7 +167,7 @@ TEST(Statement, executeStep)
     const int64_t       id      = query.getColumn(0);
     const std::string   msg     = query.getColumn(1);
     const int           integer = query.getColumn(2);
-    const long          integer2= query.getColumn(2);
+    const int64_t       integer2= query.getColumn(2);
     const double        real    = query.getColumn(3);
     EXPECT_EQ(1,        id);
     EXPECT_EQ("first",  msg);
@@ -220,7 +220,7 @@ TEST(Statement, tryExecuteStep)
     const int64_t       id      = query.getColumn(0);
     const std::string   msg     = query.getColumn(1);
     const int           integer = query.getColumn(2);
-    const long          integer2= query.getColumn(2);
+    const int64_t       integer2= query.getColumn(2);
     const double        real    = query.getColumn(3);
     EXPECT_EQ(1,        id);
     EXPECT_EQ("first",  msg);
@@ -327,7 +327,7 @@ TEST(Statement, bindings)
     // Fourth row with string/int64/float
     {
         const std::string   fourth("fourth");
-        const long long     int64 = 12345678900000LL;
+        const int64_t       int64 = 12345678900000LL;
         const float         float32 = 0.234f;
         insert.bind(1, fourth);
         insert.bind(2, int64);
@@ -370,10 +370,10 @@ TEST(Statement, bindings)
     // reset() without clearbindings()
     insert.reset();
 
-    // Sixth row with uint32_t unsigned value and a long value (which is either a 32b int or a 64b long long)
+    // Sixth row with uint32_t unsigned value and a long value (which is either a 32b int or a 64b int64_t)
     {
         const uint32_t  uint32 = 4294967295U;
-        const long      integer = -123;
+        const int64_t   integer = -123;
         insert.bind(2, uint32);
         insert.bind(3, integer);
         EXPECT_EQ(1, insert.exec());
@@ -455,11 +455,11 @@ TEST(Statement, bindByName)
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a new table
-    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL, long INTEGER)"));
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, long INTEGER, double REAL)"));
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Insertion with bindable parameters
-    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, @msg, @int, @double, @long)");
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, @msg, @int, @long, @double)");
 
     // First row with text/int/double
     insert.bind("@msg",      "first");
@@ -481,8 +481,8 @@ TEST(Statement, bindByName)
     EXPECT_EQ   (1,         query.getColumn(0).getInt64());
     EXPECT_STREQ("first",   query.getColumn(1).getText());
     EXPECT_EQ   (123,       query.getColumn(2).getInt());
-    EXPECT_EQ   (0.123,     query.getColumn(3).getDouble());
-    EXPECT_EQ   (-123,      query.getColumn(4).getInt());
+    EXPECT_EQ   (-123,      query.getColumn(3).getInt());
+    EXPECT_EQ   (0.123,     query.getColumn(4).getDouble());
 
     // reset() with clearbindings() and new bindings
     insert.reset();
@@ -491,13 +491,13 @@ TEST(Statement, bindByName)
     // Second row with string/int64/float
     {
         const std::string   second("second");
-        const long long     int64 = 12345678900000LL;
-        const long          integer = -123;
+        const int32_t       int32 = -123;
+        const int64_t       int64 = 12345678900000LL;
         const float         float32 = 0.234f;
         insert.bind("@msg",      second);
-        insert.bind("@int",      int64);
+        insert.bind("@int",      int32);
+        insert.bind("@long",     int64);
         insert.bind("@double",   float32);
-        insert.bind("@long",     integer);
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
@@ -507,9 +507,9 @@ TEST(Statement, bindByName)
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(2,                query.getColumn(0).getInt64());
         EXPECT_EQ(second,           query.getColumn(1).getText());
-        EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
-        EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
-        EXPECT_EQ(-123,             query.getColumn(4).getInt());
+        EXPECT_EQ(-123,             query.getColumn(2).getInt());
+        EXPECT_EQ(12345678900000LL, query.getColumn(3).getInt64());
+        EXPECT_EQ(0.234f,           query.getColumn(4).getDouble());
     }
 
     // reset() without clearbindings()
@@ -530,7 +530,7 @@ TEST(Statement, bindByName)
         EXPECT_STREQ(buffer,        query.getColumn(1).getText());
         EXPECT_TRUE (query.isColumnNull(2));
         EXPECT_EQ(0,                query.getColumn(2).getInt());
-        EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+        EXPECT_EQ(0.234f,           query.getColumn(4).getDouble());
     }
 
     // reset() without clearbindings()
@@ -551,7 +551,7 @@ TEST(Statement, bindByName)
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(4, query.getColumn(0).getInt64());
         EXPECT_EQ(4294967295U, query.getColumn(2).getUInt());
-        EXPECT_EQ(12345678900000LL, query.getColumn(4).getInt64());
+        EXPECT_EQ(12345678900000LL, query.getColumn(3).getInt64());
     }
 }
 
@@ -604,8 +604,8 @@ TEST(Statement, bindByNameString)
     // Second row with string/int64/float
     {
         const std::string   second("second");
-        const long long     int64 = 12345678900000LL;
-        const long          integer = -123;
+        const int64_t       int64 = 12345678900000LL;
+        const int64_t       integer = -123;
         const float         float32 = 0.234f;
         insert.bind(amsg, second);
         insert.bind(aint, int64);
@@ -1007,21 +1007,6 @@ TEST(Statement, getColumns)
     EXPECT_EQ("first", testStruct2.msg);
     EXPECT_EQ(-1, testStruct2.integer);
     EXPECT_EQ(0.0, testStruct2.real);
-}
-#endif
-
-#if (LONG_MAX > INT_MAX) // sizeof(long)==8 means the data model of the system is LP64 (64bits Linux)
-TEST(Statement, bind64bitsLong)
-{
-    // Create a new database
-    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
-    EXPECT_EQ(SQLite::OK, db.getErrorCode());
-    EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
-
-    SQLite::Statement query(db, "SELECT ?");
-    query.bind(1, 4294967297L);
-    query.executeStep();
-    EXPECT_EQ(4294967297L, query.getColumn(0).getInt64());
 }
 #endif
 

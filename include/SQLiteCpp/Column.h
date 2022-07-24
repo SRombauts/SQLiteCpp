@@ -15,7 +15,6 @@
 
 #include <string>
 #include <memory>
-#include <climits> // For INT_MAX
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3_stmt;
@@ -79,11 +78,11 @@ public:
 #endif
 
     /// Return the integer value of the column.
-    int         getInt() const noexcept;
+    int32_t     getInt() const noexcept;
     /// Return the 32bits unsigned integer value of the column (note that SQLite3 does not support unsigned 64bits).
-    unsigned    getUInt() const noexcept;
+    uint32_t    getUInt() const noexcept;
     /// Return the 64bits integer value of the column (note that SQLite3 does not support unsigned 64bits).
-    long long   getInt64() const noexcept;
+    int64_t     getInt64() const noexcept;
     /// Return the double (64bits float) value of the column
     double      getDouble() const noexcept;
     /**
@@ -160,62 +159,39 @@ public:
         return getBytes ();
     }
 
-    /// Inline cast operator to char
+    /// Inline cast operators to basic types
     operator char() const
     {
         return static_cast<char>(getInt());
     }
-    /// Inline cast operator to unsigned char
-    operator unsigned char() const
+    operator int8_t() const
     {
-        return static_cast<unsigned char>(getInt());
+        return static_cast<int8_t>(getInt());
     }
-    /// Inline cast operator to short
-    operator short() const
+    operator uint8_t() const
     {
-        return static_cast<short>(getInt());
+        return static_cast<uint8_t>(getInt());
     }
-    /// Inline cast operator to unsigned short
-    operator unsigned short() const
+    operator int16_t() const
     {
-        return static_cast<unsigned short>(getInt());
+        return static_cast<int16_t>(getInt());
     }
-
-    /// Inline cast operator to int
-    operator int() const
+    operator uint16_t() const
     {
-        return getInt();
+        return static_cast<uint16_t>(getInt());
     }
-    /// Inline cast operator to 32bits unsigned integer
-    operator unsigned int() const
-    {
-        return getUInt();
-    }
-#if (LONG_MAX == INT_MAX) // 4 bytes "long" type means the data model is ILP32 or LLP64 (Win64 Visual C++ and MinGW)
-    /// Inline cast operator to 32bits long
-    operator long() const
+    operator int32_t() const
     {
         return getInt();
     }
-    /// Inline cast operator to 32bits unsigned long
-    operator unsigned long() const
+    operator uint32_t() const
     {
         return getUInt();
     }
-#else // 8 bytes "long" type means the data model is LP64 (Most Unix-like, Windows when using Cygwin; z/OS)
-    /// Inline cast operator to 64bits long when the data model of the system is LP64 (Linux 64 bits...)
-    operator long() const
+    operator int64_t() const
     {
         return getInt64();
     }
-#endif
-
-    /// Inline cast operator to 64bits integer
-    operator long long() const
-    {
-        return getInt64();
-    }
-    /// Inline cast operator to double
     operator double() const
     {
         return getDouble();

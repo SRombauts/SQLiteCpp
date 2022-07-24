@@ -429,7 +429,7 @@ public:
      *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.
      */
-    long long getLastInsertRowid() const noexcept;
+    int64_t getLastInsertRowid() const noexcept;
 
     /// Get number of rows modified by last INSERT, UPDATE or DELETE statement (not DROP table).
     int getChanges() const noexcept;

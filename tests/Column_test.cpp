@@ -13,8 +13,6 @@
 #include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Column.h>
 
-#include <sqlite3.h> // for sqlite3_int64
-
 #include <gtest/gtest.h>
 
 #include <cstdio>
@@ -59,12 +57,13 @@ TEST(Column, basis)
 
     // validates every variant of cast operators, and conversions of types
     {
-        const sqlite3_int64 id1     = query.getColumn(0); // operator long long()
-        const int64_t       id2     = query.getColumn(0); // operator long long()
-        const long long     id3     = query.getColumn(0); // operator long long()
-        const long          id4     = query.getColumn(0); // operator long long() or long() depending on compiler/architecture
-        const char          id5     = query.getColumn(0); // operator char()
-        const short         id6     = query.getColumn(0); // operator short()
+        const int64_t       id1     = query.getColumn(0); // operator int64_t()
+        const int32_t       id2     = query.getColumn(0); // operator int32_t()
+        const int           id3     = query.getColumn(0); // operator int32_t()
+        const int16_t       id4     = query.getColumn(0); // operator int32_t()
+        const short         id5     = query.getColumn(0); // operator int32_t()
+        const int8_t        id6     = query.getColumn(0); // operator int32_t()
+        const char          id7     = query.getColumn(0); // operator int32_t()
         const unsigned int  uint1   = query.getColumn(0); // operator unsigned int()
         const uint32_t      uint2   = query.getColumn(0); // operator unsigned int()
         const unsigned char uint3   = query.getColumn(0); // operator unsigned char()
@@ -83,9 +82,6 @@ TEST(Column, basis)
         EXPECT_EQ(1,            id1);
         EXPECT_EQ(1,            id2);
         EXPECT_EQ(1,            id3);
-        EXPECT_EQ(1,            id4);
-        EXPECT_EQ(1,            id5);
-        EXPECT_EQ(1,            id6);
         EXPECT_EQ(1U,           uint1);
         EXPECT_EQ(1U,           uint2);
         EXPECT_EQ(1U,           uint3);

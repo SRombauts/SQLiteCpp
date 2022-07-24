@@ -22,10 +22,10 @@
             #define SQLITECPP_HAVE_STD_FILESYSTEM
         #endif
     #elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
-      // macOS clang won't let us touch std::filesystem if we're targetting earlier than 10.15
+        // macOS clang won't let us touch std::filesystem if we're targetting earlier than 10.15
     #elif defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && defined(__IPHONE_13_0) && \
 __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_13_0
-      // build for iOS clang won't let us touch std::filesystem if we're targetting earlier than iOS 13
+        // build for iOS clang won't let us touch std::filesystem if we're targetting earlier than iOS 13
     #else
         #define SQLITECPP_HAVE_STD_FILESYSTEM
     #endif

@@ -1,7 +1,7 @@
 /**
  * @file    RowExecutor.cpp
  * @ingroup SQLiteCpp
- * @brief   TODO:
+ * @brief   Step executor for SQLite prepared Statement Object
  *
  * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
  * Copyright (c) 2015-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
@@ -24,6 +24,10 @@ namespace SQLite
     {
         prepareStatement(aQuery);
         createColumnInfo();
+
+        mpRowExecutor.swap(TRowPtr(this, [](const RowExecutor* const) {
+            //empty destructor to make shared_ptr without ownership
+            }));
     }
 
     void SQLite::RowExecutor::prepareStatement(const std::string& aQuery)
@@ -163,12 +167,6 @@ namespace SQLite
     const char* RowExecutor::getErrorMsg() const noexcept
     {
         return sqlite3_errmsg(mpSQLite);
-    }
-
-    // Return std::shared_ptr with SQLite statement object
-    RowExecutor::TStatementPtr RowExecutor::getStatement() const noexcept
-    {
-        return mpStatement;
     }
 
     // Return prepered SQLite statement object or throw

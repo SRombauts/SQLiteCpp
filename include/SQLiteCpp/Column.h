@@ -54,11 +54,7 @@ public:
      * @param[in] aStmtPtr  Shared pointer to the prepared SQLite Statement Object.
      * @param[in] aIndex    Index of the column in the row of result, starting at 0
      */
-    explicit Column(const Statement::TStatementPtr& aStmtPtr, int aIndex);
-
-    // default destructor: the finalization will be done by the destructor of the last shared pointer
-    // default copy constructor and assignment operator are perfectly suited :
-    // they copy the Statement::Ptr which in turn increments the reference counter.
+    explicit Column(const RowExecutor::TStatementPtr& aStmtPtr, int aIndex);
 
     /**
      * @brief Return a pointer to the named assigned to this result column (potentially aliased)
@@ -252,7 +248,7 @@ public:
     }
 
 private:
-    Statement::TStatementPtr    mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
+    RowExecutor::TStatementPtr  mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
     int                         mIndex;    ///< Index of the column in the row of result, starting at 0
 };
 
@@ -283,9 +279,10 @@ T Statement::getColumns()
 template<typename T, const int... Is>
 T Statement::getColumns(const std::integer_sequence<int, Is...>)
 {
-    return T{Column(getStatement(), Is)...};
+    return T{ Column(getStatement(), Is)... };
 }
 
 #endif
+
 
 }  // namespace SQLite

@@ -1,7 +1,7 @@
 /**
  * @file    Statement.cpp
  * @ingroup SQLiteCpp
- * @brief   A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
+ * @brief   A prepared SQLite Statement Object binder and Column getter.
  *
  * Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
@@ -22,8 +22,7 @@ namespace SQLite
 
 
 Statement::Statement(const Database& aDatabase, const std::string& aQuery) :
-    RowExecutor(aDatabase.getHandle(), aQuery),
-    mQuery(aQuery)
+    RowExecutor(aDatabase.getHandle(), aQuery), mQuery(aQuery)
 {}
 
 // Clears away all the bindings of a prepared statement (can be associated with #reset() above).
@@ -211,5 +210,47 @@ std::string Statement::getExpandedSQL() const {
     sqlite3_free(expanded);
     return expandedString;
 }
+
+Statement::RowIterator Statement::begin()
+{
+    reset();
+    tryExecuteStep();
+    return Statement::RowIterator(getStatement(), getExecutorWeakPtr(), 0);
+}
+
+Statement::RowIterator SQLite::Statement::end()
+{
+    return Statement::RowIterator();
+}
+
+void SQLite::Statement::RowIterator::advance() noexcept
+{
+    if (mpRow.expired())
+        return;
+
+    auto statement = mpRow.lock();
+    statement->tryExecuteStep();
+
+    if (statement->isDone())
+    {
+        mpRow.reset();
+        return;
+    }
+}
+
+bool SQLite::Statement::RowIterator::operator==(const RowIterator& aIt) const
+{
+    auto left = mpRow.lock();
+    auto right = aIt.mpRow.lock();
+
+    if (!left && !right)
+        return true;
+
+    if (left != right)
+        return false;
+    
+    return mID == aIt.mID;
+}
+
 
 }  // namespace SQLite

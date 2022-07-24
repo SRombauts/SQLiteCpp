@@ -1,7 +1,7 @@
 /**
  * @file    RowExecutor.h
  * @ingroup SQLiteCpp
- * @brief   TODO:
+ * @brief   Step executor for SQLite prepared Statement Object
  *
  * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
  * Copyright (c) 2015-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
@@ -44,6 +44,11 @@ public:
     
     /// Type to store columns names and indexes
     using TColumnsMap = std::map<std::string, int, std::less<>>;
+
+    RowExecutor(const RowExecutor&) = delete;
+    RowExecutor(RowExecutor&&) = default;
+    RowExecutor& operator=(const RowExecutor&) = delete;
+    RowExecutor& operator=(RowExecutor&&) = default;
 
     /// Reset the statement to make it ready for a new execution. Throws an exception on error.
     void reset();
@@ -130,17 +135,17 @@ public:
     int getChanges() const noexcept;
 
     /// Return the number of columns in the result set returned by the prepared statement
-    int getColumnCount() const
+    int getColumnCount() const noexcept
     {
         return mColumnCount;
     }
     /// true when a row has been fetched with executeStep()
-    bool hasRow() const
+    bool hasRow() const noexcept
     {
         return mbHasRow;
     }
     /// true when the last executeStep() had no more row to fetch
-    bool isDone() const
+    bool isDone() const noexcept
     {
         return mbDone;
     }
@@ -167,7 +172,10 @@ protected:
      *
      * @return raw pointer to Statement Object
      */
-    TStatementPtr getStatement() const noexcept;
+    TStatementPtr getStatement() const noexcept
+    {
+        return mpStatement;
+    }
     
     /**
      * @brief Return a prepared SQLite Statement Object.
@@ -176,6 +184,19 @@ protected:
      * @return raw pointer to Prepared Statement Object
      */
     sqlite3_stmt* getPreparedStatement() const;
+    
+    /**
+     * @brief Return a prepared SQLite Statement Object.
+     *
+     * Throw an exception if the statement object was not prepared.
+     * @return raw pointer to Prepared Statement Object
+     */
+    TRowWeakPtr getExecutorWeakPtr() const
+    {
+        return mpRowExecutor;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * @brief Check if a return code equals SQLITE_OK, else throw a SQLite::Exception with the SQLite error message
@@ -222,9 +243,13 @@ private:
     sqlite3* mpSQLite{}; //!< Pointer to SQLite Database Connection Handle
     TStatementPtr mpStatement{}; //!< Shared Pointer to the prepared SQLite Statement Object
 
-    int mColumnCount{ 0 }; //!< Number of columns in the result of the prepared statement
-    bool mbHasRow{ false }; //!< true when a row has been fetched with executeStep()
-    bool mbDone{ false }; //!< true when the last executeStep() had no more row to fetch
+    /// Shared Pointer to this object.
+    /// Allows RowIterator to execute next step
+    TRowPtr mpRowExecutor{};
+
+    int mColumnCount = 0; //!< Number of columns in the result of the prepared statement
+    bool mbHasRow = false; //!< true when a row has been fetched with executeStep()
+    bool mbDone = false; //!< true when the last executeStep() had no more row to fetch
 
     /// Map of columns index by name (mutable so getColumnIndex can be const)
     mutable TColumnsMap mColumnNames{};

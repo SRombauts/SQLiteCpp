@@ -204,4 +204,7 @@ Version 3.x - 2022
 - #335 from jagerman/older-macos-avoid-std-filesystem
 - #337 Add catkin configuration from ardabbour/master
 - #339 Allow specifying transaction behaviors DEFERRED, IMMEDIATE, and EXCLUSIVE from jjenkins278/transaction_behavior
-
+- #340 add HTML keywords and properly link up the links in docs/README.md from phoebe-leong/patch-1
+- #341 Install the package.xml file from ardabbour/patch-1
+- #352 add basic meson support from ninjaoflight/meson-support
+- #349 Refactoring of Statement and Column classes from Kacperos155/refactoring-Statement&Column

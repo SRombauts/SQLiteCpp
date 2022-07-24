@@ -188,7 +188,7 @@ Version 3.1.1 - August 19 2020
 - #293 Remove FindSQLiteCpp.cmake from sum01
 
 Version 3.x - 2022
-- #300 #316 Updated SQLite3 from 3.32.3 to 3.37.2 (2022-01-06)
+- #300 #316 #362 Updated SQLite3 from 3.32.3 to 3.39.2 (2022-07-21)
 - #236 Disable explicit setting of MSVC runtime from BioDataAnalysis/emmenlau
 - #308 Fix build warning due to string truncation from stauffer-garmin
 - #311 Add Database::tryExec() from kcowolf
@@ -200,7 +200,7 @@ Version 3.x - 2022
 - #305 Add other constants that work with sqlite3_open_v2 from LuAPi/more-flags
 - #333 Added Database and Statement method getChanges() from SRombauts/get-changes
 - #334 fix link for HAS_CODEC from linux-fan-dave/master
-- #338 fix load extension from paulo-coutinho/fix-load-extension
+- #338 fix load extension from paulo-coutinho/fix-load-extension- 
 - #335 from jagerman/older-macos-avoid-std-filesystem
 - #337 Add catkin configuration from ardabbour/master
 - #339 Allow specifying transaction behaviors DEFERRED, IMMEDIATE, and EXCLUSIVE from jjenkins278/transaction_behavior

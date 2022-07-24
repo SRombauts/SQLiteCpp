@@ -20,42 +20,11 @@
 namespace SQLite
 {
 
-Statement::Statement(const Database& aDatabase, const char* apQuery) :
-    mQuery(apQuery),
-    mpSQLite(aDatabase.getHandle()),
-    mpPreparedStatement(prepareStatement()) // prepare the SQL query (needs Database friendship)
-{
-    mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
-}
 
-Statement::Statement(Statement&& aStatement) noexcept :
-    mQuery(std::move(aStatement.mQuery)),
-    mpSQLite(aStatement.mpSQLite),
-    mpPreparedStatement(std::move(aStatement.mpPreparedStatement)),
-    mColumnCount(aStatement.mColumnCount),
-    mbHasRow(aStatement.mbHasRow),
-    mbDone(aStatement.mbDone),
-    mColumnNames(std::move(aStatement.mColumnNames))
-{
-    aStatement.mpSQLite = nullptr;
-    aStatement.mColumnCount = 0;
-    aStatement.mbHasRow = false;
-    aStatement.mbDone = false;
-}
-
-// Reset the statement to make it ready for a new execution (see also #clearBindings() bellow)
-void Statement::reset()
-{
-    const int ret = tryReset();
-    check(ret);
-}
-
-int Statement::tryReset() noexcept
-{
-    mbHasRow = false;
-    mbDone = false;
-    return sqlite3_reset(mpPreparedStatement.get());
-}
+Statement::Statement(const Database& aDatabase, const std::string& aQuery) :
+    RowExecutor(aDatabase.getHandle(), aQuery),
+    mQuery(aQuery)
+{}
 
 // Clears away all the bindings of a prepared statement (can be associated with #reset() above).
 void Statement::clearBindings()
@@ -64,6 +33,7 @@ void Statement::clearBindings()
     check(ret);
 }
 
+// Get bind parameter index
 int Statement::getIndex(const char * const apName) const
 {
     return sqlite3_bind_parameter_index(getPreparedStatement(), apName);
@@ -148,71 +118,6 @@ void Statement::bind(const int aIndex)
     check(ret);
 }
 
-
-// Execute a step of the query to fetch one row of results
-bool Statement::executeStep()
-{
-    const int ret = tryExecuteStep();
-    if ((SQLITE_ROW != ret) && (SQLITE_DONE != ret)) // on row or no (more) row ready, else it's a problem
-    {
-        if (ret == sqlite3_errcode(mpSQLite))
-        {
-            throw SQLite::Exception(mpSQLite, ret);
-        }
-        else
-        {
-            throw SQLite::Exception("Statement needs to be reseted", ret);
-        }
-    }
-
-    return mbHasRow; // true only if one row is accessible by getColumn(N)
-}
-
-// Execute a one-step query with no expected result, and return the number of changes.
-int Statement::exec()
-{
-    const int ret = tryExecuteStep();
-    if (SQLITE_DONE != ret) // the statement has finished executing successfully
-    {
-        if (SQLITE_ROW == ret)
-        {
-            throw SQLite::Exception("exec() does not expect results. Use executeStep.");
-        }
-        else if (ret == sqlite3_errcode(mpSQLite))
-        {
-            throw SQLite::Exception(mpSQLite, ret);
-        }
-        else
-        {
-            throw SQLite::Exception("Statement needs to be reseted", ret);
-        }
-    }
-
-    // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
-    return sqlite3_changes(mpSQLite);
-}
-
-int Statement::tryExecuteStep() noexcept
-{
-    if (mbDone)
-    {
-        return SQLITE_MISUSE; // Statement needs to be reseted !
-    }
-
-    const int ret = sqlite3_step(mpPreparedStatement.get());
-    if (SQLITE_ROW == ret) // one row is ready : call getColumn(N) to access it
-    {
-        mbHasRow = true;
-    }
-    else
-    {
-        mbHasRow = false;
-        mbDone = SQLITE_DONE == ret; // check if the query has finished executing
-    }
-    return ret;
-}
-
-
 // Return a copy of the column data specified by its index starting at 0
 // (use the Column copy-constructor)
 Column Statement::getColumn(const int aIndex) const
@@ -221,7 +126,7 @@ Column Statement::getColumn(const int aIndex) const
     checkIndex(aIndex);
 
     // Share the Statement Object handle with the new Column created
-    return Column(mpPreparedStatement, aIndex);
+    return Column(getStatement(), aIndex);
 }
 
 // Return a copy of the column data specified by its column name starting at 0
@@ -232,7 +137,7 @@ Column Statement::getColumn(const char* apName) const
     const int index = getColumnIndex(apName);
 
     // Share the Statement Object handle with the new Column created
-    return Column(mpPreparedStatement, index);
+    return Column(getStatement(), index);
 }
 
 // Test if the column is NULL
@@ -269,18 +174,10 @@ const char* Statement::getColumnOriginName(const int aIndex) const
 // Return the index of the specified (potentially aliased) column name
 int Statement::getColumnIndex(const char* apName) const
 {
-    // Build the map of column index by name on first call
-    if (mColumnNames.empty())
-    {
-        for (int i = 0; i < mColumnCount; ++i)
-        {
-            const char* pName = sqlite3_column_name(getPreparedStatement(), i);
-            mColumnNames[pName] = i;
-        }
-    }
+    auto& columns = getColumnsNames();
 
-    const auto iIndex = mColumnNames.find(apName);
-    if (iIndex == mColumnNames.end())
+    const auto iIndex = columns.find(apName);
+    if (iIndex == columns.end())
     {
         throw SQLite::Exception("Unknown column name.");
     }
@@ -302,33 +199,9 @@ const char * Statement::getColumnDeclaredType(const int aIndex) const
     }
 }
 
-// Get number of rows modified by last INSERT, UPDATE or DELETE statement (not DROP table).
-int Statement::getChanges() const noexcept
-{
-    return sqlite3_changes(mpSQLite);
-}
-
 int Statement::getBindParameterCount() const noexcept
 {
-    return sqlite3_bind_parameter_count(mpPreparedStatement.get());
-}
-
-// Return the numeric result code for the most recent failed API call (if any).
-int Statement::getErrorCode() const noexcept
-{
-    return sqlite3_errcode(mpSQLite);
-}
-
-// Return the extended numeric result code for the most recent failed API call (if any).
-int Statement::getExtendedErrorCode() const noexcept
-{
-    return sqlite3_extended_errcode(mpSQLite);
-}
-
-// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-const char* Statement::getErrorMsg() const noexcept
-{
-    return sqlite3_errmsg(mpSQLite);
+    return sqlite3_bind_parameter_count(getStatement().get());
 }
 
 // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
@@ -337,32 +210,6 @@ std::string Statement::getExpandedSQL() const {
     std::string expandedString(expanded);
     sqlite3_free(expanded);
     return expandedString;
-}
-
-// Prepare SQLite statement object and return shared pointer to this object
-Statement::TStatementPtr Statement::prepareStatement()
-{
-    sqlite3_stmt* statement;
-    const int ret = sqlite3_prepare_v2(mpSQLite, mQuery.c_str(), static_cast<int>(mQuery.size()), &statement, nullptr);
-    if (SQLITE_OK != ret)
-    {
-        throw SQLite::Exception(mpSQLite, ret);
-    }
-    return Statement::TStatementPtr(statement, [](sqlite3_stmt* stmt)
-        {
-            sqlite3_finalize(stmt);
-        });
-}
-
-// Return prepered statement object or throw
-sqlite3_stmt* Statement::getPreparedStatement() const
-{
-    sqlite3_stmt* ret = mpPreparedStatement.get();
-    if (ret)
-    {
-        return ret;
-    }
-    throw SQLite::Exception("Statement was not prepared.");
 }
 
 }  // namespace SQLite

@@ -105,6 +105,7 @@ set(SQLITECPP_SRC
  ${PROJECT_SOURCE_DIR}/src/Column.cpp
  ${PROJECT_SOURCE_DIR}/src/Database.cpp
  ${PROJECT_SOURCE_DIR}/src/Exception.cpp
+ ${PROJECT_SOURCE_DIR}/src/RowExecutor.cpp
  ${PROJECT_SOURCE_DIR}/src/Savepoint.cpp
  ${PROJECT_SOURCE_DIR}/src/Statement.cpp
  ${PROJECT_SOURCE_DIR}/src/Transaction.cpp
@@ -119,6 +120,7 @@ set(SQLITECPP_INC
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Column.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Database.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Exception.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/RowExecutor.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Savepoint.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Statement.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Transaction.h

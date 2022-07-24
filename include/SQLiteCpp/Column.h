@@ -283,7 +283,7 @@ T Statement::getColumns()
 template<typename T, const int... Is>
 T Statement::getColumns(const std::integer_sequence<int, Is...>)
 {
-    return T{Column(mpPreparedStatement, Is)...};
+    return T{Column(getStatement(), Is)...};
 }
 
 #endif

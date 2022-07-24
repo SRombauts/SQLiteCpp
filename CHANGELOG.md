@@ -200,7 +200,7 @@ Version 3.x - 2022
 - #305 Add other constants that work with sqlite3_open_v2 from LuAPi/more-flags
 - #333 Added Database and Statement method getChanges() from SRombauts/get-changes
 - #334 fix link for HAS_CODEC from linux-fan-dave/master
-- #338 fix load extension from paulo-coutinho/fix-load-extension- 
+- #338 fix load extension from paulo-coutinho/fix-load-extension
 - #335 from jagerman/older-macos-avoid-std-filesystem
 - #337 Add catkin configuration from ardabbour/master
 - #339 Allow specifying transaction behaviors DEFERRED, IMMEDIATE, and EXCLUSIVE from jjenkins278/transaction_behavior
@@ -208,3 +208,7 @@ Version 3.x - 2022
 - #341 Install the package.xml file from ardabbour/patch-1
 - #352 add basic meson support from ninjaoflight/meson-support
 - #349 Refactoring of Statement and Column classes from Kacperos155/refactoring-Statement&Column
+- #359 Fix compilation issues earlier than iOS 13
+- #354 Windows improved support (meson) from ninjaoflight/windows-migration
+- #361 Fix Statement unit test using long from SRombauts/fix-statement-unit-tests-long-long-type
+- #346 Add compatible definition for std::experimental::filesystem from guoh27/master

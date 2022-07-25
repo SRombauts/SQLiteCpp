@@ -22,7 +22,7 @@ namespace SQLite
 
 
 Statement::Statement(const Database& aDatabase, const std::string& aQuery) :
-    RowExecutor(aDatabase.getHandle(), aQuery), mQuery(aQuery)
+    StatementExecutor(aDatabase.getHandle(), aQuery), mQuery(aQuery)
 {}
 
 // Clears away all the bindings of a prepared statement (can be associated with #reset() above).

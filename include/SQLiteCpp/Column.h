@@ -55,7 +55,7 @@ public:
      * 
      * @throws Exception is thrown in case of error, then the Column object is NOT constructed.
      */
-    explicit Column(const RowExecutor::TStatementPtr& aStmtPtr, int aIndex);
+    explicit Column(const StatementExecutor::TStatementPtr& aStmtPtr, int aIndex);
 
     /**
      * @brief Return a pointer to the named assigned to this result column (potentially aliased)
@@ -226,7 +226,7 @@ public:
     }
 
 private:
-    RowExecutor::TStatementPtr  mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
+    StatementExecutor::TStatementPtr  mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
     int                         mIndex;    ///< Index of the column in the row of result, starting at 0
 };
 

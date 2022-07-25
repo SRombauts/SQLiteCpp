@@ -26,7 +26,7 @@ const int Null      = SQLITE_NULL;
 
 
 // Encapsulation of a Column in a row of the result pointed by the prepared Statement.
-Column::Column(const RowExecutor::TStatementPtr& aStmtPtr, int aIndex) :
+Column::Column(const StatementExecutor::TStatementPtr& aStmtPtr, int aIndex) :
     mStmtPtr(aStmtPtr),
     mIndex(aIndex)
 {

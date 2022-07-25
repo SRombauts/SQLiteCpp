@@ -10,7 +10,7 @@
  */
 #pragma once
 
-#include <SQLiteCpp/RowExecutor.h>
+#include <SQLiteCpp/StatementExecutor.h>
 #include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/Utils.h> // SQLITECPP_PURE_FUNC
 
@@ -46,7 +46,7 @@ class Column;
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Statement : public RowExecutor
+class Statement : public StatementExecutor
 {
 public:
     /**

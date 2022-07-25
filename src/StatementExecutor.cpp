@@ -1,5 +1,5 @@
 /**
- * @file    RowExecutor.cpp
+ * @file    StatementExecutor.cpp
  * @ingroup SQLiteCpp
  * @brief   Step executor for SQLite prepared Statement Object
  *
@@ -9,7 +9,7 @@
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
-#include <SQLiteCpp/RowExecutor.h>
+#include <SQLiteCpp/StatementExecutor.h>
 
 #include <SQLiteCpp/Exception.h>
 
@@ -19,18 +19,18 @@ namespace SQLite
 {
 
 
-    RowExecutor::RowExecutor(sqlite3* apSQLite, const std::string& aQuery)
+    StatementExecutor::StatementExecutor(sqlite3* apSQLite, const std::string& aQuery)
         : mpSQLite(apSQLite)
     {
         prepareStatement(aQuery);
         createColumnInfo();
 
-        mpRowExecutor.swap(TRowPtr(this, [](const RowExecutor* const) {
+        mpRowExecutor.swap(TRowPtr(this, [](const StatementExecutor* const) {
             // empty destructor to make shared_ptr without ownership
             }));
     }
 
-    void SQLite::RowExecutor::prepareStatement(const std::string& aQuery)
+    void SQLite::StatementExecutor::prepareStatement(const std::string& aQuery)
     {
         if (!mpSQLite)
             throw SQLite::Exception("Can't create statement without valid database connection");
@@ -49,7 +49,7 @@ namespace SQLite
             });
     }
 
-    void SQLite::RowExecutor::createColumnInfo()
+    void SQLite::StatementExecutor::createColumnInfo()
     {
         mColumnCount = sqlite3_column_count(mpStatement.get());
 
@@ -66,13 +66,13 @@ namespace SQLite
     }
 
     // Reset the statement to make it ready for a new execution (see also #clearBindings() bellow)
-    void RowExecutor::reset()
+    void StatementExecutor::reset()
     {
         const int ret = tryReset();
         check(ret);
     }
 
-    int RowExecutor::tryReset() noexcept
+    int StatementExecutor::tryReset() noexcept
     {
         mbHasRow = false;
         mbDone = false;
@@ -80,7 +80,7 @@ namespace SQLite
     }
 
     // Execute a step of the query to fetch one row of results
-    bool RowExecutor::executeStep()
+    bool StatementExecutor::executeStep()
     {
         const int ret = tryExecuteStep();
         if ((SQLITE_ROW != ret) && (SQLITE_DONE != ret)) // on row or no (more) row ready, else it's a problem
@@ -99,7 +99,7 @@ namespace SQLite
     }
 
     // Execute a one-step query with no expected result, and return the number of changes.
-    int RowExecutor::exec()
+    int StatementExecutor::exec()
     {
         const int ret = tryExecuteStep();
         if (SQLITE_DONE != ret) // the statement has finished executing successfully
@@ -122,7 +122,7 @@ namespace SQLite
         return sqlite3_changes(mpSQLite);
     }
 
-    int RowExecutor::tryExecuteStep() noexcept
+    int StatementExecutor::tryExecuteStep() noexcept
     {
         if (mbDone)
         {
@@ -143,31 +143,31 @@ namespace SQLite
     }
 
     // Get number of rows modified by last INSERT, UPDATE or DELETE statement (not DROP table).
-    int RowExecutor::getChanges() const noexcept
+    int StatementExecutor::getChanges() const noexcept
     {
         return sqlite3_changes(mpSQLite);
     }
 
     // Return the numeric result code for the most recent failed API call (if any).
-    int RowExecutor::getErrorCode() const noexcept
+    int StatementExecutor::getErrorCode() const noexcept
     {
         return sqlite3_errcode(mpSQLite);
     }
 
     // Return the extended numeric result code for the most recent failed API call (if any).
-    int RowExecutor::getExtendedErrorCode() const noexcept
+    int StatementExecutor::getExtendedErrorCode() const noexcept
     {
         return sqlite3_extended_errcode(mpSQLite);
     }
 
     // Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
-    const char* RowExecutor::getErrorMsg() const noexcept
+    const char* StatementExecutor::getErrorMsg() const noexcept
     {
         return sqlite3_errmsg(mpSQLite);
     }
 
     // Return prepered SQLite statement object or throw
-    sqlite3_stmt* RowExecutor::getPreparedStatement() const
+    sqlite3_stmt* StatementExecutor::getPreparedStatement() const
     {
         sqlite3_stmt* ret = mpStatement.get();
         if (ret)
@@ -177,19 +177,19 @@ namespace SQLite
         throw SQLite::Exception("Statement was not prepared.");
     }
 
-    RowExecutor::RowIterator RowExecutor::begin()
+    StatementExecutor::RowIterator StatementExecutor::begin()
     {
         reset();
         tryExecuteStep();
-        return RowExecutor::RowIterator(getStatement(), getExecutorWeakPtr(), 0);
+        return StatementExecutor::RowIterator(getStatement(), getExecutorWeakPtr(), 0);
     }
 
-    RowExecutor::RowIterator RowExecutor::end()
+    StatementExecutor::RowIterator StatementExecutor::end()
     {
-        return RowExecutor::RowIterator();
+        return StatementExecutor::RowIterator();
     }
 
-    void RowExecutor::RowIterator::advance() noexcept
+    void StatementExecutor::RowIterator::advance() noexcept
     {
         if (mpRow.expired())
             return;
@@ -204,7 +204,7 @@ namespace SQLite
         }
     }
 
-    bool RowExecutor::RowIterator::operator==(const RowIterator& aIt) const
+    bool StatementExecutor::RowIterator::operator==(const RowIterator& aIt) const
     {
         auto left = mpRow.lock();
         auto right = aIt.mpRow.lock();

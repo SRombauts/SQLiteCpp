@@ -106,9 +106,9 @@ set(SQLITECPP_SRC
  ${PROJECT_SOURCE_DIR}/src/Database.cpp
  ${PROJECT_SOURCE_DIR}/src/Exception.cpp
  ${PROJECT_SOURCE_DIR}/src/Row.cpp
- ${PROJECT_SOURCE_DIR}/src/RowExecutor.cpp
  ${PROJECT_SOURCE_DIR}/src/Savepoint.cpp
  ${PROJECT_SOURCE_DIR}/src/Statement.cpp
+ ${PROJECT_SOURCE_DIR}/src/StatementExecutor.cpp
  ${PROJECT_SOURCE_DIR}/src/Transaction.cpp
 )
 source_group(src FILES ${SQLITECPP_SRC})
@@ -122,9 +122,9 @@ set(SQLITECPP_INC
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Database.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Exception.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Row.h
- ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/RowExecutor.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Savepoint.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Statement.h
+ ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/StatementExecutor.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/Transaction.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/VariadicBind.h
  ${PROJECT_SOURCE_DIR}/include/SQLiteCpp/ExecuteMany.h

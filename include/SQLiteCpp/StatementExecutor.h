@@ -1,5 +1,5 @@
 /**
- * @file    RowExecutor.h
+ * @file    StatementExecutor.h
  * @ingroup SQLiteCpp
  * @brief   Step executor for SQLite prepared Statement Object
  *
@@ -33,7 +33,7 @@ extern const int OK; ///< SQLITE_OK
 * inherit this class to create your own Statement executor class.
 * Either way you should look at SQLite::Statement documentation
 * 
-* Thread-safety: a RowExecutor object shall not be shared by multiple threads, because :
+* Thread-safety: a StatementExecutor object shall not be shared by multiple threads, because :
 * 1) in the SQLite "Thread Safe" mode, "SQLite can be safely used by multiple threads
 *    provided that no single database connection is used simultaneously in two or more threads."
 * 2) the SQLite "Serialized" mode is not supported by SQLiteC++,
@@ -41,7 +41,7 @@ extern const int OK; ///< SQLITE_OK
 *    in a custom shared pointer (See the inner class "Statement::Ptr").
 *    TODO Test Serialized mode after all changes to pointers
 */
-class RowExecutor
+class StatementExecutor
 {
 public:
     /// Shared pointer to SQLite Prepared Statement Object
@@ -50,19 +50,19 @@ public:
     /// Weak pointer to SQLite Prepared Statement Object
     using TStatementWeakPtr = std::weak_ptr<sqlite3_stmt>;
 
-    /// Shared pointer to SQLite RowExecutor
-    using TRowPtr = std::shared_ptr<RowExecutor>;
+    /// Shared pointer to SQLite StatementExecutor
+    using TRowPtr = std::shared_ptr<StatementExecutor>;
 
-    /// Weak pointer to SQLite RowExecutor
-    using TRowWeakPtr = std::weak_ptr<RowExecutor>;
+    /// Weak pointer to SQLite StatementExecutor
+    using TRowWeakPtr = std::weak_ptr<StatementExecutor>;
 
     /// Type to store columns names and indexes
     using TColumnsMap = std::map<std::string, int, std::less<>>;
 
-    RowExecutor(const RowExecutor&) = delete;
-    RowExecutor(RowExecutor&&) = default;
-    RowExecutor& operator=(const RowExecutor&) = delete;
-    RowExecutor& operator=(RowExecutor&&) = default;
+    StatementExecutor(const StatementExecutor&) = delete;
+    StatementExecutor(StatementExecutor&&) = default;
+    StatementExecutor& operator=(const StatementExecutor&) = delete;
+    StatementExecutor& operator=(StatementExecutor&&) = default;
 
     /// Reset the statement to make it ready for a new execution. Throws an exception on error.
     void reset();
@@ -168,7 +168,7 @@ public:
     /**
     * @brief InputIterator for statement steps.
     * 
-    * Remember that this iterator is changing state of RowExecutor.
+    * Remember that this iterator is changing state of StatementExecutor.
     */
     class RowIterator
     {
@@ -217,7 +217,7 @@ public:
         void advance() noexcept;
 
         TStatementWeakPtr   mpStatement{};  //!< Weak pointer to SQLite Statement Object
-        TRowWeakPtr         mpRow{};        //!< Weak pointer to RowExecutor Object
+        TRowWeakPtr         mpRow{};        //!< Weak pointer to StatementExecutor Object
         uint16_t            mID{};          //!< Current row number
 
         /// Internal row object storage
@@ -247,9 +247,9 @@ protected:
      * @param[in] apSQLite  the SQLite Database Connection
      * @param[in] aQuery    an UTF-8 encoded query string
      *
-     * @throws Exception is thrown in case of error, then the RowExecutor object is NOT constructed.
+     * @throws Exception is thrown in case of error, then the StatementExecutor object is NOT constructed.
      */
-    explicit RowExecutor(sqlite3* apSQLite, const std::string& aQuery);
+    explicit StatementExecutor(sqlite3* apSQLite, const std::string& aQuery);
 
     /**
      * @brief Return a std::shared_ptr with SQLite Statement Object.

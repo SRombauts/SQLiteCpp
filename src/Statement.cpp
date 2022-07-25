@@ -211,46 +211,5 @@ std::string Statement::getExpandedSQL() const {
     return expandedString;
 }
 
-Statement::RowIterator Statement::begin()
-{
-    reset();
-    tryExecuteStep();
-    return Statement::RowIterator(getStatement(), getExecutorWeakPtr(), 0);
-}
-
-Statement::RowIterator SQLite::Statement::end()
-{
-    return Statement::RowIterator();
-}
-
-void SQLite::Statement::RowIterator::advance() noexcept
-{
-    if (mpRow.expired())
-        return;
-
-    auto statement = mpRow.lock();
-    statement->tryExecuteStep();
-
-    if (statement->isDone())
-    {
-        mpRow.reset();
-        return;
-    }
-}
-
-bool SQLite::Statement::RowIterator::operator==(const RowIterator& aIt) const
-{
-    auto left = mpRow.lock();
-    auto right = aIt.mpRow.lock();
-
-    if (!left && !right)
-        return true;
-
-    if (left != right)
-        return false;
-    
-    return mID == aIt.mID;
-}
-
 
 }  // namespace SQLite

@@ -11,8 +11,8 @@
  */
 #pragma once
 
- //#include <SQLiteCpp/Database.h>
- #include <SQLiteCpp/Exception.h>
+#include <SQLiteCpp/Row.h>
+#include <SQLiteCpp/Exception.h>
 
 #include <memory>
 #include <string>
@@ -26,7 +26,21 @@ namespace SQLite
 
 extern const int OK; ///< SQLITE_OK
 
-
+/**
+* @brief Base class for prepared SQLite Statement.
+* 
+* You should use SQLite::Statement or (if you had a reson)
+* inherit this class to create your own Statement executor class.
+* Either way you should look at SQLite::Statement documentation
+* 
+* Thread-safety: a RowExecutor object shall not be shared by multiple threads, because :
+* 1) in the SQLite "Thread Safe" mode, "SQLite can be safely used by multiple threads
+*    provided that no single database connection is used simultaneously in two or more threads."
+* 2) the SQLite "Serialized" mode is not supported by SQLiteC++,
+*    because of the way it shares the underling SQLite precompiled statement
+*    in a custom shared pointer (See the inner class "Statement::Ptr").
+*    TODO Test Serialized mode after all changes to pointers
+*/
 class RowExecutor
 {
 public:
@@ -41,7 +55,7 @@ public:
 
     /// Weak pointer to SQLite RowExecutor
     using TRowWeakPtr = std::weak_ptr<RowExecutor>;
-    
+
     /// Type to store columns names and indexes
     using TColumnsMap = std::map<std::string, int, std::less<>>;
 
@@ -112,25 +126,6 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * @brief Execute a step of the prepared query to fetch one row of results.
-     *
-     *  While true is returned, a row of results is available, and can be accessed
-     * through the getColumn() method
-     *
-     * @see exec() execute a one-step prepared statement with no expected result
-     * @see tryExecuteStep() try to execute a step of the prepared query to fetch one row of results, returning the sqlite result code.
-     * @see Database::exec() is a shortcut to execute one or multiple statements without results
-     *
-     * @return - true  (SQLITE_ROW)  if there is another row ready : you can call getColumn(N) to get it
-     *                               then you have to call executeStep() again to fetch more rows until the query is finished
-     *         - false (SQLITE_DONE) if the query has finished executing : there is no (more) row of result
-     *                               (case of a query with no result, or after N rows fetched successfully)
-     *
-     * @throw SQLite::Exception in case of error
-     */
-    const TColumnsMap& getColumnsNames() const;
-
     /// Get number of rows modified by last INSERT, UPDATE or DELETE statement (not DROP table).
     int getChanges() const noexcept;
 
@@ -139,6 +134,13 @@ public:
     {
         return mColumnCount;
     }
+
+    /// Get columns names with theirs ids
+    const TColumnsMap& getColumnsNames() const
+    {
+        return mColumnNames;
+    }
+
     /// true when a row has been fetched with executeStep()
     bool hasRow() const noexcept
     {
@@ -161,10 +163,92 @@ public:
     /// Return UTF-8 encoded English language explanation of the most recent failed API call (if any).
     const char* getErrorMsg() const noexcept;
 
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+    * @brief InputIterator for statement steps.
+    * 
+    * Remember that this iterator is changing state of RowExecutor.
+    */
+    class RowIterator
+    {
+    public:
+        using iterator_category = std::input_iterator_tag;
+        using value_type = Row;
+        using reference = const Row&;
+        using pointer = const Row*;
+        using difference_type = std::ptrdiff_t;
+
+        RowIterator() = default;
+        RowIterator(TStatementWeakPtr apStatement, TRowWeakPtr apRow, uint16_t aID) :
+            mpStatement(apStatement), mpRow(apRow), mID(aID), mRow(apStatement, aID) {}
+
+        reference operator*() const
+        {
+            return mRow;
+        }
+        pointer operator->() const noexcept
+        {
+            return &mRow;
+        }
+
+        reference operator++() noexcept
+        {
+            mRow = Row(mpStatement, ++mID);
+            advance();
+            return mRow;
+        }
+        value_type operator++(int)
+        {
+            Row copy{ mRow };
+            mRow = Row(mpStatement, ++mID);
+            advance();
+            return copy;
+        }
+
+        bool operator==(const RowIterator& aIt) const;
+        bool operator!=(const RowIterator& aIt) const
+        {
+            return !(*this == aIt);
+        }
+
+    private:
+        /// Executing next statement step
+        void advance() noexcept;
+
+        TStatementWeakPtr   mpStatement{};  //!< Weak pointer to SQLite Statement Object
+        TRowWeakPtr         mpRow{};        //!< Weak pointer to RowExecutor Object
+        uint16_t            mID{};          //!< Current row number
+
+        /// Internal row object storage
+        Row mRow{ mpStatement, mID };
+    };
+
+    /**
+    * @brief Start execution of SQLite Statement Object and return iterator to first row.
+    * 
+    * This function calls resets SQLite Statement Object.
+    * 
+    * @return RowIterator for first row of this prepared statement
+    * 
+    * @throws Exception is thrown in case of error, then the RowIterator object is NOT constructed.
+    */
+    RowIterator begin();
+
+    /**
+    * @return RowIterator to non-exisitng step
+    */
+    RowIterator end();
+
 protected:
     /**
-    *
-    */
+     * @brief Proteced construtor to ensure that this class is only created in derived objects
+     *
+     * @param[in] apSQLite  the SQLite Database Connection
+     * @param[in] aQuery    an UTF-8 encoded query string
+     *
+     * @throws Exception is thrown in case of error, then the RowExecutor object is NOT constructed.
+     */
     explicit RowExecutor(sqlite3* apSQLite, const std::string& aQuery);
 
     /**
@@ -176,7 +260,7 @@ protected:
     {
         return mpStatement;
     }
-    
+
     /**
      * @brief Return a prepared SQLite Statement Object.
      *
@@ -184,7 +268,7 @@ protected:
      * @return raw pointer to Prepared Statement Object
      */
     sqlite3_stmt* getPreparedStatement() const;
-    
+
     /**
      * @brief Return a prepared SQLite Statement Object.
      *
@@ -236,20 +320,20 @@ protected:
 private:
     ///  Create prepared SQLite Statement Object
     void prepareStatement(const std::string& aQuery);
-    
+
     ///  Get column number and create map with columns names
     void createColumnInfo();
 
-    sqlite3* mpSQLite{}; //!< Pointer to SQLite Database Connection Handle
-    TStatementPtr mpStatement{}; //!< Shared Pointer to the prepared SQLite Statement Object
+    sqlite3*        mpSQLite{};     //!< Pointer to SQLite Database Connection Handle
+    TStatementPtr   mpStatement{};  //!< Shared Pointer to the prepared SQLite Statement Object
 
     /// Shared Pointer to this object.
     /// Allows RowIterator to execute next step
     TRowPtr mpRowExecutor{};
 
-    int mColumnCount = 0; //!< Number of columns in the result of the prepared statement
-    bool mbHasRow = false; //!< true when a row has been fetched with executeStep()
-    bool mbDone = false; //!< true when the last executeStep() had no more row to fetch
+    int     mColumnCount = 0;   //!< Number of columns in the result of the prepared statement
+    bool    mbHasRow = false;   //!< true when a row has been fetched with executeStep()
+    bool    mbDone = false;     //!< true when the last executeStep() had no more row to fetch
 
     /// Map of columns index by name (mutable so getColumnIndex can be const)
     mutable TColumnsMap mColumnNames{};

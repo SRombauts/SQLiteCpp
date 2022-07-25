@@ -26,7 +26,7 @@ namespace SQLite
         createColumnInfo();
 
         mpRowExecutor.swap(TRowPtr(this, [](const RowExecutor* const) {
-            //empty destructor to make shared_ptr without ownership
+            // empty destructor to make shared_ptr without ownership
             }));
     }
 
@@ -36,7 +36,9 @@ namespace SQLite
             throw SQLite::Exception("Can't create statement without valid database connection");
 
         sqlite3_stmt* statement;
-        const int ret = sqlite3_prepare_v2(mpSQLite, aQuery.c_str(), static_cast<int>(aQuery.size()), &statement, nullptr);
+        const int ret = sqlite3_prepare_v2(mpSQLite, aQuery.c_str(),
+            static_cast<int>(aQuery.size()), &statement, nullptr);
+
         if (SQLITE_OK != ret)
         {
             throw SQLite::Exception(mpSQLite, ret);
@@ -51,7 +53,7 @@ namespace SQLite
     {
         mColumnCount = sqlite3_column_count(mpStatement.get());
 
-        
+
         if (!mColumnNames.empty())
             mColumnNames.clear();
 
@@ -140,11 +142,6 @@ namespace SQLite
         return ret;
     }
 
-    const RowExecutor::TColumnsMap& RowExecutor::getColumnsNames() const
-    {
-        return mColumnNames;
-    }
-
     // Get number of rows modified by last INSERT, UPDATE or DELETE statement (not DROP table).
     int RowExecutor::getChanges() const noexcept
     {
@@ -180,5 +177,45 @@ namespace SQLite
         throw SQLite::Exception("Statement was not prepared.");
     }
 
+    RowExecutor::RowIterator RowExecutor::begin()
+    {
+        reset();
+        tryExecuteStep();
+        return RowExecutor::RowIterator(getStatement(), getExecutorWeakPtr(), 0);
+    }
+
+    RowExecutor::RowIterator RowExecutor::end()
+    {
+        return RowExecutor::RowIterator();
+    }
+
+    void RowExecutor::RowIterator::advance() noexcept
+    {
+        if (mpRow.expired())
+            return;
+
+        auto statement = mpRow.lock();
+        statement->tryExecuteStep();
+
+        if (statement->isDone())
+        {
+            mpRow.reset();
+            return;
+        }
+    }
+
+    bool RowExecutor::RowIterator::operator==(const RowIterator& aIt) const
+    {
+        auto left = mpRow.lock();
+        auto right = aIt.mpRow.lock();
+
+        if (!left && !right)
+            return true;
+
+        if (left != right)
+            return false;
+
+        return mID == aIt.mID;
+    }
 
 }  // namespace SQLite

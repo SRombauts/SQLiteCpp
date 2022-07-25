@@ -11,7 +11,6 @@
 #pragma once
 
 #include <SQLiteCpp/RowExecutor.h>
-#include <SQLiteCpp/Row.h>
 #include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/Utils.h> // SQLITECPP_PURE_FUNC
 
@@ -56,7 +55,7 @@ public:
      * @param[in] aDatabase the SQLite Database Connection
      * @param[in] aQuery    an UTF-8 encoded query string
      *
-     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     * @throws Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
     Statement(const Database& aDatabase, const std::string& aQuery);
 
@@ -540,62 +539,6 @@ public:
 
     /// Return the number of bind parameters in the statement
     int getBindParameterCount() const noexcept;
-
-    ////////////////////////////////////////////////////////////////////////////
-
-    class RowIterator
-    {
-    public:
-        using iterator_category = std::input_iterator_tag;
-        using value_type = Row;
-        using reference = const Row&;
-        using pointer = const Row*;
-        using difference_type = std::ptrdiff_t;
-
-        RowIterator() = default;
-        RowIterator(TStatementWeakPtr apStatement, TRowWeakPtr apRow, uint16_t aID) :
-            mpStatement(apStatement), mpRow(apRow), mID(aID), mRow(apStatement, aID) {}
-
-        reference operator*() const
-        {
-            return mRow;
-        }
-        pointer operator->() const noexcept
-        {
-            return &mRow;
-        }
-
-        reference operator++() noexcept
-        {
-            mRow = Row(mpStatement, ++mID);
-            advance();
-            return mRow;
-        }
-        value_type operator++(int)
-        {
-            Row copy{ mRow };
-            mRow = Row(mpStatement, ++mID);
-            advance();
-            return copy;
-        }
-
-        bool operator==(const RowIterator& aIt) const;
-        bool operator!=(const RowIterator& aIt) const
-        {
-            return !(*this == aIt);
-        }
-
-    private:
-        void advance() noexcept;
-
-        TStatementWeakPtr mpStatement{};
-        TRowWeakPtr mpRow{};
-        uint16_t mID{};
-        Row mRow{ mpStatement, mID };
-    };
-
-    RowIterator begin();
-    RowIterator end();
 
 private:
     std::string mQuery; //!< UTF-8 SQL Query,

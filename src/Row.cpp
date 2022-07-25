@@ -1,7 +1,7 @@
 /**
  * @file    Row.cpp
  * @ingroup SQLiteCpp
- * @brief   TODO:
+ * @brief   Container for SQLite Statement Object step
  *
  * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
  * Copyright (c) 2015-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
@@ -19,7 +19,7 @@ namespace SQLite
 {
 
 
-    Row::Row(RowExecutor::TStatementWeakPtr apRow, std::size_t aID) :
+    Row::Row(TStatementWeakPtr apRow, std::size_t aID) :
         mpRow(apRow), ID(aID)
     {
     }

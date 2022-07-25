@@ -52,6 +52,8 @@ public:
      *
      * @param[in] aStmtPtr  Shared pointer to the prepared SQLite Statement Object.
      * @param[in] aIndex    Index of the column in the row of result, starting at 0
+     * 
+     * @throws Exception is thrown in case of error, then the Column object is NOT constructed.
      */
     explicit Column(const RowExecutor::TStatementPtr& aStmtPtr, int aIndex);
 

@@ -1,7 +1,7 @@
 /**
  * @file    Row.h
  * @ingroup SQLiteCpp
- * @brief   TODO:
+ * @brief   Container for SQLite Statement Object step
  *
  * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
  * Copyright (c) 2015-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
@@ -11,18 +11,27 @@
  */
 #pragma once
 
-#include <SQLiteCpp/RowExecutor.h>
+//#include <SQLiteCpp/RowExecutor.h>
 
+#include <memory>
 #include <string>
+
+// Forward declaration to avoid inclusion of <sqlite3.h> in a header
+struct sqlite3_stmt;
 
 namespace SQLite
 {
 
-
+/**
+* @brief CLASS IS WIP!
+*/
 class Row
 {
+    /// Weak pointer to SQLite Prepared Statement Object
+    using TStatementWeakPtr = std::weak_ptr<sqlite3_stmt>;
+
 public:
-    Row(RowExecutor::TStatementWeakPtr apRow, std::size_t aID);
+    Row(TStatementWeakPtr apRow, std::size_t aID);
 
     std::size_t getRowNumber() const
     {
@@ -49,7 +58,7 @@ public:
     const char* getText(uint32_t aColumnID) const noexcept;
 
 private:
-    RowExecutor::TStatementWeakPtr mpRow;
+    TStatementWeakPtr mpRow;
     std::size_t ID;
 };
 

@@ -10,9 +10,9 @@
  */
 #include <SQLiteCpp/Column.h>
 
-#include <sqlite3.h>
+#include <SQLiteCpp/Exception.h>
 
-#include <iostream>
+#include <sqlite3.h>
 
 
 namespace SQLite
@@ -26,7 +26,7 @@ const int Null      = SQLITE_NULL;
 
 
 // Encapsulation of a Column in a row of the result pointed by the prepared Statement.
-Column::Column(const StatementExecutor::TStatementPtr& aStmtPtr, int aIndex) :
+Column::Column(const StatementPtr::TStatementPtr& aStmtPtr, int aIndex) :
     mStmtPtr(aStmtPtr),
     mIndex(aIndex)
 {
@@ -78,7 +78,7 @@ double Column::getDouble() const noexcept
 const char* Column::getText(const char* apDefaultValue /* = "" */) const noexcept
 {
     auto pText = reinterpret_cast<const char*>(sqlite3_column_text(mStmtPtr.get(), mIndex));
-    return (pText?pText:apDefaultValue);
+    return (pText ? pText : apDefaultValue);
 }
 
 // Return a pointer to the blob value (*not* NULL terminated) of the column specified by its index starting at 0
@@ -92,7 +92,7 @@ std::string Column::getString() const
 {
     // Note: using sqlite3_column_blob and not sqlite3_column_text
     // - no need for sqlite3_column_text to add a \0 on the end, as we're getting the bytes length directly
-    auto data = static_cast<const char *>(sqlite3_column_blob(mStmtPtr.get(), mIndex));
+    auto data = static_cast<const char*>(sqlite3_column_blob(mStmtPtr.get(), mIndex));
 
     // SQLite docs: "The safest policy is to invoke… sqlite3_column_blob() followed by sqlite3_column_bytes()"
     // Note: std::string is ok to pass nullptr as first arg, if length is 0

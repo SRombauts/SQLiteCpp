@@ -17,7 +17,6 @@
 #include <string>
 #include <map>
 #include <memory>
-#include <iterator>
 
 
 namespace SQLite
@@ -59,17 +58,12 @@ public:
      */
     Statement(const Database& aDatabase, const std::string& aQuery);
 
-    /**
-     * @brief Move an SQLite statement.
-     *
-     * @param[in] aStatement    Statement to move
-     */
-    Statement(Statement&& aStatement) noexcept = default;
-    Statement& operator=(Statement&& aStatement) noexcept = default;
-
     // Statement is non-copyable
     Statement(const Statement&) = delete;
     Statement& operator=(const Statement&) = delete;
+
+    Statement(Statement&& aStatement) = default;
+    Statement& operator=(Statement&& aStatement) = default;
 
     /// Finalize and unregister the SQL query from the SQLite Database Connection.
     /// The finalization will be done by the destructor of the last shared pointer
@@ -440,15 +434,27 @@ public:
      * @note Requires std=C++14
      */
     template<typename T, int N>
-    T       getColumns();
+    T getColumns()
+    {
+        checkRow();
+        checkIndex(N - 1);
+        return getColumns<T>(std::make_integer_sequence<int, N>{});
+    }
 
 private:
     /**
     * @brief Helper function used by getColumns<typename T, int N> to expand an integer_sequence used to generate
     *        the required Column objects
+    * 
+    * @note Requires std=C++14
+    * 
+    * @return Column object for each column in statement
     */
     template<typename T, const int... Is>
-    T       getColumns(const std::integer_sequence<int, Is...>);
+    T getColumns(const std::integer_sequence<int, Is...>)
+    {
+        return T{ Column(getStatement(), Is)... };
+    }
 
 public:
 #endif

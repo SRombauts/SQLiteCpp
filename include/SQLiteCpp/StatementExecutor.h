@@ -3,23 +3,22 @@
  * @ingroup SQLiteCpp
  * @brief   Step executor for SQLite prepared Statement Object
  *
- * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
- * Copyright (c) 2015-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
 #pragma once
 
+#include <SQLiteCpp/StatementPtr.h>
 #include <SQLiteCpp/Row.h>
 #include <SQLiteCpp/Exception.h>
 
+#include <iterator>
 #include <memory>
 #include <string>
 #include <map>
 
-// Forward declaration to avoid inclusion of <sqlite3.h> in a header
-struct sqlite3_stmt;
 
 namespace SQLite
 {
@@ -44,24 +43,13 @@ extern const int OK; ///< SQLITE_OK
 class StatementExecutor
 {
 public:
-    /// Shared pointer to SQLite Prepared Statement Object
-    using TStatementPtr = std::shared_ptr<sqlite3_stmt>;
-
-    /// Weak pointer to SQLite Prepared Statement Object
-    using TStatementWeakPtr = std::weak_ptr<sqlite3_stmt>;
-
-    /// Shared pointer to SQLite StatementExecutor
-    using TRowPtr = std::shared_ptr<StatementExecutor>;
-
-    /// Weak pointer to SQLite StatementExecutor
-    using TRowWeakPtr = std::weak_ptr<StatementExecutor>;
-
     /// Type to store columns names and indexes
     using TColumnsMap = std::map<std::string, int, std::less<>>;
 
     StatementExecutor(const StatementExecutor&) = delete;
-    StatementExecutor(StatementExecutor&&) = default;
     StatementExecutor& operator=(const StatementExecutor&) = delete;
+
+    StatementExecutor(StatementExecutor&&) = default;
     StatementExecutor& operator=(StatementExecutor&&) = default;
 
     /// Reset the statement to make it ready for a new execution. Throws an exception on error.
@@ -180,8 +168,8 @@ public:
         using difference_type = std::ptrdiff_t;
 
         RowIterator() = default;
-        RowIterator(TStatementWeakPtr apStatement, TRowWeakPtr apRow, uint16_t aID) :
-            mpStatement(apStatement), mpRow(apRow), mID(aID), mRow(apStatement, aID) {}
+        RowIterator(TRowWeakPtr apStatement, uint16_t aID) :
+            mpStatement(apStatement), mID(aID), mRow(apStatement, aID) {}
 
         reference operator*() const
         {
@@ -216,8 +204,7 @@ public:
         /// Executing next statement step
         void advance() noexcept;
 
-        TStatementWeakPtr   mpStatement{};  //!< Weak pointer to SQLite Statement Object
-        TRowWeakPtr         mpRow{};        //!< Weak pointer to StatementExecutor Object
+        TRowWeakPtr         mpStatement{};  //!< Weak pointer to prepared Statement Object
         uint16_t            mID{};          //!< Current row number
 
         /// Internal row object storage
@@ -256,9 +243,9 @@ protected:
      *
      * @return raw pointer to Statement Object
      */
-    TStatementPtr getStatement() const noexcept
+    StatementPtr::TStatementPtr getStatement() const noexcept
     {
-        return mpStatement;
+        return mpStatement->mpStatement;
     }
 
     /**
@@ -277,7 +264,7 @@ protected:
      */
     TRowWeakPtr getExecutorWeakPtr() const
     {
-        return mpRowExecutor;
+        return mpStatement;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -291,7 +278,7 @@ protected:
     {
         if (SQLite::OK != aRet)
         {
-            throw SQLite::Exception(mpSQLite, aRet);
+            throw SQLite::Exception(mpStatement->mpConnection, aRet);
         }
     }
 
@@ -318,18 +305,17 @@ protected:
     }
 
 private:
-    ///  Create prepared SQLite Statement Object
-    void prepareStatement(const std::string& aQuery);
-
     ///  Get column number and create map with columns names
     void createColumnInfo();
 
-    sqlite3*        mpSQLite{};     //!< Pointer to SQLite Database Connection Handle
-    TStatementPtr   mpStatement{};  //!< Shared Pointer to the prepared SQLite Statement Object
+    // xD
+    bool checkReturnCode(int aReturnCode) const;
+    // xD
+    bool checkReturnCode(int aReturnCode, int aErrorCode) const;
 
     /// Shared Pointer to this object.
     /// Allows RowIterator to execute next step
-    TRowPtr mpRowExecutor{};
+    TRowPtr mpStatement{};
 
     int     mColumnCount = 0;   //!< Number of columns in the result of the prepared statement
     bool    mbHasRow = false;   //!< true when a row has been fetched with executeStep()

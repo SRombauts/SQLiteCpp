@@ -98,7 +98,6 @@ TEST(Statement, invalid)
     EXPECT_THROW(query.exec(), SQLite::Exception); // exec() shall throw as it does not expect a result
 }
 
-/* TODO: Re-enable this test
 #if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
 
 SQLite::Statement StatementBuilder(SQLite::Database& aDb, const char* apQuery)
@@ -142,7 +141,6 @@ TEST(Statement, moveConstructor)
 }
 
 #endif
-*/
 
 TEST(Statement, executeStep)
 {

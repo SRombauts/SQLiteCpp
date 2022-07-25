@@ -19,22 +19,24 @@ namespace SQLite
 {
 
 
-    Row::Row(TStatementWeakPtr apRow, std::size_t aID) :
-        mpRow(apRow), ID(aID)
+    Row::Row(TRowWeakPtr apStatement, std::size_t aID) :
+        mpStatement(apStatement), ID(aID)
     {
     }
 
     bool Row::isColumnNull(const int aIndex) const
     {
-        return false;
+        auto statement = mpStatement.lock();
+
+        return (SQLITE_NULL == sqlite3_column_type(statement->getPreparedStatement(), aIndex));
     }
 
     const char* Row::getText(uint32_t aColumnID) const noexcept
     {
-        auto statement = mpRow.lock();
+        auto statement = mpStatement.lock();
 
 
-        auto pText = reinterpret_cast<const char*>(sqlite3_column_text(statement.get(), aColumnID));
+        auto pText = reinterpret_cast<const char*>(sqlite3_column_text(statement->getPreparedStatement(), aColumnID));
         return (pText ? pText : "");
     }
 

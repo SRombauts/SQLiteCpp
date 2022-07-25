@@ -10,14 +10,12 @@
  */
 #pragma once
 
-#include <SQLiteCpp/Statement.h>
-#include <SQLiteCpp/Exception.h>
+#include <SQLiteCpp/StatementPtr.h>
 
+#include <ostream>
 #include <string>
 #include <memory>
 
-// Forward declarations to avoid inclusion of <sqlite3.h> in a header
-struct sqlite3_stmt;
 
 namespace SQLite
 {
@@ -55,7 +53,7 @@ public:
      * 
      * @throws Exception is thrown in case of error, then the Column object is NOT constructed.
      */
-    explicit Column(const StatementExecutor::TStatementPtr& aStmtPtr, int aIndex);
+    explicit Column(const StatementPtr::TStatementPtr& aStmtPtr, int aIndex);
 
     /**
      * @brief Return a pointer to the named assigned to this result column (potentially aliased)
@@ -226,7 +224,7 @@ public:
     }
 
 private:
-    StatementExecutor::TStatementPtr  mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
+    StatementPtr::TStatementPtr mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
     int                         mIndex;    ///< Index of the column in the row of result, starting at 0
 };
 
@@ -241,26 +239,6 @@ private:
  * @return  Reference to the stream used
  */
 std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
-
-#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900) // c++14: Visual Studio 2015
-
-// Create an instance of T from the first N columns, see declaration in Statement.h for full details
-template<typename T, int N>
-T Statement::getColumns()
-{
-    checkRow();
-    checkIndex(N - 1);
-    return getColumns<T>(std::make_integer_sequence<int, N>{});
-}
-
-// Helper function called by getColums<typename T, int N>
-template<typename T, const int... Is>
-T Statement::getColumns(const std::integer_sequence<int, Is...>)
-{
-    return T{ Column(getStatement(), Is)... };
-}
-
-#endif
 
 
 }  // namespace SQLite

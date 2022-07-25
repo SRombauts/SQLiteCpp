@@ -12,6 +12,7 @@
 #include <SQLiteCpp/Database.h>
 #include <SQLiteCpp/Statement.h>
 
+#include <cstdint>   // for int64_t
 #include <sqlite3.h> // for SQLITE_DONE
 
 #include <gtest/gtest.h>

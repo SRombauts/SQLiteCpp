@@ -26,7 +26,7 @@
 namespace SQLite
 {
     // declaration of the assert handler to define in user code
-    void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
+    void assertion_failed(const char* apFile, const int apLine, const char* apFunc,
                           const char* apExpr, const char* apMsg);
 
 #ifdef _MSC_VER

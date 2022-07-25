@@ -188,7 +188,7 @@ Version 3.1.1 - August 19 2020
 - #293 Remove FindSQLiteCpp.cmake from sum01
 
 Version 3.x - 2022
-- #300 #316 Updated SQLite3 from 3.32.3 to 3.37.2 (2022-01-06)
+- #300 #316 #362 Updated SQLite3 from 3.32.3 to 3.39.2 (2022-07-21)
 - #236 Disable explicit setting of MSVC runtime from BioDataAnalysis/emmenlau
 - #308 Fix build warning due to string truncation from stauffer-garmin
 - #311 Add Database::tryExec() from kcowolf
@@ -208,3 +208,7 @@ Version 3.x - 2022
 - #341 Install the package.xml file from ardabbour/patch-1
 - #352 add basic meson support from ninjaoflight/meson-support
 - #349 Refactoring of Statement and Column classes from Kacperos155/refactoring-Statement&Column
+- #359 Fix compilation issues earlier than iOS 13
+- #354 Windows improved support (meson) from ninjaoflight/windows-migration
+- #361 Fix Statement unit test using long from SRombauts/fix-statement-unit-tests-long-long-type
+- #346 Add compatible definition for std::experimental::filesystem from guoh27/master

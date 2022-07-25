@@ -46,6 +46,8 @@ sqlitecpp_deps = [
     sqlite3_dep,
     thread_dep,
 ]
+## used to override the default sqlitecpp options like cpp standard
+sqlitecpp_opts = []
 
 ## tests
 
@@ -58,6 +60,10 @@ sqlitecpp_test_srcs = [
     'tests/VariadicBind_test.cpp',
     'tests/Exception_test.cpp',
     'tests/ExecuteMany_test.cpp',
+]
+sqlitecpp_test_args = [
+    # do not use ambiguous overloads by default
+    '-DNON_AMBIGOUS_OVERLOAD'
 ]
 
 ## samples
@@ -78,7 +84,14 @@ if not (host_machine.system() == 'windows' and cxx.get_id() == 'msvc')
         '-Wno-long-long',
     ]
 endif
-
+## using MSVC headers requires c++14, if not will show an error on xstddef as: 
+## 'auto' return without trailing return type; deduced return types are a C++14 extension
+if host_machine.system() == 'windows'
+    message('[WINDOWS] using c++14 standard')
+    sqlitecpp_opts += [
+        'cpp_std=c++14',
+    ]
+endif
 # Options relative to SQLite and SQLiteC++ functions
 
 if get_option('SQLITE_ENABLE_COLUMN_METADATA')
@@ -131,10 +144,23 @@ libsqlitecpp = library(
     include_directories: sqlitecpp_incl,
     cpp_args: sqlitecpp_args,
     dependencies: sqlitecpp_deps,
+    # override the default options
+    override_options: sqlitecpp_opts,
     # install: true,
     # API version for SQLiteCpp shared library.
-    version: '0',
-)
+    version: '0',)
+if get_option('SQLITECPP_BUILD_TESTS')
+    # for the unit tests we need to link against a static version of SQLiteCpp
+    libsqlitecpp_static = static_library(
+        'sqlitecpp_static',
+        sqlitecpp_srcs,
+        include_directories: sqlitecpp_incl,
+        cpp_args: sqlitecpp_args,
+        dependencies: sqlitecpp_deps,
+        # override the default options
+        override_options: sqlitecpp_opts,)
+        # static libraries do not have a version
+endif
 
 install_headers(
     'include/SQLiteCpp/SQLiteCpp.h',
@@ -153,6 +179,14 @@ sqlitecpp_dep = declare_dependency(
     include_directories: sqlitecpp_incl,
     link_with: libsqlitecpp,
 )
+if get_option('SQLITECPP_BUILD_TESTS')
+    ## make the dependency static so the unit tests can link against it
+    ## (mainly for windows as the symbols are not exported by default)
+    sqlitecpp_static_dep = declare_dependency(
+        include_directories: sqlitecpp_incl,
+        link_with: libsqlitecpp_static,
+    )
+endif
 
 if get_option('SQLITECPP_BUILD_TESTS')
     gtest_dep = dependency(
@@ -161,13 +195,15 @@ if get_option('SQLITECPP_BUILD_TESTS')
                 fallback: ['gtest', 'gtest_dep'])
     sqlitecpp_test_dependencies = [
         gtest_dep,
-        sqlitecpp_dep,
+        sqlitecpp_static_dep,
         sqlite3_dep,
     ]
-    sqlitecpp_test_args = []
 
     testexe = executable('testexe', sqlitecpp_test_srcs,
-                     dependencies: sqlitecpp_test_dependencies)
+                     dependencies: sqlitecpp_test_dependencies,
+                     cpp_args: sqlitecpp_test_args,
+                     # override the default options
+                     override_options: sqlitecpp_opts,)
 
     test_args = []
 
@@ -177,7 +213,9 @@ if get_option('SQLITECPP_BUILD_EXAMPLES')
     ## demo executable
     sqlitecpp_demo_exe = executable('SQLITECPP_sample_demo',
                             sqlitecpp_sample_srcs,
-                            dependencies: sqlitecpp_dep)
+                            dependencies: sqlitecpp_dep,
+                            # override the default options
+                            override_options: sqlitecpp_opts,)
 endif
 
 pkgconfig = import('pkgconfig')

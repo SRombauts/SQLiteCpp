@@ -51,19 +51,19 @@ const char* Column::getOriginName() const noexcept
 #endif
 
 // Return the integer value of the column specified by its index starting at 0
-int Column::getInt() const noexcept
+int32_t Column::getInt() const noexcept
 {
     return sqlite3_column_int(mStmtPtr.get(), mIndex);
 }
 
 // Return the unsigned integer value of the column specified by its index starting at 0
-unsigned Column::getUInt() const noexcept
+uint32_t Column::getUInt() const noexcept
 {
     return static_cast<unsigned>(getInt64());
 }
 
 // Return the 64bits integer value of the column specified by its index starting at 0
-long long Column::getInt64() const noexcept
+int64_t Column::getInt64() const noexcept
 {
     return sqlite3_column_int64(mStmtPtr.get(), mIndex);
 }

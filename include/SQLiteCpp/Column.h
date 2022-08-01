@@ -55,8 +55,8 @@ public:
         mStatementPtr(aStatementPtr),
         mIndex(aIndex), mRowIndex(mStatementPtr->mCurrentStep) {}
 
-    Column(const Column&) = delete;
-    Column& operator=(const Column&) = delete;
+    Column(const Column&) noexcept = default;
+    Column& operator=(const Column&) noexcept = default;
 
     Column(Column&& aColumn) noexcept = default;
     Column& operator=(Column&& aColumn) noexcept = default;

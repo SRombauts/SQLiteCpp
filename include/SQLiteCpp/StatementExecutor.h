@@ -173,9 +173,8 @@ public:
         using pointer = const Row*;
         using difference_type = std::ptrdiff_t;
 
-        RowIterator() = default;
-        RowIterator(TStatementWeakPtr apStatement, uint16_t aID) :
-            mpStatement(apStatement), mID(aID), mRow(apStatement, aID) {}
+        explicit RowIterator(TStatementWeakPtr apStatement = TStatementWeakPtr{}) :
+            mpStatement(apStatement) {}
 
         reference operator*() const noexcept
         {
@@ -188,16 +187,13 @@ public:
 
         RowIterator& operator++() noexcept
         {
-            mRow = Row(mpStatement, ++mID);
             advance();
             return *this;
         }
-        /// Prefer to use prefix increment (++it)
-        RowIterator operator++(int) noexcept
+        RowIterator& operator++(int) noexcept
         {
-            RowIterator copy{ *this };
             advance();
-            return copy;
+            return *this;
         }
 
         bool operator==(const RowIterator& aIt) const noexcept;
@@ -210,8 +206,8 @@ public:
         /// Executing next statement step
         void advance() noexcept;
 
-        TStatementWeakPtr   mpStatement{};  //!< Weak pointer to prepared Statement Object
-        uint16_t            mID{};          //!< Current row number
+        TStatementWeakPtr mpStatement{};  //!< Weak pointer to prepared Statement Object
+        std::size_t             mID{};          //!< Current row number
 
         /// Internal row object storage
         Row mRow{ mpStatement, mID };

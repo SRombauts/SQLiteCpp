@@ -9,6 +9,7 @@
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
+#include <iterator>
 #include <SQLiteCpp/StatementExecutor.h>
 
 #include <SQLiteCpp/Exception.h>
@@ -148,7 +149,7 @@ namespace SQLite
     {
         reset();
         tryExecuteStep();
-        return StatementExecutor::RowIterator(mpStatement, 0);
+        return StatementExecutor::RowIterator(mpStatement);
     }
 
     StatementExecutor::RowIterator StatementExecutor::end() noexcept
@@ -158,6 +159,8 @@ namespace SQLite
 
     void StatementExecutor::RowIterator::advance() noexcept
     {
+        mRow = Row(mpStatement, ++mID);
+
         if (mpStatement.expired())
             return;
 
@@ -173,8 +176,8 @@ namespace SQLite
 
     bool StatementExecutor::RowIterator::operator==(const RowIterator& aIt) const noexcept
     {
-        auto left = mpStatement.lock();
-        auto right = aIt.mpStatement.lock();
+        const auto left = mpStatement.lock();
+        const auto right = aIt.mpStatement.lock();
 
         if (!left && !right)
             return true;

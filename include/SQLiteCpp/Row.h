@@ -35,9 +35,73 @@ public:
         return mID;
     }
 
+    /**
+    * @brief RandomAccessIterator for row columns.
+    */
+    class ColumnIterator
+    {
+    public:
+        //TODO: using iterator_category = std::random_access_iterator_tag;
+        using iterator_category = std::bidirectional_iterator_tag;
+        using value_type = Column;
+        using reference = const Column&;
+        using pointer = const Column*;
+        using difference_type = std::ptrdiff_t;
+
+        ColumnIterator() = default;
+        ColumnIterator(TStatementPtr apStatement, uint16_t aID) :
+            mpStatement(apStatement), mID(aID), mColumn(apStatement, aID) {}
+
+        reference operator*() const noexcept
+        {
+            return mColumn;
+        }
+        pointer operator->() const noexcept
+        {
+            return &mColumn;
+        }
+
+        ColumnIterator& operator++() noexcept
+        {
+            mColumn = Column(mpStatement, ++mID);
+            return *this;
+        }
+        ColumnIterator operator++(int) noexcept
+        {
+            ColumnIterator copy{ *this };
+            mColumn = Column(mpStatement, ++mID);
+            return copy;
+        }
+        ColumnIterator& operator--() noexcept
+        {
+            mColumn = Column(mpStatement, --mID);
+            return *this;
+        }
+        ColumnIterator operator--(int) noexcept
+        {
+            ColumnIterator copy{ *this };
+            mColumn = Column(mpStatement, --mID);
+            return copy;
+        }
+
+        bool operator==(const ColumnIterator& aIt) const noexcept;
+        bool operator!=(const ColumnIterator& aIt) const noexcept
+        {
+            return !(*this == aIt);
+        }
+
+    private:
+        TStatementPtr   mpStatement{};  //!< Shared pointer to prepared Statement Object
+        std::size_t     mRowID{};       //!< Current row number
+        uint16_t        mID{};          //!< Current column number
+
+        /// Internal column object storage
+        Column mColumn{ mpStatement, mID };
+    };
+
 private:
     TStatementWeakPtr mpStatement;
-    std::size_t mID;
+    std::size_t       mID;
 };
 
 }  // namespace SQLite

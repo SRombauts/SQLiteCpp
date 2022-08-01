@@ -19,5 +19,22 @@ namespace SQLite
 {
 
 
+    bool Row::ColumnIterator::operator==(const ColumnIterator& aIt) const noexcept
+    {
+        const auto& left = mpStatement;
+        const auto& right = aIt.mpStatement;
+
+        if (mID != aIt.mID)
+            return false;
+
+        if (!left && !right)
+            return true;
+
+        if (left != right)
+            return false;
+
+        return mRowID == aIt.mRowID;
+    }
+
 
 }  // namespace SQLite

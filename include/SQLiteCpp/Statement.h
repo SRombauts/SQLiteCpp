@@ -58,7 +58,6 @@ public:
      */
     Statement(const Database& aDatabase, const std::string& aQuery);
 
-    // Statement is non-copyable
     Statement(const Statement&) = delete;
     Statement& operator=(const Statement&) = delete;
 
@@ -453,7 +452,7 @@ private:
     template<typename T, const int... Is>
     T getColumns(const std::integer_sequence<int, Is...>)
     {
-        return T{ Column(getStatement(), Is)... };
+        return T{ Column(getStatementPtr(), Is)... };
     }
 
 public:
@@ -530,7 +529,7 @@ public:
      *  - the statement is not a SELECT query
      *  - the column at aIndex is not a table column but an expression or subquery
      */
-    const char * getColumnDeclaredType(const int aIndex) const;
+    const char* getColumnDeclaredType(const int aIndex) const;
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -540,7 +539,7 @@ public:
         return mQuery;
     }
 
-    // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
+    /// Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
     std::string getExpandedSQL() const;
 
     /// Return the number of bind parameters in the statement

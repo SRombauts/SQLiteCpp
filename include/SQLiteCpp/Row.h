@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Container for SQLite Statement Object step
  *
- * Copyright (c) 2015 Shibao HONG (shibaohong@outlook.com)
+ * Copyright (c) 2022 Kacper Zielinski (KacperZ155@gmail.com)
  * Copyright (c) 2015-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
@@ -26,7 +26,7 @@ namespace SQLite
 class Row
 {
 public:
-    Row(TRowWeakPtr apStatement, std::size_t aID);
+    Row(TStatementWeakPtr apStatement, std::size_t aID);
 
     std::size_t getRowNumber() const
     {
@@ -53,7 +53,7 @@ public:
     const char* getText(uint32_t aColumnID) const noexcept;
 
 private:
-    TRowWeakPtr mpStatement;
+    TStatementWeakPtr mpStatement;
     std::size_t ID;
 };
 

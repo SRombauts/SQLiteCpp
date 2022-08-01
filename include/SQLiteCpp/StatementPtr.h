@@ -3,6 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Pointer for prepared SQLite Statement Object
  *
+ * Copyright (c) 2022 Kacper Zielinski (KacperZ155@gmail.com)
  * Copyright (c) 2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
@@ -39,11 +40,11 @@ struct StatementPtr
     StatementPtr(sqlite3* apSQLite, const std::string& aQuery);
 
     /// Shared pointer to SQLite prepared Statement Object
-    using TStatementPtr = std::shared_ptr<sqlite3_stmt>;
+    using TRawStatementPtr = std::shared_ptr<sqlite3_stmt>;
 
-    sqlite3* const      mpConnection;       //!< Pointer to SQLite Database Connection Handle
-    TStatementPtr const mpStatement;        //!< Shared Pointer to the prepared SQLite Statement Object
-    std::size_t         mCurrentStep = 0;   //!< Current step of prepared Statement Object
+    sqlite3* const          mpConnection;       //!< Pointer to SQLite Database Connection Handle
+    TRawStatementPtr const  mpStatement;        //!< Shared Pointer to the prepared SQLite Statement Object
+    std::size_t             mCurrentStep = 0;   //!< Current step of prepared Statement Object
 
     /// Resets SQLite Statement Object
     int reset() noexcept;
@@ -57,19 +58,19 @@ struct StatementPtr
     * 
     * @return Pointer to SQLite Statement Object
     */
-    sqlite3_stmt* getPreparedStatement() const;
+    sqlite3_stmt* getStatement() const noexcept;
 
 private:
     /// Create prepared SQLite Statement Object
-    TStatementPtr prepareStatement(sqlite3* apConnection, const std::string& aQuery) const;
+    TRawStatementPtr prepareStatement(sqlite3* apConnection, const std::string& aQuery) const;
 };
 
 
 /// Shared pointer to SQLite StatementPtr
-using TRowPtr = std::shared_ptr<StatementPtr>;
+using TStatementPtr = const std::shared_ptr<StatementPtr>;
 
 /// Weak pointer to SQLite StatementPtr
-using TRowWeakPtr = std::weak_ptr<StatementPtr>;
+using TStatementWeakPtr = std::weak_ptr<StatementPtr>;
 
 
 }  // namespace SQLite

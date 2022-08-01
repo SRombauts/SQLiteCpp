@@ -3,6 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Pointer for prepared SQLite Statement Object
  *
+ * Copyright (c) 2022 Kacper Zielinski (KacperZ155@gmail.com)
  * Copyright (c) 2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
@@ -22,7 +23,7 @@ namespace SQLite
         mpConnection(apSQLite), mpStatement(prepareStatement(apSQLite, aQuery))
     {}
 
-    sqlite3_stmt* StatementPtr::getPreparedStatement() const
+    sqlite3_stmt* StatementPtr::getStatement() const noexcept
     {
         return mpStatement.get();
     }
@@ -39,7 +40,7 @@ namespace SQLite
         return sqlite3_step(mpStatement.get());
     }
 
-    StatementPtr::TStatementPtr StatementPtr::prepareStatement(sqlite3* apConnection, const std::string& aQuery) const
+    StatementPtr::TRawStatementPtr StatementPtr::prepareStatement(sqlite3* apConnection, const std::string& aQuery) const
     {
         if (!apConnection)
             throw SQLite::Exception("Can't create statement without valid database connection");
@@ -53,7 +54,7 @@ namespace SQLite
             throw SQLite::Exception(apConnection, ret);
         }
 
-        return TStatementPtr(statement, [](sqlite3_stmt* stmt)
+        return TRawStatementPtr(statement, [](sqlite3_stmt* stmt)
             {
                 sqlite3_finalize(stmt);
             });

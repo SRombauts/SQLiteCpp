@@ -3,6 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Step executor for SQLite prepared Statement Object
  *
+ * Copyright (c) 2022 Kacper Zielinski (KacperZ155@gmail.com)
  * Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
@@ -26,7 +27,7 @@ namespace SQLite
 
     void StatementExecutor::createColumnInfo()
     {
-        mColumnCount = sqlite3_column_count(mpStatement->getPreparedStatement());
+        mColumnCount = sqlite3_column_count(getStatement());
 
 
         if (!mColumnNames.empty())
@@ -35,30 +36,12 @@ namespace SQLite
         // Build the map of column name and index
         for (int i = 0; i < mColumnCount; ++i)
         {
-            const char* pName = sqlite3_column_name(getPreparedStatement(), i);
+            const char* pName = sqlite3_column_name(getStatement(), i);
             mColumnNames.emplace(pName, i);
         }
     }
 
-    bool StatementExecutor::checkReturnCode(int aReturnCode) const
-    {
-        if (aReturnCode == getErrorCode())
-        {
-            throw SQLite::Exception(mpStatement->mpConnection, aReturnCode);
-        }
-        return true;
-    }
-
-    bool StatementExecutor::checkReturnCode(int aReturnCode, int aErrorCode) const
-    {
-        if (aReturnCode == aErrorCode)
-        {
-            throw SQLite::Exception(mpStatement->mpConnection, aReturnCode);
-        }
-        return true;
-    }
-
-    // Reset the statement to make it ready for a new execution (see also #clearBindings() bellow)
+    // Reset the statement to make it ready for a new execution. This doesn't clear bindings.
     void StatementExecutor::reset()
     {
         const int ret = tryReset();
@@ -78,7 +61,11 @@ namespace SQLite
         const int ret = tryExecuteStep();
         if ((SQLITE_ROW != ret) && (SQLITE_DONE != ret)) // on row or no (more) row ready, else it's a problem
         {
-            if (checkReturnCode(ret))
+            if (ret == getErrorCode())
+            {
+                throw SQLite::Exception(mpStatement->mpConnection, ret);
+            }
+            else
             {
                 throw SQLite::Exception("Statement needs to be reseted", ret);
             }
@@ -97,7 +84,11 @@ namespace SQLite
             {
                 throw SQLite::Exception("exec() does not expect results. Use executeStep.");
             }
-            else if (checkReturnCode(ret))
+            else if (ret == getErrorCode())
+            {
+                throw SQLite::Exception(mpStatement->mpConnection, ret);
+            }
+            else
             {
                 throw SQLite::Exception("Statement needs to be reseted", ret);
             }
@@ -151,11 +142,7 @@ namespace SQLite
         return sqlite3_errmsg(mpStatement->mpConnection);
     }
 
-    // Return prepered SQLite statement object or throw
-    sqlite3_stmt* StatementExecutor::getPreparedStatement() const
-    {
-        return mpStatement->getPreparedStatement();
-    }
+    ////////////////////////////////////////////////////////////////////////////
 
     StatementExecutor::RowIterator StatementExecutor::begin()
     {
@@ -164,7 +151,7 @@ namespace SQLite
         return StatementExecutor::RowIterator(mpStatement, 0);
     }
 
-    StatementExecutor::RowIterator StatementExecutor::end()
+    StatementExecutor::RowIterator StatementExecutor::end() noexcept
     {
         return StatementExecutor::RowIterator();
     }
@@ -179,12 +166,12 @@ namespace SQLite
 
         if (SQLITE_ROW != ret)
         {
-            mpStatement = TRowWeakPtr{};
+            mpStatement = TStatementWeakPtr{};
             return;
         }
     }
 
-    bool StatementExecutor::RowIterator::operator==(const RowIterator& aIt) const
+    bool StatementExecutor::RowIterator::operator==(const RowIterator& aIt) const noexcept
     {
         auto left = mpStatement.lock();
         auto right = aIt.mpStatement.lock();
@@ -197,5 +184,6 @@ namespace SQLite
 
         return mID == aIt.mID;
     }
+
 
 }  // namespace SQLite

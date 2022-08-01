@@ -53,7 +53,13 @@ public:
      * 
      * @throws Exception is thrown in case of error, then the Column object is NOT constructed.
      */
-    explicit Column(const StatementPtr::TStatementPtr& aStmtPtr, int aIndex);
+    explicit Column(const StatementPtr::TRawStatementPtr& aStmtPtr, int aIndex);
+
+    Column(const Column&) = delete;
+    Column& operator=(const Column&) = delete;
+
+    Column(Column&& aColumn) = default;
+    Column& operator=(Column&& aColumn) = default;
 
     /**
      * @brief Return a pointer to the named assigned to this result column (potentially aliased)
@@ -224,8 +230,8 @@ public:
     }
 
 private:
-    StatementPtr::TStatementPtr mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
-    int                         mIndex;    ///< Index of the column in the row of result, starting at 0
+    StatementPtr::TRawStatementPtr  mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
+    int                             mIndex;    ///< Index of the column in the row of result, starting at 0
 };
 
 /**

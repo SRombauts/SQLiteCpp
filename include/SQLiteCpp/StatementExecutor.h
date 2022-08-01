@@ -250,11 +250,11 @@ protected:
     /**
      * @brief Return a std::shared_ptr with prepared SQLite Statement Object.
      *
-     * @return TRawStatementPtr with SQLite Statement Object
+     * @return TStatementPtr with SQLite Statement Object
      */
-    StatementPtr::TRawStatementPtr getStatementPtr() const noexcept
+    TStatementPtr getStatementPtr() const noexcept
     {
-        return mpStatement->mpStatement;
+        return mpStatement;
     }
 
     /**
@@ -316,7 +316,7 @@ private:
 
     /// Shared Pointer to this object.
     /// Allows RowIterator to execute next step.
-    TStatementPtr mpStatement{};
+    const TStatementPtr mpStatement{};
 
     int     mColumnCount = 0;   //!< Number of columns in the result of the prepared statement
     bool    mbHasRow = false;   //!< true when a row has been fetched with executeStep()

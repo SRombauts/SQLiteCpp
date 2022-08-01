@@ -25,7 +25,6 @@ namespace SQLite
 
 // Forward declaration
 class Database;
-class Column;
 
 
 /**
@@ -379,7 +378,7 @@ public:
      *          Thus, you should instead extract immediately its data (getInt(), getText()...)
      *          and use or copy this data for any later usage.
      */
-    Column  getColumn(const int aIndex) const;
+    Column  getColumn(const int aIndex);
 
     /**
      * @brief Return a copy of the column data specified by its column name (less efficient than using an index)
@@ -410,7 +409,7 @@ public:
      *
      *  Throw an exception if the specified name is not one of the aliased name of the columns in the result.
      */
-    Column  getColumn(const char* apName) const;
+    Column  getColumn(const char* apName);
 
 #if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900) // c++14: Visual Studio 2015
      /**

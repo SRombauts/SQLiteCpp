@@ -133,7 +133,6 @@ TEST(Statement, moveConstructor)
     const auto const_query = std::move(moved);
     auto index = const_query.getColumnIndex("value");
     EXPECT_EQ(1, index);
-    EXPECT_NO_THROW(const_query.getColumn(index));
 
     // Moved statements should throw
     EXPECT_THROW(query.getColumnIndex("value"), SQLite::Exception);

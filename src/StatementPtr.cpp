@@ -40,7 +40,8 @@ namespace SQLite
         return sqlite3_step(mpStatement.get());
     }
 
-    StatementPtr::TRawStatementPtr StatementPtr::prepareStatement(sqlite3* apConnection, const std::string& aQuery) const
+    StatementPtr::TRawStatementPtr StatementPtr::prepareStatement(sqlite3* apConnection,
+        const std::string& aQuery) const
     {
         if (!apConnection)
             throw SQLite::Exception("Can't create statement without valid database connection");

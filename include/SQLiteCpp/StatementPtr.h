@@ -67,7 +67,7 @@ private:
 
 
 /// Shared pointer to SQLite StatementPtr
-using TStatementPtr = const std::shared_ptr<StatementPtr>;
+using TStatementPtr = std::shared_ptr<StatementPtr>;
 
 /// Weak pointer to SQLite StatementPtr
 using TStatementWeakPtr = std::weak_ptr<StatementPtr>;

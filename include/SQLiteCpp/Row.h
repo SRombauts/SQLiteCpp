@@ -12,6 +12,7 @@
 #pragma once
 
 #include <SQLiteCpp/StatementPtr.h>
+#include <SQLiteCpp/Column.h>
 
 #include <memory>
 #include <string>
@@ -26,35 +27,17 @@ namespace SQLite
 class Row
 {
 public:
-    Row(TStatementWeakPtr apStatement, std::size_t aID);
+    Row(TStatementWeakPtr apStatement, std::size_t aID) :
+        mpStatement(apStatement), mID(aID) {}
 
     std::size_t getRowNumber() const
     {
-        return ID;
+        return mID;
     }
-
-    /**
-     * @brief Test if the column value is NULL
-     *
-     * @param[in] aIndex    Index of the column, starting at 0
-     *
-     * @return true if the column value is NULL
-     *
-     *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
-     */
-    bool    isColumnNull(const int aIndex) const;
-
-    /**
-     * @brief Return a pointer to the text value (NULL terminated string) of the column.
-     *
-     * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
-     *          thus you must copy it before using it beyond its scope (to a std::string for instance).
-     */
-    const char* getText(uint32_t aColumnID) const noexcept;
 
 private:
     TStatementWeakPtr mpStatement;
-    std::size_t ID;
+    std::size_t mID;
 };
 
 }  // namespace SQLite

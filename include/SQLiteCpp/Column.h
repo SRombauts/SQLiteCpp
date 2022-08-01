@@ -50,16 +50,16 @@ public:
      *
      * @param[in] aStmtPtr  Shared pointer to the prepared SQLite Statement Object.
      * @param[in] aIndex    Index of the column in the row of result, starting at 0
-     * 
-     * @throws Exception is thrown in case of error, then the Column object is NOT constructed.
      */
-    explicit Column(const StatementPtr::TRawStatementPtr& aStmtPtr, int aIndex);
+    explicit Column(const TStatementPtr& aStatementPtr, uint16_t aIndex) noexcept :
+        mStatementPtr(aStatementPtr),
+        mIndex(aIndex), mRowIndex(mStatementPtr->mCurrentStep) {}
 
     Column(const Column&) = delete;
     Column& operator=(const Column&) = delete;
 
-    Column(Column&& aColumn) = default;
-    Column& operator=(Column&& aColumn) = default;
+    Column(Column&& aColumn) noexcept = default;
+    Column& operator=(Column&& aColumn) noexcept = default;
 
     /**
      * @brief Return a pointer to the named assigned to this result column (potentially aliased)
@@ -80,27 +80,27 @@ public:
 #endif
 
     /// Return the integer value of the column.
-    int32_t     getInt() const noexcept;
+    int32_t     getInt() const;
     /// Return the 32bits unsigned integer value of the column (note that SQLite3 does not support unsigned 64bits).
-    uint32_t    getUInt() const noexcept;
+    uint32_t    getUInt() const;
     /// Return the 64bits integer value of the column (note that SQLite3 does not support unsigned 64bits).
-    int64_t     getInt64() const noexcept;
+    int64_t     getInt64() const;
     /// Return the double (64bits float) value of the column
-    double      getDouble() const noexcept;
+    double      getDouble() const;
     /**
      * @brief Return a pointer to the text value (NULL terminated string) of the column.
      *
      * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
      *          thus you must copy it before using it beyond its scope (to a std::string for instance).
      */
-    const char* getText(const char* apDefaultValue = "") const noexcept;
+    const char* getText(const char* apDefaultValue = "") const;
     /**
      * @brief Return a pointer to the binary blob value of the column.
      *
      * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
      *          thus you must copy it before using it beyond its scope (to a std::string for instance).
      */
-    const void* getBlob() const noexcept;
+    const void* getBlob() const;
     /**
      * @brief Return a std::string for a TEXT or BLOB column.
      *
@@ -153,12 +153,12 @@ public:
      * - size in bytes of the binary blob returned by getBlob()
      * - 0 for a NULL value
      */
-    int getBytes() const noexcept;
+    int getBytes() const;
 
     /// Alias returning the number of bytes used by the text (or blob) value of the column
-    int size() const noexcept
+    int size() const
     {
-        return getBytes ();
+        return getBytes();
     }
 
     /// Inline cast operators to basic types
@@ -230,8 +230,19 @@ public:
     }
 
 private:
-    StatementPtr::TRawStatementPtr  mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
-    int                             mIndex;    ///< Index of the column in the row of result, starting at 0
+    /**
+    * @brief Returns pointer to SQLite Statement Object to use with sqlite3 API.
+    * Checks if SQLite::Column is used with proper statement step.
+    * 
+    * @throws SQLite::Exception when statement has changed since this object constrution.
+    * 
+    * @return Raw pointer to SQLite Statement Object
+    */
+    sqlite3_stmt* getStatement() const;
+
+    TStatementPtr   mStatementPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
+    uint16_t        mIndex;         ///< Index of the column in the row of result, starting at 0
+    std::size_t     mRowIndex;      ///< Index of the statement row, starting at 0
 };
 
 /**

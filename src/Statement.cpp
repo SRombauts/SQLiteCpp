@@ -119,7 +119,7 @@ void Statement::bind(const int aIndex)
 
 // Return a copy of the column data specified by its index starting at 0
 // (use the Column copy-constructor)
-Column Statement::getColumn(const int aIndex) const
+Column Statement::getColumn(const int aIndex)
 {
     checkRow();
     checkIndex(aIndex);
@@ -130,7 +130,7 @@ Column Statement::getColumn(const int aIndex) const
 
 // Return a copy of the column data specified by its column name starting at 0
 // (use the Column copy-constructor)
-Column Statement::getColumn(const char* apName) const
+Column Statement::getColumn(const char* apName)
 {
     checkRow();
     const int index = getColumnIndex(apName);

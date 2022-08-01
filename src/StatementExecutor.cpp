@@ -20,28 +20,6 @@ namespace SQLite
 {
 
 
-    StatementExecutor::StatementExecutor(sqlite3* apSQLite, const std::string& aQuery) :
-        mpStatement(std::make_shared<StatementPtr>(apSQLite, aQuery))
-    {
-        createColumnInfo();
-    }
-
-    void StatementExecutor::createColumnInfo()
-    {
-        mColumnCount = sqlite3_column_count(getStatement());
-
-
-        if (!mColumnNames.empty())
-            mColumnNames.clear();
-
-        // Build the map of column name and index
-        for (int i = 0; i < mColumnCount; ++i)
-        {
-            const char* pName = sqlite3_column_name(getStatement(), i);
-            mColumnNames.emplace(pName, i);
-        }
-    }
-
     // Reset the statement to make it ready for a new execution. This doesn't clear bindings.
     void StatementExecutor::reset()
     {

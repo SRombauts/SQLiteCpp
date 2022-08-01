@@ -33,41 +33,41 @@ void Statement::clearBindings()
 }
 
 // Get bind parameter index
-int Statement::getIndex(const char * const apName) const
+int Statement::getIndex(const char* const apName) const
 {
     return sqlite3_bind_parameter_index(getStatement(), apName);
 }
 
 // Bind an 32bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const int32_t aValue)
+void Statement::bind(const int_fast16_t aIndex, const int32_t aValue)
 {
     const int ret = sqlite3_bind_int(getStatement(), aIndex, aValue);
     check(ret);
 }
 
 // Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const uint32_t aValue)
+void Statement::bind(const int_fast16_t aIndex, const uint32_t aValue)
 {
     const int ret = sqlite3_bind_int64(getStatement(), aIndex, aValue);
     check(ret);
 }
 
 // Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const int64_t aValue)
+void Statement::bind(const int_fast16_t aIndex, const int64_t aValue)
 {
     const int ret = sqlite3_bind_int64(getStatement(), aIndex, aValue);
     check(ret);
 }
 
 // Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const double aValue)
+void Statement::bind(const int_fast16_t aIndex, const double aValue)
 {
     const int ret = sqlite3_bind_double(getStatement(), aIndex, aValue);
     check(ret);
 }
 
 // Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const std::string& aValue)
+void Statement::bind(const int_fast16_t aIndex, const std::string& aValue)
 {
     const int ret = sqlite3_bind_text(getStatement(), aIndex, aValue.c_str(),
                                       static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
@@ -75,21 +75,21 @@ void Statement::bind(const int aIndex, const std::string& aValue)
 }
 
 // Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const char* apValue)
+void Statement::bind(const int_fast16_t aIndex, const char* apValue)
 {
     const int ret = sqlite3_bind_text(getStatement(), aIndex, apValue, -1, SQLITE_TRANSIENT);
     check(ret);
 }
 
 // Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const void* apValue, const int aSize)
+void Statement::bind(const int_fast16_t aIndex, const void* apValue, const int aSize)
 {
     const int ret = sqlite3_bind_blob(getStatement(), aIndex, apValue, aSize, SQLITE_TRANSIENT);
     check(ret);
 }
 
 // Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bindNoCopy(const int aIndex, const std::string& aValue)
+void Statement::bindNoCopy(const int_fast16_t aIndex, const std::string& aValue)
 {
     const int ret = sqlite3_bind_text(getStatement(), aIndex, aValue.c_str(),
                                       static_cast<int>(aValue.size()), SQLITE_STATIC);
@@ -97,21 +97,21 @@ void Statement::bindNoCopy(const int aIndex, const std::string& aValue)
 }
 
 // Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bindNoCopy(const int aIndex, const char* apValue)
+void Statement::bindNoCopy(const int_fast16_t aIndex, const char* apValue)
 {
     const int ret = sqlite3_bind_text(getStatement(), aIndex, apValue, -1, SQLITE_STATIC);
     check(ret);
 }
 
 // Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bindNoCopy(const int aIndex, const void* apValue, const int aSize)
+void Statement::bindNoCopy(const int_fast16_t aIndex, const void* apValue, const int aSize)
 {
     const int ret = sqlite3_bind_blob(getStatement(), aIndex, apValue, aSize, SQLITE_STATIC);
     check(ret);
 }
 
 // Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex)
+void Statement::bind(const int_fast16_t aIndex)
 {
     const int ret = sqlite3_bind_null(getStatement(), aIndex);
     check(ret);
@@ -119,7 +119,7 @@ void Statement::bind(const int aIndex)
 
 // Return a copy of the column data specified by its index starting at 0
 // (use the Column copy-constructor)
-Column Statement::getColumn(const int aIndex)
+Column Statement::getColumn(const int_fast16_t aIndex)
 {
     checkRow();
     checkIndex(aIndex);
@@ -140,7 +140,7 @@ Column Statement::getColumn(const char* apName)
 }
 
 // Test if the column is NULL
-bool Statement::isColumnNull(const int aIndex) const
+bool Statement::isColumnNull(const int_fast16_t aIndex) const
 {
     checkRow();
     checkIndex(aIndex);
@@ -155,7 +155,7 @@ bool Statement::isColumnNull(const char* apName) const
 }
 
 // Return the named assigned to the specified result column (potentially aliased)
-const char* Statement::getColumnName(const int aIndex) const
+const char* Statement::getColumnName(const int_fast16_t aIndex) const
 {
     checkIndex(aIndex);
     return sqlite3_column_name(getStatement(), aIndex);
@@ -163,7 +163,7 @@ const char* Statement::getColumnName(const int aIndex) const
 
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
 // Return the named assigned to the specified result column (potentially aliased)
-const char* Statement::getColumnOriginName(const int aIndex) const
+const char* Statement::getColumnOriginName(const int_fast16_t aIndex) const
 {
     checkIndex(aIndex);
     return sqlite3_column_origin_name(getStatement(), aIndex);
@@ -184,7 +184,7 @@ int Statement::getColumnIndex(const char* apName) const
     return iIndex->second;
 }
 
-const char * Statement::getColumnDeclaredType(const int aIndex) const
+const char * Statement::getColumnDeclaredType(const int_fast16_t aIndex) const
 {
     checkIndex(aIndex);
     const char * result = sqlite3_column_decltype(getStatement(), aIndex);

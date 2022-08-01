@@ -18,7 +18,6 @@
 #include <iterator>
 #include <memory>
 #include <string>
-#include <map>
 
 
 namespace SQLite
@@ -28,6 +27,8 @@ extern const int OK; ///< SQLITE_OK
 
 /**
 * @brief Base class for prepared SQLite Statement.
+* 
+* Use with for-range to iterate on statement rows.
 * 
 * You should use SQLite::Statement or (if you had a reson)
 * inherit this class to create your own Statement executor class.
@@ -44,9 +45,6 @@ extern const int OK; ///< SQLITE_OK
 class StatementExecutor
 {
 public:
-    /// Type to store columns names and indexes
-    using TColumnsMap = std::map<std::string, int, std::less<>>;
-
     StatementExecutor(const StatementExecutor&) = delete;
     StatementExecutor& operator=(const StatementExecutor&) = delete;
 
@@ -126,13 +124,13 @@ public:
     /// Return the number of columns in the result set returned by the prepared statement
     int getColumnCount() const noexcept
     {
-        return mColumnCount;
+        return mpStatement->mColumnCount;
     }
 
     /// Get columns names with theirs ids
-    const TColumnsMap& getColumnsNames() const noexcept
+    const StatementPtr::TColumnsMap& getColumnsNames() const noexcept
     {
-        return mColumnNames;
+        return mpStatement->mColumnNames;
     }
 
     /// true when a row has been fetched with executeStep()
@@ -163,6 +161,9 @@ public:
     * @brief InputIterator for statement steps.
     * 
     * Remember that this iterator is changing state of StatementExecutor.
+    * 
+    * Use this iterator by using for-range on StatementExecutor
+    * or by calling StatementExecutor::begin().
     */
     class RowIterator
     {
@@ -206,8 +207,8 @@ public:
         /// Executing next statement step
         void advance() noexcept;
 
-        TStatementWeakPtr mpStatement{};  //!< Weak pointer to prepared Statement Object
-        std::size_t             mID{};          //!< Current row number
+        TStatementWeakPtr mpStatement{};    //!< Weak pointer to prepared Statement Object
+        std::size_t             mID{};      //!< Current row number
 
         /// Internal row object storage
         Row mRow{ mpStatement, mID };
@@ -241,7 +242,8 @@ protected:
      *
      * @throws Exception is thrown in case of error, then the StatementExecutor object is NOT constructed.
      */
-    explicit StatementExecutor(sqlite3* apSQLite, const std::string& aQuery);
+    explicit StatementExecutor(sqlite3* apSQLite, const std::string& aQuery) :
+        mpStatement(std::make_shared<StatementPtr>(apSQLite, aQuery)) {}
 
     /**
      * @brief Return a std::shared_ptr with prepared SQLite Statement Object.
@@ -298,28 +300,21 @@ protected:
      * 
      * @throws SQLite::Exception when aIndex is out of bounds.
      */
-    void checkIndex(const int aIndex) const
+    void checkIndex(const int_fast16_t aIndex) const
     {
-        if ((aIndex < 0) || (aIndex >= mColumnCount))
+        if ((aIndex < 0) || (mpStatement->mColumnCount <= aIndex))
         {
             throw SQLite::Exception("Column index out of range.");
         }
     }
 
 private:
-    ///  Get column number and create map with columns names.
-    void createColumnInfo();
-
     /// Shared Pointer to this object.
     /// Allows RowIterator to execute next step.
     const TStatementPtr mpStatement{};
 
-    int     mColumnCount = 0;   //!< Number of columns in the result of the prepared statement
-    bool    mbHasRow = false;   //!< true when a row has been fetched with executeStep()
-    bool    mbDone = false;     //!< true when the last executeStep() had no more row to fetch
-
-    /// Map of columns index by name (mutable so getColumnIndex can be const)
-    mutable TColumnsMap mColumnNames{};
+    bool    mbHasRow    = false;    //!< true when a row has been fetched with executeStep()
+    bool    mbDone      = false;    //!< true when the last executeStep() had no more row to fetch
 };
 
 

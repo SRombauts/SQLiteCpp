@@ -51,7 +51,7 @@ public:
      * @param[in] aStmtPtr  Shared pointer to the prepared SQLite Statement Object.
      * @param[in] aIndex    Index of the column in the row of result, starting at 0
      */
-    explicit Column(const TStatementPtr& aStatementPtr, uint16_t aIndex) noexcept :
+    explicit Column(const TStatementPtr& aStatementPtr, int_fast16_t aIndex) noexcept :
         mStatementPtr(aStatementPtr),
         mIndex(aIndex), mRowIndex(mStatementPtr->mCurrentStep) {}
 
@@ -60,6 +60,14 @@ public:
 
     Column(Column&& aColumn) noexcept = default;
     Column& operator=(Column&& aColumn) noexcept = default;
+
+    /**
+    * @return Column index in statement return table.
+    */
+    int_fast16_t getIndex() const noexcept
+    {
+        return mIndex;
+    }
 
     /**
      * @brief Return a pointer to the named assigned to this result column (potentially aliased)
@@ -241,7 +249,7 @@ private:
     sqlite3_stmt* getStatement() const;
 
     TStatementPtr   mStatementPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
-    uint16_t        mIndex;         ///< Index of the column in the row of result, starting at 0
+    int_fast16_t    mIndex;         ///< Index of the column in the row of result, starting at 0
     std::size_t     mRowIndex;      ///< Index of the statement row, starting at 0
 };
 

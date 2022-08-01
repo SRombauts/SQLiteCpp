@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <string>
+#include <map>
 
 // Forward declaration to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
@@ -42,9 +43,16 @@ struct StatementPtr
     /// Shared pointer to SQLite prepared Statement Object
     using TRawStatementPtr = std::shared_ptr<sqlite3_stmt>;
 
+    /// Type to store columns names and indexes
+    using TColumnsMap = std::map<std::string, int_fast16_t, std::less<>>;
+
     sqlite3* const          mpConnection;       //!< Pointer to SQLite Database Connection Handle
     TRawStatementPtr const  mpStatement;        //!< Shared Pointer to the prepared SQLite Statement Object
     std::size_t             mCurrentStep = 0;   //!< Current step of prepared Statement Object
+    int_fast16_t            mColumnCount;       //!< Number of columns in the result of the prepared statement
+
+    /// Map of columns index by name (mutable so getColumnIndex can be const)
+    mutable TColumnsMap mColumnNames{};
 
     /// Resets SQLite Statement Object
     int reset() noexcept;

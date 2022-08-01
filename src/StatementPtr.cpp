@@ -21,7 +21,15 @@ namespace SQLite
 
     StatementPtr::StatementPtr(sqlite3* apSQLite, const std::string& aQuery) :
         mpConnection(apSQLite), mpStatement(prepareStatement(apSQLite, aQuery))
-    {}
+    {
+        mColumnCount = sqlite3_column_count(getStatement());
+
+        // Build the map of column name and index
+        for (int i = 0; i < mColumnCount; ++i)
+        {
+            mColumnNames.emplace(sqlite3_column_name(getStatement(), i), i);
+        }
+    }
 
     sqlite3_stmt* StatementPtr::getStatement() const noexcept
     {

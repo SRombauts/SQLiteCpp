@@ -135,7 +135,6 @@ TEST(Statement, moveConstructor)
     EXPECT_EQ(1, index);
 
     // Moved statements should throw
-    EXPECT_THROW(query.getColumnIndex("value"), SQLite::Exception);
     EXPECT_THROW(query.getColumn(index), SQLite::Exception);
 }
 

@@ -17,7 +17,60 @@
 
 namespace SQLite
 {
+    Row::Row(TStatementWeakPtr apStatement, std::size_t aID) :
+        mpStatement(apStatement), mID(aID)
+    {
+        checkStatement();
+        auto statement = mpStatement.lock();
+        mColumnCount = statement->mColumnCount;
+    }
 
+    Column Row::operator[](int_fast16_t aIndex) const
+    {
+        checkStatement();
+        if (mColumnCount <= aIndex)
+        {
+            throw SQLite::Exception("Column index out of range.");
+        }
+        return Column(mpStatement.lock(), aIndex);
+    }
+
+    Column Row::operator[](const char* aName) const
+    {
+        return Column(mpStatement.lock(), getColumnIndex(aName));
+    }
+
+    int_fast16_t Row::getColumnIndex(const char* apName) const
+    {
+        checkStatement();
+        auto statement = mpStatement.lock();
+
+        const auto& columns = statement->mColumnNames;
+
+        const auto iIndex = columns.find(apName);
+        if (iIndex == columns.end())
+        {
+            throw SQLite::Exception("Unknown column name.");
+        }
+
+        return iIndex->second;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    Row::ColumnIterator Row::begin() const
+    {
+        checkStatement();
+        auto statement = mpStatement.lock();
+        return ColumnIterator(statement, 0);
+    }
+
+    Row::ColumnIterator Row::end() const
+    {
+        checkStatement();
+        auto statement = mpStatement.lock();
+        return ColumnIterator(statement, statement->mColumnCount);
+    }
 
     bool Row::ColumnIterator::operator==(const ColumnIterator& aIt) const noexcept
     {
@@ -35,6 +88,5 @@ namespace SQLite
 
         return mRowID == aIt.mRowID;
     }
-
 
 }  // namespace SQLite

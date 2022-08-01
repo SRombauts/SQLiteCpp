@@ -11,9 +11,11 @@
  */
 #pragma once
 
+#include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/StatementPtr.h>
 #include <SQLiteCpp/Column.h>
 
+#include <iterator>
 #include <memory>
 #include <string>
 
@@ -22,26 +24,58 @@ namespace SQLite
 {
 
 /**
-* @brief CLASS IS WIP!
+* @brief Small class returned by StatementExecutor::RowIterator.
+* 
+* Use with for-range to iterate on statement columns.
 */
 class Row
 {
 public:
-    Row(TStatementWeakPtr apStatement, std::size_t aID) :
-        mpStatement(apStatement), mID(aID) {}
+    Row(TStatementWeakPtr apStatement, std::size_t aID);
 
-    std::size_t getRowNumber() const
+    /**
+    * @return Row ID/steps executed since statement start (starting at 0).
+    */
+    std::size_t getRowNumber() const noexcept
     {
         return mID;
     }
 
     /**
+    * @return Column with given index
+    *
+    * @throws SQLite::Exception when index is out of bounds
+    */
+    Column operator[](int_fast16_t aIndex) const;
+    /**
+    * @return Column with given name
+    *
+    * @throws SQLite::Exception when there is no column with given name
+    */
+    Column operator[](const char* aName) const;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @brief Return the index of the specified (potentially aliased) column name
+     *
+     * @param[in] apName Aliased name of the column, that is, the named specified in the query (not the original name)
+     *
+     * @throws SQLite::Exception if the specified name is not known.
+     */
+    int_fast16_t getColumnIndex(const char* apName) const;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
     * @brief RandomAccessIterator for row columns.
+    * 
+    * Use by using for-range on Row or by calling Row::begin().
     */
     class ColumnIterator
     {
     public:
-        //TODO: using iterator_category = std::random_access_iterator_tag;
+        // TODO: using iterator_category = std::random_access_iterator_tag;
         using iterator_category = std::bidirectional_iterator_tag;
         using value_type = Column;
         using reference = const Column&;
@@ -49,8 +83,8 @@ public:
         using difference_type = std::ptrdiff_t;
 
         ColumnIterator() = default;
-        ColumnIterator(TStatementPtr apStatement, uint16_t aID) :
-            mpStatement(apStatement), mID(aID), mColumn(apStatement, aID) {}
+        ColumnIterator(TStatementPtr apStatement, int_fast16_t aID) :
+            mpStatement(apStatement), mRowID(apStatement->mCurrentStep), mID(aID), mColumn(apStatement, aID) {}
 
         reference operator*() const noexcept
         {
@@ -91,17 +125,41 @@ public:
         }
 
     private:
-        TStatementPtr   mpStatement{};  //!< Shared pointer to prepared Statement Object
-        std::size_t     mRowID{};       //!< Current row number
-        uint16_t        mID{};          //!< Current column number
+        TStatementPtr   mpStatement;  //!< Shared pointer to prepared Statement Object
+        std::size_t     mRowID;       //!< Current row number
+        int_fast16_t    mID;          //!< Current column number
 
         /// Internal column object storage
         Column mColumn{ mpStatement, mID };
     };
 
+    /**
+    * @return RowIterator to first column of this prepared statement.
+    */
+    ColumnIterator begin() const;
+
+    /**
+    * @return RowIterator to after the last column of this prepared statement.
+    */
+    ColumnIterator end() const;
+
 private:
-    TStatementWeakPtr mpStatement;
-    std::size_t       mID;
+    /**
+    * @brief Checks if weak_ptr contains existing SQLite Statement Object.
+    * 
+    * @throws SQLite::Exception when weak_ptr is expired.
+    */
+    void checkStatement() const
+    {
+        if (mpStatement.expired())
+        {
+            throw SQLite::Exception("Row is used after destruction of SQLite Statement Object");
+        }
+    }
+
+    TStatementWeakPtr   mpStatement;    //!< Weak Pointer to the prepared SQLite Statement Object
+    std::size_t         mID;            //!< Index of the statement row, starting at 0
+    int_fast16_t        mColumnCount{}; //!< Number of columns in row
 };
 
 }  // namespace SQLite

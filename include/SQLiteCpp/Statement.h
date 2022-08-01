@@ -93,42 +93,42 @@ public:
     // => if you know what you are doing, use bindNoCopy() instead of bind()
 
     SQLITECPP_PURE_FUNC
-    int getIndex(const char * const apName) const;
+    int getIndex(const char* const apName) const;
 
     /**
      * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const int32_t       aValue);
+    void bind(const int_fast16_t aIndex, const int32_t      aValue);
     /**
      * @brief Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const uint32_t      aValue);
+    void bind(const int_fast16_t aIndex, const uint32_t     aValue);
     /**
      * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const int64_t       aValue);
+    void bind(const int_fast16_t aIndex, const int64_t      aValue);
     /**
      * @brief Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const double        aValue);
+    void bind(const int_fast16_t aIndex, const double       aValue);
     /**
      * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
-    void bind(const int aIndex, const std::string&  aValue);
+    void bind(const int_fast16_t aIndex, const std::string& aValue);
     /**
      * @brief Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
-    void bind(const int aIndex, const char*         apValue);
+    void bind(const int_fast16_t aIndex, const char*        apValue);
     /**
      * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
-    void bind(const int aIndex, const void*         apValue, const int aSize);
+    void bind(const int_fast16_t aIndex, const void*        apValue, const int aSize);
     /**
      * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1).
      *
@@ -136,7 +136,7 @@ public:
      *
      * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
      */
-    void bindNoCopy(const int aIndex, const std::string&    aValue);
+    void bindNoCopy(const int_fast16_t aIndex, const std::string&   aValue);
     /**
      * @brief Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
@@ -144,19 +144,19 @@ public:
      *
      * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
      */
-    void bindNoCopy(const int aIndex, const char*           apValue);
+    void bindNoCopy(const int_fast16_t aIndex, const char*          apValue);
     /**
      * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
      */
-    void bindNoCopy(const int aIndex, const void*           apValue, const int aSize);
+    void bindNoCopy(const int_fast16_t aIndex, const void*          apValue, const int aSize);
     /**
      * @brief Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * @see clearBindings() to set all bound parameters to NULL.
      */
-    void bind(const int aIndex);
+    void bind(const int_fast16_t aIndex);
 
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
@@ -258,28 +258,28 @@ public:
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const int32_t         aValue)
+    void bind(const std::string& aName, const int32_t       aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const uint32_t        aValue)
+    void bind(const std::string& aName, const uint32_t      aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const int64_t         aValue)
+    void bind(const std::string& aName, const int64_t       aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
      * @brief Bind a double (64bits float) value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const double          aValue)
+    void bind(const std::string& aName, const double        aValue)
     {
         bind(aName.c_str(), aValue);
     }
@@ -288,7 +288,7 @@ public:
      *
      * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
-    void bind(const std::string& aName, const std::string&    aValue)
+    void bind(const std::string& aName, const std::string&  aValue)
     {
         bind(aName.c_str(), aValue);
     }
@@ -297,7 +297,7 @@ public:
      *
      * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
-    void bind(const std::string& aName, const char*           apValue)
+    void bind(const std::string& aName, const char*         apValue)
     {
         bind(aName.c_str(), apValue);
     }
@@ -306,7 +306,7 @@ public:
      *
      * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
-    void bind(const std::string& aName, const void*           apValue, const int aSize)
+    void bind(const std::string& aName, const void*         apValue, const int aSize)
     {
         bind(aName.c_str(), apValue, aSize);
     }
@@ -378,7 +378,7 @@ public:
      *          Thus, you should instead extract immediately its data (getInt(), getText()...)
      *          and use or copy this data for any later usage.
      */
-    Column  getColumn(const int aIndex);
+    Column  getColumn(const int_fast16_t aIndex);
 
     /**
      * @brief Return a copy of the column data specified by its column name (less efficient than using an index)
@@ -431,12 +431,12 @@ public:
      *
      * @note Requires std=C++14
      */
-    template<typename T, int N>
+    template<typename T, int_fast16_t N>
     T getColumns()
     {
         checkRow();
         checkIndex(N - 1);
-        return getColumns<T>(std::make_integer_sequence<int, N>{});
+        return getColumns<T>(std::make_integer_sequence<int_fast16_t, N>{});
     }
 
 private:
@@ -449,7 +449,7 @@ private:
     * @return Column object for each column in statement
     */
     template<typename T, const int... Is>
-    T getColumns(const std::integer_sequence<int, Is...>)
+    T getColumns(const std::integer_sequence<int_fast16_t, Is...>)
     {
         return T{ Column(getStatementPtr(), Is)... };
     }
@@ -466,7 +466,7 @@ public:
      *
      *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
      */
-    bool    isColumnNull(const int aIndex) const;
+    bool    isColumnNull(const int_fast16_t aIndex) const;
 
     /**
      * @brief Test if the column value is NULL
@@ -488,7 +488,7 @@ public:
      *
      *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
      */
-    const char* getColumnName(const int aIndex) const;
+    const char* getColumnName(const int_fast16_t aIndex) const;
 
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
     /**
@@ -500,7 +500,7 @@ public:
      *
      *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
      */
-    const char* getColumnOriginName(const int aIndex) const;
+    const char* getColumnOriginName(const int_fast16_t aIndex) const;
 #endif
 
     /**
@@ -528,7 +528,7 @@ public:
      *  - the statement is not a SELECT query
      *  - the column at aIndex is not a table column but an expression or subquery
      */
-    const char* getColumnDeclaredType(const int aIndex) const;
+    const char* getColumnDeclaredType(const int_fast16_t aIndex) const;
 
     ////////////////////////////////////////////////////////////////////////////
 

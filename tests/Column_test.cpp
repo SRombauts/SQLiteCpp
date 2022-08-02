@@ -260,16 +260,12 @@ TEST(Column, shared_ptr)
     query->executeStep();
     column0 = query->getColumn(0);
     EXPECT_EQ(true, column0.isInteger());
+
     query->executeStep(); // query is done
-    
-    // Undefined behavior
-    // auto x = column0.getInt();
+    EXPECT_THROW(column0.getInt(), SQLite::Exception);
 
     query.reset();
-
-    // Undefined behavior
-    // auto x = column0.getInt();
-    // bool isInt = column0.isInteger();
+    EXPECT_THROW(column0.getInt(), SQLite::Exception);
 
     EXPECT_STREQ("id", column0.getName());
 }

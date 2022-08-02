@@ -10,6 +10,7 @@
  */
 #pragma once
 
+#include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/Column.h>
 
 // c++17: MinGW GCC version > 8

@@ -20,9 +20,9 @@ namespace SQLite
     Row::Row(TStatementWeakPtr apStatement, std::size_t aID) :
         mpStatement(apStatement), mID(aID)
     {
-        checkStatement();
         auto statement = mpStatement.lock();
-        mColumnCount = statement->mColumnCount;
+        if (statement)
+            mColumnCount = statement->mColumnCount;
     }
 
     Column Row::at(int_fast16_t aIndex) const

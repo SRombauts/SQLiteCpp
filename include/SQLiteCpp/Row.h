@@ -55,7 +55,7 @@ public:
     * @throws SQLite::Exception when there is no column with given name
     */
     Column at(const char* aName) const;
-    
+
     /**
     * @return Column with given index
     *
@@ -78,7 +78,7 @@ public:
     {
         return at(aName);
     }
-    
+
     /**
     * @return Column with given index
     *

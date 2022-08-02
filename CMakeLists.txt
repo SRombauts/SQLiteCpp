@@ -144,6 +144,7 @@ set(SQLITECPP_TESTS
  tests/VariadicBind_test.cpp
  tests/Exception_test.cpp
  tests/ExecuteMany_test.cpp
+ tests/Iterators.cpp
 )
 source_group(tests FILES ${SQLITECPP_TESTS})
 

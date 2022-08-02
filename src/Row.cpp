@@ -25,7 +25,7 @@ namespace SQLite
         mColumnCount = statement->mColumnCount;
     }
 
-    Column Row::operator[](int_fast16_t aIndex) const
+    Column Row::at(int_fast16_t aIndex) const
     {
         checkStatement();
         if (mColumnCount <= aIndex)
@@ -35,7 +35,7 @@ namespace SQLite
         return Column(mpStatement.lock(), aIndex);
     }
 
-    Column Row::operator[](const char* aName) const
+    Column Row::at(const char* aName) const
     {
         return Column(mpStatement.lock(), getColumnIndex(aName));
     }

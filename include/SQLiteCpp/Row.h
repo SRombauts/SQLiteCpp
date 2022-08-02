@@ -41,18 +41,66 @@ public:
         return mID;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
     * @return Column with given index
     *
     * @throws SQLite::Exception when index is out of bounds
     */
-    Column operator[](int_fast16_t aIndex) const;
+    Column at(int_fast16_t aIndex) const;
     /**
     * @return Column with given name
     *
     * @throws SQLite::Exception when there is no column with given name
     */
-    Column operator[](const char* aName) const;
+    Column at(const char* aName) const;
+    
+    /**
+    * @return Column with given index
+    *
+    * @note Alias of Column::at()
+    * 
+    * @throws SQLite::Exception when index is out of bounds
+    */
+    Column getColumn(int_fast16_t aIndex) const
+    {
+        return at(aIndex);
+    }
+    /**
+    * @return Column with given name
+    *
+    * @note Alias of Column::at()
+    * 
+    * @throws SQLite::Exception when there is no column with given name
+    */
+    Column getColumn(const char* aName) const
+    {
+        return at(aName);
+    }
+    
+    /**
+    * @return Column with given index
+    *
+    * @note Alias of Column::at()
+    * 
+    * @throws SQLite::Exception when index is out of bounds
+    */
+    Column operator[](int_fast16_t aIndex) const
+    {
+        return at(aIndex);
+    }
+    /**
+    * @return Column with given name
+    *
+    * @note Alias of Column::at()
+    * 
+    * @throws SQLite::Exception when there is no column with given name
+    */
+    Column operator[](const char* aName) const
+    {
+        return at(aName);
+    }
 
     ////////////////////////////////////////////////////////////////////////////
 

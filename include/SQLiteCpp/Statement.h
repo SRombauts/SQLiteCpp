@@ -74,17 +74,13 @@ public:
         Statement(aDatabase, aQuery.c_str())
     {}
 
-    /**
-     * @brief Move an SQLite statement.
-     *
-     * @param[in] aStatement    Statement to move
-     */
-    Statement(Statement&& aStatement) noexcept;
-    Statement& operator=(Statement&& aStatement) noexcept = default;
-
     // Statement is non-copyable
     Statement(const Statement&) = delete;
     Statement& operator=(const Statement&) = delete;
+
+    Statement(Statement&& aStatement) noexcept;
+    Statement& operator=(Statement&& aStatement) noexcept = default;
+    // TODO: Change Statement move constructor to default
 
     /// Finalize and unregister the SQL query from the SQLite Database Connection.
     /// The finalization will be done by the destructor of the last shared pointer
@@ -702,12 +698,12 @@ private:
     std::string             mQuery;                 //!< UTF-8 SQL Query
     sqlite3*                mpSQLite;               //!< Pointer to SQLite Database Connection Handle
     TStatementPtr           mpPreparedStatement;    //!< Shared Pointer to the prepared SQLite Statement Object
-    int                     mColumnCount{0};        //!< Number of columns in the result of the prepared statement
-    bool                    mbHasRow{false};        //!< true when a row has been fetched with executeStep()
-    bool                    mbDone{false};          //!< true when the last executeStep() had no more row to fetch
+    int                     mColumnCount = 0;       //!< Number of columns in the result of the prepared statement
+    bool                    mbHasRow = false;       //!< true when a row has been fetched with executeStep()
+    bool                    mbDone = false;         //!< true when the last executeStep() had no more row to fetch
 
     /// Map of columns index by name (mutable so getColumnIndex can be const)
-    mutable std::map<std::string, int>  mColumnNames;
+    mutable std::map<std::string, int, std::less<>>  mColumnNames;
 };
 
 

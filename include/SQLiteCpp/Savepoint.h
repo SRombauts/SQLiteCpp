@@ -66,7 +66,7 @@ class Savepoint {
      * Exception is thrown in case of error, then the Savepoint is NOT
      * initiated.
      */
-    Savepoint(Database& aDatabase, std::string name);
+    Savepoint(Database& aDatabase, const std::string& name);
 
     // Savepoint is non-copyable
     Savepoint(const Savepoint&) = delete;
@@ -88,8 +88,8 @@ class Savepoint {
     void rollback();
 
    private:
-    Database& mDatabase;  ///< Reference to the SQLite Database Connection
-    std::string msName;   ///< Name of the Savepoint
-    bool mbReleased;      ///< True when release has been called
+    Database& mDatabase;        ///< Reference to the SQLite Database Connection
+    std::string msName;         ///< Name of the Savepoint
+    bool mbReleased = false;    ///< True when release has been called
 };
 }  // namespace SQLite

@@ -275,7 +275,7 @@ int Statement::getColumnIndex(const char* apName) const
         for (int i = 0; i < mColumnCount; ++i)
         {
             const char* pName = sqlite3_column_name(getPreparedStatement(), i);
-            mColumnNames[pName] = i;
+            mColumnNames.emplace(pName, i);
         }
     }
 
@@ -288,7 +288,7 @@ int Statement::getColumnIndex(const char* apName) const
     return iIndex->second;
 }
 
-const char * Statement::getColumnDeclaredType(const int aIndex) const
+const char* Statement::getColumnDeclaredType(const int aIndex) const
 {
     checkIndex(aIndex);
     const char * result = sqlite3_column_decltype(getPreparedStatement(), aIndex);

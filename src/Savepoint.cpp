@@ -18,8 +18,8 @@
 namespace SQLite {
 
 // Begins the SQLite savepoint
-Savepoint::Savepoint(Database& aDatabase, std::string aName)
-    : mDatabase(aDatabase), msName(aName), mbReleased(false) {
+Savepoint::Savepoint(Database& aDatabase, const std::string& aName)
+    : mDatabase(aDatabase), msName(aName) {
     // workaround because you cannot bind to SAVEPOINT
     // escape name for use in query
     Statement stmt(mDatabase, "SELECT quote(?)");

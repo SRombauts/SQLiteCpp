@@ -27,6 +27,7 @@
 namespace SQLite
 {
 
+const int   OK                = SQLITE_OK;
 const int   OPEN_READONLY     = SQLITE_OPEN_READONLY;
 const int   OPEN_READWRITE    = SQLITE_OPEN_READWRITE;
 const int   OPEN_CREATE       = SQLITE_OPEN_CREATE;
@@ -42,10 +43,8 @@ const int   OPEN_NOFOLLOW     = SQLITE_OPEN_NOFOLLOW;
 const int   OPEN_NOFOLLOW     = 0;
 #endif
 
-const int   OK              = SQLITE_OK;
-
-const char* VERSION         = SQLITE_VERSION;
-const int   VERSION_NUMBER  = SQLITE_VERSION_NUMBER;
+const char* const VERSION        = SQLITE_VERSION;
+const int         VERSION_NUMBER = SQLITE_VERSION_NUMBER;
 
 // Return SQLite version string using runtime call to the compiled library
 const char* getLibVersion() noexcept
@@ -142,7 +141,7 @@ Column Database::execAndGet(const char* apQuery)
 }
 
 // Shortcut to test if a table exists.
-bool Database::tableExists(const char* apTableName)
+bool Database::tableExists(const char* apTableName) const
 {
     Statement query(*this, "SELECT count(*) FROM sqlite_master WHERE type='table' AND name=?");
     query.bind(1, apTableName);
@@ -439,8 +438,8 @@ void Database::backup(const char* apFilename, BackupType aType)
     Database otherDatabase(apFilename, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
     // For a 'Save' operation, data is copied from the current Database to the other. A 'Load' is the reverse.
-    Database& src = (aType == Save ? *this : otherDatabase);
-    Database& dest = (aType == Save ? otherDatabase : *this);
+    Database& src = (aType == BackupType::Save ? *this : otherDatabase);
+    Database& dest = (aType == BackupType::Save ? otherDatabase : *this);
 
     // Set up the backup procedure to copy between the "main" databases of each connection
     Backup bkp(dest, src);

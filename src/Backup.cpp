@@ -69,15 +69,16 @@ int Backup::executeStep(const int aNumPage /* = -1 */)
 }
 
 // Get the number of remaining source pages to be copied in this backup process
-int Backup::getRemainingPageCount()
+int Backup::getRemainingPageCount() const
 {
     return sqlite3_backup_remaining(mpSQLiteBackup);
 }
 
 // Get the number of total source pages to be copied in this backup process
-int Backup::getTotalPageCount()
+int Backup::getTotalPageCount() const
 {
     return sqlite3_backup_pagecount(mpSQLiteBackup);
 }
+
 
 }  // namespace SQLite

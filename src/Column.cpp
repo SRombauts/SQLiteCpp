@@ -78,7 +78,7 @@ double Column::getDouble() const noexcept
 const char* Column::getText(const char* apDefaultValue /* = "" */) const noexcept
 {
     auto pText = reinterpret_cast<const char*>(sqlite3_column_text(mStmtPtr.get(), mIndex));
-    return (pText?pText:apDefaultValue);
+    return (pText ? pText : apDefaultValue);
 }
 
 // Return a pointer to the blob value (*not* NULL terminated) of the column specified by its index starting at 0

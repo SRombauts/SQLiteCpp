@@ -14,6 +14,7 @@
 #include <SQLiteCpp/Database.h>
 
 #include <string>
+#include <memory>
 
 // Forward declaration to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3_backup;
@@ -114,13 +115,12 @@ public:
     int executeStep(const int aNumPage = -1);
 
     /// Return the number of source pages still to be backed up as of the most recent call to executeStep().
-    int getRemainingPageCount();
+    int getRemainingPageCount() const;
 
     /// Return the total number of pages in the source database as of the most recent call to executeStep().
-    int getTotalPageCount();
+    int getTotalPageCount() const;
 
 private:
-    // TODO: use std::unique_ptr with a custom deleter to call sqlite3_backup_finish()
     sqlite3_backup* mpSQLiteBackup = nullptr;   ///< Pointer to SQLite Database Backup Handle
 };
 

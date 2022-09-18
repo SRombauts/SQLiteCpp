@@ -275,7 +275,7 @@ int Statement::getColumnIndex(const char* apName) const
         for (int i = 0; i < mColumnCount; ++i)
         {
             const char* pName = sqlite3_column_name(getPreparedStatement(), i);
-            mColumnNames.emplace(pName, i);
+            mColumnNames[pName] = i;
         }
     }
 

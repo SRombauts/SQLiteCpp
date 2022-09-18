@@ -78,9 +78,9 @@ public:
     Statement(const Statement&) = delete;
     Statement& operator=(const Statement&) = delete;
 
+    // TODO: Change Statement move constructor to default
     Statement(Statement&& aStatement) noexcept;
     Statement& operator=(Statement&& aStatement) noexcept = default;
-    // TODO: Change Statement move constructor to default
 
     /// Finalize and unregister the SQL query from the SQLite Database Connection.
     /// The finalization will be done by the destructor of the last shared pointer
@@ -703,7 +703,7 @@ private:
     bool                    mbDone = false;         //!< true when the last executeStep() had no more row to fetch
 
     /// Map of columns index by name (mutable so getColumnIndex can be const)
-    mutable std::map<std::string, int, std::less<>>  mColumnNames;
+    mutable std::map<std::string, int>  mColumnNames;
 };
 
 

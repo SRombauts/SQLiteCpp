@@ -15,8 +15,6 @@ Missing unit tests in v2.0.0:
 - Load Extension (not practicable, and easy to verify by code review)
 
 Advanced missing features:
-- #39: SAVEPOINT https://www.sqlite.org/lang_savepoint.html
-
 - Add optional usage of experimental sqlite3_trace() function to enable statistics
 - Aggregate ?
 

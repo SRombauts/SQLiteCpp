@@ -4,7 +4,7 @@
  * @brief   Convenience function for Statement::bind(...)
  *
  * Copyright (c) 2016 Paul Dreik (github@pauldreik.se)
- * Copyright (c) 2016-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2016-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  * Copyright (c) 2019 Maximilian Bachmann (contact@maxbachmann.de)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt

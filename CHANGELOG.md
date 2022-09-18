@@ -188,7 +188,7 @@ Version 3.1.1 - August 19 2020
 - #293 Remove FindSQLiteCpp.cmake from sum01
 
 Version 3.x - 2022
-- #300 #316 #362 Updated SQLite3 from 3.32.3 to 3.39.2 (2022-07-21)
+- #300 #316 #362 #368 Updated SQLite3 from 3.32.3 to 3.39.3 (2022-09-05)
 - #236 Disable explicit setting of MSVC runtime from BioDataAnalysis/emmenlau
 - #308 Fix build warning due to string truncation from stauffer-garmin
 - #311 Add Database::tryExec() from kcowolf

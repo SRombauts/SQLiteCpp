@@ -20,7 +20,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 message (STATUS "CMake version: ${CMAKE_VERSION}")
 message (STATUS "Project version: ${PROJECT_VERSION}")
 
-option(SQLITECPP_USE_STATIC_RUNTIME "Use MSVC static runtime (default for internal googletest)." ON)
+option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 
 # Define useful variables to handle OS differences:
 if (WIN32)
@@ -36,6 +36,7 @@ if (MSVC)
     # disable Visual Studio warnings for fopen() used in the example
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     # Flags for linking with multithread static C++ runtime, required by internal googletest
+    option(SQLITECPP_USE_STATIC_RUNTIME "Use MSVC static runtime (default for internal googletest)." ${SQLITECPP_BUILD_TESTS})
     if (SQLITECPP_USE_STATIC_RUNTIME)
         message(STATUS "Linking against multithread static C++ runtime")
         set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MT")
@@ -399,7 +400,6 @@ else (SQLITECPP_BUILD_EXAMPLES)
     message(STATUS "SQLITECPP_BUILD_EXAMPLES OFF")
 endif (SQLITECPP_BUILD_EXAMPLES)
 
-option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 if (SQLITECPP_BUILD_TESTS)
     # add the unit test executable
     add_executable(SQLiteCpp_tests ${SQLITECPP_TESTS})

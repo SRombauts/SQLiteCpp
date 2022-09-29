@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+# Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 
 # build format
 version: "{build}"
@@ -8,6 +8,7 @@ install:
   - git submodule update --init --recursive
  
 image:
+  - Visual Studio 2022
   - Visual Studio 2019
   - Visual Studio 2017
   - Visual Studio 2015
@@ -30,6 +31,7 @@ init:
   - if "%arch%"=="x64" (set generator="%vs% Win64") else (set generator="%vs%")
   # CMake uses a different grammar for Visual Studio 2019, with -A to specify architecture:
   - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" (set generator="Visual Studio 16 2019" -A %arch%)
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2022" (set generator="Visual Studio 17 2022" -A %arch%)
   - echo %generator%
  
 # scripts to run before build

@@ -10,7 +10,7 @@ SQLiteC++
 [![Coverity](https://img.shields.io/coverity/scan/14508.svg)](https://scan.coverity.com/projects/srombauts-sqlitecpp "Coverity Scan Build Status")
 [![Join the chat at https://gitter.im/SRombauts/SQLiteCpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/SRombauts/SQLiteCpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
+SQLiteC++ (SQLiteCpp) is a lean and easy to use C++ SQLite3 wrapper.
 
 <!--Keywords: sqlite, sqlite3, C, library, wrapper C++-->
 <meta name="keywords" content="sqlite, sqlite3, C, library, wrapper C++">
@@ -69,17 +69,17 @@ and then is always valid until destroyed.
 Now requires a C++11 compiler. Use branch [sqlitecpp-2.x](https://github.com/SRombauts/SQLiteCpp/tree/sqlitecpp-2.x) for latest pre-C++11 developments.
 
 Developments and tests are done under the following OSs:
-- Ubuntu 14.04, 16.04 and 18.04 (Travis CI)
-- Windows 10, and Windows Server 2012 R2 & Windows Server 2016 (AppVeyor)
-- OS X 10.11 (Travis CI)
-- Github Actions
+- Ubuntu 14.04, 16.04 and 18.04 (Travis CI and Github Actions)
+- Windows 10, and Windows Server 2012 R2, Windows Server 2016, Windows Server 2022 (AppVeyor and Github Actions)
+- MacOS 10.11 and 11.7 (Travis CI and Github Actions)
 - Valgrind memcheck tool
 
 And the following IDEs/Compilers
-- GCC 4.8.4, 5.3.0 and 7.1.1 (C++11, C++14, C++17)
-- Clang 5
-- Xcode 8 & 9
-- Visual Studio Community 2019, 2017, and 2015 (AppVeyor)
+- GCC 4.8.4, 5.3.0, 7.1.1 and latest eg 9.4 (C++11, C++14, C++17)
+- Clang 5 and 7 (Travis CI)
+- AppleClang 8, 9 and 13 (Travis CI and Github Actions)
+- Xcode 8 & 9 (Travis CI)
+- Visual Studio Community/Entreprise 2022, 2019, 2017, and 2015 (AppVeyor and Github Actions)
 
 ### Dependencies
 

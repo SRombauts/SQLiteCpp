@@ -10,7 +10,7 @@ SQLiteC++
 [![Coverity](https://img.shields.io/coverity/scan/14508.svg)](https://scan.coverity.com/projects/srombauts-sqlitecpp "Coverity Scan Build Status")
 [![Join the chat at https://gitter.im/SRombauts/SQLiteCpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/SRombauts/SQLiteCpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.
+SQLiteC++ (SQLiteCpp) is a lean and easy to use C++ SQLite3 wrapper.
 
 <!--Keywords: sqlite, sqlite3, C, library, wrapper C++-->
 <meta name="keywords" content="sqlite, sqlite3, C, library, wrapper C++">
@@ -22,7 +22,7 @@ with a few intuitive and well documented C++ classes.
 
 ### License:
 
-Copyright (c) 2012-2021 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+Copyright (c) 2012-2022 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 <a href="https://www.paypal.me/SRombauts" title="Pay Me a Beer! Donate with PayPal :)"><img src="https://www.paypalobjects.com/webstatic/paypalme/images/pp_logo_small.png" width="118"></a>
 
 Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
@@ -69,17 +69,17 @@ and then is always valid until destroyed.
 Now requires a C++11 compiler. Use branch [sqlitecpp-2.x](https://github.com/SRombauts/SQLiteCpp/tree/sqlitecpp-2.x) for latest pre-C++11 developments.
 
 Developments and tests are done under the following OSs:
-- Ubuntu 14.04, 16.04 and 18.04 (Travis CI)
-- Windows 10, and Windows Server 2012 R2 & Windows Server 2016 (AppVeyor)
-- OS X 10.11 (Travis CI)
-- Github Actions
+- Ubuntu 14.04, 16.04 and 18.04 (Travis CI and Github Actions)
+- Windows 10, and Windows Server 2012 R2, Windows Server 2016, Windows Server 2022 (AppVeyor and Github Actions)
+- MacOS 10.11 and 11.7 (Travis CI and Github Actions)
 - Valgrind memcheck tool
 
 And the following IDEs/Compilers
-- GCC 4.8.4, 5.3.0 and 7.1.1 (C++11, C++14, C++17)
-- Clang 5
-- Xcode 8 & 9
-- Visual Studio Community 2019, 2017, and 2015 (AppVeyor)
+- GCC 4.8.4, 5.3.0, 7.1.1 and latest eg 9.4 (C++11, C++14, C++17)
+- Clang 5 and 7 (Travis CI)
+- AppleClang 8, 9 and 13 (Travis CI and Github Actions)
+- Xcode 8 & 9 (Travis CI)
+- Visual Studio Community/Entreprise 2022, 2019, 2017, and 2015 (AppVeyor and Github Actions)
 
 ### Dependencies
 
@@ -127,6 +127,21 @@ cd SQLiteCpp
 git submodule init
 git submodule update
 ```
+
+### Installing SQLiteCpp (vcpkg)
+
+Alternatively, you can build and install SQLiteCpp using [vcpkg](https://github.com/Microsoft/vcpkg/) dependency manager:
+
+```bash or powershell
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg integrate install
+./vcpkg install sqlitecpp
+```
+
+The SQLiteCpp port in vcpkg is kept up to date by Microsoft team members and community contributors. If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
+
 
 #### Using SQLiteCpp on a system-wide installation
 
@@ -190,7 +205,11 @@ it's that you lack the "sqlite3" library: install the libsqlite3-dev package.
 If you get a single linker error "Column.cpp: undefined reference to sqlite3_column_origin_name",
 it's that your "sqlite3" library was not compiled with
 the SQLITE_ENABLE_COLUMN_METADATA macro defined (see [http://www.sqlite.org/compile.html#enable_column_metadata](http://www.sqlite.org/compile.html#enable_column_metadata)).
-You can either recompile it yourself (seek help online) or you can comment out the following line in src/Column.h:
+You can either:
+ - recompile the sqlite3 library provided by your distribution yourself (seek help online)
+ - turn off the option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getColumnOriginName(). Require support from sqlite3 library." ON) in CMakeFiles.txt (or similarly for other build system scripts)
+ - turn on the option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON) in CMakeFiles.txt (or similarly for other build system scripts)
+ 
 
 ```C++
 #define SQLITE_ENABLE_COLUMN_METADATA
@@ -222,6 +241,17 @@ provided that no single database connection is used simultaneously in two or mor
 But SQLiteC++ does not support the fully thread-safe "Serialized" mode of SQLite,
 because of the way it shares the underlying SQLite precompiled statement
 in a custom shared pointer (See the inner class "Statement::Ptr").
+
+### Valgrind memcheck
+
+Run valgrind to search for memory leaks in your application, the SQLiteCpp wrapper, or the sqlite3 library.
+Execute the following command under Unix like OS (Linux, MacOS or WSL2/Ubuntu under Windows Subsystem for Linux):
+
+```Shell
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose build/SQLiteCpp_example1
+```
+
+or uncoment the line at the end of [build.sh](build.sh)
 
 ## Examples
 ### The first sample demonstrates how to query a database and get results: 

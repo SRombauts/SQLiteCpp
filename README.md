@@ -205,7 +205,11 @@ it's that you lack the "sqlite3" library: install the libsqlite3-dev package.
 If you get a single linker error "Column.cpp: undefined reference to sqlite3_column_origin_name",
 it's that your "sqlite3" library was not compiled with
 the SQLITE_ENABLE_COLUMN_METADATA macro defined (see [http://www.sqlite.org/compile.html#enable_column_metadata](http://www.sqlite.org/compile.html#enable_column_metadata)).
-You can either recompile it yourself (seek help online) or you can comment out the following line in src/Column.h:
+You can either:
+ - recompile the sqlite3 library provided by your distribution yourself (seek help online)
+ - turn off the option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getColumnOriginName(). Require support from sqlite3 library." ON) in [CMakeFiles.txt](CMakeFiles.txt) (or other build system scripts)
+ - turn on the option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON) in [CMakeFiles.txt](CMakeFiles.txt)
+ 
 
 ```C++
 #define SQLITE_ENABLE_COLUMN_METADATA
@@ -246,6 +250,8 @@ Execute the following command under Unix like OS (Linux, MacOS or WSL2/Ubuntu un
 ```Shell
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose build/SQLiteCpp_example1
 ```
+
+or uncoment the line at the end of [build.sh](build.sh)
 
 ## Examples
 ### The first sample demonstrates how to query a database and get results: 

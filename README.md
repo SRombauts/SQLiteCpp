@@ -87,7 +87,7 @@ And the following IDEs/Compilers
 - exception support (the class Exception inherits from std::runtime_error)
 - the SQLite library (3.7.15 minimum from 2012-12-12) either by linking to it dynamically or statically (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),
   or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows),
-  with the SQLITE_ENABLE_COLUMN_METADATA macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).
+  with the `SQLITE_ENABLE_COLUMN_METADATA` macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).
 
 ## Getting started
 ### Installation
@@ -204,16 +204,11 @@ it's that you lack the "sqlite3" library: install the libsqlite3-dev package.
 
 If you get a single linker error "Column.cpp: undefined reference to sqlite3_column_origin_name",
 it's that your "sqlite3" library was not compiled with
-the SQLITE_ENABLE_COLUMN_METADATA macro defined (see [http://www.sqlite.org/compile.html#enable_column_metadata](http://www.sqlite.org/compile.html#enable_column_metadata)).
-You can either:
- - recompile the sqlite3 library provided by your distribution yourself (seek help online)
- - turn off the option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getColumnOriginName(). Require support from sqlite3 library." ON) in [CMakeFiles.txt](CMakeFiles.txt) (or other build system scripts)
- - turn on the option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON) in [CMakeFiles.txt](CMakeFiles.txt)
- 
-
-```C++
-#define SQLITE_ENABLE_COLUMN_METADATA
-```
+the `SQLITE_ENABLE_COLUMN_METADATA` macro defined (see [http://www.sqlite.org/compile.html#enable_column_metadata](http://www.sqlite.org/compile.html#enable_column_metadata)).
+You can:
+ - either recompile the sqlite3 library provided by your distribution yourself (seek help online)
+ - or turn off the `option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getColumnOriginName(). Require support from sqlite3 library." ON)` in [CMakeFiles.txt](CMakeFiles.txt) (or other build system scripts)
+ - or turn on the `option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)` in [CMakeFiles.txt](CMakeFiles.txt)
 
 ### Continuous Integration
 

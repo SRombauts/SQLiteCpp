@@ -4,7 +4,7 @@
  *
  *  Demonstrates how-to use the SQLite++ wrapper
  *
- * Copyright (c) 2012-2021 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -32,7 +32,7 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 }
 #endif
 
-/// Get example path
+/// Get path to this example's directory (including the final separator '/' or '\')
 static inline std::string getExamplePath()
 {
     std::string filePath(__FILE__);
@@ -40,9 +40,10 @@ static inline std::string getExamplePath()
 }
 
 /// Example Database
-static const std::string filename_example_db3 = getExamplePath() + "/example.db3";
-/// Image
-static const std::string filename_logo_png    = getExamplePath() + "/logo.png";
+static const std::string filename_example_db3   = getExamplePath() + "example.db3";
+/// Image (SQLite logo as a 12581 bytes PNG file)
+static const int sizeof_logo_png                = 12581;
+static const std::string filename_logo_png      = getExamplePath() + "logo.png";
 
 
 /// Object Oriented Basic example
@@ -51,7 +52,7 @@ class Example
 public:
     // Constructor
     Example() :
-        mDb(filename_example_db3),                                  // Open a database file in readonly mode
+        mDb(filename_example_db3),                                  // Open a database file in read-only mode
         mQuery(mDb, "SELECT * FROM test WHERE weight > :min_weight")// Compile a SQL query, containing one parameter (index 1)
     {
     }
@@ -60,9 +61,9 @@ public:
     }
 
     /// List the rows where the "weight" column is greater than the provided aParamValue
-    void ListGreaterThan (const int aParamValue)
+    void ListGreaterThan(const int aParamValue)
     {
-        std::cout << "ListGreaterThan (" << aParamValue << ")\n";
+        std::cout << "ListGreaterThan(" << aParamValue << ")\n";
 
         // Bind the integer value provided to the first parameter of the SQL query
         mQuery.bind(":min_weight", aParamValue); // same as mQuery.bind(1, aParamValue);
@@ -82,7 +83,7 @@ private:
     SQLite::Statement   mQuery; ///< Database prepared SQL query
 };
 
-int main ()
+int main()
 {
     // Using SQLITE_VERSION would require #include <sqlite3.h> which we want to avoid: use SQLite::VERSION if possible.
 //  std::cout << "SQlite3 version " << SQLITE_VERSION << std::endl;
@@ -130,7 +131,7 @@ int main ()
     // Very basic first example (1/7) :
     try
     {
-        // Open a database file in readonly mode
+        // Open a database file in read-only mode
         SQLite::Database    db(filename_example_db3);  // SQLite::OPEN_READONLY
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
@@ -152,7 +153,7 @@ int main ()
     // Simple select query - few variations (2/7) :
     try
     {
-        // Open a database file in readonly mode
+        // Open a database file in read-only mode
         SQLite::Database    db(filename_example_db3);  // SQLite::OPEN_READONLY
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
@@ -160,7 +161,7 @@ int main ()
 
         // Compile a SQL query, containing one parameter (index 1)
         SQLite::Statement   query(db, "SELECT id as test_id, value as test_val, weight as test_weight FROM test WHERE weight > ?");
-        std::cout << "SQLite statement '" << query.getQuery().c_str() << "' compiled (" << query.getColumnCount () << " columns in the result)\n";
+        std::cout << "SQLite statement '" << query.getQuery().c_str() << "' compiled (" << query.getColumnCount() << " columns in the result)\n";
         // Bind the integer value 2 to the first parameter of the SQL query
         query.bind(1, 2);
         std::cout << "binded with integer value '2' :\n";
@@ -229,7 +230,7 @@ int main ()
         // Bind the string value "6" to the first parameter of the SQL query
         query.bind(1, "6");
         std::cout << "binded with string value \"6\" :\n";
-        // Reuses variables: uses assignement operator in the loop instead of constructor with initialization
+        // Reuses variables: uses assignment operator in the loop instead of constructor with initialization
         int         id = 0;
         std::string value;
         double      weight = 0.0;
@@ -268,7 +269,7 @@ int main ()
     // The execAndGet wrapper example (4/7) :
     try
     {
-        // Open a database file in readonly mode
+        // Open a database file in read-only mode
         SQLite::Database    db(filename_example_db3);  // SQLite::OPEN_READONLY
         std::cout << "SQLite database file '" << db.getFilename().c_str() << "' opened successfully\n";
 
@@ -407,15 +408,18 @@ int main ()
         db.exec("DROP TABLE IF EXISTS test");
         db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value BLOB)");
 
+        // A) insert the logo.png image into the db as a blob
         FILE* fp = fopen(filename_logo_png.c_str(), "rb");
         if (NULL != fp)
         {
             char  buffer[16*1024];
+            static_assert(sizeof(buffer) > sizeof_logo_png, "Buffer is smaller than the size of the file to read");
             void* blob = &buffer;
-            int size = static_cast<int>(fread(blob, 1, 16*1024, fp));
+            const int size = static_cast<int>(fread(blob, 1, 16*1024, fp));
             buffer[size] = '\0';
-            fclose (fp);
-            std::cout << "blob size=" << size << " :\n";
+            SQLITECPP_ASSERT(size == sizeof_logo_png, "unexpected fread return value");   // See SQLITECPP_ENABLE_ASSERT_HANDLER
+            fclose(fp);
+            std::cout << filename_logo_png << " file size=" << size << " bytes\n";
 
             // Insert query
             SQLite::Statement   query(db, "INSERT INTO test VALUES (NULL, ?)");
@@ -424,7 +428,7 @@ int main ()
             std::cout << "blob binded successfully\n";
 
             // Execute the one-step query to insert the blob
-            int nb = query.exec ();
+            int nb = query.exec();
             std::cout << "INSERT INTO test VALUES (NULL, ?)\", returned " << nb << std::endl;
         }
         else
@@ -433,24 +437,23 @@ int main ()
             return EXIT_FAILURE; // unexpected error : exit the example program
         }
 
+        // B) select the blob from the db and write it to disk into a "out.png" image file
         fp = fopen("out.png", "wb");
         if (NULL != fp)
         {
-            const void* blob = NULL;
-            size_t size;
-
             SQLite::Statement   query(db, "SELECT * FROM test");
             std::cout << "SELECT * FROM test :\n";
             if (query.executeStep())
             {
                 SQLite::Column colBlob = query.getColumn(1);
-                blob = colBlob.getBlob ();
-                size = colBlob.getBytes ();
-                std::cout << "row (" << query.getColumn(0) << ", size=" << size << ")\n";
+                const void* const blob = colBlob.getBlob();
+                const size_t size = colBlob.getBytes();
+                std::cout << "row (" << query.getColumn(0) << ", size=" << size << " bytes)\n";
                 size_t sizew = fwrite(blob, 1, size, fp);
                 SQLITECPP_ASSERT(sizew == size, "fwrite failed");   // See SQLITECPP_ENABLE_ASSERT_HANDLER
-                fclose (fp);
+                fclose(fp);
             }
+            // NOTE: here the blob is still held in memory, until the Statement is finalized at the end of the scope
         }
         else
         {

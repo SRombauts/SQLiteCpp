@@ -1,7 +1,6 @@
 Debug
 Release
 build
-example1
 *.a
 
 .vs/

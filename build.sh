@@ -20,5 +20,6 @@ cmake --build .
 ctest --output-on-failure
 
 # And with Valgrind
-#valgrind --leak-check=full --error-exitcode=1 ./SQLiteCpp_example1
-#valgrind --leak-check=full --error-exitcode=1 ./SQLiteCpp_tests
+echo "Note: uncomment to run valgrind memcheck"
+#valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./SQLiteCpp_example1
+#valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./SQLiteCpp_tests

@@ -353,7 +353,7 @@ TEST(Statement, bindings)
     {
         const char buffer[] = "binary";
         insert.bind(1, buffer, sizeof(buffer));
-        insert.bind(2);
+        insert.bind(2); // bind a NULL value
         EXPECT_EQ(1, insert.exec());
 
         // Check the result
@@ -520,7 +520,7 @@ TEST(Statement, bindByName)
     {
         const char buffer[] = "binary";
         insert.bind("@msg", buffer, sizeof(buffer));
-        insert.bind("@int");
+        insert.bind("@int"); // bind a NULL value
         EXPECT_EQ(1, insert.exec());
 
         // Check the result
@@ -633,7 +633,7 @@ TEST(Statement, bindByNameString)
     {
         const char buffer[] = "binary";
         insert.bind(amsg, buffer, sizeof(buffer));
-        insert.bind(aint);
+        insert.bind(aint); // bind a NULL value
         EXPECT_EQ(1, insert.exec());
 
         // Check the result

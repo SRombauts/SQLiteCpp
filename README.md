@@ -238,6 +238,15 @@ But SQLiteC++ does not support the fully thread-safe "Serialized" mode of SQLite
 because of the way it shares the underlying SQLite precompiled statement
 in a custom shared pointer (See the inner class "Statement::Ptr").
 
+### Valgrind memcheck
+
+Run valgrind to search for memory leaks in your application, the SQLiteCpp wrapper, or the sqlite3 library.
+Execute the following command under Unix like OS (Linux, MacOS or WSL2/Ubuntu under Windows Subsystem for Linux):
+
+```Shell
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose build/SQLiteCpp_example1
+```
+
 ## Examples
 ### The first sample demonstrates how to query a database and get results: 
 

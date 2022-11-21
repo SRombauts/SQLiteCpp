@@ -31,7 +31,7 @@ extern const int Null;      ///< SQLITE_NULL
 /**
  * @brief Encapsulation of a Column in a row of the result pointed by the prepared Statement.
  *
- *  A Column is a particular field of SQLite data in the current row of result
+ * A Column is a particular field of SQLite data in the current row of result
  * of the Statement : it points to a single cell.
  *
  * Its value can be expressed as a text, and, when applicable, as a numeric
@@ -103,9 +103,12 @@ public:
     std::string getString() const;
 
     /**
-     * @brief Return the type of the value of the column
+     * @brief Return the type of the value of the column using sqlite3_column_type()
      *
      * Return either SQLite::INTEGER, SQLite::FLOAT, SQLite::TEXT, SQLite::BLOB, or SQLite::Null.
+     * This type may change from one row to the next, since
+     * SQLite stores data types dynamically for each value and not per column.
+     * Use Statement::getColumnDeclaredType() to retrieve the declared column type from a SELECT statement.
      *
      * @warning After a type conversion (by a call to a getXxx on a Column of a Yyy type),
      *          the value returned by sqlite3_column_type() is undefined.

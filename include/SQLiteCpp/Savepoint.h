@@ -66,7 +66,7 @@ class Savepoint {
      * Exception is thrown in case of error, then the Savepoint is NOT
      * initiated.
      */
-    Savepoint(Database& aDatabase, const std::string& name);
+    Savepoint(Database& aDatabase, const std::string& aName);
 
     // Savepoint is non-copyable
     Savepoint(const Savepoint&) = delete;

@@ -23,7 +23,7 @@ class Database;
  * @brief RAII encapsulation of a SQLite Savepoint.
  *
  * A Savepoint is a way to group multiple SQL statements into an atomic
- * secureced operation; either it succeeds, with all the changes commited to the
+ * secure operation; either it succeeds, with all the changes committed to the
  * database file, or if it fails, all the changes are rolled back to the initial
  * state at the start of the savepoint.
  *
@@ -39,7 +39,7 @@ class Database;
  * savepoint to be rolled back.
  *
  * 3) This savepoint is not saved to the database until this and all savepoints
- * or transaction in the savepoint stack have been released or commited.
+ * or transaction in the savepoint stack have been released or committed.
  *
  * See also: https://sqlite.org/lang_savepoint.html
  *

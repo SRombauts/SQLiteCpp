@@ -43,7 +43,7 @@ Statement::Statement(Statement&& aStatement) noexcept :
     aStatement.mbDone = false;
 }
 
-// Reset the statement to make it ready for a new execution (see also #clearBindings() bellow)
+// Reset the statement to make it ready for a new execution (see also #clearBindings() below)
 void Statement::reset()
 {
     const int ret = tryReset();

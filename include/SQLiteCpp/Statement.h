@@ -86,7 +86,10 @@ public:
     /// The finalization will be done by the destructor of the last shared pointer
     ~Statement() = default;
 
-    /// Reset the statement to make it ready for a new execution. Throws an exception on error.
+    /// Reset the statement to make it ready for a new execution by calling sqlite3_reset.
+    /// Throws an exception on error.
+    /// Call this function before any news calls to bind() if the statement was already executed before.
+    /// Calling reset() does not clear the bindings (see clearBindings()).
     void reset();
 
     /// Reset the statement. Returns the sqlite result code instead of throwing an exception on error.

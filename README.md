@@ -193,6 +193,17 @@ cmake --build .
 ctest --output-on-failure
 ```
 
+#### Building the Doxygen/html documentation
+
+Make sure you have Dogygen installed and configure CMake using the `SQLITECPP_RUN_DOXYGEN=ON` flag:
+
+```
+cmake -DSQLITECPP_RUN_DOXYGEN=ON   <MORE ARGUMENTS_HERE>
+```
+
+and then execute the `SQLiteCpp_doxygen` target (or build all targets, see above).
+The documentation will be generated in the 'doc' subfolder of the source tree.
+
 #### CMake options
 
   * For more options on customizing the build, see the [CMakeLists.txt](https://github.com/SRombauts/SQLiteCpp/blob/master/CMakeLists.txt) file.

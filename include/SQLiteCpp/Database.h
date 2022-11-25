@@ -256,8 +256,8 @@ public:
      * @brief Set a busy handler that sleeps for a specified amount of time when a table is locked.
      *
      *  This is useful in multithreaded program to handle case where a table is locked for writing by a thread.
-     * Any other thread cannot access the table and will receive a SQLITE_BUSY error:
-     * setting a timeout will wait and retry up to the time specified before returning this SQLITE_BUSY error.
+     *  Any other thread cannot access the table and will receive a SQLITE_BUSY error:
+     *  setting a timeout will wait and retry up to the time specified before returning this SQLITE_BUSY error.
      *  Reading the value of timeout for current connection can be done with SQL query "PRAGMA busy_timeout;".
      *  Default busy timeout is 0ms.
      *
@@ -322,7 +322,7 @@ public:
      *
      * @see exec() to execute, returning number of rows modified
      *
-     * @param[in] aQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
+     * @param[in] apQueries  one or multiple UTF-8 encoded, semicolon-separate SQL statements
      *
      * @return the sqlite result code.
      */
@@ -424,7 +424,7 @@ public:
     /**
      * @brief Get the rowid of the most recent successful INSERT into the database from the current connection.
      *
-     *  Each entry in an SQLite table always has a unique 64-bit signed integer key called the rowid.
+     * Each entry in an SQLite table always has a unique 64-bit signed integer key called the rowid.
      * If the table has a column of type INTEGER PRIMARY KEY, then it is an alias for the rowid.
      *
      * @return Rowid of the most recent successful INSERT into the database, or 0 if there was none.

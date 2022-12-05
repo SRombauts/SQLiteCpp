@@ -149,6 +149,31 @@ void Statement::bind(const int aIndex, const char* apValue)
     check(ret);
 }
 
+#ifdef __cpp_unicode_characters
+void Statement::bind(const int aIndex, const std::u16string& aValue)
+{
+    const int ret = sqlite3_bind_text16(getPreparedStatement(), aIndex, aValue.data(),
+                                        static_cast<int>(aValue.size() * sizeof(char16_t)), SQLITE_TRANSIENT);
+    check(ret);
+}
+#endif
+
+#ifdef __cpp_lib_string_view
+void Statement::bind(const int aIndex, const std::string_view aValue)
+{
+    const int ret = sqlite3_bind_text(getPreparedStatement(), aIndex, aValue.data(),
+                                      static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
+    check(ret);
+}
+
+void Statement::bind(const int aIndex, const std::u16string_view aValue)
+{
+    const int ret = sqlite3_bind_text16(getPreparedStatement(), aIndex, aValue.data(),
+                                        static_cast<int>(aValue.size() * sizeof(char16_t)), SQLITE_TRANSIENT);
+    check(ret);
+}
+#endif
+
 // Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const void* apValue, const int aSize)
 {
@@ -170,6 +195,31 @@ void Statement::bindNoCopy(const int aIndex, const char* apValue)
     const int ret = sqlite3_bind_text(getPreparedStatement(), aIndex, apValue, -1, SQLITE_STATIC);
     check(ret);
 }
+
+#ifdef __cpp_unicode_characters
+void Statement::bindNoCopy(const int aIndex, const std::u16string& aValue)
+{
+    const int ret = sqlite3_bind_text16(getPreparedStatement(), aIndex, aValue.data(),
+                                        static_cast<int>(aValue.size() * sizeof(char16_t)), SQLITE_STATIC);
+    check(ret);
+}
+#endif
+
+#ifdef __cpp_lib_string_view
+void Statement::bindNoCopy(const int aIndex, const std::string_view aValue)
+{
+    const int ret = sqlite3_bind_text(getPreparedStatement(), aIndex, aValue.data(),
+                                      static_cast<int>(aValue.size()), SQLITE_STATIC);
+    check(ret);
+}
+
+void Statement::bindNoCopy(const int aIndex, const std::u16string_view aValue)
+{
+    const int ret = sqlite3_bind_text16(getPreparedStatement(), aIndex, aValue.data(),
+                                        static_cast<int>(aValue.size() * sizeof(char16_t)), SQLITE_STATIC);
+    check(ret);
+}
+#endif
 
 // Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bindNoCopy(const int aIndex, const void* apValue, const int aSize)

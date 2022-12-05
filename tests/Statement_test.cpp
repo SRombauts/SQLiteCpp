@@ -159,6 +159,7 @@ TEST(Statement, unicode)
     EXPECT_EQ(sql, query_u16_str.getQuery());
 
     EXPECT_THROW(SQLite::Statement(db, u"SELECT * FROM test2"), SQLite::Exception);
+    EXPECT_THROW(SQLite::Statement(db, std::u16string(u"SELECT * FROM test2")), SQLite::Exception);
 
 #if WCHAR_MAX == 0xffff
     const std::wstring sql_w(L"SELECT * FROM test");
@@ -446,6 +447,110 @@ TEST(Statement, bindings)
         EXPECT_EQ(7, query.getColumn(0).getInt64());
         EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
     }
+
+#ifdef __cpp_unicode_characters
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Eighth row using UTF-16 text
+    {
+        insert.bind(1, u"u16 text");
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(8, query.getColumn(0).getInt64());
+        EXPECT_STREQ("u16 text", query.getColumn(1).getText());
+    }
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // Nineth row using UTF-16 string
+    {
+        insert.bind(1, std::u16string(u"u16 string"));
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(9, query.getColumn(0).getInt64());
+        EXPECT_STREQ("u16 string", query.getColumn(1).getText());
+    }
+
+#if WCHAR_MAX == 0xffff
+    // reset() without clearbindings()
+    insert.reset();
+
+    // wchar_t text
+    {
+        insert.bind(1, L"w text");
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_STREQ("w text", query.getColumn(1).getText());
+    }
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // wstring
+    {
+        insert.bind(1, std::wstring(L"w string"));
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_STREQ("w string", query.getColumn(1).getText());
+    }
+#endif
+#endif
+
+#ifdef __cpp_char8_t
+    // reset() without clearbindings()
+    insert.reset();
+
+    // u8 text
+    {
+        insert.bind(1, u8"u8 text");
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_STREQ("u8 text", query.getColumn(1).getText());
+    }
+
+    // reset() without clearbindings()
+    insert.reset();
+
+    // u8 string
+    {
+        insert.bind(1, std::u8string(u8"u8 string"));
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_STREQ("u8 string", query.getColumn(1).getText());
+    }
+#endif
 }
 
 TEST(Statement, bindNoCopy)
@@ -776,6 +881,55 @@ TEST(Statement, bindNoCopyByName)
         EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
         EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
     }
+
+#ifdef __cpp_unicode_characters
+    insert.reset();
+
+    // Insert a third row using u16 strings.
+    {
+        const std::string    atxt1 = "@txt1";
+        const std::string    atxt2 = "@txt2";
+        const auto           txt1 = u"first3";
+        const std::u16string txt2 = u"sec\0nd3";
+        insert.bindNoCopy(atxt1, txt1);
+        insert.bindNoCopy(atxt2, txt2);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(3, db.getLastInsertRowid());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(3, query.getColumn(0).getInt64());
+        EXPECT_STREQ("first3", query.getColumn(1).getText());
+//        EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
+    }
+#endif
+#ifdef __cpp_char8_t
+    insert.reset();
+
+    // Insert a forth row using u8 strings.
+    {
+        const std::string   atxt1 = "@txt1";
+        const std::string   atxt2 = "@txt2";
+        const auto          txt1 = u8"first4";
+        const std::u8string txt2 = u8"sec\0nd4";
+        insert.bindNoCopy(atxt1, txt1);
+        insert.bindNoCopy(atxt2, txt2);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(4, db.getLastInsertRowid());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(4, query.getColumn(0).getInt64());
+        EXPECT_STREQ("first4", query.getColumn(1).getText());
+        EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
+    }
+#endif
 }
 
 TEST(Statement, isColumnNull)

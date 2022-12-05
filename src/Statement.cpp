@@ -39,6 +39,32 @@ Statement::Statement(const Database& aDatabase, const char* apQuery) :
     mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
 }
 
+#ifdef __cpp_unicode_characters
+Statement::Statement(const Database& aDatabase, const std::u16string& aQuery) :
+    mpSQLite(aDatabase.getHandle()),
+    mpPreparedStatement(prepareStatement(aQuery)) // prepare the SQL query (needs Database friendship)
+{
+    mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
+}
+#endif  // __cpp_unicode_characters
+
+#ifdef __cpp_lib_string_view
+Statement::Statement(const Database& aDatabase, const std::string_view aQuery) :
+    mQuery(aQuery),
+    mpSQLite(aDatabase.getHandle()),
+    mpPreparedStatement(prepareStatement()) // prepare the SQL query (needs Database friendship)
+{
+    mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
+}
+
+Statement::Statement(const Database& aDatabase, const std::u16string_view aQuery) :
+    mpSQLite(aDatabase.getHandle()),
+    mpPreparedStatement(prepareStatement(aQuery)) // prepare the SQL query (needs Database friendship)
+{
+    mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
+}
+#endif  // __cpp_lib_string_view
+
 Statement::Statement(Statement&& aStatement) noexcept :
     mQuery(std::move(aStatement.mQuery)),
     mpSQLite(aStatement.mpSQLite),
@@ -370,6 +396,42 @@ Statement::TStatementPtr Statement::prepareStatement()
             sqlite3_finalize(stmt);
         });
 }
+
+#ifdef __cpp_unicode_characters
+Statement::TStatementPtr Statement::prepareStatement(const std::u16string& query)
+{
+    sqlite3_stmt* statement;
+    const int ret = sqlite3_prepare16_v2(mpSQLite, query.data(),
+        static_cast<int>(query.size() * sizeof(char16_t)), &statement, nullptr);
+    if (SQLITE_OK != ret)
+    {
+        throw SQLite::Exception(mpSQLite, ret);
+    }
+    mQuery = sqlite3_sql(statement);
+    return Statement::TStatementPtr(statement, [](sqlite3_stmt* stmt)
+        {
+            sqlite3_finalize(stmt);
+        });
+}
+#endif  // __cpp_unicode_characters
+
+#ifdef __cpp_lib_string_view
+Statement::TStatementPtr Statement::prepareStatement(const std::u16string_view query)
+{
+    sqlite3_stmt* statement;
+    const int ret = sqlite3_prepare16_v2(mpSQLite, query.data(),
+        static_cast<int>(query.size() * sizeof(char16_t)), &statement, nullptr);
+    if (SQLITE_OK != ret)
+    {
+        throw SQLite::Exception(mpSQLite, ret);
+    }
+    mQuery = sqlite3_sql(statement);
+    return Statement::TStatementPtr(statement, [](sqlite3_stmt* stmt)
+        {
+            sqlite3_finalize(stmt);
+        });
+}
+#endif  // __cpp_lib_string_view
 
 // Return prepered statement object or throw
 sqlite3_stmt* Statement::getPreparedStatement() const

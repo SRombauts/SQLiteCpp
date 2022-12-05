@@ -142,6 +142,45 @@ TEST(Statement, moveConstructor)
 
 #endif
 
+#ifdef __cpp_unicode_characters
+TEST(Statement, unicode)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
+
+    const std::string sql("SELECT * FROM test");
+    const std::u16string sql_u16(u"SELECT * FROM test");
+
+    SQLite::Statement query_u16_char(db, sql_u16.c_str());
+    EXPECT_EQ(sql, query_u16_char.getQuery());
+
+    SQLite::Statement query_u16_str(db, sql_u16);
+    EXPECT_EQ(sql, query_u16_str.getQuery());
+
+    EXPECT_THROW(SQLite::Statement(db, u"SELECT * FROM test2"), SQLite::Exception);
+
+#if WCHAR_MAX == 0xffff
+    const std::wstring sql_w(L"SELECT * FROM test");
+
+    SQLite::Statement query_w_char(db, sql_w.c_str());
+    EXPECT_EQ(sql, query_w_char.getQuery());
+    SQLite::Statement query_w_str(db, sql_w);
+    EXPECT_EQ(sql, query_w_str.getQuery());
+#endif
+
+#ifdef __cpp_char8_t
+    const std::u8string sql_u8(u8"SELECT * FROM test");
+
+    SQLite::Statement query_u8_char(db, sql_u8.c_str());
+    EXPECT_EQ(sql, query_u8_char.getQuery());
+    SQLite::Statement query_u8_str(db, sql_u8);
+    EXPECT_EQ(sql, query_u8_str.getQuery());
+    EXPECT_THROW(SQLite::Statement(db, u8"SELECT * FROM test2"), SQLite::Exception);
+#endif
+}
+#endif
+
 TEST(Statement, executeStep)
 {
     // Create a new database

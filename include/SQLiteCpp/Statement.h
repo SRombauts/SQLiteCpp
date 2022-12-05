@@ -16,6 +16,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <cstdint>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
@@ -73,6 +74,110 @@ public:
     Statement(const Database& aDatabase, const std::string& aQuery) :
         Statement(aDatabase, aQuery.c_str())
     {}
+
+#ifdef __cpp_unicode_characters
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery    an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const std::u16string& aQuery);
+
+#if WCHAR_MAX == 0xffff
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery    an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const std::wstring& aQuery) :
+#ifdef __cpp_lib_string_view
+        Statement(aDatabase, std::u16string_view(reinterpret_cast<const char16_t*>(aQuery.data()), aQuery.size()))
+#else
+        Statement(aDatabase, std::u16string(reinterpret_cast<const char16_t*>(aQuery.data()), aQuery.size()))
+#endif
+    {}
+#endif  // WCHAR_MAX == 0xffff
+#endif  // __cpp_unicode_characters
+
+#ifdef __cpp_lib_string_view
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery    an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const std::string_view aQuery);
+
+#ifdef __cpp_char8_t
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery    an UTF-8 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const std::u8string_view aQuery) :
+        Statement(aDatabase, std::string_view(reinterpret_cast<const char*>(aQuery.data()), aQuery.size()))
+    {}
+#endif  // __cpp_char8_t
+
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] apQuery   an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const char16_t* apQuery) :
+        Statement(aDatabase, std::u16string_view(apQuery))
+    {}
+
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery    an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, std::u16string_view aQuery);
+
+#if WCHAR_MAX == 0xffff
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] apQuery   an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const wchar_t* apQuery) :
+        Statement(aDatabase, std::u16string_view(reinterpret_cast<const char16_t*>(apQuery)))
+    {}
+
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery   an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const std::wstring_view aQuery) :
+        Statement(aDatabase, std::u16string_view(reinterpret_cast<const char16_t*>(aQuery.data()), aQuery.size()))
+    {}
+#endif  // WCHAR_MAX == 0xffff
+#endif  // __cpp_lib_string_view
 
     // Statement is non-copyable
     Statement(const Statement&) = delete;
@@ -689,6 +794,24 @@ private:
      * @return Shared pointer to prepared statement object
      */
     TStatementPtr prepareStatement();
+
+#ifdef __cpp_unicode_characters
+    /**
+     * @brief Prepare statement object.
+     *
+     * @return Shared pointer to prepared statement object
+     */
+    TStatementPtr prepareStatement(const std::u16string& query);
+#endif  // __cpp_unicode_characters
+
+#ifdef __cpp_lib_string_view
+    /**
+     * @brief Prepare statement object.
+     *
+     * @return Shared pointer to prepared statement object
+     */
+    TStatementPtr prepareStatement(const std::u16string_view query);
+#endif  // __cpp_lib_string_view
 
     /**
      * @brief Return a prepared statement object.

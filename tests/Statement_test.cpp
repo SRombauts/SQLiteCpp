@@ -138,6 +138,7 @@ TEST(Statement, moveConstructor)
     // Moved statements should throw
     EXPECT_THROW(query.getColumnIndex("value"), SQLite::Exception);
     EXPECT_THROW(query.getColumn(index), SQLite::Exception);
+    EXPECT_THROW(query.getExpandedSQL(), SQLite::Exception);
 }
 
 #endif
@@ -309,6 +310,7 @@ TEST(Statement, bindings)
         insert.bind(3, dbl);
         EXPECT_EQ(insert.getExpandedSQL(), "INSERT INTO test VALUES (NULL, 'first', -123, 0.123)");
         EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(1, insert.getChanges());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
         // Check the result

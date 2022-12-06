@@ -102,6 +102,49 @@ public:
      */
     std::string getString() const;
 
+#ifdef __cpp_unicode_characters
+    /**
+     * @brief Return a pointer to the text value (NULL terminated UTF-16 string) of the column.
+     *
+     * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
+     *          thus you must copy it before using it beyond its scope (to a std::u16string for instance).
+     */
+    const char16_t* getU16Text(const char16_t* apDefaultValue = u"") const noexcept;
+    /**
+     * @brief Return a std::u16string for a TEXT column.
+     *
+     * Note this correctly handles strings that contain null bytes.
+     */
+    std::u16string getU16String() const;
+#if WCHAR_MAX == 0xffff
+    /**
+     * @brief Return a pointer to the text value (NULL terminated UTF-16 string) of the column.
+     *
+     * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
+     *          thus you must copy it before using it beyond its scope (to a std::wstring for instance).
+     */
+    const wchar_t* getWText(const wchar_t* apDefaultValue = L"") const noexcept;
+    /**
+     * @brief Return a std::wstring for a TEXT column.
+     */
+    std::wstring getWString() const;
+#endif  // WCHAR_MAX == 0xffff
+#endif  // __cpp_unicode_characters
+#ifdef __cpp_char8_t
+    /**
+     * @brief Return a pointer to the text value (NULL terminated UTF-8 string) of the column.
+     *
+     * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
+     *          thus you must copy it before using it beyond its scope (to a std::u8string for instance).
+     */
+    const char8_t* getU8Text(const char8_t* apDefaultValue = u8"") const noexcept;
+    /**
+     * @brief Return a std::u8string for a TEXT or BLOB column.
+     *
+     * Note this correctly handles strings that contain null bytes.
+     */
+    std::u8string getU8String() const;
+#endif  // __cpp_char8_t
     /**
      * @brief Return the type of the value of the column using sqlite3_column_type()
      *
@@ -142,7 +185,10 @@ public:
     }
 
     /**
-     * @brief Return the number of bytes used by the text (or blob) value of the column
+     * @brief Return the number of bytes used by the UTF-8 text (or blob) value of the column
+     *
+     *  Can cause conversion to text and between UTF-8/UTF-16 encodings
+     *  Be careful when using with getBytes16() and UTF-16 functions
      *
      * Return either :
      * - size in bytes (not in characters) of the string returned by getText() without the '\0' terminator
@@ -151,6 +197,19 @@ public:
      * - 0 for a NULL value
      */
     int getBytes() const noexcept;
+
+    /**
+     * @brief Return the number of bytes used by the UTF-16 text value of the column
+     *
+     *  Can cause conversion to text and between UTF-8/UTF-16 encodings
+     *  Be careful when using with getBytes() and UTF-8 functions
+     *
+     * Return either :
+     * - size in bytes (not in characters) of the string returned by getText() without the '\0' terminator
+     * - size in bytes of the string representation of the numerical value (integer or double)
+     * - 0 for a NULL value
+     */
+    int getBytes16() const noexcept;
 
     /// Alias returning the number of bytes used by the text (or blob) value of the column
     int size() const noexcept
@@ -225,6 +284,73 @@ public:
     {
         return getString();
     }
+
+#ifdef __cpp_unicode_characters
+    /**
+     * @brief Inline cast operator to char16_t*
+     *
+     * @see getU16String
+     */
+    operator const char16_t* () const
+    {
+        return getU16Text();
+    }
+    /**
+     * @brief Inline cast operator to std::u16string
+     *
+     * Handles UTF-16 TEXT
+     *
+     * @see getU16String
+     */
+    operator std::u16string() const
+    {
+        return getU16String();
+    }
+#if WCHAR_MAX == 0xffff
+    /**
+     * @brief Inline cast operator to wchar_t*
+     *
+     * @see getWText
+     */
+    operator const wchar_t* () const
+    {
+        return getWText();
+    }
+    /**
+     * @brief Inline cast operator to std::wstring
+     *
+     * Handles UTF-16 TEXT
+     *
+     * @see getWString
+     */
+    operator std::wstring() const
+    {
+        return getWString();
+    }
+#endif  // WCHAR_MAX == 0xffff
+#endif  // __cpp_unicode_characters
+#ifdef __cpp_char8_t
+    /**
+     * @brief Inline cast operator to char8_t*
+     *
+     * @see getU8Text
+     */
+    operator const char8_t* () const
+    {
+        return getU8Text();
+    }
+    /**
+     * @brief Inline cast operator to std::u8string
+     *
+     * Handles BLOB or TEXT, which may contain null bytes within
+     *
+     * @see getU8String
+     */
+    operator std::u8string() const
+    {
+        return getU8String();
+    }
+#endif  // __cpp_char8_t
 
 private:
     Statement::TStatementPtr    mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object

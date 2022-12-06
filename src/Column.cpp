@@ -102,16 +102,67 @@ std::string Column::getString() const
     return std::string(data, sqlite3_column_bytes(mStmtPtr.get(), mIndex));
 }
 
+#ifdef __cpp_unicode_characters
+const char16_t* Column::getU16Text(const char16_t* apDefaultValue /* = u"" */) const noexcept
+{
+    auto pText = static_cast<const char16_t*>(sqlite3_column_text16(mStmtPtr.get(), mIndex));
+    return (pText ? pText : apDefaultValue);
+}
+std::u16string Column::getU16String() const
+{
+    (void)sqlite3_column_bytes16(mStmtPtr.get(), mIndex);
+    auto data = static_cast<const char16_t*>(sqlite3_column_blob(mStmtPtr.get(), mIndex));
+    return std::u16string(data, sqlite3_column_bytes16(mStmtPtr.get(), mIndex) / sizeof(char16_t));
+}
+#if WCHAR_MAX == 0xffff
+const wchar_t* Column::getWText(const wchar_t* apDefaultValue /* = L"" */) const noexcept
+{
+    auto pText = static_cast<const wchar_t*>(sqlite3_column_text16(mStmtPtr.get(), mIndex));
+    return (pText ? pText : apDefaultValue);
+}
+std::wstring Column::getWString() const
+{
+    (void)sqlite3_column_bytes16(mStmtPtr.get(), mIndex);
+    auto data = static_cast<const wchar_t*>(sqlite3_column_blob(mStmtPtr.get(), mIndex));
+    return std::wstring(data, sqlite3_column_bytes16(mStmtPtr.get(), mIndex) / sizeof(wchar_t));
+}
+#endif  // WCHAR_MAX == 0xffff
+#endif  // __cpp_unicode_characters
+#ifdef __cpp_char8_t
+const char8_t* Column::getU8Text(const char8_t* apDefaultValue /* = u8"" */) const noexcept
+{
+    auto pText = reinterpret_cast<const char8_t*>(sqlite3_column_text(mStmtPtr.get(), mIndex));
+    return (pText ? pText : apDefaultValue);
+}
+std::u8string Column::getU8String() const
+{
+    (void)sqlite3_column_bytes(mStmtPtr.get(), mIndex);
+    auto data = static_cast<const char8_t*>(sqlite3_column_blob(mStmtPtr.get(), mIndex));
+    return std::u8string(data, sqlite3_column_bytes(mStmtPtr.get(), mIndex));
+}
+#endif  // __cpp_char8_t
+
+
 // Return the type of the value of the column
 int Column::getType() const noexcept
 {
     return sqlite3_column_type(mStmtPtr.get(), mIndex);
 }
 
-// Return the number of bytes used by the text value of the column
+// Return the number of bytes used by the UTF-8 text value of the column
+// Can cause conversion to text and between UTF-8/UTF-16 encodings
+// Be careful when using with getBytes16() and UTF-16 functions
 int Column::getBytes() const noexcept
 {
     return sqlite3_column_bytes(mStmtPtr.get(), mIndex);
+}
+
+// Return the number of bytes used by the UTF-16 text value of the column
+// Can cause conversion to text and between UTF-8/UTF-16 encodings
+// Be careful when using with getBytes() and UTF-8 functions
+int Column::getBytes16() const noexcept
+{
+    return sqlite3_column_bytes16(mStmtPtr.get(), mIndex);
 }
 
 // Standard std::ostream inserter

@@ -197,6 +197,59 @@ static void test_column_basis(bool utf16)
         const SQLite::Column dbl = query.getColumn(3);
         EXPECT_EQ(0.123, dbl.getDouble());
     }
+
+#ifdef __cpp_unicode_characters
+    query.reset();
+    query.executeStep();
+
+    {
+        const auto first_u16 = u"first";
+
+        const std::u16string    str16 = query.getColumn(1);
+        const char16_t *        txt16 = query.getColumn(1);
+
+        EXPECT_EQ(5, str16.length());
+        EXPECT_EQ(10, query.getColumn(1).getBytes16());
+        EXPECT_EQ(0, memcmp(first_u16, str16.data(), str16.length() * sizeof(char16_t)));
+        EXPECT_EQ(5, std::char_traits<char16_t>::length(txt16));
+        EXPECT_EQ(0, std::char_traits<char16_t>::compare(first_u16, txt16, 6));
+    }
+
+#if WCHAR_MAX == 0xffff
+    query.reset();
+    query.executeStep();
+
+    {
+        const auto first_w = L"first";
+
+        const std::wstring      wstr = query.getColumn(1);
+        const wchar_t*          wtxt = query.getColumn(1);
+
+        EXPECT_EQ(5, wstr.length());
+        EXPECT_EQ(0, memcmp(first_w, wstr.data(), wstr.length() * sizeof(wchar_t)));
+        EXPECT_EQ(5, std::char_traits<wchar_t>::length(wtxt));
+        EXPECT_EQ(0, std::char_traits<wchar_t>::compare(first_w, wtxt, 6));
+    }
+#endif  // WCHAR_MAX == 0xffff
+
+#endif  // __cpp_unicode_characters
+
+#ifdef __cpp_char8_t
+    query.reset();
+    query.executeStep();
+
+    {
+        const auto first_u8 = u8"first";
+
+        const std::u8string     str8 = query.getColumn(1);
+        const char8_t*          txt8 = query.getColumn(1);
+
+        EXPECT_EQ(5, str8.length());
+        EXPECT_EQ(0, memcmp(first_u8, str8.data(), str8.length() * sizeof(char8_t)));
+        EXPECT_EQ(5, std::char_traits<char8_t>::length(txt8));
+        EXPECT_EQ(0, std::char_traits<char8_t>::compare(first_u8, txt8, 6));
+    }
+#endif  // __cpp_char8_t
 }
 
 TEST(Column, basis)

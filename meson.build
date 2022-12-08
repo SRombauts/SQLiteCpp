@@ -61,10 +61,7 @@ sqlitecpp_test_srcs = [
     'tests/Exception_test.cpp',
     'tests/ExecuteMany_test.cpp',
 ]
-sqlitecpp_test_args = [
-    # do not use ambiguous overloads by default
-    '-DNON_AMBIGOUS_OVERLOAD'
-]
+sqlitecpp_test_args = []
 
 ## samples
 

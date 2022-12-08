@@ -173,6 +173,7 @@ install_headers(
     'include/SQLiteCpp/Transaction.h',
     'include/SQLiteCpp/VariadicBind.h',
     'include/SQLiteCpp/ExecuteMany.h',
+    subdir : 'SQLiteCpp',
 )
 
 sqlitecpp_dep = declare_dependency(

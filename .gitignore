@@ -3,6 +3,8 @@ Release
 build
 *.a
 
+# ignore clangd cache directory
+.cache
 .vs/
 .vscode/
 /SQLiteCpp.sln

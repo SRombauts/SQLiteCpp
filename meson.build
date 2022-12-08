@@ -161,20 +161,9 @@ if get_option('SQLITECPP_BUILD_TESTS')
         # static libraries do not have a version
 endif
 
-install_headers(
-    'include/SQLiteCpp/SQLiteCpp.h',
-    'include/SQLiteCpp/Assertion.h',
-    'include/SQLiteCpp/Backup.h',
-    'include/SQLiteCpp/Column.h',
-    'include/SQLiteCpp/Database.h',
-    'include/SQLiteCpp/Exception.h',
-    'include/SQLiteCpp/Savepoint.h',
-    'include/SQLiteCpp/Statement.h',
-    'include/SQLiteCpp/Transaction.h',
-    'include/SQLiteCpp/VariadicBind.h',
-    'include/SQLiteCpp/ExecuteMany.h',
-    subdir : 'SQLiteCpp',
-)
+install_subdir(
+    'include/SQliteCpp',
+    install_dir: get_option('includedir'))
 
 sqlitecpp_dep = declare_dependency(
     include_directories: sqlitecpp_incl,

@@ -192,7 +192,7 @@ if get_option('SQLITECPP_BUILD_TESTS')
     gtest_dep = dependency(
                 'gtest',
                 main : true,
-                fallback: ['gtest', 'gtest_dep'])
+                fallback: ['gtest', 'gtest_main_dep'])
     sqlitecpp_test_dependencies = [
         gtest_dep,
         sqlitecpp_static_dep,

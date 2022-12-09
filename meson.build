@@ -3,7 +3,7 @@ project(
     # SQLiteCpp requires C++11 support
     default_options: ['cpp_std=c++11'],
     license: 'MIT',
-    version: '3.1.1',
+    version: '3.2.0',
 )
 
 cxx = meson.get_compiler('cpp')
@@ -35,6 +35,7 @@ sqlitecpp_srcs = [
     'src/Column.cpp',
     'src/Database.cpp',
     'src/Exception.cpp',
+    'src/Savepoint.cpp',
     'src/Statement.cpp',
     'src/Transaction.cpp',
 ]
@@ -54,6 +55,7 @@ sqlitecpp_opts = []
 sqlitecpp_test_srcs = [
     'tests/Column_test.cpp',
     'tests/Database_test.cpp',
+    'tests/Savepoint_test.cpp',
     'tests/Statement_test.cpp',
     'tests/Backup_test.cpp',
     'tests/Transaction_test.cpp',
@@ -61,15 +63,15 @@ sqlitecpp_test_srcs = [
     'tests/Exception_test.cpp',
     'tests/ExecuteMany_test.cpp',
 ]
-sqlitecpp_test_args = [
-    # do not use ambiguous overloads by default
-    '-DNON_AMBIGOUS_OVERLOAD'
-]
+sqlitecpp_test_args = []
 
 ## samples
 
-sqlitecpp_sample_srcs = [
+sqlitecpp_sample1_srcs = [
     'examples/example1/main.cpp',
+]
+sqlitecpp_sample2_srcs = [
+    'examples/example2/src/main.cpp',
 ]
 
 # if not using MSVC we need to add this compiler arguments
@@ -91,6 +93,11 @@ if host_machine.system() == 'windows'
     sqlitecpp_opts += [
         'cpp_std=c++14',
     ]
+    # check that we are not trying to build as dynamic library
+    if get_option('default_library') != 'shared'
+        warming('SQLiteCpp does not support shared library on Windows, the library will be built as static')
+    endif
+    
 endif
 # Options relative to SQLite and SQLiteC++ functions
 
@@ -137,43 +144,50 @@ if get_option('b_coverage')
     ]
 endif
 
-
-libsqlitecpp = library(
-    'sqlitecpp',
-    sqlitecpp_srcs,
-    include_directories: sqlitecpp_incl,
-    cpp_args: sqlitecpp_args,
-    dependencies: sqlitecpp_deps,
-    # override the default options
-    override_options: sqlitecpp_opts,
-    # install: true,
-    # API version for SQLiteCpp shared library.
-    version: '0',)
-if get_option('SQLITECPP_BUILD_TESTS')
-    # for the unit tests we need to link against a static version of SQLiteCpp
-    libsqlitecpp_static = static_library(
-        'sqlitecpp_static',
+## Workarround for windows: if building on windows we will build the library as static
+if host_machine.system() == 'windows'
+    libsqlitecpp = static_library(
+        'sqlitecpp',
         sqlitecpp_srcs,
         include_directories: sqlitecpp_incl,
         cpp_args: sqlitecpp_args,
         dependencies: sqlitecpp_deps,
         # override the default options
         override_options: sqlitecpp_opts,)
-        # static libraries do not have a version
+else
+    libsqlitecpp = library(
+        'sqlitecpp',
+        sqlitecpp_srcs,
+        include_directories: sqlitecpp_incl,
+        cpp_args: sqlitecpp_args,
+        dependencies: sqlitecpp_deps,
+        # override the default options
+        override_options: sqlitecpp_opts,
+        # install: true,
+        # API version for SQLiteCpp shared library.
+        version: '0',)
 endif
 
-install_headers(
-    'include/SQLiteCpp/SQLiteCpp.h',
-    'include/SQLiteCpp/Assertion.h',
-    'include/SQLiteCpp/Backup.h',
-    'include/SQLiteCpp/Column.h',
-    'include/SQLiteCpp/Database.h',
-    'include/SQLiteCpp/Exception.h',
-    'include/SQLiteCpp/Statement.h',
-    'include/SQLiteCpp/Transaction.h',
-    'include/SQLiteCpp/VariadicBind.h',
-    'include/SQLiteCpp/ExecuteMany.h',
-)
+if get_option('SQLITECPP_BUILD_TESTS')
+    # for the unit tests we need to link against a static version of SQLiteCpp
+    if host_machine.system() == 'windows' or get_option('default_library') == 'static'
+        # we do not need to recomplile the library
+        libsqlitecpp_static = libsqlitecpp
+    else
+        libsqlitecpp_static = static_library(
+            'sqlitecpp_static',
+            sqlitecpp_srcs,
+            include_directories: sqlitecpp_incl,
+            cpp_args: sqlitecpp_args,
+            dependencies: sqlitecpp_deps,
+            # override the default options
+            override_options: sqlitecpp_opts,)
+    endif
+endif
+
+install_subdir(
+    'include/SQliteCpp',
+    install_dir: get_option('includedir'))
 
 sqlitecpp_dep = declare_dependency(
     include_directories: sqlitecpp_incl,
@@ -192,7 +206,7 @@ if get_option('SQLITECPP_BUILD_TESTS')
     gtest_dep = dependency(
                 'gtest',
                 main : true,
-                fallback: ['gtest', 'gtest_dep'])
+                fallback: ['gtest', 'gtest_main_dep'])
     sqlitecpp_test_dependencies = [
         gtest_dep,
         sqlitecpp_static_dep,
@@ -210,12 +224,19 @@ if get_option('SQLITECPP_BUILD_TESTS')
     test('sqlitecpp unit tests', testexe, args: test_args)
 endif
 if get_option('SQLITECPP_BUILD_EXAMPLES')
-    ## demo executable
-    sqlitecpp_demo_exe = executable('SQLITECPP_sample_demo',
-                            sqlitecpp_sample_srcs,
+    ## demo 1 executable
+    sqlitecpp_demo1_exe = executable('SQLITECPP_sample_demo1',
+                            sqlitecpp_sample1_srcs,
                             dependencies: sqlitecpp_dep,
                             # override the default options
                             override_options: sqlitecpp_opts,)
+    ## demo 2 executable
+    sqlitecpp_demo1_exe = executable('SQLITECPP_sample_demo2',
+                            sqlitecpp_sample2_srcs,
+                            dependencies: sqlitecpp_dep,
+                            # override the default options
+                            override_options: sqlitecpp_opts,)
+                    
 endif
 
 pkgconfig = import('pkgconfig')

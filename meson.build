@@ -35,7 +35,7 @@ sqlitecpp_srcs = [
     'src/Column.cpp',
     'src/Database.cpp',
     'src/Exception.cpp',
-    'src/Savepoint.cpp'
+    'src/Savepoint.cpp',
     'src/Statement.cpp',
     'src/Transaction.cpp',
 ]

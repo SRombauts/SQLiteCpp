@@ -19,6 +19,8 @@ core
 *ipch
 .settings/
 
+# do not track Visual Studio CMake settings
+CMakeSettings.json
 CMakeCache.txt
 CMakeFiles
 *.dir

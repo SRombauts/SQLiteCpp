@@ -93,6 +93,11 @@ if host_machine.system() == 'windows'
     sqlitecpp_opts += [
         'cpp_std=c++14',
     ]
+    # check that we are not trying to build as dynamic library
+    if get_option('default_library') != 'shared'
+        warming('SQLiteCpp does not support shared library on Windows, the library will be built as static')
+    endif
+    
 endif
 # Options relative to SQLite and SQLiteC++ functions
 
@@ -139,29 +144,45 @@ if get_option('b_coverage')
     ]
 endif
 
-
-libsqlitecpp = library(
-    'sqlitecpp',
-    sqlitecpp_srcs,
-    include_directories: sqlitecpp_incl,
-    cpp_args: sqlitecpp_args,
-    dependencies: sqlitecpp_deps,
-    # override the default options
-    override_options: sqlitecpp_opts,
-    # install: true,
-    # API version for SQLiteCpp shared library.
-    version: '0',)
-if get_option('SQLITECPP_BUILD_TESTS')
-    # for the unit tests we need to link against a static version of SQLiteCpp
-    libsqlitecpp_static = static_library(
-        'sqlitecpp_static',
+## Workarround for windows: if building on windows we will build the library as static
+if host_machine.system() == 'windows'
+    libsqlitecpp = static_library(
+        'sqlitecpp',
         sqlitecpp_srcs,
         include_directories: sqlitecpp_incl,
         cpp_args: sqlitecpp_args,
         dependencies: sqlitecpp_deps,
         # override the default options
         override_options: sqlitecpp_opts,)
-        # static libraries do not have a version
+else
+    libsqlitecpp = library(
+        'sqlitecpp',
+        sqlitecpp_srcs,
+        include_directories: sqlitecpp_incl,
+        cpp_args: sqlitecpp_args,
+        dependencies: sqlitecpp_deps,
+        # override the default options
+        override_options: sqlitecpp_opts,
+        # install: true,
+        # API version for SQLiteCpp shared library.
+        version: '0',)
+endif
+
+if get_option('SQLITECPP_BUILD_TESTS')
+    # for the unit tests we need to link against a static version of SQLiteCpp
+    if host_machine.system() == 'windows' or get_option('default_library') == 'static'
+        # we do not need to recomplile the library
+        libsqlitecpp_static = libsqlitecpp
+    else
+        libsqlitecpp_static = static_library(
+            'sqlitecpp_static',
+            sqlitecpp_srcs,
+            include_directories: sqlitecpp_incl,
+            cpp_args: sqlitecpp_args,
+            dependencies: sqlitecpp_deps,
+            # override the default options
+            override_options: sqlitecpp_opts,)
+    endif
 endif
 
 install_subdir(

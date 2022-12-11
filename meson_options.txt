@@ -9,6 +9,8 @@ option('SQLITE_ENABLE_ASSERT_HANDLER', type: 'boolean', value: false, descriptio
 option('SQLITE_HAS_CODEC', type: 'boolean', value: false, description: 'Enable database encryption API. Not available in the public release of SQLite.')
 ## Force forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)
 option('SQLITE_USE_LEGACY_STRUCT', type: 'boolean', value: false, description: 'Fallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)')
+## Disable the support for std::filesystem (C++17)
+option('SQLITECPP_DISABLE_STD_FILESYSTEM', type: 'boolean', value: false, description: 'Disable the support for std::filesystem (C++17)')
 ## Enable build for the tests of SQLiteC++
 option('SQLITECPP_BUILD_TESTS', type: 'boolean', value: false, description: 'Build SQLiteC++ unit tests.')
 ## Build the examples of SQLiteC++

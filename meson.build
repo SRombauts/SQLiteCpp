@@ -20,6 +20,11 @@ unix_like_code = '''
 '''
 unix_like = cxx.compiles(unix_like_code, name : 'unix like environment')
 
+## C++17 disable the support for std::filesystem (by default off)
+if get_option('SQLITECPP_DISABLE_STD_FILESYSTEM')
+    sqlitecpp_cxx_flags += ['-DSQLITECPP_DISABLE_STD_FILESYSTEM']
+endif
+
 thread_dep = dependency('threads')
 # sqlite3 support
 sqlite3_dep = dependency(

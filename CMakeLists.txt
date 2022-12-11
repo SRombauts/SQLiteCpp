@@ -297,6 +297,13 @@ else (SQLITECPP_INTERNAL_SQLITE)
     endif()
 endif (SQLITECPP_INTERNAL_SQLITE)
 
+## disable the optional support for std::filesystem (C++17)
+option(SQLITECPP_DISABLE_STD_FILESYSTEM "Disable the use of std::filesystem in SQLiteCpp." OFF)
+if (SQLITECPP_DISABLE_STD_FILESYSTEM)
+    message (STATUS "Disabling std::filesystem support")
+    add_definitions(-DSQLITECPP_DISABLE_STD_FILESYSTEM)
+endif (SQLITECPP_DISABLE_STD_FILESYSTEM)
+
 # Link target with pthread and dl for Unix
 if (UNIX)
     set(THREADS_PREFER_PTHREAD_FLAG ON)

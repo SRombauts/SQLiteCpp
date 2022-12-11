@@ -19,12 +19,17 @@
 #include <stdint.h>
 
 
-TEST(Column, basis)
+static void test_column_basis(bool utf16)
 {
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
     EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
+
+    if (utf16)
+    {
+        EXPECT_EQ(0, db.exec("PRAGMA encoding = 'UTF-16';"));
+    }
 
     // Create a new table
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, int INTEGER, double REAL, binary BLOB, empty TEXT)"));
@@ -82,6 +87,10 @@ TEST(Column, basis)
         EXPECT_EQ(1,            id1);
         EXPECT_EQ(1,            id2);
         EXPECT_EQ(1,            id3);
+        EXPECT_EQ(1,            id4);
+        EXPECT_EQ(1,            id5);
+        EXPECT_EQ(1,            id6);
+        EXPECT_EQ(1,            id7);
         EXPECT_EQ(1U,           uint1);
         EXPECT_EQ(1U,           uint2);
         EXPECT_EQ(1U,           uint3);
@@ -98,14 +107,17 @@ TEST(Column, basis)
         EXPECT_EQ(NULL,         pempty);
     }
 
+    query.reset();
+    query.executeStep();
+
     // validates every variant of explicit getters
     {
         int64_t             id      = query.getColumn(0).getInt64();
         const unsigned int  uint1   = query.getColumn(0).getUInt();
         const uint32_t      uint2   = query.getColumn(0).getUInt();
+        const std::string   msg1    = query.getColumn(1).getString();
         const char*         ptxt    = query.getColumn(1).getText();
-        const std::string   msg1    = query.getColumn(1).getText();
-        const std::string   msg2    = query.getColumn(1).getString();
+        const std::string   msg2    = query.getColumn(1).getText();
         const int           integer = query.getColumn(2).getInt();
         const double        real    = query.getColumn(3).getDouble();
         const void*         pblob   = query.getColumn(4).getBlob();
@@ -129,7 +141,7 @@ TEST(Column, basis)
     EXPECT_EQ(false,            query.getColumn(0).isText());
     EXPECT_EQ(false,            query.getColumn(0).isBlob());
     EXPECT_EQ(false,            query.getColumn(0).isNull());
-    EXPECT_STREQ("1",           query.getColumn(0).getText());  // convert to string
+    EXPECT_STREQ("1",           query.getColumn(0).getText());  // convert to TEXT via text func
     EXPECT_EQ(1,                query.getColumn(0).getBytes()); // size of the string "1" without the null terminator
     EXPECT_EQ(SQLite::TEXT,     query.getColumn(1).getType());
     EXPECT_EQ(false,            query.getColumn(1).isInteger());
@@ -137,7 +149,7 @@ TEST(Column, basis)
     EXPECT_EQ(true,             query.getColumn(1).isText());
     EXPECT_EQ(false,            query.getColumn(1).isBlob());
     EXPECT_EQ(false,            query.getColumn(1).isNull());
-    EXPECT_STREQ("first",       query.getColumn(1).getText());  // convert to string
+    EXPECT_STREQ("first",       query.getColumn(1).getString().c_str());  // convert to TEXT via string func
     EXPECT_EQ(5,                query.getColumn(1).getBytes()); // size of the string "first"
     EXPECT_EQ(SQLite::INTEGER,  query.getColumn(2).getType());
     EXPECT_EQ(true,             query.getColumn(2).isInteger());
@@ -161,7 +173,6 @@ TEST(Column, basis)
     EXPECT_EQ(false,            query.getColumn(4).isText());
     EXPECT_EQ(true,             query.getColumn(4).isBlob());
     EXPECT_EQ(false,            query.getColumn(4).isNull());
-    EXPECT_STREQ("bl\0b",       query.getColumn(4).getText());  // convert to string
     EXPECT_EQ(4,                query.getColumn(4).getBytes()); // size of the blob "bl\0b" with the null char
     EXPECT_EQ(SQLite::Null,     query.getColumn(5).getType());
     EXPECT_EQ(false,            query.getColumn(5).isInteger());
@@ -171,6 +182,9 @@ TEST(Column, basis)
     EXPECT_EQ(true,             query.getColumn(5).isNull());
     EXPECT_STREQ("",            query.getColumn(5).getText());  // convert to string
     EXPECT_EQ(0,                query.getColumn(5).getBytes()); // size of the string "" without the null terminator
+
+    query.reset();
+    query.executeStep();
 
     // Use intermediate Column objects (this is not the recommended way to use the API)
     {
@@ -183,6 +197,16 @@ TEST(Column, basis)
         const SQLite::Column dbl = query.getColumn(3);
         EXPECT_EQ(0.123, dbl.getDouble());
     }
+}
+
+TEST(Column, basis)
+{
+    test_column_basis(false);
+}
+
+TEST(Column, basis16)
+{
+    test_column_basis(true);
 }
 
 TEST(Column, getName)

@@ -215,3 +215,16 @@ Version 3.2.0 - 2022 Septembre 18
 - #364 Removal of remaining long APIs from SRombauts/convert-remaining-long-types
 - #366 Add vcpkg installation instructions from FrankXie05/vcpkg-instructions
 - #360 Small improvements and code cleaning from Kacperos155/small_improvements
+
+Versions 3.2.1 - 2022 Decembre 12
+- Merge pull request #383 Update SQLite from 3.39.3 to 3.40.0 (2022-11-16) from SRombauts/update-sqlite-340
+- Merge pull request #370 Don't link anymore with Visual Studio's static runtime by default from SRombauts/dont-enforce-static-linking
+- Merge pull request #371 from SRombauts/appveyor-vs-2022
+- Merge pull request #277 from cuberite/cmake-scoping
+- Merge pull request #374 Update googletest from vuhailongkl97/master
+- Merge pull request #377 Some documentation fixes from cbielow/fix_doc
+- Merge pull request #380 [Meson] fixes for meson project from ninjaoflight/windows-support
+- Merge pull request #387 Ensure that TEXT column is UTF-8 encoded before using sqlite3_column_blob() from dougnazar
+- Merge pull request #385 disable SQLITECPP_USE_STACK_PROTECTION when on MinGW from SRombauts/mingw-disable-stack-protection
+- Merge pull request #386 [meson] Update SQLite from 3.39.3 to 3.40.0 from ninjaoflight/sqlite-meson-update
+- Merge pull request #389 [meson] add missing compile options from ninjaoflight/meson-fixes

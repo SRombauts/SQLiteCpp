@@ -33,6 +33,22 @@ __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_13_0
     #define SQLITECPP_HAVE_STD_FILESYSTEM
 #endif
 
+// disable the support if the required header is not available
+#ifdef __has_include
+    #ifndef __has_include(<filesystem>)
+        #undef SQLITECPP_HAVE_STD_FILESYSTEM
+    #endif
+    #ifndef __has_include(<experimental/filesystem>)
+        #undef SQLITECPP_HAVE_EXPERIMENTAL_FILESYSTEM
+    #endif
+#endif
+
+// C++17 allow to disable std::filesystem support
+#ifdef SQLITECPP_DISABLE_STD_FILESYSTEM
+    #undef SQLITECPP_HAVE_STD_FILESYSTEM
+    #undef SQLITECPP_HAVE_STD_EXPERIMENTAL_FILESYSTEM
+#endif
+
 #ifdef SQLITECPP_HAVE_STD_FILESYSTEM
 #include  <filesystem>
 #endif // c++17 and a suitable compiler

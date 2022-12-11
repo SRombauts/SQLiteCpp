@@ -10,20 +10,11 @@
  */
 #include <SQLiteCpp/Column.h>
 
-#include <sqlite3.h>
-
 #include <iostream>
 
 
 namespace SQLite
 {
-
-const int INTEGER   = SQLITE_INTEGER;
-const int FLOAT     = SQLITE_FLOAT;
-const int TEXT      = SQLITE_TEXT;
-const int BLOB      = SQLITE_BLOB;
-const int Null      = SQLITE_NULL;
-
 
 // Encapsulation of a Column in a row of the result pointed by the prepared Statement.
 Column::Column(const Statement::TStatementPtr& aStmtPtr, int aIndex) :

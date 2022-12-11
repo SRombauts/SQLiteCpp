@@ -13,6 +13,8 @@
 #include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Exception.h>
 
+#include <sqlite3.h>
+
 #include <string>
 #include <memory>
 
@@ -22,11 +24,11 @@ struct sqlite3_stmt;
 namespace SQLite
 {
 
-extern const int INTEGER;   ///< SQLITE_INTEGER
-extern const int FLOAT;     ///< SQLITE_FLOAT
-extern const int TEXT;      ///< SQLITE_TEXT
-extern const int BLOB;      ///< SQLITE_BLOB
-extern const int Null;      ///< SQLITE_NULL
+constexpr int INTEGER = SQLITE_INTEGER;
+constexpr int FLOAT = SQLITE_FLOAT;
+constexpr int TEXT = SQLITE_TEXT;
+constexpr int BLOB = SQLITE_BLOB;
+constexpr int Null = SQLITE_NULL;
 
 /**
  * @brief Encapsulation of a Column in a row of the result pointed by the prepared Statement.

@@ -48,16 +48,19 @@ if (MSVC)
     if (MSVC_VERSION LESS 1900) # OR MSVC_TOOLSET_VERSION LESS 140)
       message(ERROR "Visual Studio prior to 2015 is not supported anymore.")
     endif (MSVC_VERSION LESS 1900)
-else (MSVC)
+else (MSVC) # Unix/macOS/MinGW
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
     # Useful compile flags and extra warnings
-    # Stack protection is not supported on MinGW-W64 on Windows, allow this flag to be turned off.
-    option(SQLITECPP_USE_STACK_PROTECTION "USE Stack Protection hardening." ON)
-    if (SQLITECPP_USE_STACK_PROTECTION)
-        message (STATUS "Using Stack Protection hardening")
-        add_compile_options(-fstack-protector)
-    endif()
+    if (NOT MINGW)
+        # Stack protection is not supported on MinGW-W64 on Windows.
+        # Allow this flag to be turned off.
+        option(SQLITECPP_USE_STACK_PROTECTION "USE Stack Protection hardening." ON)
+        if (SQLITECPP_USE_STACK_PROTECTION)
+            message (STATUS "Using Stack Protection hardening")
+            add_compile_options(-fstack-protector)
+        endif (SQLITECPP_USE_STACK_PROTECTION)
+    endif (NOT MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wswitch-enum -Wshadow -Wno-long-long") # C++ only, don't bother with sqlite3
     if (CMAKE_COMPILER_IS_GNUCXX)
         # GCC flags

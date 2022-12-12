@@ -92,7 +92,7 @@ void Database::Deleter::operator()(sqlite3* apSQLite)
     SQLITECPP_ASSERT(SQLITE_OK == ret, "database is locked");  // See SQLITECPP_ENABLE_ASSERT_HANDLER
 }
 
-//Set a busy handler that sleeps for a specified amount of time when a table is locked.
+// Set a busy handler that sleeps for a specified amount of time when a table is locked.
 void Database::setBusyTimeout(const int aBusyTimeoutMs)
 {
     const int ret = sqlite3_busy_timeout(getHandle(), aBusyTimeoutMs);

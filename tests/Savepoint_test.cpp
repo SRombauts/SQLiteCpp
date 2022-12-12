@@ -33,7 +33,7 @@ TEST(Savepoint, commitRollback) {
             db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
         EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
-        // Insert a first valu
+        // Insert a first value
         EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'first')"));
         EXPECT_EQ(1, db.getLastInsertRowid());
 

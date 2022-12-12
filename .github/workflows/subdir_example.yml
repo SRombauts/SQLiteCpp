@@ -1,6 +1,6 @@
 name: subdir_example
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:

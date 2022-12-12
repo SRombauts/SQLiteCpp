@@ -14,7 +14,7 @@ option('SQLITE_OMMIT_LOAD_EXTENSION', type: 'boolean', value: false, description
 ## Disable the support for std::filesystem (C++17)
 option('SQLITECPP_DISABLE_STD_FILESYSTEM', type: 'boolean', value: false, description: 'Disable the support for std::filesystem (C++17)')
 ## Stack protection is not supported on MinGW-W64 on Windows, allow this flag to be turned off.
-option('SQLITECPP_USE_STACK_PROTECTION', type: 'boolean', value: true, description: 'Disable stack protection on MinGW-W64 on Windows.')
+option('SQLITECPP_USE_STACK_PROTECTION', type: 'boolean', value: true, description: 'Enable stack protection for MySQL.')
 ## Enable build for the tests of SQLiteC++
 option('SQLITECPP_BUILD_TESTS', type: 'boolean', value: false, description: 'Build SQLiteC++ unit tests.')
 ## Build the examples of SQLiteC++

@@ -20,10 +20,14 @@ unix_like_code = '''
 '''
 unix_like = cxx.compiles(unix_like_code, name : 'unix like environment')
 
-## C++17 disable the support for std::filesystem (by default off)
-if get_option('SQLITECPP_DISABLE_STD_FILESYSTEM')
-    sqlitecpp_cxx_flags += ['-DSQLITECPP_DISABLE_STD_FILESYSTEM']
-endif
+mingw_64_env_code = '''
+    #if defined(__MINGW64__)
+    // do nothing
+    #else
+    # error "Non MinGW-W64 environment"
+    #endif
+'''
+mingw_64_env = cxx.compiles(mingw_64_env_code, name : 'MinGW-W64 environment')
 
 thread_dep = dependency('threads')
 # sqlite3 support
@@ -129,6 +133,29 @@ if get_option('SQLITE_USE_LEGACY_STRUCT')
         '-DSQLITE_USE_LEGACY_STRUCT',
     ] 
 endif
+
+## C++17 disable the support for std::filesystem (by default off)
+if get_option('SQLITECPP_DISABLE_STD_FILESYSTEM')
+    sqlitecpp_cxx_flags += ['-DSQLITECPP_DISABLE_STD_FILESYSTEM']
+endif
+
+## stack protection hardening
+if get_option('SQLITECPP_USE_STACK_PROTECTOR')
+    ## if is on MinGW-W64 give a warning that is not supported
+    if mingw_64_env
+        warning('SQLiteCpp does not support stack protection on MinGW-W64')
+        warming('this could lead to a crash on the application')
+        warming('you can disable this warning by setting SQLITECPP_USE_STACK_PROTECTOR to false')
+    else
+        sqlitecpp_args += ['-fstack-protector']
+    endif
+endif
+
+## enable ommit load extension
+if get_option('SQLITECPP_OMIT_LOAD_EXTENSION')
+    sqlitecpp_args += ['-DSQLITE_OMIT_LOAD_EXTENSION']
+endif
+
 
 if unix_like
     sqlitecpp_args += [

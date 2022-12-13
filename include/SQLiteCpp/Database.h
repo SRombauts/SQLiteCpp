@@ -35,10 +35,10 @@ __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_13_0
 
 // disable the support if the required header is not available
 #ifdef __has_include
-    #ifndef __has_include(<filesystem>)
+    #if !__has_include(<filesystem>)
         #undef SQLITECPP_HAVE_STD_FILESYSTEM
     #endif
-    #ifndef __has_include(<experimental/filesystem>)
+    #if !__has_include(<experimental/filesystem>)
         #undef SQLITECPP_HAVE_EXPERIMENTAL_FILESYSTEM
     #endif
 #endif

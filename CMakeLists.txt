@@ -327,7 +327,7 @@ elseif (SQLITECPP_INTERNAL_SQLITE)
     option(SQLITE_ENABLE_JSON1 "Enable JSON1 extension when building internal sqlite3 library." ON)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
-    target_link_libraries(SQLiteCpp PRIVATE SQLite::SQLite3)
+    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
     target_compile_definitions(SQLiteCpp PRIVATE SQLITECPP_INTERNAL_SQLITE)
     #target_compile_definitions(SQLiteCpp PUBLIC SQLITE_HAS_CODEC)
 endif ()

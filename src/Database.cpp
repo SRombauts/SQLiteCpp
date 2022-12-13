@@ -24,7 +24,7 @@
 #endif // SQLITE_DETERMINISTIC
 
 #if defined(SQLITECPP_USE_SQLITE3MULTIPLECIPHERS)
-#include "sqlite3mc.h"
+#include <sqlite3mc.h>
 #endif
 
 

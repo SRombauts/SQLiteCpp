@@ -11,6 +11,15 @@ add_library(sqlite3
  sqlite3.h
 )
 
+# Try to extract the SQLite3 version
+file(STRINGS "sqlite3.h" _ver_line
+     REGEX "^#define SQLITE_VERSION *\"[0-9]+\\.[0-9]+\\.[0-9]+\""
+     LIMIT_COUNT 1)
+string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
+       SQLite3_VERSION "${_ver_line}")
+unset(_ver_line)
+mark_as_advanced(SQLite3_VERSION)
+
 add_library(SQLite::SQLite3 ALIAS sqlite3)
 
 target_include_directories(sqlite3

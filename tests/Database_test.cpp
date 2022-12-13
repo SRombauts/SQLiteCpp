@@ -34,6 +34,7 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 }
 #endif
 
+#ifdef SQLITECPP_INTERNAL_SQLITE
 TEST(SQLiteCpp, version)
 {
     EXPECT_STREQ(SQLITE_VERSION,        SQLite::VERSION);
@@ -41,6 +42,7 @@ TEST(SQLiteCpp, version)
     EXPECT_STREQ(SQLITE_VERSION,        SQLite::getLibVersion());
     EXPECT_EQ   (SQLITE_VERSION_NUMBER, SQLite::getLibVersionNumber());
 }
+#endif
 
 TEST(Database, ctorExecCreateDropExist)
 {

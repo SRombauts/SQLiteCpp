@@ -522,6 +522,23 @@ public:
     void loadExtension(const char* apExtensionName, const char* apEntryPointName);
 
     /**
+    * @brief Set the cipher for the current sqlite database instance.
+    *
+    *  This function is needed because some encryption providers require the user 
+    *  to select the cipher that they wish to use. This should happen immediately
+    *  after opening an encrypted database:
+    *  Open encrypted database 
+    *   -> call db.cipher("aes256cbc")
+    *   -> call db.key("secret")
+    *   -> database ready
+    *
+    * @param[in] aCipher   Cipher to decode/encode the database
+    *
+    * @throw SQLite::Exception in case of error
+    */
+    void cipher(const std::string& aCipher) const;
+
+    /**
     * @brief Set the key for the current sqlite database instance.
     *
     *  This is the equivalent of the sqlite3_key call and should thus be called

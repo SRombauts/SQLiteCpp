@@ -23,6 +23,10 @@
 #define SQLITE_DETERMINISTIC 0x800
 #endif // SQLITE_DETERMINISTIC
 
+#if defined(SQLITECPP_USE_SQLITE3MULTIPLECIPHERS)
+#include "sqlite3mc.h"
+#endif
+
 
 namespace SQLite
 {
@@ -221,6 +225,38 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
     ret = sqlite3_load_extension(getHandle(), apExtensionName, apEntryPointName, 0);
     check(ret);
 #endif
+}
+
+// Set the cipher for the current sqlite database instance.
+void Database::cipher(const std::string& aCipher) const {
+    int cipherLen = static_cast<int>(aCipher.length());
+#ifdef SQLITECPP_USE_SQLCIPHER
+    if (cipherLen > 0)
+    {
+        throw SQLite::Exception("SQLiteCpp has been compiled with SQLCipher support, but the functionality has not been implemented, yet.");
+    }
+#else
+#ifdef SQLITECPP_USE_SQLITE3MULTIPLECIPHERS
+    if (cipherLen > 0) 
+    {
+        int idx = sqlite3mc_cipher_index(aCipher.c_str());
+        if (idx < 0)
+        {
+            throw SQLite::Exception("Could not find the cipher named \"" + aCipher + "\".");
+        }
+        int res = sqlite3mc_config(getHandle(), "cipher", idx);
+        if (idx != res)
+        {
+            throw SQLite::Exception("Could not set the cipher index to \"" + std::to_string(idx) + "\".");
+        }
+    }
+#else // SQLITECPP_USE_SQLITE3MULTIPLECIPHERS
+    if (cipherLen > 0)
+    {
+        throw SQLite::Exception("No cipher selection support, recompile with an encryption library enabled.");
+    }
+#endif // SQLITECPP_USE_SQLITE3MULTIPLECIPHERS
+#endif // SQLITECPP_USE_SQLCIPHER
 }
 
 // Set the key for the current sqlite database instance.

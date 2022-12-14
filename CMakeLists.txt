@@ -241,10 +241,6 @@ if (SQLITECPP_USE_GCOV)
 endif ()
 
 # Try to handle the non-standard SQLite3 implementations first
-if (TARGET SQLite::SQLite3)
-    message(STATUS "SQLite::SQLite3 target has already been defined, using it.")
-    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
-endif (TARGET SQLite::SQLite3)
 
 option(SQLITECPP_USE_SQLCIPHER "Use SQLCipher as SQLite3 library with encyption support." OFF)
 if (SQLITECPP_USE_SQLCIPHER AND TARGET SQLite::SQLite3)
@@ -331,6 +327,16 @@ elseif (SQLITECPP_INTERNAL_SQLITE)
     target_compile_definitions(SQLiteCpp PRIVATE SQLITECPP_INTERNAL_SQLITE)
     #target_compile_definitions(SQLiteCpp PUBLIC SQLITE_HAS_CODEC)
 endif ()
+
+# Use the system library as fallback solution
+if (NOT TARGET SQLite::SQLite3)
+    find_package (SQLite3 REQUIRED)
+    message(STATUS "Link to sqlite3 system library")
+    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
+else (NOT TARGET SQLite::SQLite3)
+    message(STATUS "SQLite::SQLite3 target has already been defined, using it.")
+    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
+endif (NOT TARGET SQLite::SQLite3)
 
 # Check the version of the found SQLite3 implementation
 if(SQLite3_VERSION AND SQLite3_VERSION VERSION_LESS "3.19")

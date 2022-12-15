@@ -44,7 +44,7 @@ Transaction::Transaction(Database& aDatabase, TransactionBehavior behavior) :
 Transaction::Transaction(Database &aDatabase) :
     mDatabase(aDatabase)
 {
-    mDatabase.exec("BEGIN");
+    mDatabase.exec("BEGIN TRANSACTION");
 }
 
 // Safely rollback the transaction if it has not been committed.
@@ -54,7 +54,7 @@ Transaction::~Transaction()
     {
         try
         {
-            mDatabase.exec("ROLLBACK");
+            mDatabase.exec("ROLLBACK TRANSACTION");
         }
         catch (SQLite::Exception&)
         {
@@ -68,7 +68,7 @@ void Transaction::commit()
 {
     if (false == mbCommited)
     {
-        mDatabase.exec("COMMIT");
+        mDatabase.exec("COMMIT TRANSACTION");
         mbCommited = true;
     }
     else
@@ -77,5 +77,17 @@ void Transaction::commit()
     }
 }
 
+// Rollback the transaction
+void Transaction::rollback()
+{
+    if (false == mbCommited)
+    {
+        mDatabase.exec("ROLLBACK TRANSACTION");
+    }
+    else
+    {
+        throw SQLite::Exception("Transaction already committed.");
+    }
+}
 
 }  // namespace SQLite

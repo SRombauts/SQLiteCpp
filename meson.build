@@ -1,7 +1,7 @@
 project(
     'SQLiteCpp', 'cpp',
     # SQLiteCpp requires C++11 support
-    default_options: ['cpp_std=c++11'],
+    default_options: ['cpp_std=c++11', 'warning_level=3'],
     license: 'MIT',
     version: '3.2.1',
 )
@@ -51,8 +51,9 @@ sqlitecpp_srcs = files(
 sqlitecpp_args = cxx.get_supported_arguments(
     # included in meson by default
     # -Wall
-    '-Wextra',
-    '-Wpedantic',
+    # included when warning_level=3
+    #'-Wextra',
+    #'-Wpedantic',
     '-Wswitch-enum',
     '-Wshadow',
     '-Wno-long-long',

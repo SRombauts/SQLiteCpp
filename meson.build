@@ -1,9 +1,9 @@
 project(
     'SQLiteCpp', 'cpp',
     # SQLiteCpp requires C++11 support
-    default_options: ['cpp_std=c++11'],
+    default_options: ['cpp_std=c++11', 'warning_level=3'],
     license: 'MIT',
-    version: '3.2.0',
+    version: '3.2.1',
 )
 
 cxx = meson.get_compiler('cpp')
@@ -39,7 +39,7 @@ sqlite3_dep = dependency(
 sqlitecpp_incl = [ 
     include_directories('include')
 ]
-sqlitecpp_srcs = [
+sqlitecpp_srcs = files(
     'src/Backup.cpp',
     'src/Column.cpp',
     'src/Database.cpp',
@@ -47,10 +47,17 @@ sqlitecpp_srcs = [
     'src/Savepoint.cpp',
     'src/Statement.cpp',
     'src/Transaction.cpp',
-]
-sqlitecpp_args = [
-    '-Wall',
-]
+)
+sqlitecpp_args = cxx.get_supported_arguments(
+    # included in meson by default
+    # -Wall
+    # included when warning_level=3
+    #'-Wextra',
+    #'-Wpedantic',
+    '-Wswitch-enum',
+    '-Wshadow',
+    '-Wno-long-long',
+)
 sqlitecpp_link = []
 sqlitecpp_deps = [
     sqlite3_dep,
@@ -61,7 +68,7 @@ sqlitecpp_opts = []
 
 ## tests
 
-sqlitecpp_test_srcs = [
+sqlitecpp_test_srcs = files(
     'tests/Column_test.cpp',
     'tests/Database_test.cpp',
     'tests/Savepoint_test.cpp',
@@ -71,30 +78,18 @@ sqlitecpp_test_srcs = [
     'tests/VariadicBind_test.cpp',
     'tests/Exception_test.cpp',
     'tests/ExecuteMany_test.cpp',
-]
+)
 sqlitecpp_test_args = []
 
 ## samples
 
-sqlitecpp_sample1_srcs = [
+sqlitecpp_sample1_srcs = files(
     'examples/example1/main.cpp',
-]
-sqlitecpp_sample2_srcs = [
+)
+sqlitecpp_sample2_srcs = files(
     'examples/example2/src/main.cpp',
-]
+)
 
-# if not using MSVC we need to add this compiler arguments
-# for a list of MSVC supported arguments please check:
-# https://docs.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-alphabetically?view=msvc-170
-if not (host_machine.system() == 'windows' and cxx.get_id() == 'msvc')
-    sqlitecpp_args += [
-        '-Wextra',
-        '-Wpedantic',
-        '-Wswitch-enum',
-        '-Wshadow',
-        '-Wno-long-long',
-    ]
-endif
 ## using MSVC headers requires c++14, if not will show an error on xstddef as: 
 ## 'auto' return without trailing return type; deduced return types are a C++14 extension
 if host_machine.system() == 'windows'
@@ -104,7 +99,7 @@ if host_machine.system() == 'windows'
     ]
     # check that we are not trying to build as dynamic library
     if get_option('default_library') != 'shared'
-        warming('SQLiteCpp does not support shared library on Windows, the library will be built as static')
+        message('warning: SQLiteCpp does not support shared library on Windows, the library will be built as static')
     endif
     
 endif
@@ -140,26 +135,46 @@ if get_option('SQLITECPP_DISABLE_STD_FILESYSTEM')
 endif
 
 ## stack protection hardening
-if get_option('SQLITECPP_USE_STACK_PROTECTOR')
+if get_option('SQLITECPP_USE_STACK_PROTECTION')
     ## if is on MinGW-W64 give a warning that is not supported
     if mingw_64_env
-        warning('SQLiteCpp does not support stack protection on MinGW-W64')
-        warming('this could lead to a crash on the application')
-        warming('you can disable this warning by setting SQLITECPP_USE_STACK_PROTECTOR to false')
+        message('warning: SQLiteCpp does not support stack protection on MinGW-W64')
+        message('warning: this could lead to a crash on the application')
+        message('warning: you can disable this warning by setting SQLITECPP_USE_STACK_PROTECTOR to false')
     else
         sqlitecpp_args += ['-fstack-protector']
     endif
 endif
 
 ## enable ommit load extension
-if get_option('SQLITECPP_OMIT_LOAD_EXTENSION')
+if get_option('SQLITE_OMIT_LOAD_EXTENSION')
     sqlitecpp_args += ['-DSQLITE_OMIT_LOAD_EXTENSION']
+## check if running on OSX
+elif host_machine.system() == 'darwin' and sqlite3_dep.found()
+   sqlite3_load_extension_support = cxx.links(
+        '''
+            #include <sqlite3.h>
+            int main() {
+                sqlite3_enable_load_extension(0, 0);
+                return 0;
+            }
+        ''', 
+        name: 'sqlite3_load_extension',
+        dependencies: [sqlite3_dep])
+    if not sqlite3_load_extension_support
+        message('warning: Detected bundled SQLite3 in OSX, but it does not support load extension')
+        message('warning: SQLiteCpp will be built without load extension support')
+        message('warning: You can disable this warning by setting SQLITE_OMIT_LOAD_EXTENSION to false')
+        sqlitecpp_args += ['-DSQLITE_OMIT_LOAD_EXTENSION']
+    endif
 endif
+
 
 
 if unix_like
     sqlitecpp_args += [
-        '-DfPIC',
+        # -fPIC is included by default in meson
+        # 'fPIC',
     ]
     # add dl dependency
     libdl_dep = cxx.find_library('dl')

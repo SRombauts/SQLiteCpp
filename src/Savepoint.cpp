@@ -66,7 +66,7 @@ void Savepoint::release()
 }
 
 // Rollback to the savepoint, but don't release it
-void Savepoint::rollback()
+void Savepoint::rollbackTo()
 {
     if (!mbReleased)
     {

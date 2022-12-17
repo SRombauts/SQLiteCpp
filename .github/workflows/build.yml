@@ -13,29 +13,43 @@ jobs:
         - {
             name: "Windows Latest MSVC",
             os: windows-latest,
-            build_type: "Debug", cc: "cl", cxx: "cl",
+            generator: "Visual Studio 17 2022",
+            build_type: "Debug",
+            cc: "cl", cxx: "cl",
+            extra_path: "",
           }
-        # TODO: this is not working, since CMake is using generator for latest Visual Studio
-        #- {
-        #    name: "Windows Latest MinGW",
-        #    os: windows-latest,
-        #    build_type: "Debug", cc: "gcc", cxx: "g++"
-        #  }
+        - {
+            name: "Windows Latest MinGW",
+            os: windows-latest,
+            generator: "MinGW Makefiles",
+            build_type: "Debug",
+            cc: "gcc", cxx: "g++",
+            extra_path: "C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin",
+          }
         - {
             name: "Ubuntu Latest GCC",
             os: ubuntu-latest,
-            build_type: "Debug", cc: "gcc", cxx: "g++"
+            generator: "Unix Makefiles",
+            build_type: "Debug",
+            cc: "gcc", cxx: "g++",
+            extra_path: ""
           }
         - {
             name: "macOS Latest Clang",
             os: macos-latest,
-            build_type: "Debug", cc: "clang", cxx: "clang++"
+            generator: "Unix Makefiles",
+            build_type: "Debug",
+            cc: "clang", cxx: "clang++",
+            extra_path: ""
           }
 
     steps:
     - uses: actions/checkout@v2
     - name: submodule
       run: git submodule update --init --recursive
+    - name: extra_path
+      shell: bash
+      run: echo "${{matrix.config.extra_path}}" >> $GITHUB_PATH
     - name: configure
       shell: cmake -P {0}
       run: |
@@ -45,7 +59,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF .. 
+        cmake -G "${{matrix.config.generator}}" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF .. 
     - name: build
       run: cmake --build build --config ${{matrix.config.build_type}}
     - name: test

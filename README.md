@@ -193,6 +193,62 @@ cmake --build .
 ctest --output-on-failure
 ```
 
+#### Building with meson
+
+You can build SQLiteCpp with [meson](https://mesonbuild.com/) using the provided meson project.
+
+you can install meson using pip: `pip install meson` however you may need to install ninja and other dependencies depending on your platform as an compiler toolchain
+
+Arch Linux:
+
+```sh
+# install clang (compiler toolchain) and ninja (recommended build system)
+sudo pacman -Syu clang ninja
+# install python and pip (required for meson)
+sudo pacman -Syu python python-pip
+# install meson 
+pip install meson
+```
+
+Ubuntu:
+
+```sh
+# install gcc(compiler toolchain) and ninja (recommended build system)
+sudo apt install build-essential ninja-build
+# install python and pip (required for meson)
+sudo apt install python3 python3-pip
+# install meson
+pip install meson
+```
+
+for example you can build the library using the default options with:
+
+```sh
+# setup the build directory
+meson setup builddir 
+# build sqlitecpp
+meson compile -C builddir
+```
+
+or if you wish to build with tests and examples:
+
+```sh
+# setup the build directory with tests and examples enabled
+meson setup builddir -DSQLITECPP_BUILD_TESTS=true -DSQLITECPP_BUILD_EXAMPLES=true
+# build sqlitecpp
+meson compile -C builddir
+```
+
+#### Using SQLiteCpp as subproject in meson
+
+please check the examples in the examples folder for usage of SQLiteCpp as a subproject in meson, as for the wrap file you can use the one provided in the subprojects folder called `SQLiteCpp.wrap`
+
+> keep in mind that even that this wrap should be up to date, it is recommended to check the latest version of SQLiteCpp and update the wrap file accordingly
+
+#### System SQLiteCpp support under meson
+
+additionally meson can detect and use the bundled sqlitecpp library included on your system if available, for example with vcpkg you would need to set the `PKG_CONFIG_PATH` environment variable to the vcpkg directory before running meson setup, and if applies the corresponding `PKG-CONFIG` executable to the path.
+
 #### Building the Doxygen/html documentation
 
 Make sure you have Dogygen installed and configure CMake using the `SQLITECPP_RUN_DOXYGEN=ON` flag:

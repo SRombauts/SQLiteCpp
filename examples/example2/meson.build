@@ -1,20 +1,14 @@
-
-
-sqlitecpp_dep = dependency(
-                'sqlitecpp_dep',
-                fallback: ['SQLiteCpp', 'sqlitecpp_dep']
-)
-
-example1_sources = files(
+example2_srcs = files(
     'src/main.cpp'
 )
 
-example1_dependencies = [
-    dependency('SQLite')
-]
+# if running on windows define _CRT_SECURE_NO_WARNINGS
+example2_args = []
 
-sqlitecpp_demo1_exe = executable('SQLITECPP_sample_demo1',
-                            sqlitecpp_sample1_srcs,
+
+sqlitecpp_demo2_exe = executable('SQLITECPP_sample_demo1',
+                            sqlitecpp_sample2_srcs,
                             dependencies: sqlitecpp_dep,
-                            # override the default options
-                            override_options: sqlitecpp_opts,)
+                            # inherit the default options from sqlitecpp
+                            override_options: sqlitecpp_opts,
+                            cpp_args: example2_args)

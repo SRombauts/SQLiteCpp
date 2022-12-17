@@ -271,19 +271,7 @@ if get_option('SQLITECPP_BUILD_TESTS')
     test('sqlitecpp unit tests', testexe, args: test_args)
 endif
 if get_option('SQLITECPP_BUILD_EXAMPLES')
-    ## demo 1 executable
-    sqlitecpp_demo1_exe = executable('SQLITECPP_sample_demo1',
-                            sqlitecpp_sample1_srcs,
-                            dependencies: sqlitecpp_dep,
-                            # override the default options
-                            override_options: sqlitecpp_opts,)
-    ## demo 2 executable
-    sqlitecpp_demo1_exe = executable('SQLITECPP_sample_demo2',
-                            sqlitecpp_sample2_srcs,
-                            dependencies: sqlitecpp_dep,
-                            # override the default options
-                            override_options: sqlitecpp_opts,)
-                    
+    subdir('examples')
 endif
 
 pkgconfig = import('pkgconfig')

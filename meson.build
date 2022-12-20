@@ -134,6 +134,14 @@ if get_option('SQLITECPP_DISABLE_STD_FILESYSTEM')
     sqlitecpp_cxx_flags += ['-DSQLITECPP_DISABLE_STD_FILESYSTEM']
 endif
 
+## get the user option for the SQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL
+disable_sqlitecpp_expanded_sql = get_option('SQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL')
+
+## Disable the use of sqlite3_expanded_sql (from sqlite3 3.14.0)
+if disable_sqlitecpp_expanded_sql
+    sqlitecpp_args += ['-DSQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL']
+endif
+
 ## stack protection hardening
 if get_option('SQLITECPP_USE_STACK_PROTECTION')
     ## if is on MinGW-W64 give a warning that is not supported

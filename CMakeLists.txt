@@ -304,6 +304,13 @@ if (SQLITECPP_DISABLE_STD_FILESYSTEM)
     add_definitions(-DSQLITECPP_DISABLE_STD_FILESYSTEM)
 endif (SQLITECPP_DISABLE_STD_FILESYSTEM)
 
+## disable the optional support for sqlite3_expanded_sql (from sqlite3 3.14.0)
+option(SQLITECPP_DISABLE_EXPANDED_SQL "Disable the use of sqlite3_expanded_sql in SQLiteCpp." OFF)
+if (SQLITECPP_DISABLE_EXPANDED_SQL)
+    message (STATUS "Disabling sqlite3_expanded_sql support")
+    add_definitions(-DSQLITECPP_DISABLE_EXPANDED_SQL)
+endif (SQLITECPP_DISABLE_EXPANDED_SQL)
+
 # Link target with pthread and dl for Unix
 if (UNIX)
     set(THREADS_PREFER_PTHREAD_FLAG ON)

@@ -301,7 +301,7 @@ endif (SQLITECPP_INTERNAL_SQLITE)
 option(SQLITECPP_DISABLE_STD_FILESYSTEM "Disable the use of std::filesystem in SQLiteCpp." OFF)
 if (SQLITECPP_DISABLE_STD_FILESYSTEM)
     message (STATUS "Disabling std::filesystem support")
-    add_definitions(-DSQLITECPP_DISABLE_STD_FILESYSTEM)
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITECPP_DISABLE_STD_FILESYSTEM)
 endif (SQLITECPP_DISABLE_STD_FILESYSTEM)
 
 # Link target with pthread and dl for Unix

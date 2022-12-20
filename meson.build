@@ -119,7 +119,7 @@ endif
 
 if get_option('SQLITE_HAS_CODEC')
     sqlitecpp_args += [
-        'SQLITE_HAS_CODEC',
+        '-DSQLITE_HAS_CODEC',
     ]
 endif
 

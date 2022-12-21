@@ -210,7 +210,7 @@ else
         dependencies: sqlitecpp_deps,
         # override the default options
         override_options: sqlitecpp_opts,
-        # install: true,
+        install: true,
         # API version for SQLiteCpp shared library.
         version: '0',)
 endif
@@ -233,7 +233,7 @@ if get_option('SQLITECPP_BUILD_TESTS')
 endif
 
 install_subdir(
-    'include/SQliteCpp',
+    'include/SQLiteCpp',
     install_dir: get_option('includedir'))
 
 sqlitecpp_dep = declare_dependency(

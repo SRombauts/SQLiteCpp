@@ -373,6 +373,42 @@ catch (std::exception& e)
 }
 ```
 
+### The third sample shows how to manage a prepared statement with a transaction:
+
+```C++
+try 
+{ 
+    SQLite::Database    db("test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+
+    db.exec("DROP TABLE IF EXISTS test");
+
+    db.exec("CREATE TABLE test (value INTEGER)");
+
+    // Begin transaction
+    SQLite::Transaction transaction(db);
+
+    // Prepare query
+    SQLite::Statement query {db, "INSERT INTO test (value) VALUES (?)"};
+
+    // Collection to save in database
+    std::vector<int> values{1, 2, 3};
+
+    for (const auto& v: values)
+    {
+      query.bind(1, v);
+      query.exec();
+      query.reset();
+    }
+
+    // Commit transaction
+    transaction.commit();
+}
+catch (std::exception& e)
+{
+  std::cout << "exception: " << e.what() << std::endl;
+}
+```
+
 ### How to handle assertion in SQLiteC++:
 Exceptions shall not be used in destructors, so SQLiteC++ uses SQLITECPP_ASSERT() to check for errors in destructors.
 If you don't want assert() to be called, you have to enable and define an assert handler as shown below,

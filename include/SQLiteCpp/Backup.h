@@ -11,6 +11,7 @@
  */
 #pragma once
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Database.h>
 
 #include <string>
@@ -31,7 +32,7 @@ namespace SQLite
  * See also the a reference implementation of live backup taken from the official site:
  * https://www.sqlite.org/backup.html
  */
-class Backup
+class DLL_API Backup
 {
 public:
     /**

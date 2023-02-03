@@ -17,6 +17,11 @@ endif ()
 message(STATUS "Using c++ standard c++${CMAKE_CXX_STANDARD}")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(BUILD_SHARED_LIBS "Build shared libraries (.dll/.so) instead of static ones (.lib/.a)" ON)
+if(BUILD_SHARED_LIBS)
+add_definitions(-DSQLITECPP_COMPILE_DLL -DSQLITECPP_EXPORT)
+endif()
+
 message (STATUS "CMake version: ${CMAKE_VERSION}")
 message (STATUS "Project version: ${PROJECT_VERSION}")
 

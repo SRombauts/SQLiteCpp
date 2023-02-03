@@ -10,6 +10,7 @@
  */
 #pragma once
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Exception.h>
 
 
@@ -50,7 +51,7 @@ enum class TransactionBehavior {
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Transaction
+class DLL_API Transaction
 {
 public:
     /**

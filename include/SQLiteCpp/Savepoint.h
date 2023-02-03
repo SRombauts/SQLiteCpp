@@ -12,6 +12,7 @@
  */
 #pragma once
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Exception.h>
 
 namespace SQLite
@@ -53,7 +54,7 @@ class Database;
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Savepoint
+class DLL_API Savepoint
 {
 public:
     /**

@@ -17,16 +17,6 @@ endif ()
 message(STATUS "Using c++ standard c++${CMAKE_CXX_STANDARD}")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(BUILD_SHARED_LIBS)
-    if(WIN32)
-        message("defining SQLITECPP_COMPILE_DLL")
-        add_definitions("-DSQLITECPP_COMPILE_DLL")
-        if(SQLITECPP_DLL_EXPORT)
-        add_definitions("-DSQLITECPP_DLL_EXPORT")
-        endif()
-    endif()
-endif()
-
 message (STATUS "CMake version: ${CMAKE_VERSION}")
 message (STATUS "Project version: ${PROJECT_VERSION}")
 
@@ -223,6 +213,13 @@ if (SQLITE_USE_LEGACY_STRUCT)
     target_compile_definitions(SQLiteCpp PUBLIC SQLITE_USE_LEGACY_STRUCT)
 endif (SQLITE_USE_LEGACY_STRUCT)
 
+if(BUILD_SHARED_LIBS)
+    if(WIN32)
+        add_definitions("-DSQLITECPP_COMPILE_DLL")
+        target_compile_definitions(SQLiteCpp PRIVATE "SQLITECPP_DLL_EXPORT=1")
+    endif()
+endif()
+
 option(SQLITE_OMIT_LOAD_EXTENSION "Enable omit load extension" OFF)
 if (SQLITE_OMIT_LOAD_EXTENSION)
     # Enable the user definition of load_extension().
@@ -412,8 +409,14 @@ endif (SQLITECPP_RUN_DOXYGEN)
 
 option(SQLITECPP_BUILD_EXAMPLES "Build examples." OFF)
 if (SQLITECPP_BUILD_EXAMPLES)
+
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
+    if(BUILD_SHARED_LIBS)
+        if(WIN32)
+           target_compile_definitions(SQLiteCpp_example1 PRIVATE "SQLITECPP_DLL_EXPORT=0")
+        endif()
+    endif()    
     target_link_libraries(SQLiteCpp_example1 SQLiteCpp)
     if (MSYS OR MINGW)
         target_link_libraries(SQLiteCpp_example1 ssp)

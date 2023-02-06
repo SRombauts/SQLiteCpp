@@ -31,7 +31,7 @@ namespace SQLite
 class Database;
 class Column;
 
-extern const int OK; ///< SQLITE_OK
+DLL_API extern const int OK; ///< SQLITE_OK
 
 /**
  * @brief RAII encapsulation of a prepared SQLite Statement.

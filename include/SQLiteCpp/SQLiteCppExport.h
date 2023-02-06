@@ -19,7 +19,7 @@
 
 /* Windows DLL export/import */
 #if defined(WIN32) && defined(SQLITECPP_COMPILE_DLL)
-    #if defined(SQLITECPP_DLL_EXPORT)
+    #if SQLITECPP_DLL_EXPORT
         #define DLL_API __declspec(dllexport)
         #pragma message("Exporting symbols")
     #else
@@ -28,4 +28,9 @@
     #endif    
 #else    
     #define DLL_API
+#endif
+
+#if defined(WIN32) && defined(SQLITECPP_COMPILE_DLL)
+    #pragma warning( disable : 4251 )
+    #pragma warning( disable : 4275 )
 #endif

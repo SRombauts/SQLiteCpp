@@ -107,15 +107,15 @@ DLL_API extern const int OPEN_PRIVATECACHE; // SQLITE_OPEN_PRIVATECACHE
 DLL_API extern const int OPEN_NOFOLLOW;     // SQLITE_OPEN_NOFOLLOW
 
 
-extern const int OK;                ///< SQLITE_OK (used by check() bellow)
+DLL_API extern const int OK;                ///< SQLITE_OK (used by check() bellow)
 
-extern const char* const VERSION;        ///< SQLITE_VERSION string from the sqlite3.h used at compile time
-extern const int         VERSION_NUMBER; ///< SQLITE_VERSION_NUMBER from the sqlite3.h used at compile time
+DLL_API extern const char* const VERSION;        ///< SQLITE_VERSION string from the sqlite3.h used at compile time
+DLL_API extern const int         VERSION_NUMBER; ///< SQLITE_VERSION_NUMBER from the sqlite3.h used at compile time
 
 /// Return SQLite version string using runtime call to the compiled library
-const char* getLibVersion() noexcept;
+DLL_API const char* getLibVersion() noexcept;
 /// Return SQLite version number using runtime call to the compiled library
-int   getLibVersionNumber() noexcept;
+DLL_API int   getLibVersionNumber() noexcept;
 
 // Public structure for representing all fields contained within the SQLite header.
 // Official documentation for fields: https://www.sqlite.org/fileformat.html#the_database_header
@@ -266,7 +266,7 @@ public:
     // Deleter functor to use with smart pointers to close the SQLite database connection in an RAII fashion.
     struct Deleter
     {
-        void operator()(sqlite3* apSQLite);
+        DLL_API void operator()(sqlite3* apSQLite);
     };
 
     /**

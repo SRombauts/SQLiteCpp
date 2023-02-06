@@ -23,29 +23,28 @@
 #define SQLITE_DETERMINISTIC 0x800
 #endif // SQLITE_DETERMINISTIC
 
-
 namespace SQLite
 {
 
-const int   OK                = SQLITE_OK;
-const int   OPEN_READONLY     = SQLITE_OPEN_READONLY;
-const int   OPEN_READWRITE    = SQLITE_OPEN_READWRITE;
-const int   OPEN_CREATE       = SQLITE_OPEN_CREATE;
-const int   OPEN_URI          = SQLITE_OPEN_URI;
-const int   OPEN_MEMORY       = SQLITE_OPEN_MEMORY;
-const int   OPEN_NOMUTEX      = SQLITE_OPEN_NOMUTEX;
-const int   OPEN_FULLMUTEX    = SQLITE_OPEN_FULLMUTEX;
-const int   OPEN_SHAREDCACHE  = SQLITE_OPEN_SHAREDCACHE;
-const int   OPEN_PRIVATECACHE = SQLITE_OPEN_PRIVATECACHE;
+DLL_API const int   OK                = SQLITE_OK;
+DLL_API const int   OPEN_READONLY     = SQLITE_OPEN_READONLY;
+DLL_API const int   OPEN_READWRITE    = SQLITE_OPEN_READWRITE;
+DLL_API const int   OPEN_CREATE       = SQLITE_OPEN_CREATE;
+DLL_API const int   OPEN_URI          = SQLITE_OPEN_URI;
+DLL_API const int   OPEN_MEMORY       = SQLITE_OPEN_MEMORY;
+DLL_API const int   OPEN_NOMUTEX      = SQLITE_OPEN_NOMUTEX;
+DLL_API const int   OPEN_FULLMUTEX    = SQLITE_OPEN_FULLMUTEX;
+DLL_API const int   OPEN_SHAREDCACHE  = SQLITE_OPEN_SHAREDCACHE;
+DLL_API const int   OPEN_PRIVATECACHE = SQLITE_OPEN_PRIVATECACHE;
 // check if sqlite version is >= 3.31.0 and SQLITE_OPEN_NOFOLLOW is defined
 #if SQLITE_VERSION_NUMBER >= 3031000 && defined(SQLITE_OPEN_NOFOLLOW)
-const int   OPEN_NOFOLLOW     = SQLITE_OPEN_NOFOLLOW;
+DLL_API const int   OPEN_NOFOLLOW     = SQLITE_OPEN_NOFOLLOW;
 #else
-const int   OPEN_NOFOLLOW     = 0;
+DLL_API const int   OPEN_NOFOLLOW     = 0;
 #endif
 
-const char* const VERSION        = SQLITE_VERSION;
-const int         VERSION_NUMBER = SQLITE_VERSION_NUMBER;
+DLL_API const char* const VERSION        = SQLITE_VERSION;
+DLL_API const int         VERSION_NUMBER = SQLITE_VERSION_NUMBER;
 
 // Return SQLite version string using runtime call to the compiled library
 const char* getLibVersion() noexcept

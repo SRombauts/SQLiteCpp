@@ -19,11 +19,13 @@
 
 /* Windows DLL export/import */
 #if defined(WIN32) && defined(SQLITECPP_COMPILE_DLL)
-    #ifdef SQLITECPP_EXPORT
+    #if defined(SQLITECPP_DLL_EXPORT)
         #define DLL_API __declspec(dllexport)
         #pragma message("Exporting symbols")
     #else
         #define DLL_API __declspec(dllimport)
         #pragma message("Importing symbols")
-    #endif        
+    #endif    
+#else    
+    #define DLL_API
 #endif

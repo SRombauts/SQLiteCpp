@@ -11,6 +11,18 @@ add_library(sqlite3
  sqlite3.h
 )
 
+if(WIN32)
+    if(BUILD_SHARED_LIBS)
+        if(SQLITECPP_DLL_EXPORT)
+            message("Adding __declspec(dllexport)")
+            add_definitions("-DSQLITE_API=__declspec(dllexport)")
+        else()
+            message("Adding __declspec(dllimport)")
+            add_definitions("-DSQLITE_API=__declspec(dllimport)")
+        endif()
+    endif()
+endif()
+
 add_library(SQLite::SQLite3 ALIAS sqlite3)
 
 target_include_directories(sqlite3

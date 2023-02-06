@@ -18,7 +18,7 @@
 
 
 // Include useful headers of SQLiteC++
-#include <SQLiteCppExport.h>
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Assertion.h>
 #include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/Database.h>

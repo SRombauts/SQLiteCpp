@@ -216,7 +216,7 @@ endif (SQLITE_USE_LEGACY_STRUCT)
 if(BUILD_SHARED_LIBS)
     if(WIN32)
         add_definitions("-DSQLITECPP_COMPILE_DLL")
-        target_compile_definitions(SQLiteCpp PRIVATE "SQLITECPP_DLL_EXPORT=1")
+        target_compile_definitions(SQLiteCpp PRIVATE "SQLITECPP_DLL_EXPORT")
     endif()
 endif()
 
@@ -412,11 +412,7 @@ if (SQLITECPP_BUILD_EXAMPLES)
 
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
-    if(BUILD_SHARED_LIBS)
-        if(WIN32)
-           target_compile_definitions(SQLiteCpp_example1 PRIVATE "SQLITECPP_DLL_EXPORT=0")
-        endif()
-    endif()    
+    
     target_link_libraries(SQLiteCpp_example1 SQLiteCpp)
     if (MSYS OR MINGW)
         target_link_libraries(SQLiteCpp_example1 ssp)

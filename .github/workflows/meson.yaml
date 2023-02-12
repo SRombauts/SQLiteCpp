@@ -13,16 +13,12 @@ jobs:
         - {
             name: "Windows Latest MSVC",
             os: windows-latest,
-            generator: "Visual Studio 17 2022",
-            build_type: "Debug",
             cc: "cl", cxx: "cl",
             extra_path: "",
           }
         - {
             name: "Windows Latest MinGW",
             os: windows-latest,
-            generator: "MinGW Makefiles",
-            build_type: "Debug",
             cc: "gcc", cxx: "g++",
             extra_path: "C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin",
           }
@@ -35,8 +31,6 @@ jobs:
         - {
             name: "Ubuntu Latest GCC",
             os: ubuntu-latest,
-            generator: "Unix Makefiles",
-            build_type: "Debug",
             cc: "gcc", cxx: "g++",
             extra_path: ""
           }
@@ -49,8 +43,6 @@ jobs:
         - {
             name: "macOS Latest Clang",
             os: macos-latest,
-            generator: "Unix Makefiles",
-            build_type: "Debug",
             cc: "clang", cxx: "clang++",
             extra_path: ""
           }
@@ -67,6 +59,8 @@ jobs:
       run: |
         set(ENV{CC} ${{matrix.config.cc}})
         set(ENV{CXX} ${{matrix.config.cxx}})
+        set(ENV{C_LD} ${{matrix.config.c_ld}})
+        set(ENV{CXX_LD} ${{matrix.config.cxx_ld}})
     - name: install prerequisites
       run: |
         # asuming that python and pip are already installed

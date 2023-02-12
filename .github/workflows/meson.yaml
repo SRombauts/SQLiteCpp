@@ -48,7 +48,7 @@ jobs:
           }
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: submodule
       run: git submodule update --init --recursive
     - name: extra_path

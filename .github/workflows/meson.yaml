@@ -54,8 +54,6 @@ jobs:
     - name: setup MSVC
       if: matrix.config.requires_msvc
       uses: ilammy/msvc-dev-cmd@v1
-    - name: submodule
-      run: git submodule update --init --recursive
     - name: extra_path
       shell: bash
       run: echo "${{matrix.config.extra_path}}" >> $GITHUB_PATH

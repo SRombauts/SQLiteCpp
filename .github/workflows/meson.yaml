@@ -58,7 +58,7 @@ jobs:
     - name: install prerequisites
       run: |
         # asuming that python and pip are already installed
-        pip3 install meson
+        pip3 install meson ninja
     - name: setup meson project
       run: |
         # setup the build directory with tests and examples enabled

@@ -27,11 +27,23 @@ jobs:
             extra_path: "C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin",
           }
         - {
+            name: "Windows Latest Clang",
+            os: windows-latest,
+            cc: "clang", cxx: "clang++", c_ld: "lld-link", cxx_ld: "lld-link",
+            extra_path: "",
+          }
+        - {
             name: "Ubuntu Latest GCC",
             os: ubuntu-latest,
             generator: "Unix Makefiles",
             build_type: "Debug",
             cc: "gcc", cxx: "g++",
+            extra_path: ""
+          }
+        - {
+            name: "Ubuntu Latest Clang",
+            os: ubuntu-latest,
+            cc: "clang", cxx: "clang++", c_ld: "lld", cxx_ld: "lld",
             extra_path: ""
           }
         - {

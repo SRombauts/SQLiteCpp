@@ -68,7 +68,7 @@ jobs:
     - name: setup meson project
       run: |
         # setup the build directory with tests and examples enabled
-        meson setup builddir -DSQLITECPP_BUILD_TESTS=true -DSQLITECPP_BUILD_EXAMPLES=true
+        meson setup builddir -DSQLITECPP_BUILD_TESTS=true -DSQLITECPP_BUILD_EXAMPLES=true --force-fallback-for=sqlite3
     - name: build meson project
       run: |
         # build the project

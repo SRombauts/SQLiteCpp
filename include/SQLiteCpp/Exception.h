@@ -24,7 +24,7 @@ namespace SQLite
 /**
  * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
  */
-class DLL_API Exception : public std::runtime_error
+class SQLITECPP_API Exception : public std::runtime_error
 {
 public:
     /**

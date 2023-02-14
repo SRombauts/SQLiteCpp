@@ -31,7 +31,7 @@ namespace SQLite
 class Database;
 class Column;
 
-DLL_API extern const int OK; ///< SQLITE_OK
+SQLITECPP_API extern const int OK; ///< SQLITE_OK
 
 /**
  * @brief RAII encapsulation of a prepared SQLite Statement.
@@ -50,7 +50,7 @@ DLL_API extern const int OK; ///< SQLITE_OK
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class DLL_API Statement
+class SQLITECPP_API Statement
 {
 public:
     /**

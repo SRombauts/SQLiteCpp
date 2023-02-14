@@ -54,7 +54,7 @@ class Database;
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class DLL_API Savepoint
+class SQLITECPP_API Savepoint
 {
 public:
     /**

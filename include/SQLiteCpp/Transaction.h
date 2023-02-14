@@ -51,7 +51,7 @@ enum class TransactionBehavior {
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class DLL_API Transaction
+class SQLITECPP_API Transaction
 {
 public:
     /**

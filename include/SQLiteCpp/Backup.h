@@ -32,7 +32,7 @@ namespace SQLite
  * See also the a reference implementation of live backup taken from the official site:
  * https://www.sqlite.org/backup.html
  */
-class DLL_API Backup
+class SQLITECPP_API Backup
 {
 public:
     /**

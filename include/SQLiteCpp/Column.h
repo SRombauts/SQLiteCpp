@@ -23,11 +23,11 @@ struct sqlite3_stmt;
 namespace SQLite
 {
 
-DLL_API extern const int INTEGER;   ///< SQLITE_INTEGER
-DLL_API extern const int FLOAT;     ///< SQLITE_FLOAT
-DLL_API extern const int TEXT;      ///< SQLITE_TEXT
-DLL_API extern const int BLOB;      ///< SQLITE_BLOB
-DLL_API extern const int Null;      ///< SQLITE_NULL
+SQLITECPP_API extern const int INTEGER;   ///< SQLITE_INTEGER
+SQLITECPP_API extern const int FLOAT;     ///< SQLITE_FLOAT
+SQLITECPP_API extern const int TEXT;      ///< SQLITE_TEXT
+SQLITECPP_API extern const int BLOB;      ///< SQLITE_BLOB
+SQLITECPP_API extern const int Null;      ///< SQLITE_NULL
 
 /**
  * @brief Encapsulation of a Column in a row of the result pointed by the prepared Statement.
@@ -45,7 +45,7 @@ DLL_API extern const int Null;      ///< SQLITE_NULL
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class DLL_API Column
+class SQLITECPP_API Column
 {
 public:
     /**
@@ -242,7 +242,7 @@ private:
  *
  * @return  Reference to the stream used
  */
-DLL_API std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
+SQLITECPP_API std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
 
 #if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900) // c++14: Visual Studio 2015
 

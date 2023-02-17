@@ -6,7 +6,7 @@ example2_srcs = files(
 example2_args = []
 
 
-sqlitecpp_demo2_exe = executable('SQLITECPP_sample_demo1',
+sqlitecpp_demo2_exe = executable('SQLITECPP_sample_demo2',
                             sqlitecpp_sample2_srcs,
                             dependencies: sqlitecpp_dep,
                             # inherit the default options from sqlitecpp

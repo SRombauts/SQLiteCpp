@@ -159,21 +159,25 @@ if get_option('SQLITE_OMIT_LOAD_EXTENSION')
     sqlitecpp_args += ['-DSQLITE_OMIT_LOAD_EXTENSION']
 ## check if running on OSX
 elif host_machine.system() == 'darwin' and sqlite3_dep.found()
-   sqlite3_load_extension_support = cxx.links(
-        '''
-            #include <sqlite3.h>
-            int main() {
-                sqlite3_enable_load_extension(0, 0);
-                return 0;
-            }
-        ''', 
-        name: 'sqlite3_load_extension',
-        dependencies: [sqlite3_dep])
-    if not sqlite3_load_extension_support
-        message('warning: Detected bundled SQLite3 in OSX, but it does not support load extension')
-        message('warning: SQLiteCpp will be built without load extension support')
-        message('warning: You can disable this warning by setting SQLITE_OMIT_LOAD_EXTENSION to false')
-        sqlitecpp_args += ['-DSQLITE_OMIT_LOAD_EXTENSION']
+    ## check if sqlite3 is the one bundled with OSX
+    if sqlite3_dep.type_name() != 'internal'
+        message('warning: Detected non-internal SQLite3 in OSX, check if it supports load extension')
+        sqlite3_load_extension_support = cxx.links(
+            '''
+                #include <sqlite3.h>
+                int main() {
+                    sqlite3_enable_load_extension(0, 0);
+                    return 0;
+                }
+            ''', 
+            name: 'sqlite3_load_extension',
+            dependencies: [sqlite3_dep])
+        if not sqlite3_load_extension_support
+            message('warning: Detected bundled SQLite3 in OSX, but it does not support load extension')
+            message('warning: SQLiteCpp will be built without load extension support')
+            message('warning: You can disable this warning by setting SQLITE_OMIT_LOAD_EXTENSION to false')
+            sqlitecpp_args += ['-DSQLITE_OMIT_LOAD_EXTENSION']
+        endif
     endif
 endif
 

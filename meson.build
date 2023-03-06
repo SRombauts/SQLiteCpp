@@ -65,6 +65,7 @@ sqlitecpp_deps = [
 ]
 ## used to override the default sqlitecpp options like cpp standard
 sqlitecpp_opts = []
+
 ## used to set required macros when using sqlitecpp
 sqlitecpp_dep_args = []
 
@@ -156,21 +157,25 @@ if get_option('SQLITE_OMIT_LOAD_EXTENSION')
     sqlitecpp_args += ['-DSQLITE_OMIT_LOAD_EXTENSION']
 ## check if running on OSX
 elif host_machine.system() == 'darwin' and sqlite3_dep.found()
-   sqlite3_load_extension_support = cxx.links(
-        '''
-            #include <sqlite3.h>
-            int main() {
-                sqlite3_enable_load_extension(0, 0);
-                return 0;
-            }
-        ''', 
-        name: 'sqlite3_load_extension',
-        dependencies: [sqlite3_dep])
-    if not sqlite3_load_extension_support
-        message('warning: Detected bundled SQLite3 in OSX, but it does not support load extension')
-        message('warning: SQLiteCpp will be built without load extension support')
-        message('warning: You can disable this warning by setting SQLITE_OMIT_LOAD_EXTENSION to false')
-        sqlitecpp_args += ['-DSQLITE_OMIT_LOAD_EXTENSION']
+    ## check if sqlite3 is the one bundled with OSX
+    if sqlite3_dep.type_name() != 'internal'
+        message('warning: Detected non-internal SQLite3 in OSX, check if it supports load extension')
+        sqlite3_load_extension_support = cxx.links(
+            '''
+                #include <sqlite3.h>
+                int main() {
+                    sqlite3_enable_load_extension(0, 0);
+                    return 0;
+                }
+            ''', 
+            name: 'sqlite3_load_extension',
+            dependencies: [sqlite3_dep])
+        if not sqlite3_load_extension_support
+            message('warning: Detected bundled SQLite3 in OSX, but it does not support load extension')
+            message('warning: SQLiteCpp will be built without load extension support')
+            message('warning: You can disable this warning by setting SQLITE_OMIT_LOAD_EXTENSION to false')
+            sqlitecpp_args += ['-DSQLITE_OMIT_LOAD_EXTENSION']
+        endif
     endif
 endif
 
@@ -198,6 +203,7 @@ endif
 
 sqlitecpp_static_args = sqlitecpp_args
 sqlitecpp_static_dep_args = sqlitecpp_dep_args
+
 # if windows and shared library
 if host_machine.system() == 'windows' and get_option('default_library') == 'shared'
     # compile with SQLITECPP_COMPILE_DLL and SQLITECPP_DLL_EXPORT=1
@@ -211,6 +217,7 @@ if host_machine.system() == 'windows' and get_option('default_library') == 'shar
     ]
 endif
 
+
 libsqlitecpp = library(
     'sqlitecpp',
     sqlitecpp_srcs,
@@ -222,6 +229,8 @@ libsqlitecpp = library(
     install: true,
     # API version for SQLiteCpp shared library.
     version: '0',)
+
+
 
 if get_option('SQLITECPP_BUILD_TESTS')
     # for the unit tests we need to link against a static version of SQLiteCpp
@@ -251,6 +260,7 @@ sqlitecpp_dep = declare_dependency(
 )
 if get_option('SQLITECPP_BUILD_TESTS')
     ## make the dependency static so the unit tests can link against it
+    ## (mainly for windows as the symbols are not exported by default)
     sqlitecpp_static_dep = declare_dependency(
         include_directories: sqlitecpp_incl,
         link_with: libsqlitecpp_static,

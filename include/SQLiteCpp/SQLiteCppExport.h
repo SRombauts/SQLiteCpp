@@ -18,7 +18,7 @@
 */
 
 /* Windows DLL export/import */
-#if defined(_WIN32) && defined(SQLITECPP_COMPILE_DLL)
+#if defined(_WIN32)&& !defined(__GNUC__) && defined(SQLITECPP_COMPILE_DLL)
     #if SQLITECPP_DLL_EXPORT
         #define SQLITECPP_API __declspec(dllexport)
         #pragma message("Exporting symbols")

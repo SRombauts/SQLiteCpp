@@ -57,6 +57,7 @@ sqlitecpp_args = cxx.get_supported_arguments(
     '-Wswitch-enum',
     '-Wshadow',
     '-Wno-long-long',
+    '-Wno-attributes',
 )
 sqlitecpp_link = []
 sqlitecpp_deps = [

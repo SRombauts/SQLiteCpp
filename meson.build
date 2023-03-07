@@ -57,6 +57,7 @@ sqlitecpp_args = cxx.get_supported_arguments(
     '-Wswitch-enum',
     '-Wshadow',
     '-Wno-long-long',
+    '-Wno-attributes',
 )
 sqlitecpp_link = []
 sqlitecpp_deps = [
@@ -65,6 +66,9 @@ sqlitecpp_deps = [
 ]
 ## used to override the default sqlitecpp options like cpp standard
 sqlitecpp_opts = []
+
+## used to set required macros when using sqlitecpp
+sqlitecpp_dep_args = []
 
 ## tests
 
@@ -97,11 +101,6 @@ if host_machine.system() == 'windows'
     sqlitecpp_opts += [
         'cpp_std=c++14',
     ]
-    # check that we are not trying to build as dynamic library
-    if get_option('default_library') != 'shared'
-        message('warning: SQLiteCpp does not support shared library on Windows, the library will be built as static')
-    endif
-    
 endif
 # Options relative to SQLite and SQLiteC++ functions
 
@@ -203,33 +202,40 @@ if get_option('b_coverage')
     ]
 endif
 
-## Workarround for windows: if building on windows we will build the library as static
-if host_machine.system() == 'windows'
-    libsqlitecpp = static_library(
-        'sqlitecpp',
-        sqlitecpp_srcs,
-        include_directories: sqlitecpp_incl,
-        cpp_args: sqlitecpp_args,
-        dependencies: sqlitecpp_deps,
-        # override the default options
-        override_options: sqlitecpp_opts,)
-else
-    libsqlitecpp = library(
-        'sqlitecpp',
-        sqlitecpp_srcs,
-        include_directories: sqlitecpp_incl,
-        cpp_args: sqlitecpp_args,
-        dependencies: sqlitecpp_deps,
-        # override the default options
-        override_options: sqlitecpp_opts,
-        install: true,
-        # API version for SQLiteCpp shared library.
-        version: '0',)
+sqlitecpp_static_args = sqlitecpp_args
+sqlitecpp_static_dep_args = sqlitecpp_dep_args
+
+# if windows and shared library
+if host_machine.system() == 'windows' and get_option('default_library') == 'shared'
+    # compile with SQLITECPP_COMPILE_DLL and SQLITECPP_DLL_EXPORT=1
+    sqlitecpp_args += [
+        '-DSQLITECPP_COMPILE_DLL',
+        '-DSQLITECPP_DLL_EXPORT',
+    ]
+    sqlitecpp_dep_args += [
+        # we just need to define SQLITECPP_COMPILE_DLL
+        '-DSQLITECPP_COMPILE_DLL',
+    ]
 endif
+
+
+libsqlitecpp = library(
+    'sqlitecpp',
+    sqlitecpp_srcs,
+    include_directories: sqlitecpp_incl,
+    cpp_args: sqlitecpp_args,
+    dependencies: sqlitecpp_deps,
+    # override the default options
+    override_options: sqlitecpp_opts,
+    install: true,
+    # API version for SQLiteCpp shared library.
+    version: '0',)
+
+
 
 if get_option('SQLITECPP_BUILD_TESTS')
     # for the unit tests we need to link against a static version of SQLiteCpp
-    if host_machine.system() == 'windows' or get_option('default_library') == 'static'
+    if get_option('default_library') == 'static'
         # we do not need to recomplile the library
         libsqlitecpp_static = libsqlitecpp
     else
@@ -237,7 +243,7 @@ if get_option('SQLITECPP_BUILD_TESTS')
             'sqlitecpp_static',
             sqlitecpp_srcs,
             include_directories: sqlitecpp_incl,
-            cpp_args: sqlitecpp_args,
+            cpp_args: sqlitecpp_static_args,
             dependencies: sqlitecpp_deps,
             # override the default options
             override_options: sqlitecpp_opts,)
@@ -251,6 +257,7 @@ install_subdir(
 sqlitecpp_dep = declare_dependency(
     include_directories: sqlitecpp_incl,
     link_with: libsqlitecpp,
+    compile_args: sqlitecpp_dep_args,
 )
 if get_option('SQLITECPP_BUILD_TESTS')
     ## make the dependency static so the unit tests can link against it
@@ -258,6 +265,7 @@ if get_option('SQLITECPP_BUILD_TESTS')
     sqlitecpp_static_dep = declare_dependency(
         include_directories: sqlitecpp_incl,
         link_with: libsqlitecpp_static,
+        compile_args: sqlitecpp_static_dep_args,
     )
 endif
 
@@ -268,7 +276,7 @@ if get_option('SQLITECPP_BUILD_TESTS')
                 fallback: ['gtest', 'gtest_main_dep'])
     sqlitecpp_test_dependencies = [
         gtest_dep,
-        sqlitecpp_static_dep,
+        sqlitecpp_dep,
         sqlite3_dep,
     ]
 

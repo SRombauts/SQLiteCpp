@@ -10,6 +10,7 @@
  */
 #pragma once
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Column.h>
 
 // c++17: MinGW GCC version > 8
@@ -84,37 +85,37 @@ namespace SQLite
 // Those public constants enable most usages of SQLiteCpp without including <sqlite3.h> in the client application.
 
 /// The database is opened in read-only mode. If the database does not already exist, an error is returned.
-extern const int OPEN_READONLY;     // SQLITE_OPEN_READONLY
+SQLITECPP_API extern const int OPEN_READONLY;     // SQLITE_OPEN_READONLY
 /// The database is opened for reading and writing if possible, or reading only if the file is write protected
 /// by the operating system. In either case the database must already exist, otherwise an error is returned.
-extern const int OPEN_READWRITE;    // SQLITE_OPEN_READWRITE
+SQLITECPP_API extern const int OPEN_READWRITE;    // SQLITE_OPEN_READWRITE
 /// With OPEN_READWRITE: The database is opened for reading and writing, and is created if it does not already exist.
-extern const int OPEN_CREATE;       // SQLITE_OPEN_CREATE
+SQLITECPP_API extern const int OPEN_CREATE;       // SQLITE_OPEN_CREATE
 /// Enable URI filename interpretation, parsed according to RFC 3986 (ex. "file:data.db?mode=ro&cache=private")
-extern const int OPEN_URI;          // SQLITE_OPEN_URI
+SQLITECPP_API extern const int OPEN_URI;          // SQLITE_OPEN_URI
 /// Open in memory database
-extern const int OPEN_MEMORY;       // SQLITE_OPEN_MEMORY
+SQLITECPP_API extern const int OPEN_MEMORY;       // SQLITE_OPEN_MEMORY
 /// Open database in multi-thread threading mode
-extern const int OPEN_NOMUTEX;      // SQLITE_OPEN_NOMUTEX
+SQLITECPP_API extern const int OPEN_NOMUTEX;      // SQLITE_OPEN_NOMUTEX
 /// Open database with thread-safety in serialized threading mode
-extern const int OPEN_FULLMUTEX;    // SQLITE_OPEN_FULLMUTEX
+SQLITECPP_API extern const int OPEN_FULLMUTEX;    // SQLITE_OPEN_FULLMUTEX
 /// Open database with shared cache enabled
-extern const int OPEN_SHAREDCACHE;  // SQLITE_OPEN_SHAREDCACHE
+SQLITECPP_API extern const int OPEN_SHAREDCACHE;  // SQLITE_OPEN_SHAREDCACHE
 /// Open database with shared cache disabled
-extern const int OPEN_PRIVATECACHE; // SQLITE_OPEN_PRIVATECACHE
+SQLITECPP_API extern const int OPEN_PRIVATECACHE; // SQLITE_OPEN_PRIVATECACHE
 /// Database filename is not allowed to be a symbolic link (Note: only since SQlite 3.31.0 from 2020-01-22)
-extern const int OPEN_NOFOLLOW;     // SQLITE_OPEN_NOFOLLOW
+SQLITECPP_API extern const int OPEN_NOFOLLOW;     // SQLITE_OPEN_NOFOLLOW
 
 
-extern const int OK;                ///< SQLITE_OK (used by check() bellow)
+SQLITECPP_API extern const int OK;                ///< SQLITE_OK (used by check() bellow)
 
-extern const char* const VERSION;        ///< SQLITE_VERSION string from the sqlite3.h used at compile time
-extern const int         VERSION_NUMBER; ///< SQLITE_VERSION_NUMBER from the sqlite3.h used at compile time
+SQLITECPP_API extern const char* const VERSION;        ///< SQLITE_VERSION string from the sqlite3.h used at compile time
+SQLITECPP_API extern const int         VERSION_NUMBER; ///< SQLITE_VERSION_NUMBER from the sqlite3.h used at compile time
 
 /// Return SQLite version string using runtime call to the compiled library
-const char* getLibVersion() noexcept;
+SQLITECPP_API const char* getLibVersion() noexcept;
 /// Return SQLite version number using runtime call to the compiled library
-int   getLibVersionNumber() noexcept;
+SQLITECPP_API int   getLibVersionNumber() noexcept;
 
 // Public structure for representing all fields contained within the SQLite header.
 // Official documentation for fields: https://www.sqlite.org/fileformat.html#the_database_header
@@ -160,7 +161,7 @@ struct Header {
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Database
+class SQLITECPP_API Database
 {
     friend class Statement; // Give Statement constructor access to the mSQLitePtr Connection Handle
 
@@ -265,7 +266,7 @@ public:
     // Deleter functor to use with smart pointers to close the SQLite database connection in an RAII fashion.
     struct Deleter
     {
-        void operator()(sqlite3* apSQLite);
+        SQLITECPP_API void operator()(sqlite3* apSQLite);
     };
 
     /**

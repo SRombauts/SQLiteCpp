@@ -10,6 +10,7 @@
  */
 #pragma once
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/Utils.h> // SQLITECPP_PURE_FUNC
 
@@ -30,7 +31,7 @@ namespace SQLite
 class Database;
 class Column;
 
-extern const int OK; ///< SQLITE_OK
+SQLITECPP_API extern const int OK; ///< SQLITE_OK
 
 /**
  * @brief RAII encapsulation of a prepared SQLite Statement.
@@ -49,7 +50,7 @@ extern const int OK; ///< SQLITE_OK
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Statement
+class SQLITECPP_API Statement
 {
 public:
     /**

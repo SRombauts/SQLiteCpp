@@ -18,6 +18,7 @@
 
 
 // Include useful headers of SQLiteC++
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Assertion.h>
 #include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/Database.h>
@@ -42,3 +43,5 @@
  */
 #define SQLITECPP_VERSION           "3.02.01"   // 3.2.1
 #define SQLITECPP_VERSION_NUMBER     3002001    // 3.2.1
+
+

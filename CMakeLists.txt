@@ -213,6 +213,13 @@ if (SQLITE_USE_LEGACY_STRUCT)
     target_compile_definitions(SQLiteCpp PUBLIC SQLITE_USE_LEGACY_STRUCT)
 endif (SQLITE_USE_LEGACY_STRUCT)
 
+if(BUILD_SHARED_LIBS)
+    if(WIN32)
+        add_definitions("-DSQLITECPP_COMPILE_DLL")
+        target_compile_definitions(SQLiteCpp PRIVATE "SQLITECPP_DLL_EXPORT")
+    endif()
+endif()
+
 option(SQLITE_OMIT_LOAD_EXTENSION "Enable omit load extension" OFF)
 if (SQLITE_OMIT_LOAD_EXTENSION)
     # Enable the user definition of load_extension().
@@ -402,8 +409,10 @@ endif (SQLITECPP_RUN_DOXYGEN)
 
 option(SQLITECPP_BUILD_EXAMPLES "Build examples." OFF)
 if (SQLITECPP_BUILD_EXAMPLES)
+
     # add the basic example executable
     add_executable(SQLiteCpp_example1 ${SQLITECPP_EXAMPLES})
+    
     target_link_libraries(SQLiteCpp_example1 SQLiteCpp)
     if (MSYS OR MINGW)
         target_link_libraries(SQLiteCpp_example1 ssp)

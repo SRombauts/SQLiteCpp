@@ -21,10 +21,8 @@
 #if defined(_WIN32)&& !defined(__GNUC__) && defined(SQLITECPP_COMPILE_DLL)
     #if SQLITECPP_DLL_EXPORT
         #define SQLITECPP_API __declspec(dllexport)
-        #pragma message("Exporting symbols")
     #else
         #define SQLITECPP_API __declspec(dllimport)
-        #pragma message("Importing symbols")
     #endif    
 #else    
     #if __GNUC__ >= 4

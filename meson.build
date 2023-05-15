@@ -148,8 +148,14 @@ if get_option('SQLITECPP_USE_STACK_PROTECTION')
         message('warning: SQLiteCpp does not support stack protection on MinGW-W64')
         message('warning: this could lead to a crash on the application')
         message('warning: you can disable this warning by setting SQLITECPP_USE_STACK_PROTECTOR to false')
-    else
+    ## check if it is supported by the compiler
+    elif cxx.has_argument('-fstack-protector')
         sqlitecpp_args += ['-fstack-protector']
+    ## if not supported give a warning
+    else
+        message('warning: SQLiteCpp does not have stack protection support in this compiler')
+        message('warning: this argument will be ignored')
+        message('warning: you can disable this warning by setting SQLITECPP_USE_STACK_PROTECTOR to false')
     endif
 endif
 

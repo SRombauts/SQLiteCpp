@@ -15,7 +15,13 @@
 #include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/Statement.h>
 
+#if !defined(SQLITECPP_IN_EXTENSION) || defined(SQLITE_CORE)
 #include <sqlite3.h>
+#else
+#include <sqlite3ext.h>
+extern "C" const sqlite3_api_routines *sqlite3_api;
+#endif
+
 #include <fstream>
 #include <string.h>
 
@@ -64,6 +70,7 @@ Database::Database(const char* apFilename,
                    const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
                    const char* apVfs          /* = nullptr*/) :
+    mCloseOnDestruct(true),
     mFilename(apFilename)
 {
     sqlite3* handle;
@@ -72,6 +79,24 @@ Database::Database(const char* apFilename,
     if (SQLITE_OK != ret)
     {
         throw SQLite::Exception(handle, ret);
+    }
+    if (aBusyTimeoutMs > 0)
+    {
+        setBusyTimeout(aBusyTimeoutMs);
+    }
+}
+
+// Wrap an existing sqlite3* connection opened by other means.
+Database::Database(sqlite3*  apSQLite,
+                   const int aBusyTimeoutMs /* = 0 */) :
+    mCloseOnDestruct(false)
+{
+    SQLITECPP_ASSERT(apSQLite != nullptr, "Database(nullptr)");
+    mSQLitePtr.reset(apSQLite);
+    const char *zFilename = sqlite3_db_filename(mSQLitePtr.get(), nullptr);
+    if (zFilename)
+    {
+        mFilename = zFilename;
     }
     if (aBusyTimeoutMs > 0)
     {

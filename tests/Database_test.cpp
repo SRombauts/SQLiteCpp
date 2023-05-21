@@ -124,6 +124,28 @@ TEST(Database, createCloseReopen)
     remove("test.db3");
 }
 
+TEST(Database, wrapper)
+{
+    remove("test.db4");
+    // Create a new database using SQLite3 directly
+    sqlite3 *dbconn = nullptr;
+    int rc = sqlite3_open_v2("test.db4", &dbconn, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE, nullptr);
+    EXPECT_EQ(rc, SQLITE_OK);
+    {
+        // instantiate SQLite::Database wrapper
+        SQLite::Database db(dbconn, 5000);
+        EXPECT_FALSE(db.tableExists("test"));
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+        EXPECT_TRUE(db.tableExists("test"));
+        std::string filename = db.getFilename();
+        EXPECT_STREQ(filename.substr(filename.rfind('/')+1).c_str(), "test.db4");
+    }
+    // dbconn remains open after db destruction
+    rc = sqlite3_close(dbconn);
+    EXPECT_EQ(rc, SQLITE_OK);
+    remove("test.db4");
+}
+
 TEST(Database, inMemory)
 {
     {

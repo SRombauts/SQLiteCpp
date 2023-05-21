@@ -250,7 +250,13 @@ endif ()
 ## Build provided copy of SQLite3 C library ##
 
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
-if (SQLITECPP_INTERNAL_SQLITE)
+option(SQLITECPP_IN_EXTENSION "Use SQLiteCpp in the implementation of a SQLite3 loadable extension" OFF)
+if(SQLITECPP_IN_EXTENSION)
+    # To use within a SQLite3 loadable extension, we must not target_link_libraries() SQLite3 itself; the
+    # host program will already have loaded it (possibly a statically-linked version) and we'll receive its
+    # API pointers via sqlite3_extension_init().
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITECPP_IN_EXTENSION)
+elseif (SQLITECPP_INTERNAL_SQLITE)
     message(STATUS "Compile sqlite3 from source in subdirectory")
     option(SQLITE_ENABLE_JSON1 "Enable JSON1 extension when building internal sqlite3 library." ON)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
@@ -302,7 +308,7 @@ else (SQLITECPP_INTERNAL_SQLITE)
             set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
         endif()
     endif()
-endif (SQLITECPP_INTERNAL_SQLITE)
+endif (SQLITECPP_IN_EXTENSION)
 
 ## disable the optional support for std::filesystem (C++17)
 option(SQLITECPP_DISABLE_STD_FILESYSTEM "Disable the use of std::filesystem in SQLiteCpp." OFF)

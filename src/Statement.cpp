@@ -15,7 +15,12 @@
 #include <SQLiteCpp/Assertion.h>
 #include <SQLiteCpp/Exception.h>
 
+#if !defined(SQLITECPP_IN_EXTENSION) || defined(SQLITE_CORE)
 #include <sqlite3.h>
+#else
+#include <sqlite3ext.h>
+extern "C" const sqlite3_api_routines *sqlite3_api;
+#endif
 
 // check for if SQLite3 version >= 3.14.0
 #if SQLITE_VERSION_NUMBER < 3014000

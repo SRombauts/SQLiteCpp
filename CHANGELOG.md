@@ -228,3 +228,25 @@ Versions 3.2.1 - 2022 Decembre 12
 - Merge pull request #385 disable SQLITECPP_USE_STACK_PROTECTION when on MinGW from SRombauts/mingw-disable-stack-protection
 - Merge pull request #386 [meson] Update SQLite from 3.39.3 to 3.40.0 from ninjaoflight/sqlite-meson-update
 - Merge pull request #389 [meson] add missing compile options from ninjaoflight/meson-fixes
+
+Version 3.3.0 - 2023 May 24
+- Merge pull request #393 Fix preprocessor issues from jowr/fix_preprocessor_issues
+- Merge pull request #394 check if SQLITE_OPEN_NOFOLLOW is defined from ninjaoflight/macos-11-fix
+- Merge pull request #391 meson project changes based on wrap submission review from ninjaoflight/meson-macos-fix
+- Merge pull request #390 fix incorrect work of savepoint from spoyler/save_point	Sébastien Rombauts	12/15/2022 01:12 PM
+- Merge pull request #396 Rename Savepoint RollbackTo() and fix class comments and formatting from SRombauts/rename-savepoint-rollback-to
+- Merge pull request #384 Add Mingw GitHub actions from SRombauts/mingw-github-actions
+- Merge pull request #397 Add a Transaction::rollback() method from SRombauts/add-transaction-rollback
+- Merge pull request #395 add meson usage guide from ninjaoflight/meson-readme-guide
+- Merge pull request #401 Fix meson installation from dougnazar/fix_meson_install
+- Merge pull request #400 CMakr/meson Lint corrections from ninjaoflight/lint-corrections
+- Merge pull request #404 Add documentation for prepared statements in transactions from ewarchul/query_transactions_example
+- Merge pull request #399 add disable option for sqlite3_expanded_sql from ninjaoflight/optional-sqlite3_expanded_sql
+- Merge pull request #408 correct executable name in meson from ninjaoflight/patch-2
+- Merge pull request #407 Create Meson CI from ninjaoflight/patch-1
+- Merge pull request #409 Update package.xml from poshul/patch-1
+- Merge pull request #410 use checkout@v3 in CMake CI from ninjaoflight/fix-nodejs-warnings
+- Merge pull request #406 Dllexport import from pierre-aimi/dllexport_import
+- Merge pull request #415 Remove mismatched else condition in CMakeLists.txt from Timmmm/patch-1
+- Merge pull request #413 Fix compiler warnings warning from ninjaoflight/fix-visibility-warning
+- Merge pull request #423 Update SQLite from 3.40.0 to 3.42.0 (2023-05-16) from SRombauts/update-sqlite

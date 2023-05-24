@@ -7,7 +7,8 @@ build
 .cache
 .vs/
 .vscode/
-/SQLiteCpp.sln
+.vsconfig
+*.sln
 *.ncb
 *.suo
 *.user

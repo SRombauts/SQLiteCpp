@@ -18,9 +18,9 @@ cmake --build .
 ctest --output-on-failure
 @if ERRORLEVEL 1 goto onError
 
-goto onSuccess
+@goto onSuccess
 
 :onError
 @echo An error occured!
 :onSuccess
-cd ..
+@cd ..

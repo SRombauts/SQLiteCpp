@@ -228,8 +228,8 @@ public:
     }
 
 private:
-    Statement::TStatementPtr    mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
-    int                         mIndex;    ///< Index of the column in the row of result, starting at 0
+    Statement::TStatementPtr    mStmtPtr;   ///< Shared Pointer to the prepared SQLite Statement Object
+    int                         mIndex;     ///< Index of the column in the row of result, starting at 0
 };
 
 /**

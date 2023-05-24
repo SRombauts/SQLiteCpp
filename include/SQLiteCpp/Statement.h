@@ -22,10 +22,8 @@
 struct sqlite3;
 struct sqlite3_stmt;
 
-
 namespace SQLite
 {
-
 
 // Forward declaration
 class Database;
@@ -709,6 +707,5 @@ private:
     /// Map of columns index by name (mutable so getColumnIndex can be const)
     mutable std::map<std::string, int>  mColumnNames;
 };
-
 
 }  // namespace SQLite

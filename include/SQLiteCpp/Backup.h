@@ -125,7 +125,7 @@ private:
         void operator()(sqlite3_backup* apBackup);
     };
 
-    std::unique_ptr<sqlite3_backup, Deleter> mpSQLiteBackup{};   ///< Pointer to SQLite Database Backup Handle
+    std::unique_ptr<sqlite3_backup, Deleter> mpSQLiteBackup;    ///< Pointer to SQLite Database Backup Handle
 };
 
 }  // namespace SQLite

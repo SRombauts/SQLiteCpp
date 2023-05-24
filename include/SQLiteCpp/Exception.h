@@ -20,7 +20,6 @@ struct sqlite3;
 namespace SQLite
 {
 
-
 /**
  * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
  */
@@ -88,6 +87,5 @@ private:
     int mErrcode;         ///< Error code value
     int mExtendedErrcode; ///< Detailed error code if any
 };
-
 
 }  // namespace SQLite

@@ -80,5 +80,4 @@ void SQLite::Backup::Deleter::operator()(sqlite3_backup* apBackup)
     }
 }
 
-
 }  // namespace SQLite

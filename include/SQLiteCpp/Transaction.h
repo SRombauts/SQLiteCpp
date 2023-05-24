@@ -13,10 +13,8 @@
 #include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Exception.h>
 
-
 namespace SQLite
 {
-
 
 // Forward declaration
 class Database;
@@ -39,7 +37,7 @@ enum class TransactionBehavior {
  * or if it fails, all the changes are rolled back to the initial state.
  *
  * Resource Acquisition Is Initialization (RAII) means that the Transaction
- * begins in the constructor and is rolled back in the destructor (unless comitted before), so that there is
+ * begins in the constructor and is rolled back in the destructor (unless committed before), so that there is
  * no need to worry about memory management or the validity of the underlying SQLite Connection.
  *
  * This method also offers big performances improvements compared to individually executed statements.
@@ -96,6 +94,5 @@ private:
     Database&   mDatabase;              ///< Reference to the SQLite Database Connection
     bool        mbCommited = false;     ///< True when commit has been called
 };
-
 
 }  // namespace SQLite

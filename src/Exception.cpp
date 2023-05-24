@@ -12,7 +12,6 @@
 
 #include <sqlite3.h>
 
-
 namespace SQLite
 {
 
@@ -42,6 +41,5 @@ const char* Exception::getErrorStr() const noexcept
 {
     return sqlite3_errstr(mErrcode);
 }
-
 
 }  // namespace SQLite

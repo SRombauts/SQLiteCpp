@@ -18,7 +18,6 @@
 namespace SQLite
 {
 
-
 // Begins the SQLite transaction
 Transaction::Transaction(Database& aDatabase, TransactionBehavior behavior) :
     mDatabase(aDatabase)

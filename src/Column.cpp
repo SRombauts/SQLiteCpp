@@ -14,7 +14,6 @@
 
 #include <iostream>
 
-
 namespace SQLite
 {
 
@@ -120,6 +119,5 @@ std::ostream& operator<<(std::ostream& aStream, const Column& aColumn)
     aStream.write(aColumn.getText(), aColumn.getBytes());
     return aStream;
 }
-
 
 }  // namespace SQLite

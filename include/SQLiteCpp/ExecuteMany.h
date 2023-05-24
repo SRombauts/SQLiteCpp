@@ -23,6 +23,7 @@
 
 namespace SQLite
 {
+
 /// @endcond
 
 /**

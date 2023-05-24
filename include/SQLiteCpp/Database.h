@@ -109,8 +109,8 @@ SQLITECPP_API extern const int OPEN_NOFOLLOW;     // SQLITE_OPEN_NOFOLLOW
 
 SQLITECPP_API extern const int OK;                ///< SQLITE_OK (used by check() bellow)
 
-SQLITECPP_API extern const char* const VERSION;        ///< SQLITE_VERSION string from the sqlite3.h used at compile time
-SQLITECPP_API extern const int         VERSION_NUMBER; ///< SQLITE_VERSION_NUMBER from the sqlite3.h used at compile time
+SQLITECPP_API extern const char* const VERSION;        ///< SQLITE_VERSION string from sqlite3.h used at compile time
+SQLITECPP_API extern const int         VERSION_NUMBER; ///< SQLITE_VERSION_NUMBER from sqlite3.h used at compile time
 
 /// Return SQLite version string using runtime call to the compiled library
 SQLITECPP_API const char* getLibVersion() noexcept;
@@ -617,9 +617,8 @@ public:
 
 private:
     // TODO: perhaps switch to having Statement sharing a pointer to the Connexion
-    std::unique_ptr<sqlite3, Deleter> mSQLitePtr;   ///< Pointer to SQLite Database Connection Handle
-    std::string mFilename;                          ///< UTF-8 filename used to open the database
+    std::unique_ptr<sqlite3, Deleter>   mSQLitePtr; ///< Pointer to SQLite Database Connection Handle
+    std::string                         mFilename;  ///< UTF-8 filename used to open the database
 };
-
 
 }  // namespace SQLite

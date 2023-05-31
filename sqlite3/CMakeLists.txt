@@ -30,12 +30,6 @@ if (SQLITE_ENABLE_COLUMN_METADATA)
     target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_COLUMN_METADATA)
 endif (SQLITE_ENABLE_COLUMN_METADATA)
 
-if (SQLITE_ENABLE_JSON1)
-    # Enable JSON1 extension when building sqlite3
-    # See more here: https://www.sqlite.org/json1.html
-    target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_JSON1)
-endif (SQLITE_ENABLE_JSON1)
-
 if (SQLITE_ENABLE_RTREE)
     # Enable RTree extension when building sqlite3
     # See more here: https://sqlite.org/rtree.html

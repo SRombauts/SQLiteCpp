@@ -30,17 +30,19 @@ if (SQLITE_ENABLE_COLUMN_METADATA)
     target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_COLUMN_METADATA)
 endif (SQLITE_ENABLE_COLUMN_METADATA)
 
-if (SQLITE_ENABLE_JSON1)
-    # Enable JSON1 extension when building sqlite3
-    # See more here: https://www.sqlite.org/json1.html
-    target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_JSON1)
-endif (SQLITE_ENABLE_JSON1)
-
-if(SQLITE_ENABLE_RTREE)
+if (SQLITE_ENABLE_RTREE)
     # Enable RTree extension when building sqlite3
     # See more here: https://sqlite.org/rtree.html
     target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_RTREE)
+    message(STATUS "Compile sqlite3 with SQLITE_ENABLE_RTREE")
 endif (SQLITE_ENABLE_RTREE)
+
+if (SQLITE_ENABLE_DBSTAT_VTAB)
+    # Enable DBSTAT extension when building sqlite3
+    # See more here: https://www.sqlite.org/dbstat.html
+    target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_DBSTAT_VTAB)
+    message(STATUS "Compile sqlite3 with SQLITE_ENABLE_DBSTAT_VTAB")
+endif (SQLITE_ENABLE_DBSTAT_VTAB)
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(sqlite3 PROPERTIES COMPILE_FLAGS "-fPIC")

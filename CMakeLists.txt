@@ -215,7 +215,7 @@ endif (SQLITE_USE_LEGACY_STRUCT)
 
 if(BUILD_SHARED_LIBS)
     if(WIN32)
-        add_definitions("-DSQLITECPP_COMPILE_DLL")
+        target_compile_definitions(SQLiteCpp PUBLIC "SQLITECPP_COMPILE_DLL")
         target_compile_definitions(SQLiteCpp PRIVATE "SQLITECPP_DLL_EXPORT")
     endif()
 endif()

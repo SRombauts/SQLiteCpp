@@ -54,6 +54,8 @@ Statement::Statement(Statement&& aStatement) noexcept :
     aStatement.mbDone = false;
 }
 
+Statement::~Statement() = default;
+
 // Reset the statement to make it ready for a new execution (see also #clearBindings() below)
 void Statement::reset()
 {

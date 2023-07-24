@@ -261,7 +261,7 @@ public:
      *
      * @warning assert in case of error
      */
-    ~Database() = default;
+    ~Database();
 
     // Deleter functor to use with smart pointers to close the SQLite database connection in an RAII fashion.
     struct Deleter

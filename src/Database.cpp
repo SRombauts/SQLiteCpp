@@ -79,6 +79,8 @@ Database::Database(const char* apFilename,
     }
 }
 
+Database::~Database() = default;
+
 // Deleter functor to use with smart pointers to close the SQLite database connection in an RAII fashion.
 void Database::Deleter::operator()(sqlite3* apSQLite)
 {

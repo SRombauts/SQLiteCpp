@@ -83,7 +83,7 @@ public:
 
     /// Finalize and unregister the SQL query from the SQLite Database Connection.
     /// The finalization will be done by the destructor of the last shared pointer
-    ~Statement() = default;
+    ~Statement();
 
     /// Reset the statement to make it ready for a new execution by calling sqlite3_reset.
     /// Throws an exception on error.

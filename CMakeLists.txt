@@ -36,13 +36,25 @@ if (MSVC)
     # disable Visual Studio warnings for fopen() used in the example
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     # Flags for linking with multithread static C++ runtime, required by internal googletest
+    # inspired from Zlib licensed glfw https://github.com/glfw/glfw/blob/master/CMakeLists.txt
     option(SQLITECPP_USE_STATIC_RUNTIME "Use MSVC static runtime (default for internal googletest)." ${SQLITECPP_BUILD_TESTS})
     if (SQLITECPP_USE_STATIC_RUNTIME)
         message(STATUS "Linking against multithread static C++ runtime")
-        set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MT")
-        set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MTd")
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-        set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+        foreach (flag CMAKE_C_FLAGS
+                      CMAKE_C_FLAGS_DEBUG
+                      CMAKE_C_FLAGS_RELEASE
+                      CMAKE_C_FLAGS_MINSIZEREL
+                      CMAKE_C_FLAGS_RELWITHDEBINFO
+                      CMAKE_CXX_FLAGS
+                      CMAKE_CXX_FLAGS_DEBUG
+                      CMAKE_CXX_FLAGS_RELEASE
+                      CMAKE_CXX_FLAGS_MINSIZEREL
+                      CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+
+            string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
+            string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
+
+        endforeach()
     endif (SQLITECPP_USE_STATIC_RUNTIME)
     # MSVC versions prior to 2015 are not supported anymore by SQLiteC++ 3.x
     if (MSVC_VERSION LESS 1900) # OR MSVC_TOOLSET_VERSION LESS 140)

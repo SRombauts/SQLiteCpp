@@ -4,7 +4,7 @@
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
-cmake_minimum_required(VERSION 3.1) # for "CMAKE_CXX_STANDARD" version
+cmake_minimum_required(VERSION 3.5)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # custom CMake modules like FindSQLiteCpp
 project(SQLiteCpp VERSION 3.3.0)
 
@@ -36,13 +36,30 @@ if (MSVC)
     # disable Visual Studio warnings for fopen() used in the example
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     # Flags for linking with multithread static C++ runtime, required by internal googletest
-    option(SQLITECPP_USE_STATIC_RUNTIME "Use MSVC static runtime (default for internal googletest)." ${SQLITECPP_BUILD_TESTS})
+    option(SQLITECPP_USE_STATIC_RUNTIME "Use MSVC static runtime (default for internal googletest)." FALSE)
     if (SQLITECPP_USE_STATIC_RUNTIME)
         message(STATUS "Linking against multithread static C++ runtime")
-        set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MT")
-        set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MTd")
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-        set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+        # inspired from Zlib licensed glfw https://github.com/glfw/glfw/blob/master/CMakeLists.txt
+        foreach (flag CMAKE_C_FLAGS
+                      CMAKE_C_FLAGS_DEBUG
+                      CMAKE_C_FLAGS_RELEASE
+                      CMAKE_C_FLAGS_MINSIZEREL
+                      CMAKE_C_FLAGS_RELWITHDEBINFO
+                      CMAKE_CXX_FLAGS
+                      CMAKE_CXX_FLAGS_DEBUG
+                      CMAKE_CXX_FLAGS_RELEASE
+                      CMAKE_CXX_FLAGS_MINSIZEREL
+                      CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+
+            string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
+            string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
+
+        endforeach()
+    else (SQLITECPP_USE_STATIC_RUNTIME)
+        if (SQLITECPP_BUILD_TESTS)
+            message(STATUS "Force googletest to link against dynamic C++ runtime")
+            set(gtest_force_shared_crt ON CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
+        endif (SQLITECPP_BUILD_TESTS)
     endif (SQLITECPP_USE_STATIC_RUNTIME)
     # MSVC versions prior to 2015 are not supported anymore by SQLiteC++ 3.x
     if (MSVC_VERSION LESS 1900) # OR MSVC_TOOLSET_VERSION LESS 140)

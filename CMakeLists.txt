@@ -25,6 +25,8 @@ option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 # BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to make it prominent
 option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." OFF)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 # Define useful variables to handle OS differences:
 if (WIN32)
     set(DEV_NULL                "NUL")
@@ -485,11 +487,11 @@ if (SQLITECPP_BUILD_TESTS)
     enable_testing()
 
     # does the tests pass?
-    add_test(UnitTests SQLiteCpp_tests)
+    add_test(UnitTests bin/SQLiteCpp_tests)
 
     if (SQLITECPP_BUILD_EXAMPLES)
         # does the example1 runs successfully?
-        add_test(Example1Run SQLiteCpp_example1)
+        add_test(Example1Run bin/SQLiteCpp_example1)
     endif (SQLITECPP_BUILD_EXAMPLES)
 else (SQLITECPP_BUILD_TESTS)
     message(STATUS "SQLITECPP_BUILD_TESTS OFF")

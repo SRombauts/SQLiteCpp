@@ -22,6 +22,9 @@ message (STATUS "Project version: ${PROJECT_VERSION}")
 
 option(SQLITECPP_BUILD_TESTS "Build and run tests." OFF)
 
+# BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to make it prominent
+option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." OFF)
+
 # Define useful variables to handle OS differences:
 if (WIN32)
     set(DEV_NULL                "NUL")
@@ -230,8 +233,9 @@ if (SQLITE_USE_LEGACY_STRUCT)
     target_compile_definitions(SQLiteCpp PUBLIC SQLITE_USE_LEGACY_STRUCT)
 endif (SQLITE_USE_LEGACY_STRUCT)
 
-if(BUILD_SHARED_LIBS)
-    if(WIN32)
+if (BUILD_SHARED_LIBS)
+    if (WIN32)
+        message(STATUS "Build shared libraries (DLLs).")
         target_compile_definitions(SQLiteCpp PUBLIC "SQLITECPP_COMPILE_DLL")
         target_compile_definitions(SQLiteCpp PRIVATE "SQLITECPP_DLL_EXPORT")
     endif()

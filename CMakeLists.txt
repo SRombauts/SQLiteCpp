@@ -459,6 +459,8 @@ if (SQLITECPP_BUILD_TESTS)
         if (NOT EXISTS "${PROJECT_SOURCE_DIR}/googletest/CMakeLists.txt")
             message(FATAL_ERROR "Missing 'googletest' submodule! Either use 'git submodule init' and 'git submodule update' to get googletest according to the README, or deactivate unit tests with -DSQLITECPP_BUILD_TESTS=OFF")
         endif ()
+        # don't build the googlemock subproject, only the main googletest library
+        set(BUILD_GMOCK OFF CACHE BOOL "Builds the googlemock subproject")
         add_subdirectory(googletest)
         include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
 

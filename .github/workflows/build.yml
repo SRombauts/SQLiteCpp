@@ -32,7 +32,7 @@ jobs:
             generator: "Unix Makefiles",
             build_type: "Debug",
             cc: "gcc", cxx: "g++",
-            extra_path: ""
+            extra_path: "",
           }
         - {
             name: "macOS Latest Clang",
@@ -40,29 +40,23 @@ jobs:
             generator: "Unix Makefiles",
             build_type: "Debug",
             cc: "clang", cxx: "clang++",
-            extra_path: ""
+            extra_path: "",
           }
 
     steps:
-    - uses: actions/checkout@v3
-    - name: submodule
-      run: git submodule update --init --recursive
-    - name: extra_path
+    - name: Checkout ${{ github.ref_name }}
+      uses: actions/checkout@v3
+    - run: git submodule update --init --recursive
+    - name: set extra GITHUB_PATH ${{ matrix.config.extra_path }} (for MinGW)
       shell: bash
-      run: echo "${{matrix.config.extra_path}}" >> $GITHUB_PATH
-    - name: configure
+      run: echo "${{ matrix.config.extra_path }}" >> $GITHUB_PATH
+    - name: set env CXX=${{ matrix.config.cxx }}
       shell: cmake -P {0}
       run: |
-        set(ENV{CC} ${{matrix.config.cc}})
-        set(ENV{CXX} ${{matrix.config.cxx}})
-    - name: generate
-      run: |
-        mkdir build
-        cd build
-        cmake -G "${{matrix.config.generator}}" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF .. 
-    - name: build
-      run: cmake --build build --config ${{matrix.config.build_type}}
-    - name: test
-      run: |
-        cd build
-        ctest --verbose --output-on-failure
+        set(ENV{CC} ${{ matrix.config.cc }})
+        set(ENV{CXX} ${{ matrix.config.cxx }})
+    - run: mkdir build
+    - run: cmake -G "${{ matrix.config.generator }}" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF .. 
+      working-directory: build
+    - run: cmake --build build --config ${{ matrix.config.build_type }}
+    - run: ctest --verbose --output-on-failure --test-dir build

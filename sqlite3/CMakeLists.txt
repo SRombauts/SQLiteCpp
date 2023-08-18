@@ -11,8 +11,8 @@ add_library(sqlite3
  sqlite3.h
 )
 
-if(WIN32)
-    if(BUILD_SHARED_LIBS)
+if (WIN32)
+    if (BUILD_SHARED_LIBS)
             add_definitions("-DSQLITE_API=__declspec(dllexport)")
     endif()
 endif()

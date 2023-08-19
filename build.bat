@@ -7,7 +7,7 @@ cd build
 
 @REM Generate a Visual Studio solution for latest version found
 REM -DPYTHON_EXECUTABLE=D:\workspace\Corvus\UnrealEngine\Engine\Binaries\ThirdParty\Python\Win64\python.exe
-cmake -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPLINT=OFF ..
+cmake -DBUILD_SHARED_LIBS=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPLINT=OFF ..
 @if ERRORLEVEL 1 goto onError
 
 @REM Build default configuration (ie 'Debug')

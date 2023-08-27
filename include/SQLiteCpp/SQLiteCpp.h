@@ -41,6 +41,6 @@
  *
  * WARNING: shall always be updated in sync with PROJECT_VERSION in CMakeLists.txt
  */
-#define SQLITECPP_VERSION           "3.03.00"   // 3.3.0
-#define SQLITECPP_VERSION_NUMBER     3003000    // 3.3.0
+#define SQLITECPP_VERSION           "3.03.01"   // 3.3.1
+#define SQLITECPP_VERSION_NUMBER     3003001    // 3.3.1
 

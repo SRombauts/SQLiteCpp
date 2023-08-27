@@ -1,4 +1,4 @@
-name: meson
+name: Meson build
 
 on: [push, pull_request]
 

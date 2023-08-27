@@ -217,36 +217,49 @@ Version 3.2.0 - 2022 Septembre 18
 - #360 Small improvements and code cleaning from Kacperos155/small_improvements
 
 Versions 3.2.1 - 2022 Decembre 12
-- Merge pull request #383 Update SQLite from 3.39.3 to 3.40.0 (2022-11-16) from SRombauts/update-sqlite-340
-- Merge pull request #370 Don't link anymore with Visual Studio's static runtime by default from SRombauts/dont-enforce-static-linking
-- Merge pull request #371 from SRombauts/appveyor-vs-2022
-- Merge pull request #277 from cuberite/cmake-scoping
-- Merge pull request #374 Update googletest from vuhailongkl97/master
-- Merge pull request #377 Some documentation fixes from cbielow/fix_doc
-- Merge pull request #380 [Meson] fixes for meson project from ninjaoflight/windows-support
-- Merge pull request #387 Ensure that TEXT column is UTF-8 encoded before using sqlite3_column_blob() from dougnazar
-- Merge pull request #385 disable SQLITECPP_USE_STACK_PROTECTION when on MinGW from SRombauts/mingw-disable-stack-protection
-- Merge pull request #386 [meson] Update SQLite from 3.39.3 to 3.40.0 from ninjaoflight/sqlite-meson-update
-- Merge pull request #389 [meson] add missing compile options from ninjaoflight/meson-fixes
+- #383 Update SQLite from 3.39.3 to 3.40.0 (2022-11-16) from SRombauts/update-sqlite-340
+- #370 Don't link anymore with Visual Studio's static runtime by default from SRombauts/dont-enforce-static-linking
+- #371 from SRombauts/appveyor-vs-2022
+- #277 from cuberite/cmake-scoping
+- #374 Update googletest from vuhailongkl97/master
+- #377 Some documentation fixes from cbielow/fix_doc
+- #380 [Meson] fixes for meson project from ninjaoflight/windows-support
+- #387 Ensure that TEXT column is UTF-8 encoded before using sqlite3_column_blob() from dougnazar
+- #385 disable SQLITECPP_USE_STACK_PROTECTION when on MinGW from SRombauts/mingw-disable-stack-protection
+- #386 [meson] Update SQLite from 3.39.3 to 3.40.0 from ninjaoflight/sqlite-meson-update
+- #389 [meson] add missing compile options from ninjaoflight/meson-fixes
 
 Version 3.3.0 - 2023 May 24
-- Merge pull request #393 Fix preprocessor issues from jowr/fix_preprocessor_issues
-- Merge pull request #394 check if SQLITE_OPEN_NOFOLLOW is defined from ninjaoflight/macos-11-fix
-- Merge pull request #391 meson project changes based on wrap submission review from ninjaoflight/meson-macos-fix
-- Merge pull request #390 fix incorrect work of savepoint from spoyler/save_point	Sébastien Rombauts	12/15/2022 01:12 PM
-- Merge pull request #396 Rename Savepoint RollbackTo() and fix class comments and formatting from SRombauts/rename-savepoint-rollback-to
-- Merge pull request #384 Add Mingw GitHub actions from SRombauts/mingw-github-actions
-- Merge pull request #397 Add a Transaction::rollback() method from SRombauts/add-transaction-rollback
-- Merge pull request #395 add meson usage guide from ninjaoflight/meson-readme-guide
-- Merge pull request #401 Fix meson installation from dougnazar/fix_meson_install
-- Merge pull request #400 CMakr/meson Lint corrections from ninjaoflight/lint-corrections
-- Merge pull request #404 Add documentation for prepared statements in transactions from ewarchul/query_transactions_example
-- Merge pull request #399 add disable option for sqlite3_expanded_sql from ninjaoflight/optional-sqlite3_expanded_sql
-- Merge pull request #408 correct executable name in meson from ninjaoflight/patch-2
-- Merge pull request #407 Create Meson CI from ninjaoflight/patch-1
-- Merge pull request #409 Update package.xml from poshul/patch-1
-- Merge pull request #410 use checkout@v3 in CMake CI from ninjaoflight/fix-nodejs-warnings
-- Merge pull request #406 Dllexport import from pierre-aimi/dllexport_import
-- Merge pull request #415 Remove mismatched else condition in CMakeLists.txt from Timmmm/patch-1
-- Merge pull request #413 Fix compiler warnings warning from ninjaoflight/fix-visibility-warning
-- Merge pull request #423 Update SQLite from 3.40.0 to 3.42.0 (2023-05-16) from SRombauts/update-sqlite
+- #393 Fix preprocessor issues from jowr/fix_preprocessor_issues
+- #394 check if SQLITE_OPEN_NOFOLLOW is defined from ninjaoflight/macos-11-fix
+- #391 meson project changes based on wrap submission review from ninjaoflight/meson-macos-fix
+- #390 fix incorrect work of savepoint from spoyler/save_point	Sébastien Rombauts	12/15/2022 01:12 PM
+- #396 Rename Savepoint RollbackTo() and fix class comments and formatting from SRombauts/rename-savepoint-rollback-to
+- #384 Add Mingw GitHub actions from SRombauts/mingw-github-actions
+- #397 Add a Transaction::rollback() method from SRombauts/add-transaction-rollback
+- #395 add meson usage guide from ninjaoflight/meson-readme-guide
+- #401 Fix meson installation from dougnazar/fix_meson_install
+- #400 CMakr/meson Lint corrections from ninjaoflight/lint-corrections
+- #404 Add documentation for prepared statements in transactions from ewarchul/query_transactions_example
+- #399 add disable option for sqlite3_expanded_sql from ninjaoflight/optional-sqlite3_expanded_sql
+- #408 correct executable name in meson from ninjaoflight/patch-2
+- #407 Create Meson CI from ninjaoflight/patch-1
+- #409 Update package.xml from poshul/patch-1
+- #410 use checkout@v3 in CMake CI from ninjaoflight/fix-nodejs-warnings
+- #406 DLL export/import using BUILD_SHARED_LIBS from pierre-aimi/dllexport_import
+- #415 Remove mismatched else condition in CMakeLists.txt from Timmmm/patch-1
+- #413 Fix compiler warnings from ninjaoflight/fix-visibility-warning
+- #423 Update SQLite from 3.40.0 to 3.42.0 (2023-05-16) from SRombauts/update-sqlite
+
+Version 3.3.1 - 2023 Aug 27
+
+- #428 Add CMake option SQLITE_ENABLE_DBSTAT_VTAB and SQLITE_ENABLE_RTREE from SRombauts/cmake-sqlite-enable-dbstat-vtab
+- #434 Define SQLITECPP_COMPILE_DLL as PUBLIC from calumr/fix-dll-import
+- #439 Update CMake minimum version to 3.5 to get rid of a new deprecation warning with CMake 3.27 from SRombauts/cmake-update-minimum-version
+- #441 Cleanup of the Github "build" workflow from SRombauts/github-actions-improvements
+- Update usage of SQLITECPP_USE_STATIC_RUNTIME (#438)
+- Don't build the googlemock subproject, only the main googletest library
+- Declare BUILD_SHARED_LIBS option for discoverability (#440)
+- Set -DBUILD_SHARED_LIBS=ON by default on scripts and CI/CD (#442)
+- Update SQLite from 3.42.0 to 3.43.0 (2023-08-24) (#443)
+- Rename the original build.yml to cmake.yml vs meson.yml (#444)

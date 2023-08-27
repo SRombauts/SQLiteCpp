@@ -3,7 +3,7 @@ project(
     # SQLiteCpp requires C++11 support
     default_options: ['cpp_std=c++11', 'warning_level=3'],
     license: 'MIT',
-    version: '3.3.0',
+    version: '3.3.1',
 )
 
 cxx = meson.get_compiler('cpp')

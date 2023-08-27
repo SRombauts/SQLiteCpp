@@ -1,4 +1,4 @@
-name: subdir_example
+name: CMake build of example in subdirectory
 
 on: [push, pull_request]
 

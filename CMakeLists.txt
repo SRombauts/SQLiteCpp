@@ -188,8 +188,9 @@ if (SQLITECPP_INCLUDE_SCRIPT)
     set(SQLITECPP_SCRIPT
      .editorconfig
      .gitbugtraq
-     .github/workflows/build.yml
-     .github/workflows/subdir_example.yml
+     .github/workflows/cmake.yml
+     .github/workflows/cmake_subdir_example.yml
+     .github/workflows/meson.yml
      .gitignore
      .gitmodules
      .travis.yml

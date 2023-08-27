@@ -193,7 +193,6 @@ if (SQLITECPP_INCLUDE_SCRIPT)
      .github/workflows/meson.yml
      .gitignore
      .gitmodules
-     .travis.yml
      appveyor.yml
      build.bat
      build.sh

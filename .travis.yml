@@ -15,6 +15,7 @@ env:
     - INTERNAL_SQLITE=ON
     - VALGRIND=OFF
     - TESTS=ON
+    - SHARED_LIBS=OFF
 
 # Build variants (should test a reasonable number of combination of CMake options)
 jobs:
@@ -64,6 +65,12 @@ jobs:
       env:
         - cc=gcc cxx=g++
         - BUILD_TYPE=Release
+
+    # GCC 7.4.0 Shared Libs (Ubuntu Bionic 18.04)
+    - dist: bionic
+      env:
+        - cc=gcc cxx=g++
+        - SHARED_LIBS=ON
 
     # GCC 7.4.0 test linking with libsqlite3-dev package (Ubuntu Bionic 18.04)
     - dist: bionic
@@ -144,7 +151,7 @@ before_install:
 before_script:
   - mkdir build
   - cd build
-  - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSQLITECPP_INTERNAL_SQLITE=$INTERNAL_SQLITE -DSQLITECPP_USE_ASAN=$ASAN -DSQLITECPP_USE_GCOV=$GCOV -DSQLITECPP_BUILD_EXAMPLES=$TESTS -DSQLITECPP_BUILD_TESTS=$TESTS ..
+  - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_SHARED_LIBS=$SHARED_LIBS -DSQLITECPP_INTERNAL_SQLITE=$INTERNAL_SQLITE -DSQLITECPP_USE_ASAN=$ASAN -DSQLITECPP_USE_GCOV=$GCOV -DSQLITECPP_BUILD_EXAMPLES=$TESTS -DSQLITECPP_BUILD_TESTS=$TESTS ..
 
 # build examples, and run tests (ie make & make test)
 script:

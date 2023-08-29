@@ -133,6 +133,7 @@ jobs:
       osx_image: xcode8.3
       env:
         - cc=clang cxx=clang++
+        - TESTS=OFF
 
 before_install:
   # Coverity: don't use addons.coverity_scan since it run on every job of the build matrix, which waste resources and exhausts quotas

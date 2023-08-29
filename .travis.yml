@@ -39,14 +39,14 @@ jobs:
       env:
         - cc=gcc cxx=g++
         - GCOV=ON
-        - COVERALLS=true
+        - COVERALLS=ON
 
     # GCC 7.4.0 Debug build with Valgrind instead of Address Sanitizer
     - dist: bionic
       env:
         - cc=gcc cxx=g++
         - ASAN=OFF
-        - VALGRIND=true
+        - VALGRIND=ON
 
     # GCC 7.4.0 Release build
     - dist: bionic
@@ -110,8 +110,8 @@ before_install:
   - if [[ -n "$COVERITY_SCAN_PROJECT_NAME" ]] ; then curl -s https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh | bash ; exit 0 ; fi
 
   - if [[ "$INTERNAL_SQLITE" == "OFF" ]]; then sudo apt-get install libsqlite3-dev ; fi
-  - if [[ "$VALGRIND" == "true" ]]; then sudo apt-get install valgrind ; fi
-  - if [[ "$COVERALLS" == "true" ]]; then pip install --user cpp-coveralls ; fi
+  - if [[ "$VALGRIND" == "ON" ]]; then sudo apt-get install valgrind ; fi
+  - if [[ "$COVERALLS" == "ON" ]]; then pip install --user cpp-coveralls ; fi
 
     # Set the compiler environment variables properly
   - export CC=${cc}
@@ -128,9 +128,9 @@ script:
   - cmake --build .
   - export ASAN_OPTIONS=verbosity=1:debug=1
   - ctest --verbose --output-on-failure
-  - if [[ "$VALGRIND" == "true" ]]; then valgrind --leak-check=full --error-exitcode=1 bin/SQLiteCpp_example1 ; fi
-  - if [[ "$VALGRIND" == "true" ]]; then valgrind --leak-check=full --error-exitcode=1 bin/SQLiteCpp_tests ; fi
+  - if [[ "$VALGRIND" == "ON" ]]; then valgrind --leak-check=full --error-exitcode=1 bin/SQLiteCpp_example1 ; fi
+  - if [[ "$VALGRIND" == "ON" ]]; then valgrind --leak-check=full --error-exitcode=1 bin/SQLiteCpp_tests ; fi
 
 # generate and publish GCov coveralls results
 after_success:
-  - if [[ "$COVERALLS" == "true" ]]; then coveralls --root .. -e examples -e googletest -e sqlite3 -e tests -E ".*feature_tests.*" -E ".*CompilerId.*" --gcov-options '\-lp' ; fi
+  - if [[ "$COVERALLS" == "ON" ]]; then coveralls --root .. -e examples -e googletest -e sqlite3 -e tests -E ".*feature_tests.*" -E ".*CompilerId.*" --gcov-options '\-lp' ; fi

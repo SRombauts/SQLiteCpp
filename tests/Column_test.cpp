@@ -98,7 +98,7 @@ static void test_column_basis(bool utf16)
         EXPECT_STREQ("first",   ptxt);
         EXPECT_EQ("first",      msg);
         EXPECT_EQ(-123,         integer);
-        EXPECT_EQ(0.123,        real);
+        EXPECT_DOUBLE_EQ(0.123, real);
         EXPECT_EQ(0,            memcmp("bl\0b", pblob, size));
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
         EXPECT_EQ((size_t)size, sblob.size());
@@ -129,7 +129,7 @@ static void test_column_basis(bool utf16)
         EXPECT_EQ("first",      msg1);
         EXPECT_EQ("first",      msg2);
         EXPECT_EQ(-123,         integer);
-        EXPECT_EQ(0.123,        real);
+        EXPECT_DOUBLE_EQ(0.123, real);
         EXPECT_EQ(0,            memcmp("bl\0b", pblob, 4));
         EXPECT_EQ(0,            memcmp("bl\0b", &sblob[0], 4));
     }
@@ -195,7 +195,7 @@ static void test_column_basis(bool utf16)
         const SQLite::Column integer = query.getColumn(2);
         EXPECT_EQ(-123, integer.getInt());
         const SQLite::Column dbl = query.getColumn(3);
-        EXPECT_EQ(0.123, dbl.getDouble());
+        EXPECT_DOUBLE_EQ(0.123, dbl.getDouble());
     }
 }
 

@@ -174,7 +174,7 @@ TEST(Statement, executeStep)
     EXPECT_EQ("first",  msg);
     EXPECT_EQ(123,      integer);
     EXPECT_EQ(123,      integer2);
-    EXPECT_EQ(0.123,    real);
+    EXPECT_DOUBLE_EQ(0.123, real);
 
     // Step one more time to discover there is nothing more
     query.executeStep();
@@ -227,7 +227,7 @@ TEST(Statement, tryExecuteStep)
     EXPECT_EQ("first",  msg);
     EXPECT_EQ(123,      integer);
     EXPECT_EQ(123,      integer2);
-    EXPECT_EQ(0.123,    real);
+    EXPECT_DOUBLE_EQ(0.123, real);
 
     // Step one more time to discover there is nothing more
     EXPECT_EQ(query.tryExecuteStep(), SQLITE_DONE);
@@ -343,7 +343,7 @@ TEST(Statement, bindings)
         EXPECT_EQ(4,                query.getColumn(0).getInt64());
         EXPECT_EQ(fourth,           query.getColumn(1).getText());
         EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
-        EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+        EXPECT_FLOAT_EQ(0.234f,     (float)query.getColumn(3).getDouble());
     }
 
     // reset() without clearbindings()
@@ -364,7 +364,7 @@ TEST(Statement, bindings)
         EXPECT_STREQ(buffer,        query.getColumn(1).getText());
         EXPECT_TRUE (query.isColumnNull(2));
         EXPECT_EQ(0,                query.getColumn(2).getInt());
-        EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+        EXPECT_FLOAT_EQ(0.234f,     (float)query.getColumn(3).getDouble());
     }
 
 
@@ -510,7 +510,7 @@ TEST(Statement, bindByName)
         EXPECT_EQ(second,           query.getColumn(1).getText());
         EXPECT_EQ(-123,             query.getColumn(2).getInt());
         EXPECT_EQ(12345678900000LL, query.getColumn(3).getInt64());
-        EXPECT_EQ(0.234f,           query.getColumn(4).getDouble());
+        EXPECT_FLOAT_EQ(0.234f,     (float)query.getColumn(4).getDouble());
     }
 
     // reset() without clearbindings()
@@ -531,7 +531,7 @@ TEST(Statement, bindByName)
         EXPECT_STREQ(buffer,        query.getColumn(1).getText());
         EXPECT_TRUE (query.isColumnNull(2));
         EXPECT_EQ(0,                query.getColumn(2).getInt());
-        EXPECT_EQ(0.234f,           query.getColumn(4).getDouble());
+        EXPECT_FLOAT_EQ(0.234f,     (float)query.getColumn(4).getDouble());
     }
 
     // reset() without clearbindings()
@@ -595,7 +595,7 @@ TEST(Statement, bindByNameString)
     EXPECT_EQ(1, query.getColumn(0).getInt64());
     EXPECT_STREQ("first", query.getColumn(1).getText());
     EXPECT_EQ(123, query.getColumn(2).getInt());
-    EXPECT_EQ(0.123, query.getColumn(3).getDouble());
+    EXPECT_DOUBLE_EQ(0.123, query.getColumn(3).getDouble());
     EXPECT_EQ(-123, query.getColumn(4).getInt());
 
     // reset() with clearbindings() and new bindings
@@ -622,7 +622,7 @@ TEST(Statement, bindByNameString)
         EXPECT_EQ(2, query.getColumn(0).getInt64());
         EXPECT_EQ(second, query.getColumn(1).getText());
         EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
-        EXPECT_EQ(0.234f, query.getColumn(3).getDouble());
+        EXPECT_FLOAT_EQ(0.234f, (float)query.getColumn(3).getDouble());
         EXPECT_EQ(-123, query.getColumn(4).getInt());
     }
 
@@ -644,7 +644,7 @@ TEST(Statement, bindByNameString)
         EXPECT_STREQ(buffer, query.getColumn(1).getText());
         EXPECT_TRUE(query.isColumnNull(2));
         EXPECT_EQ(0, query.getColumn(2).getInt());
-        EXPECT_EQ(0.234f, query.getColumn(3).getDouble());
+        EXPECT_FLOAT_EQ(0.234f, (float)query.getColumn(3).getDouble());
     }
 
     // reset() without clearbindings()
@@ -899,7 +899,7 @@ TEST(Statement, getColumnByName)
     const double        real    = query.getColumn("double");
     EXPECT_EQ("first",  msg);
     EXPECT_EQ(123,      integer);
-    EXPECT_EQ(0.123,    real);
+    EXPECT_DOUBLE_EQ(0.123, real);
 }
 
 TEST(Statement, getName)
@@ -1000,14 +1000,14 @@ TEST(Statement, getColumns)
     EXPECT_EQ(1, testStruct.id);
     EXPECT_EQ("first", testStruct.msg);
     EXPECT_EQ(123, testStruct.integer);
-    EXPECT_EQ(0.123, testStruct.real);
+    EXPECT_DOUBLE_EQ(0.123, testStruct.real);
 
     // Get only the first 2 columns
     auto testStruct2 = query.getColumns<GetRowTestStruct, 2>();
     EXPECT_EQ(1, testStruct2.id);
     EXPECT_EQ("first", testStruct2.msg);
     EXPECT_EQ(-1, testStruct2.integer);
-    EXPECT_EQ(0.0, testStruct2.real);
+    EXPECT_DOUBLE_EQ(0.0, testStruct2.real);
 }
 #endif
 

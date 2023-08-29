@@ -343,7 +343,7 @@ TEST(Statement, bindings)
         EXPECT_EQ(4,                query.getColumn(0).getInt64());
         EXPECT_EQ(fourth,           query.getColumn(1).getText());
         EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
-        EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+        EXPECT_FLOAT_EQ(0.234f,     (float)query.getColumn(3).getDouble());
     }
 
     // reset() without clearbindings()
@@ -364,7 +364,7 @@ TEST(Statement, bindings)
         EXPECT_STREQ(buffer,        query.getColumn(1).getText());
         EXPECT_TRUE (query.isColumnNull(2));
         EXPECT_EQ(0,                query.getColumn(2).getInt());
-        EXPECT_EQ(0.234f,           query.getColumn(3).getDouble());
+        EXPECT_FLOAT_EQ(0.234f,     (float)query.getColumn(3).getDouble());
     }
 
 
@@ -510,7 +510,7 @@ TEST(Statement, bindByName)
         EXPECT_EQ(second,           query.getColumn(1).getText());
         EXPECT_EQ(-123,             query.getColumn(2).getInt());
         EXPECT_EQ(12345678900000LL, query.getColumn(3).getInt64());
-        EXPECT_EQ(0.234f,           query.getColumn(4).getDouble());
+        EXPECT_FLOAT_EQ(0.234f,     (float)query.getColumn(4).getDouble());
     }
 
     // reset() without clearbindings()
@@ -531,7 +531,7 @@ TEST(Statement, bindByName)
         EXPECT_STREQ(buffer,        query.getColumn(1).getText());
         EXPECT_TRUE (query.isColumnNull(2));
         EXPECT_EQ(0,                query.getColumn(2).getInt());
-        EXPECT_EQ(0.234f,           query.getColumn(4).getDouble());
+        EXPECT_FLOAT_EQ(0.234f,     (float)query.getColumn(4).getDouble());
     }
 
     // reset() without clearbindings()
@@ -622,7 +622,7 @@ TEST(Statement, bindByNameString)
         EXPECT_EQ(2, query.getColumn(0).getInt64());
         EXPECT_EQ(second, query.getColumn(1).getText());
         EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
-        EXPECT_EQ(0.234f, query.getColumn(3).getDouble());
+        EXPECT_FLOAT_EQ(0.234f, (float)query.getColumn(3).getDouble());
         EXPECT_EQ(-123, query.getColumn(4).getInt());
     }
 
@@ -644,7 +644,7 @@ TEST(Statement, bindByNameString)
         EXPECT_STREQ(buffer, query.getColumn(1).getText());
         EXPECT_TRUE(query.isColumnNull(2));
         EXPECT_EQ(0, query.getColumn(2).getInt());
-        EXPECT_EQ(0.234f, query.getColumn(3).getDouble());
+        EXPECT_FLOAT_EQ(0.234f, (float)query.getColumn(3).getDouble());
     }
 
     // reset() without clearbindings()

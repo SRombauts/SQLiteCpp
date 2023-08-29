@@ -128,8 +128,8 @@ script:
   - cmake --build .
   - export ASAN_OPTIONS=verbosity=1:debug=1
   - ctest --verbose --output-on-failure
-  - if [[ "$VALGRIND" == "true" ]]; then valgrind --leak-check=full --error-exitcode=1 ./SQLiteCpp_example1 ; fi
-  - if [[ "$VALGRIND" == "true" ]]; then valgrind --leak-check=full --error-exitcode=1 ./SQLiteCpp_tests ; fi
+  - if [[ "$VALGRIND" == "true" ]]; then valgrind --leak-check=full --error-exitcode=1 bin/SQLiteCpp_example1 ; fi
+  - if [[ "$VALGRIND" == "true" ]]; then valgrind --leak-check=full --error-exitcode=1 bin/SQLiteCpp_tests ; fi
 
 # generate and publish GCov coveralls results
 after_success:

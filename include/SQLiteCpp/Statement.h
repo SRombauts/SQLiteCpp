@@ -77,9 +77,9 @@ public:
     Statement(const Statement&) = delete;
     Statement& operator=(const Statement&) = delete;
 
-    // TODO: Change Statement move constructor to default
+    // Statement is movable
     Statement(Statement&& aStatement) noexcept;
-    Statement& operator=(Statement&& aStatement) noexcept = default;
+    Statement& operator=(Statement&& aStatement) = default;
 
     /// Finalize and unregister the SQL query from the SQLite Database Connection.
     /// The finalization will be done by the destructor of the last shared pointer

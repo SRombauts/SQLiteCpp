@@ -8,14 +8,13 @@ install:
   - git submodule update --init --recursive
  
 image:
-# Reduce the number of images to test on AppVeyor, to speed up the build
+# Note: reduced the number of images to test on AppVeyor, to speed up the build
   - Visual Studio 2022
 #  - Visual Studio 2019
 #  - Visual Studio 2017
   - Visual Studio 2015
   
 # configurations to add to build matrix
-# TODO: MinGW Makefiles and MSYS Makefiles
 configuration:
   - Debug
   - Release

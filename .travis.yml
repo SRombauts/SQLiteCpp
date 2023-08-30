@@ -79,7 +79,7 @@ jobs:
         - INTERNAL_SQLITE=OFF
 
     # GCC 5.4.0 (Ubuntu Xenial 16.04)
-    - dist: xenial
+    - dist: xenial # Default
       env:
         - cc=gcc cxx=g++
 
@@ -108,8 +108,8 @@ jobs:
       env:
         - cc=clang cxx=clang++
 
-    # Clang 7.0.0 (Ubuntu Xenial 16.04)
-    - dist: xenial
+    # Clang 7.0.0 (Ubuntu Xenial 16.04) 
+    - dist: xenial # Default
       env:
         - cc=clang cxx=clang++
 
@@ -123,16 +123,24 @@ jobs:
     # Clang on OSX
     ##########################################################################
 
-    # Latest XCode - AppleClang 9.1.0
+    # XCode 14.2 - Apple clang 14.0.0 - macOS 12.6
     - os: osx
+      osx_image: xcode14.2
       env:
         - cc=clang cxx=clang++
 
-    # XCode 8.3 - AppleClang 8.1.0
+    # Default XCode - Apple clang 9.1.0 - macOS 10.13
+    - os: osx
+      osx_image: xcode9.4 # Default
+      env:
+        - cc=clang cxx=clang++
+
+    # XCode 8.3 - Applec lang 8.1.0 - macOS 10.12
     - os: osx
       osx_image: xcode8.3
       env:
         - cc=clang cxx=clang++
+        - TESTS=OFF
 
 before_install:
   # Coverity: don't use addons.coverity_scan since it run on every job of the build matrix, which waste resources and exhausts quotas

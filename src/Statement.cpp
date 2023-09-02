@@ -39,6 +39,32 @@ Statement::Statement(const Database& aDatabase, const char* apQuery) :
     mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
 }
 
+#ifdef __cpp_unicode_characters
+Statement::Statement(const Database& aDatabase, const std::u16string& aQuery) :
+    mpSQLite(aDatabase.getHandle()),
+    mpPreparedStatement(prepareStatement(aQuery)) // prepare the SQL query (needs Database friendship)
+{
+    mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
+}
+#endif  // __cpp_unicode_characters
+
+#ifdef __cpp_lib_string_view
+Statement::Statement(const Database& aDatabase, const std::string_view aQuery) :
+    mQuery(aQuery),
+    mpSQLite(aDatabase.getHandle()),
+    mpPreparedStatement(prepareStatement()) // prepare the SQL query (needs Database friendship)
+{
+    mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
+}
+
+Statement::Statement(const Database& aDatabase, const std::u16string_view aQuery) :
+    mpSQLite(aDatabase.getHandle()),
+    mpPreparedStatement(prepareStatement(aQuery)) // prepare the SQL query (needs Database friendship)
+{
+    mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
+}
+#endif  // __cpp_lib_string_view
+
 Statement::Statement(Statement&& aStatement) noexcept :
     mQuery(std::move(aStatement.mQuery)),
     mpSQLite(aStatement.mpSQLite),
@@ -123,6 +149,31 @@ void Statement::bind(const int aIndex, const char* apValue)
     check(ret);
 }
 
+#ifdef __cpp_unicode_characters
+void Statement::bind(const int aIndex, const std::u16string& aValue)
+{
+    const int ret = sqlite3_bind_text16(getPreparedStatement(), aIndex, aValue.data(),
+                                        static_cast<int>(aValue.size() * sizeof(char16_t)), SQLITE_TRANSIENT);
+    check(ret);
+}
+#endif
+
+#ifdef __cpp_lib_string_view
+void Statement::bind(const int aIndex, const std::string_view aValue)
+{
+    const int ret = sqlite3_bind_text(getPreparedStatement(), aIndex, aValue.data(),
+                                      static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
+    check(ret);
+}
+
+void Statement::bind(const int aIndex, const std::u16string_view aValue)
+{
+    const int ret = sqlite3_bind_text16(getPreparedStatement(), aIndex, aValue.data(),
+                                        static_cast<int>(aValue.size() * sizeof(char16_t)), SQLITE_TRANSIENT);
+    check(ret);
+}
+#endif
+
 // Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const void* apValue, const int aSize)
 {
@@ -144,6 +195,31 @@ void Statement::bindNoCopy(const int aIndex, const char* apValue)
     const int ret = sqlite3_bind_text(getPreparedStatement(), aIndex, apValue, -1, SQLITE_STATIC);
     check(ret);
 }
+
+#ifdef __cpp_unicode_characters
+void Statement::bindNoCopy(const int aIndex, const std::u16string& aValue)
+{
+    const int ret = sqlite3_bind_text16(getPreparedStatement(), aIndex, aValue.data(),
+                                        static_cast<int>(aValue.size() * sizeof(char16_t)), SQLITE_STATIC);
+    check(ret);
+}
+#endif
+
+#ifdef __cpp_lib_string_view
+void Statement::bindNoCopy(const int aIndex, const std::string_view aValue)
+{
+    const int ret = sqlite3_bind_text(getPreparedStatement(), aIndex, aValue.data(),
+                                      static_cast<int>(aValue.size()), SQLITE_STATIC);
+    check(ret);
+}
+
+void Statement::bindNoCopy(const int aIndex, const std::u16string_view aValue)
+{
+    const int ret = sqlite3_bind_text16(getPreparedStatement(), aIndex, aValue.data(),
+                                        static_cast<int>(aValue.size() * sizeof(char16_t)), SQLITE_STATIC);
+    check(ret);
+}
+#endif
 
 // Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bindNoCopy(const int aIndex, const void* apValue, const int aSize)
@@ -370,6 +446,42 @@ Statement::TStatementPtr Statement::prepareStatement()
             sqlite3_finalize(stmt);
         });
 }
+
+#ifdef __cpp_unicode_characters
+Statement::TStatementPtr Statement::prepareStatement(const std::u16string& query)
+{
+    sqlite3_stmt* statement;
+    const int ret = sqlite3_prepare16_v2(mpSQLite, query.data(),
+        static_cast<int>(query.size() * sizeof(char16_t)), &statement, nullptr);
+    if (SQLITE_OK != ret)
+    {
+        throw SQLite::Exception(mpSQLite, ret);
+    }
+    mQuery = sqlite3_sql(statement);
+    return Statement::TStatementPtr(statement, [](sqlite3_stmt* stmt)
+        {
+            sqlite3_finalize(stmt);
+        });
+}
+#endif  // __cpp_unicode_characters
+
+#ifdef __cpp_lib_string_view
+Statement::TStatementPtr Statement::prepareStatement(const std::u16string_view query)
+{
+    sqlite3_stmt* statement;
+    const int ret = sqlite3_prepare16_v2(mpSQLite, query.data(),
+        static_cast<int>(query.size() * sizeof(char16_t)), &statement, nullptr);
+    if (SQLITE_OK != ret)
+    {
+        throw SQLite::Exception(mpSQLite, ret);
+    }
+    mQuery = sqlite3_sql(statement);
+    return Statement::TStatementPtr(statement, [](sqlite3_stmt* stmt)
+        {
+            sqlite3_finalize(stmt);
+        });
+}
+#endif  // __cpp_lib_string_view
 
 // Return prepered statement object or throw
 sqlite3_stmt* Statement::getPreparedStatement() const

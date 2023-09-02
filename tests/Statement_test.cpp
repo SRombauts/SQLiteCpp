@@ -407,6 +407,24 @@ TEST(Statement, bindings)
         EXPECT_EQ(7, query.getColumn(0).getInt64());
         EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
     }
+
+    // reset() with clearbindings() and new bindings
+    insert.reset();
+    insert.clearBindings();
+
+    // Height row with a vector of unsigned char as blob
+    {
+        const std::vector<char> blob = { 'b','l','\0','b' };
+        insert.bind(3, blob.data(), blob.size());
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(0, memcmp(blob.data(), &query.getColumn(3).getString()[0], blob.size()));
+    }
 }
 
 TEST(Statement, bindNoCopy)
@@ -446,6 +464,24 @@ TEST(Statement, bindNoCopy)
         EXPECT_STREQ(txt1, query.getColumn(1).getText());
         EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
         EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
+    }
+
+    // reset() with clearbindings() and new bindings
+    insert.reset();
+    insert.clearBindings();
+
+    // Insert a second row with a vector of unsigned char as blob
+    {
+        const std::vector<char> blob = { 'b','l','\0','b' };
+        insert.bindNoCopy(3, blob.data(), blob.size());
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(0, memcmp(blob.data(), &query.getColumn(3).getString()[0], blob.size()));
     }
 }
 

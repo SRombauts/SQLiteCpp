@@ -36,6 +36,41 @@ the way you want it to, be it a git submodule, a subdirectory, or a selection of
 I would love a mention in your README, a web link to the SQLite repository, and a mention of the author,
 but none of those are mandatory.
 
+## Table of Contents
+
+1. [About the Underlying SQLite Library](#about-sqlite-underlying-library)
+
+2. [The goals of SQLiteC++](#the-goals-of-sqlitec-are)
+    - Design Principles
+    - Supported Platforms
+    - Dependencies
+
+3. [Getting Started](#getting-started)
+    - Installation
+    - Building Examples and Unit Tests
+    - Installing SQLiteCpp with vcpkg
+    - Using SQLiteCpp on a System-wide Installation
+    - Building with Meson
+    - Building the Doxygen/HTML Documentation
+    - CMake Options
+    - Troubleshooting
+    - Continuous Integration
+    - Thread-safety
+
+4. [Examples](#examples)
+    - Querying a Database and Getting Results
+    - Managing a Transaction
+    - Managing a Prepared Statement with a Transaction
+    - Handling Assertions in SQLiteC++
+
+5. [How to Contribute](#how-to-contribute)
+    - GitHub Website
+    - Contact Information
+    - Coding Style Guidelines
+
+6. [See Also](#see-also---some-other-simple-c-sqlite-wrappers)
+    - Comparison with Other SQLite Wrappers
+
 ### About SQLite underlying library:
 
 SQLite is a library that implements a serverless transactional SQL database engine.
@@ -448,6 +483,50 @@ The source code use the CamelCase naming style variant where:
 - each file, class, method and member variable is documented using Doxygen tags
 - braces on their own line
 See also [http://www.appinf.com/download/CppCodingStyleGuide.pdf](http://www.appinf.com/download/CppCodingStyleGuide.pdf) for good guidelines
+
+#### Example
+```C++
+/**
+ * @brief Description of Person object
+ */
+class Person
+{
+public:
+    /**
+     * @brief Begins defining the person
+     * 
+     * @param[in] aName the name of the person
+     */
+    Person(const std::string& aName) : mName(aName)
+    {
+    }
+
+    /**
+     * @brief Validate the person's name
+     * 
+     * @param[in] aName the name of the person
+     * @param[out] bIsValid the validation
+     */
+    bool validateName(const std::string& aName)
+    {
+      bool bIsValid = !aName.empty();
+      return bIsValid;
+    }
+
+    /**
+     * @brief Define new person pointer
+     * 
+     * @param[in] apPerson the pointer to the person object
+     */
+    void setPerson(Person* apPerson)
+    {
+    }
+
+private:
+    std::string    mName = "";                  ///< Name of the Person object
+    bool           mbValid = false;        ///< True when name has been validated
+}
+```
 
 ## See also - Some other simple C++ SQLite wrappers:
 

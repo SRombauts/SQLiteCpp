@@ -3,19 +3,18 @@
  * @ingroup SQLiteCpp
  * @brief   A Transaction is way to group multiple SQL statements into an atomic secured operation.
  *
- * Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2023 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
 #pragma once
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Exception.h>
-
 
 namespace SQLite
 {
-
 
 // Forward declaration
 class Database;
@@ -38,7 +37,7 @@ enum class TransactionBehavior {
  * or if it fails, all the changes are rolled back to the initial state.
  *
  * Resource Acquisition Is Initialization (RAII) means that the Transaction
- * begins in the constructor and is rolled back in the destructor (unless comitted before), so that there is
+ * begins in the constructor and is rolled back in the destructor (unless committed before), so that there is
  * no need to worry about memory management or the validity of the underlying SQLite Connection.
  *
  * This method also offers big performances improvements compared to individually executed statements.
@@ -50,7 +49,7 @@ enum class TransactionBehavior {
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Transaction
+class SQLITECPP_API Transaction
 {
 public:
     /**
@@ -86,10 +85,14 @@ public:
      */
     void commit();
 
+    /**
+     * @brief Rollback the transaction
+     */
+    void rollback();
+
 private:
     Database&   mDatabase;              ///< Reference to the SQLite Database Connection
     bool        mbCommited = false;     ///< True when commit has been called
 };
-
 
 }  // namespace SQLite

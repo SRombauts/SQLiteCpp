@@ -1,6 +1,6 @@
 # CMake file for compiling the sqlite3 static library under Windows (for ease of use)
 #
-# Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+# Copyright (c) 2012-2023 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT) 
@@ -11,14 +11,11 @@ add_library(sqlite3
  sqlite3.h
 )
 
-# Try to extract the SQLite3 version
-file(STRINGS "sqlite3.h" _ver_line
-     REGEX "^#define SQLITE_VERSION *\"[0-9]+\\.[0-9]+\\.[0-9]+\""
-     LIMIT_COUNT 1)
-string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
-       SQLite3_VERSION "${_ver_line}")
-unset(_ver_line)
-mark_as_advanced(SQLite3_VERSION)
+if (WIN32)
+    if (BUILD_SHARED_LIBS)
+            add_definitions("-DSQLITE_API=__declspec(dllexport)")
+    endif()
+endif()
 
 add_library(SQLite::SQLite3 ALIAS sqlite3)
 
@@ -33,17 +30,19 @@ if (SQLITE_ENABLE_COLUMN_METADATA)
     target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_COLUMN_METADATA)
 endif (SQLITE_ENABLE_COLUMN_METADATA)
 
-if (SQLITE_ENABLE_JSON1)
-    # Enable JSON1 extension when building sqlite3
-    # See more here: https://www.sqlite.org/json1.html
-    target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_JSON1)
-endif (SQLITE_ENABLE_JSON1)
-
-if(SQLITE_ENABLE_RTREE)
+if (SQLITE_ENABLE_RTREE)
     # Enable RTree extension when building sqlite3
     # See more here: https://sqlite.org/rtree.html
     target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_RTREE)
+    message(STATUS "Compile sqlite3 with SQLITE_ENABLE_RTREE")
 endif (SQLITE_ENABLE_RTREE)
+
+if (SQLITE_ENABLE_DBSTAT_VTAB)
+    # Enable DBSTAT extension when building sqlite3
+    # See more here: https://www.sqlite.org/dbstat.html
+    target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_DBSTAT_VTAB)
+    message(STATUS "Compile sqlite3 with SQLITE_ENABLE_DBSTAT_VTAB")
+endif (SQLITE_ENABLE_DBSTAT_VTAB)
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(sqlite3 PROPERTIES COMPILE_FLAGS "-fPIC")

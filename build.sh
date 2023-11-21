@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2012-2020 Sébastien Rombauts (sebastien.rombauts@gmail.com)
+# Copyright (c) 2012-2023 Sébastien Rombauts (sebastien.rombauts@gmail.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
@@ -10,8 +10,8 @@ set -e
 mkdir -p build
 cd build
 
-# Generate a Makefile for GCC (or Clang, depanding on CC/CXX envvar)
-cmake -DCMAKE_BUILD_TYPE=Debug -DSQLITECPP_USE_ASAN=ON -DSQLITECPP_USE_GCOV=OFF -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON ..
+# Generate a Makefile for GCC (or Clang, depending on CC/CXX envvar)
+cmake -DCMAKE_BUILD_TYPE=Debug -DSQLITECPP_USE_ASAN=ON -DSQLITECPP_USE_GCOV=OFF -DBUILD_SHARED_LIBS=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON ..
 
 # Build (ie 'make')
 cmake --build .

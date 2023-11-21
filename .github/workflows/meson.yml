@@ -1,0 +1,80 @@
+name: Meson build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: (Meson) ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Windows Latest MSVC",
+            os: windows-latest,
+            cc: "cl", cxx: "cl",
+            extra_path: "",
+            requires_msvc: true,
+          }
+        - {
+            name: "Windows Latest MinGW",
+            os: windows-latest,
+            cc: "gcc", cxx: "g++",
+            extra_path: "C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin",
+          }
+        - {
+            name: "Windows Latest Clang",
+            os: windows-latest,
+            cc: "clang", cxx: "clang++", c_ld: "lld-link", cxx_ld: "lld-link",
+            extra_path: "",
+          }
+        - {
+            name: "Ubuntu Latest GCC",
+            os: ubuntu-latest,
+            cc: "gcc", cxx: "g++",
+            extra_path: ""
+          }
+        - {
+            name: "Ubuntu Latest Clang",
+            os: ubuntu-latest,
+            cc: "clang", cxx: "clang++", c_ld: "lld", cxx_ld: "lld",
+            extra_path: ""
+          }
+        - {
+            name: "macOS Latest Clang",
+            os: macos-latest,
+            cc: "clang", cxx: "clang++",
+            extra_path: ""
+          }
+
+    steps:
+    - uses: actions/checkout@v3
+    # use msvc-dev-cmd to setup the environment for MSVC if needed
+    - name: setup MSVC
+      if: matrix.config.requires_msvc
+      uses: ilammy/msvc-dev-cmd@v1
+    - name: extra_path
+      shell: bash
+      run: echo "${{matrix.config.extra_path}}" >> $GITHUB_PATH
+    - name: install prerequisites
+      run: |
+        # asuming that python and pip are already installed
+        pip3 install meson ninja
+    - name: setup meson project
+      env: # set proper compilers and linkers for meson
+        CC: ${{matrix.config.cc}}
+        CXX: ${{matrix.config.cxx}}
+        C_LD: ${{matrix.config.c_ld}}
+        CXX_LD: ${{matrix.config.cxx_ld}}
+      run: |
+        # setup the build directory with tests and examples enabled
+        meson setup builddir -DSQLITECPP_BUILD_TESTS=true -DSQLITECPP_BUILD_EXAMPLES=true --force-fallback-for=sqlite3
+    - name: build meson project
+      run: |
+        # build the project
+        meson compile -C builddir
+    - name: test
+      run: |
+        # run the tests
+        meson test -C builddir

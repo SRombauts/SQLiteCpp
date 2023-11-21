@@ -1,0 +1,62 @@
+name: CMake build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Windows Latest MSVC",
+            os: windows-latest,
+            generator: "Visual Studio 17 2022",
+            build_type: "Debug",
+            cc: "cl", cxx: "cl",
+            extra_path: "",
+          }
+        - {
+            name: "Windows Latest MinGW",
+            os: windows-latest,
+            generator: "MinGW Makefiles",
+            build_type: "Debug",
+            cc: "gcc", cxx: "g++",
+            extra_path: "C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin",
+          }
+        - {
+            name: "Ubuntu Latest GCC",
+            os: ubuntu-latest,
+            generator: "Unix Makefiles",
+            build_type: "Debug",
+            cc: "gcc", cxx: "g++",
+            extra_path: "",
+          }
+        - {
+            name: "macOS Latest Clang",
+            os: macos-latest,
+            generator: "Unix Makefiles",
+            build_type: "Debug",
+            cc: "clang", cxx: "clang++",
+            extra_path: "",
+          }
+
+    steps:
+    - name: Checkout ${{ github.ref_name }}
+      uses: actions/checkout@v3
+    - run: git submodule update --init --recursive
+    - name: set extra GITHUB_PATH ${{ matrix.config.extra_path }} (for MinGW)
+      shell: bash
+      run: echo "${{ matrix.config.extra_path }}" >> $GITHUB_PATH
+    - name: set env CXX=${{ matrix.config.cxx }}
+      shell: cmake -P {0}
+      run: |
+        set(ENV{CC} ${{ matrix.config.cc }})
+        set(ENV{CXX} ${{ matrix.config.cxx }})
+    - run: mkdir build
+    - run: cmake -G "${{ matrix.config.generator }}" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DBUILD_SHARED_LIBS=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF .. 
+      working-directory: build
+    - run: cmake --build build --config ${{ matrix.config.build_type }}
+    - run: ctest --verbose --output-on-failure --test-dir build

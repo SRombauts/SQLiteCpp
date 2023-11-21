@@ -3,13 +3,14 @@
  * @ingroup SQLiteCpp
  * @brief   Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
  *
- * Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2023 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
 #pragma once
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/Exception.h>
 
@@ -22,11 +23,11 @@ struct sqlite3_stmt;
 namespace SQLite
 {
 
-extern const int INTEGER;   ///< SQLITE_INTEGER
-extern const int FLOAT;     ///< SQLITE_FLOAT
-extern const int TEXT;      ///< SQLITE_TEXT
-extern const int BLOB;      ///< SQLITE_BLOB
-extern const int Null;      ///< SQLITE_NULL
+SQLITECPP_API extern const int INTEGER;   ///< SQLITE_INTEGER
+SQLITECPP_API extern const int FLOAT;     ///< SQLITE_FLOAT
+SQLITECPP_API extern const int TEXT;      ///< SQLITE_TEXT
+SQLITECPP_API extern const int BLOB;      ///< SQLITE_BLOB
+SQLITECPP_API extern const int Null;      ///< SQLITE_NULL
 
 /**
  * @brief Encapsulation of a Column in a row of the result pointed by the prepared Statement.
@@ -44,7 +45,7 @@ extern const int Null;      ///< SQLITE_NULL
  *    because of the way it shares the underling SQLite precompiled statement
  *    in a custom shared pointer (See the inner class "Statement::Ptr").
  */
-class Column
+class SQLITECPP_API Column
 {
 public:
     /**
@@ -227,8 +228,8 @@ public:
     }
 
 private:
-    Statement::TStatementPtr    mStmtPtr;  ///< Shared Pointer to the prepared SQLite Statement Object
-    int                         mIndex;    ///< Index of the column in the row of result, starting at 0
+    Statement::TStatementPtr    mStmtPtr;   ///< Shared Pointer to the prepared SQLite Statement Object
+    int                         mIndex;     ///< Index of the column in the row of result, starting at 0
 };
 
 /**
@@ -241,7 +242,7 @@ private:
  *
  * @return  Reference to the stream used
  */
-std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
+SQLITECPP_API std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
 
 #if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900) // c++14: Visual Studio 2015
 

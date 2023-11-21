@@ -18,22 +18,20 @@
 
 #include <cstdio>
 
-TEST(Savepoint, commitRollback) {
+TEST(Savepoint, commitRollback)
+{
     // Create a new database
-    SQLite::Database db(":memory:",
-                        SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
-
+    
     {
         // Begin savepoint
         SQLite::Savepoint savepoint(db, "sp1");
 
-        EXPECT_EQ(
-            0,
-            db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
+        EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
         EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
-        // Insert a first valu
+        // Insert a first value
         EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'first')"));
         EXPECT_EQ(1, db.getLastInsertRowid());
 
@@ -58,7 +56,8 @@ TEST(Savepoint, commitRollback) {
     }
 
     // Auto rollback of a transaction on error / exception
-    try {
+    try
+    {
         // Begin savepoint
         SQLite::Savepoint savepoint(db, "sp3");
 
@@ -67,13 +66,13 @@ TEST(Savepoint, commitRollback) {
         EXPECT_EQ(2, db.getLastInsertRowid());
 
         // Execute with an error => exception with auto-rollback
-        db.exec(
-            "DesiredSyntaxError to raise an exception to rollback the "
-            "transaction");
+        db.exec("DesiredSyntaxError to raise an exception to rollback the transaction");
 
         GTEST_FATAL_FAILURE_("we should never get there");
         savepoint.release();  // We should never get there
-    } catch (std::exception& e) {
+    }
+    catch (std::exception& e)
+    {
         std::cout << "SQLite exception: " << e.what() << std::endl;
         // expected error, see above
     }
@@ -87,19 +86,18 @@ TEST(Savepoint, commitRollback) {
         EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'third')"));
         EXPECT_EQ(2, db.getLastInsertRowid());
 
-        // Execute a manual rollback (no real use case I can think of, so no
-        // rollback() method)
-        db.exec("ROLLBACK");
+        // Execute a manual rollback
+        savepoint.rollback();
 
-        // end of scope: the automatic rollback should not raise an error
-        // because it is harmless
+        // end of scope: the automatic rollback should not raise an error because it is harmless
     }
 
     // Check the results (expect only one row of result, as all other one have
     // been rollbacked)
     SQLite::Statement query(db, "SELECT * FROM test");
     int nbRows = 0;
-    while (query.executeStep()) {
+    while (query.executeStep())
+    {
         nbRows++;
         EXPECT_EQ(1, query.getColumn(0).getInt());
         EXPECT_STREQ("first", query.getColumn(1).getText());

@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Encapsulation of a Column in a row of the result pointed by the prepared SQLite::Statement.
  *
- * Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2023 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -13,7 +13,6 @@
 #include <sqlite3.h>
 
 #include <iostream>
-
 
 namespace SQLite
 {
@@ -120,6 +119,5 @@ std::ostream& operator<<(std::ostream& aStream, const Column& aColumn)
     aStream.write(aColumn.getText(), aColumn.getBytes());
     return aStream;
 }
-
 
 }  // namespace SQLite

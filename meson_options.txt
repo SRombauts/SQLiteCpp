@@ -10,9 +10,11 @@ option('SQLITE_HAS_CODEC', type: 'boolean', value: false, description: 'Enable d
 ## Force forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)
 option('SQLITE_USE_LEGACY_STRUCT', type: 'boolean', value: false, description: 'Fallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)')
 ## Enable ommit load extension
-option('SQLITE_OMMIT_LOAD_EXTENSION', type: 'boolean', value: false, description: 'Enable ommit load extension.')
+option('SQLITE_OMIT_LOAD_EXTENSION', type: 'boolean', value: false, description: 'Enable ommit load extension.')
 ## Disable the support for std::filesystem (C++17)
 option('SQLITECPP_DISABLE_STD_FILESYSTEM', type: 'boolean', value: false, description: 'Disable the support for std::filesystem (C++17)')
+## Disable the support for sqlite3_expanded_sql (since SQLite 3.14.0)
+option('SQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL', type: 'boolean', value: false, description: 'Disable the support for sqlite3_expanded_sql (since SQLite 3.14.0)')
 ## Stack protection is not supported on MinGW-W64 on Windows, allow this flag to be turned off.
 option('SQLITECPP_USE_STACK_PROTECTION', type: 'boolean', value: true, description: 'Enable stack protection for MySQL.')
 ## Enable build for the tests of SQLiteC++

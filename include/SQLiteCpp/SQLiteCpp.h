@@ -5,7 +5,7 @@
  *
  * Include this main header file in your project to gain access to all functionality provided by the wrapper.
  *
- * Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2023 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -18,6 +18,7 @@
 
 
 // Include useful headers of SQLiteC++
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Assertion.h>
 #include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/Database.h>
@@ -40,5 +41,6 @@
  *
  * WARNING: shall always be updated in sync with PROJECT_VERSION in CMakeLists.txt
  */
-#define SQLITECPP_VERSION           "3.02.01"   // 3.2.1
-#define SQLITECPP_VERSION_NUMBER     3002001    // 3.2.1
+#define SQLITECPP_VERSION           "3.03.01"   // 3.3.1
+#define SQLITECPP_VERSION_NUMBER     3003001    // 3.3.1
+

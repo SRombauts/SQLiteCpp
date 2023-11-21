@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   Encapsulation of the error message from SQLite3 on a std::runtime_error.
  *
- * Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2023 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -11,7 +11,6 @@
 #include <SQLiteCpp/Exception.h>
 
 #include <sqlite3.h>
-
 
 namespace SQLite
 {
@@ -42,6 +41,5 @@ const char* Exception::getErrorStr() const noexcept
 {
     return sqlite3_errstr(mErrcode);
 }
-
 
 }  // namespace SQLite

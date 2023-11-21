@@ -3,7 +3,7 @@
  * @ingroup SQLiteCpp
  * @brief   A prepared SQLite Statement is a compiled SQL query ready to be executed, pointing to a row of result.
  *
- * Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2023 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
@@ -16,6 +16,17 @@
 #include <SQLiteCpp/Exception.h>
 
 #include <sqlite3.h>
+
+// check for if SQLite3 version >= 3.14.0
+#if SQLITE_VERSION_NUMBER < 3014000
+    #warning "SQLite3 version is less than 3.14.0, so expanded SQL is not available"
+    #warning "To use expanded SQL, please upgrade to SQLite3 version 3.14.0 or later"
+    #warning "If you want to disable this warning, define SQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL"
+    #warning "or use the specific project option in your build system"
+    #warning "disabling expanded SQL support"
+    #define SQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL
+#endif
+
 
 namespace SQLite
 {
@@ -331,13 +342,19 @@ const char* Statement::getErrorMsg() const noexcept
     return sqlite3_errmsg(mpSQLite);
 }
 
+
 // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
 std::string Statement::getExpandedSQL() const {
+    #ifdef SQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL
+    throw SQLite::Exception("this version of SQLiteCpp does not support expanded SQL");
+    #else
     char* expanded = sqlite3_expanded_sql(getPreparedStatement());
     std::string expandedString(expanded);
     sqlite3_free(expanded);
     return expandedString;
+    #endif
 }
+
 
 // Prepare SQLite statement object and return shared pointer to this object
 Statement::TStatementPtr Statement::prepareStatement()

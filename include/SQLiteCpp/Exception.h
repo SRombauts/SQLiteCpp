@@ -3,13 +3,14 @@
  * @ingroup SQLiteCpp
  * @brief   Encapsulation of the error message from SQLite3 on a std::runtime_error.
  *
- * Copyright (c) 2012-2022 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2012-2023 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
  * or copy at http://opensource.org/licenses/MIT)
  */
 #pragma once
 
+#include <SQLiteCpp/SQLiteCppExport.h>
 #include <stdexcept>
 #include <string>
 
@@ -19,11 +20,10 @@ struct sqlite3;
 namespace SQLite
 {
 
-
 /**
  * @brief Encapsulation of the error message from SQLite3, based on std::runtime_error.
  */
-class Exception : public std::runtime_error
+class SQLITECPP_API Exception : public std::runtime_error
 {
 public:
     /**
@@ -87,6 +87,5 @@ private:
     int mErrcode;         ///< Error code value
     int mExtendedErrcode; ///< Detailed error code if any
 };
-
 
 }  // namespace SQLite

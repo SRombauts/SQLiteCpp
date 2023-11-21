@@ -99,8 +99,8 @@ TEST(Transaction, commitRollback)
         EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"third\")"));
         EXPECT_EQ(2, db.getLastInsertRowid());
 
-        // Execute a manual rollback (no real use case I can think of, so no rollback() method)
-        db.exec("ROLLBACK");
+        // Execute a manual rollback
+        transaction.rollback();
 
         // end of scope: the automatic rollback should not raise an error because it is harmless
     }

@@ -3,7 +3,7 @@ sqlite3
 
 Copyright (c) 2012-2024 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 
-"sqlite3.c" and "sqlite3.h" files from sqlite-amalgamation-3450100.zip (SQLite 3.45.1 2024-01-30)
+"sqlite3.c" and "sqlite3.h" files from sqlite-amalgamation-3450300.zip (SQLite 3.45.3 2024-04-15)
 
 Those files are provided for easy setup and compatibility under Windows/Linux/MacOS.
 They are used by default by the CMake build.

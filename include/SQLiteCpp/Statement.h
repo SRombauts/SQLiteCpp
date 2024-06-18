@@ -179,6 +179,11 @@ public:
      */
     void bindNoCopy(const int aIndex, const void*           apValue, const int aSize);
     /**
+     * @brief Deleted, because the value's lifetime could not be guaranteed. Use bind().
+     */
+    void bindNoCopy(const int aIndex, std::string&& aValue) = delete;
+
+    /**
      * @brief Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * @see clearBindings() to set all bound parameters to NULL.
@@ -271,6 +276,10 @@ public:
     {
         bindNoCopy(getIndex(apName), apValue, aSize);
     }
+    /**
+     * @brief Deleted, because the value's lifetime could not be guaranteed. Use bind().
+     */
+    void bindNoCopy(const char* apName, std::string&& aValue) = delete;
     /**
      * @brief Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
@@ -368,6 +377,10 @@ public:
     {
         bindNoCopy(aName.c_str(), apValue, aSize);
     }
+    /**
+     * @brief Deleted, because the value's lifetime could not be guaranteed. Use bind().
+     */
+    void bindNoCopy(const std::string& aName, std::string&& aValue) = delete;
     /**
      * @brief Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *

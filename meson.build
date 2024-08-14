@@ -86,14 +86,6 @@ sqlitecpp_test_srcs = files(
 )
 sqlitecpp_test_args = []
 
-## samples
-
-sqlitecpp_sample1_srcs = files(
-    'examples/example1/main.cpp',
-)
-sqlitecpp_sample2_srcs = files(
-    'examples/example2/src/main.cpp',
-)
 
 ## using MSVC headers requires c++14, if not will show an error on xstddef as: 
 ## 'auto' return without trailing return type; deduced return types are a C++14 extension

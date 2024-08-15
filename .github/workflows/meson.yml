@@ -59,8 +59,8 @@ jobs:
       run: echo "${{matrix.config.extra_path}}" >> $GITHUB_PATH
     - name: install prerequisites
       run: |
-        # asuming that python and pip are already installed
-        pip3 install meson ninja
+        # asuming that python and pipx are already installed
+        pipx install meson ninja
     - name: setup meson project
       env: # set proper compilers and linkers for meson
         CC: ${{matrix.config.cc}}

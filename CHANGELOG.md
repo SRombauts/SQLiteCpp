@@ -263,3 +263,14 @@ Version 3.3.1 - 2023 Aug 27
 - Set -DBUILD_SHARED_LIBS=ON by default on scripts and CI/CD (#442)
 - Update SQLite from 3.42.0 to 3.43.0 (2023-08-24) (#443)
 - Rename the original build.yml to cmake.yml vs meson.yml (#444)
+
+Version 3.3.2 - 2024 Aug 16
+
+- Fix and update Travis CI workflow (#450)
+- Update Googletest to v1.15.2 (#451) and (#478)
+- [Meson] update meson dependencies (#448)
+- Macos ci fix (#476)
+- Update meson dependencies [Meson only] (#475)
+- Update SQLite from 3.43.0 to 3.46.1 (2024-08-13) (#461) and (#477)
+- Explicitly =delete; Statement::bindNoCopy(..., std::string&&) (#469)
+

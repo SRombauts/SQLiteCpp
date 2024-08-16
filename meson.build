@@ -4,7 +4,7 @@ project(
     # however newer versions of gtest requires C++14
     default_options: ['cpp_std=c++14', 'warning_level=3'],
     license: 'MIT',
-    version: '3.3.1',
+    version: '3.3.2',
 )
 
 cxx = meson.get_compiler('cpp')

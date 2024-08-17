@@ -45,7 +45,7 @@ jobs:
 
     steps:
     - name: Checkout ${{ github.ref_name }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - run: git submodule update --init --recursive
     - name: set extra GITHUB_PATH ${{ matrix.config.extra_path }} (for MinGW)
       shell: bash

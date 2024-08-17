@@ -27,8 +27,8 @@ TEST(Backup, initException)
     {
         SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
-        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, \"first\")"));
-        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, \"second\")"));
+        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, 'first')"));
+        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, 'second')"));
         EXPECT_THROW(SQLite::Backup backup(srcDB, srcDB), SQLite::Exception);
         EXPECT_THROW(SQLite::Backup backup(srcDB, "main", srcDB, "main"), SQLite::Exception);
         const std::string name("main");
@@ -44,8 +44,8 @@ TEST(Backup, executeStepOne)
     {
         SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
-        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, \"first\")"));
-        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, \"second\")"));
+        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, 'first')"));
+        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, 'second')"));
 
         SQLite::Database destDB("backup_test.db3.backup", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         SQLite::Backup backup(destDB, "main", srcDB, "main");
@@ -79,8 +79,8 @@ TEST(Backup, executeStepAll)
     {
         SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
-        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, \"first\")"));
-        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, \"second\")"));
+        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, 'first')"));
+        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, 'second')"));
 
         SQLite::Database destDB("backup_test.db3.backup", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         SQLite::Backup backup(destDB, srcDB);
@@ -110,8 +110,8 @@ TEST(Backup, executeStepException)
     {
         SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
         srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
-        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, \"first\")"));
-        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, \"second\")"));
+        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, 'first')"));
+        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, 'second')"));
         {
             SQLite::Database destDB("backup_test.db3.backup", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
             (void)destDB;

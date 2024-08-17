@@ -87,7 +87,7 @@ int main()
 {
     // Using SQLITE_VERSION would require #include <sqlite3.h> which we want to avoid: use SQLite::VERSION if possible.
 //  std::cout << "SQlite3 version " << SQLITE_VERSION << std::endl;
-    std::cout << "SQlite3 version " << SQLite::VERSION << " (" << SQLite::getLibVersion() << ")" << std::endl;
+    std::cout << "SQlite3 compile time header version " << SQLite::VERSION << " (vs dynamic lib version " << SQLite::getLibVersion() << ")" << std::endl;
     std::cout << "SQliteC++ version " << SQLITECPP_VERSION << std::endl;
 
     ////////////////////////////////////////////////////////////////////////////

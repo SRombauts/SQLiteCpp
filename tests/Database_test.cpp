@@ -34,7 +34,8 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 }
 #endif
 
-#ifdef SQLITECPP_INTERNAL_SQLITE
+// NOTE on macOS FindSQLite3 find an unrelated sqlite3.h from Mono.framework that doesn't match the actual package version!
+#if defined(SQLITECPP_INTERNAL_SQLITE) || !defined(__APPLE__)
 TEST(SQLiteCpp, version)
 {
     EXPECT_STREQ(SQLITE_VERSION,        SQLite::VERSION);
@@ -559,7 +560,10 @@ TEST(Database, getHeaderInfo)
         EXPECT_EQ(h.databaseTextEncoding, 1);
         EXPECT_EQ(h.incrementalVaccumMode, 0);
         EXPECT_EQ(h.versionValidFor, 3);
+// NOTE on macOS FindSQLite3 find an unrelated sqlite3.h from Mono.framework that doesn't match the actual package version!
+#if defined(SQLITECPP_INTERNAL_SQLITE) || !defined(__APPLE__)
         EXPECT_EQ(h.sqliteVersion, SQLITE_VERSION_NUMBER);
+#endif  && !defined(__APPLE__)
     }
     remove("test.db3");
 }

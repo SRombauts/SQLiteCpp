@@ -49,7 +49,7 @@ jobs:
           }
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     # use msvc-dev-cmd to setup the environment for MSVC if needed
     - name: setup MSVC
       if: matrix.config.requires_msvc

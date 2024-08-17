@@ -188,6 +188,7 @@ if (SQLITECPP_INCLUDE_SCRIPT)
     set(SQLITECPP_SCRIPT
      .editorconfig
      .gitbugtraq
+     .github/dependabot.yml
      .github/workflows/cmake.yml
      .github/workflows/cmake_subdir_example.yml
      .github/workflows/meson.yml
@@ -197,10 +198,13 @@ if (SQLITECPP_INCLUDE_SCRIPT)
      appveyor.yml
      build.bat
      build.sh
-     cpplint.py
-     Doxyfile
      cmake/FindSQLite3.cmake
      cmake/SQLiteCppConfig.cmake.in
+     cpplint.py
+     Doxyfile
+     meson.build
+     meson_options.txt
+     package.xml
     )
     source_group(scripts FILES ${SQLITECPP_SCRIPT})
 endif()

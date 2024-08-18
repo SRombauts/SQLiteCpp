@@ -298,16 +298,16 @@ int main()
         db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
 
         // first row
-        int nb = db.exec("INSERT INTO test VALUES (NULL, \"test\")");
-        std::cout << "INSERT INTO test VALUES (NULL, \"test\")\", returned " << nb << std::endl;
+        int nb = db.exec("INSERT INTO test VALUES (NULL, 'test')");
+        std::cout << "INSERT INTO test VALUES (NULL, 'test')\", returned " << nb << std::endl;
 
         // second row
-        nb = db.exec("INSERT INTO test VALUES (NULL, \"second\")");
-        std::cout << "INSERT INTO test VALUES (NULL, \"second\")\", returned " << nb << std::endl;
+        nb = db.exec("INSERT INTO test VALUES (NULL, 'second')");
+        std::cout << "INSERT INTO test VALUES (NULL, 'second')\", returned " << nb << std::endl;
 
         // update the second row
-        nb = db.exec("UPDATE test SET value=\"second-updated\" WHERE id='2'");
-        std::cout << "UPDATE test SET value=\"second-updated\" WHERE id='2', returned " << nb << std::endl;
+        nb = db.exec("UPDATE test SET value='second-updated' WHERE id='2'");
+        std::cout << "UPDATE test SET value='second-updated' WHERE id='2', returned " << nb << std::endl;
 
         nb = db.getTotalChanges();
         std::cout << "Nb of total changes since connection: " << nb << std::endl;
@@ -347,8 +347,8 @@ int main()
 
             db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
 
-            int nb = db.exec("INSERT INTO test VALUES (NULL, \"test\")");
-            std::cout << "INSERT INTO test VALUES (NULL, \"test\")\", returned " << nb << std::endl;
+            int nb = db.exec("INSERT INTO test VALUES (NULL, 'test')");
+            std::cout << "INSERT INTO test VALUES (NULL, 'test')\", returned " << nb << std::endl;
 
             // Commit transaction
             transaction.commit();
@@ -365,8 +365,8 @@ int main()
             // Begin transaction
             SQLite::Transaction transaction(db);
 
-            int nb = db.exec("INSERT INTO test VALUES (NULL, \"second\")");
-            std::cout << "INSERT INTO test VALUES (NULL, \"second\")\", returned " << nb << std::endl;
+            int nb = db.exec("INSERT INTO test VALUES (NULL, 'second')");
+            std::cout << "INSERT INTO test VALUES (NULL, 'second')\", returned " << nb << std::endl;
 
             nb = db.exec("INSERT INTO test ObviousError");
             std::cout << "INSERT INTO test \"error\", returned " << nb << std::endl;

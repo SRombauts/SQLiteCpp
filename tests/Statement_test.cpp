@@ -87,7 +87,7 @@ TEST(Statement, invalid)
     EXPECT_THROW(query.exec(), SQLite::Exception); // exec() shall throw as it needs to be reseted
 
     // Add a first row
-    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\")"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'first')"));
     EXPECT_EQ(1, db.getLastInsertRowid());
     EXPECT_EQ(1, db.getTotalChanges());
 
@@ -110,7 +110,7 @@ TEST(Statement, moveConstructor)
     // Create a new database
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
-    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\")"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'first')"));
     EXPECT_EQ(1, db.getLastInsertRowid());
 
     SQLite::Statement query = StatementBuilder(db, "SELECT * FROM test");
@@ -153,7 +153,7 @@ TEST(Statement, executeStep)
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a first row
-    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'first', 123, 0.123)"));
     EXPECT_EQ(1, db.getLastInsertRowid());
 
     // Compile a SQL query
@@ -185,13 +185,13 @@ TEST(Statement, executeStep)
     EXPECT_THROW(query.executeStep(), SQLite::Exception);
 
     // Try to insert a new row with the same PRIMARY KEY: "UNIQUE constraint failed: test.id"
-    SQLite::Statement insert(db, "INSERT INTO test VALUES (1, \"impossible\", 456, 0.456)");
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (1, 'impossible', 456, 0.456)");
     EXPECT_THROW(insert.executeStep(), SQLite::Exception);
     // in this case, reset() do throw again the same error
     EXPECT_THROW(insert.reset(), SQLite::Exception);
 
     // Try again to insert a new row with the same PRIMARY KEY (with an alternative method): "UNIQUE constraint failed: test.id"
-    SQLite::Statement insert2(db, "INSERT INTO test VALUES (1, \"impossible\", 456, 0.456)");
+    SQLite::Statement insert2(db, "INSERT INTO test VALUES (1, 'impossible', 456, 0.456)");
     EXPECT_THROW(insert2.exec(), SQLite::Exception);
 }
 
@@ -206,7 +206,7 @@ TEST(Statement, tryExecuteStep)
     EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a first row
-    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'first', 123, 0.123)"));
     EXPECT_EQ(1, db.getLastInsertRowid());
 
     // Compile a SQL query
@@ -235,7 +235,7 @@ TEST(Statement, tryExecuteStep)
     EXPECT_TRUE (query.isDone()); // "done" is "the end"
 
     // Try to insert a new row with the same PRIMARY KEY: "UNIQUE constraint failed: test.id"
-    SQLite::Statement insert(db, "INSERT INTO test VALUES (1, \"impossible\", 456, 0.456)");
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (1, 'impossible', 456, 0.456)");
     EXPECT_EQ(insert.tryExecuteStep(), SQLITE_CONSTRAINT);
     // in this case, reset() do throw again the same error
     EXPECT_EQ(insert.tryReset(), SQLITE_CONSTRAINT);
@@ -750,10 +750,10 @@ TEST(Statement, isColumnNull)
     ASSERT_EQ(SQLite::OK, db.getErrorCode());
 
     // Create a first row with no null values, then other rows with each time a NULL value
-    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (\"first\", 123,  0.123)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES ('first', 123,  0.123)"));
     ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (NULL,      123,  0.123)"));
-    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (\"first\", NULL, 0.123)"));
-    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (\"first\", 123,  NULL)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES ('first', NULL, 0.123)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES ('first', 123,  NULL)"));
 
     // Compile a SQL query
     const std::string select("SELECT * FROM test");
@@ -813,10 +813,10 @@ TEST(Statement, isColumnNullByName)
     ASSERT_EQ(SQLITE_OK, db.getErrorCode());
 
     // Create a first row with no null values, then other rows with each time a NULL value
-    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (\"first\", 123,  0.123)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES ('first', 123,  0.123)"));
     ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (NULL,      123,  0.123)"));
-    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (\"first\", NULL, 0.123)"));
-    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (\"first\", 123,  NULL)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES ('first', NULL, 0.123)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES ('first', 123,  NULL)"));
 
     // Compile a SQL query
     const std::string select("SELECT * FROM test");
@@ -878,7 +878,7 @@ TEST(Statement, getColumnByName)
     EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
 
     // Create a first row
-    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'first', 123, 0.123)"));
     EXPECT_EQ(1, db.getLastInsertRowid());
     EXPECT_EQ(1, db.getTotalChanges());
 
@@ -983,7 +983,7 @@ TEST(Statement, getColumns)
     EXPECT_EQ(SQLite::OK, db.getExtendedErrorCode());
 
     // Create a first row
-    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\", 123, 0.123)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'first', 123, 0.123)"));
     EXPECT_EQ(1, db.getLastInsertRowid());
     EXPECT_EQ(1, db.getTotalChanges());
 

@@ -32,7 +32,7 @@ TEST(Transaction, commitRollback)
         EXPECT_EQ(SQLite::OK, db.getErrorCode());
 
         // Insert a first value
-        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"first\")"));
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'first')"));
         EXPECT_EQ(1, db.getLastInsertRowid());
 
         // Commit transaction
@@ -62,7 +62,7 @@ TEST(Transaction, commitRollback)
         SQLite::Transaction transaction(db);
 
         // Insert a second value (that will be rollbacked)
-        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"third\")"));
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'third')"));
         EXPECT_EQ(2, db.getLastInsertRowid());
 
         // end of scope: automatic rollback
@@ -75,7 +75,7 @@ TEST(Transaction, commitRollback)
         SQLite::Transaction transaction(db);
 
         // Insert a second value (that will be rollbacked)
-        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"second\")"));
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'second')"));
         EXPECT_EQ(2, db.getLastInsertRowid());
 
         // Execute with an error => exception with auto-rollback
@@ -96,7 +96,7 @@ TEST(Transaction, commitRollback)
         SQLite::Transaction transaction(db);
 
         // Insert a second value (that will be rollbacked)
-        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, \"third\")"));
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'third')"));
         EXPECT_EQ(2, db.getLastInsertRowid());
 
         // Execute a manual rollback

@@ -229,7 +229,7 @@ endif (SQLITE_ENABLE_ASSERT_HANDLER)
 
 option(SQLITE_HAS_CODEC "Enable database encryption API. Not available in the public release of SQLite." OFF)
 if (SQLITE_HAS_CODEC)
-    # Enable database encryption API. Requires implementations of sqlite3_key & sqlite3_key_v2.
+    # Enable database encryption API. Requires implementations of sqlite3_key & sqlite3_rekey.
     # Eg. SQLCipher (libsqlcipher-dev) is an SQLite extension that provides 256 bit AES encryption of database files. 
     target_compile_definitions(SQLiteCpp PUBLIC SQLITE_HAS_CODEC)
 endif (SQLITE_HAS_CODEC)
@@ -275,63 +275,109 @@ if (SQLITECPP_USE_GCOV)
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fkeep-inline-functions -fkeep-static-functions")
 endif ()
 
-## Build provided copy of SQLite3 C library ##
+# Try to handle the non-standard SQLite3 implementations first
+
+option(SQLITECPP_USE_SQLCIPHER "Use SQLCipher as SQLite3 library with encyption support." OFF)
+if (SQLITECPP_USE_SQLCIPHER AND TARGET SQLite::SQLite3)
+    message(FATAL_ERROR "SQLite::SQLite3 target has already been defined, cannot use SQLCipher.")
+elseif (SQLITECPP_USE_SQLCIPHER)
+    # Make PkgConfig optional since Windows doesn't usually have it installed.
+    find_package(PkgConfig QUIET)
+    if(PKG_CONFIG_FOUND)
+        # IMPORTED_TARGET was added in 3.6.3
+        if(CMAKE_VERSION VERSION_LESS 3.6.3)
+            pkg_check_modules(SQLCipher REQUIRED sqlcipher)
+            # Since we can't use IMPORTED_TARGET on this older Cmake version, manually link libs & includes
+            message(STATUS "Link to SQLCipher library")
+            add_library(SQLite::SQLite3 ALIAS ${SQLCipher_LIBRARIES})
+            target_link_libraries(SQLiteCpp PUBLIC ${SQLCipher_LIBRARIES})
+            target_include_directories(SQLiteCpp PUBLIC ${SQLCipher_INCLUDE_DIRS})
+        else()
+            pkg_check_modules(SQLCipher REQUIRED IMPORTED_TARGET sqlcipher)
+            message(STATUS "Link to SQLCipher library")
+            add_library(SQLite::SQLite3 ALIAS PkgConfig::SQLCipher)
+            target_link_libraries(SQLiteCpp PUBLIC PkgConfig::SQLCipher)
+        endif()
+    else()
+        # Since we aren't using pkgconf here, find it manually
+        find_library(SQLCipher_LIBRARY "sqlcipher")
+        find_path(SQLCipher_INCLUDE_DIR "sqlcipher/sqlite3.h"
+            PATH_SUFFIXES
+                "include"
+                "includes"
+        )
+        # Hides it from the GUI
+        mark_as_advanced(SQLCipher_LIBRARY SQLCipher_INCLUDE_DIR)
+        if(NOT SQLCipher_INCLUDE_DIR)
+            message(FATAL_ERROR "${PROJECT_NAME} requires the \"<sqlcipher/sqlite3.h>\" header to use the codec functionality but it wasn't found.")
+        elseif(NOT SQLCipher_LIBRARY)
+            message(FATAL_ERROR "${PROJECT_NAME} requires the SQLCipher library to use the codec functionality but it wasn't found.")
+        endif()
+        message(STATUS "Link to SQLCipher library")
+        add_library(SQLite::SQLite3 ALIAS ${SQLCipher_LIBRARY})
+        target_link_libraries(SQLiteCpp PUBLIC ${SQLCipher_LIBRARY})
+        target_include_directories(SQLiteCpp PUBLIC "${SQLCipher_INCLUDE_DIR}/sqlcipher")
+    endif()
+    # Try to extract the SQLCipher version
+    file(STRINGS "${SQLCipher_INCLUDE_DIR}/sqlcipher/crypto.h" _ver_line
+         REGEX "^#define CIPHER_VERSION_NUMBER *\"[0-9]+\\.[0-9]+\\.[0-9]+\""
+         LIMIT_COUNT 1)
+    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
+           SQLCipher_VERSION "${_ver_line}")
+    unset(_ver_line)
+    mark_as_advanced(SQLCipher_VERSION)
+    # Try to extract the SQLite3 version
+    file(STRINGS "${SQLCipher_INCLUDE_DIR}/sqlcipher/sqlite3.h" _ver_line
+         REGEX "^#define SQLITE_VERSION *\"[0-9]+\\.[0-9]+\\.[0-9]+\""
+         LIMIT_COUNT 1)
+    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
+           SQLite3_VERSION "${_ver_line}")
+    unset(_ver_line)
+    mark_as_advanced(SQLite3_VERSION)
+    target_compile_definitions(SQLiteCpp PRIVATE SQLITECPP_USE_SQLCIPHER)
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITE_HAS_CODEC)
+endif ()
+
+option(SQLITECPP_USE_SQLITE3MULTIPLECIPHERS "Use SQLite3MultipleCiphers as SQLite3 library with encyption support." OFF)
+if (SQLITECPP_USE_SQLITE3MULTIPLECIPHERS AND TARGET SQLite::SQLite3)
+    message(FATAL_ERROR "SQLite::SQLite3 target has already been defined, cannot use SQLite3MultipleCiphers.")
+elseif (SQLITECPP_USE_SQLITE3MULTIPLECIPHERS)
+    find_package (SQLite3MultipleCiphers REQUIRED)
+    message(STATUS "Link to SQLite3MultipleCiphers library")
+    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3MultipleCiphers)
+    target_compile_definitions(SQLiteCpp PRIVATE SQLITECPP_USE_SQLITE3MULTIPLECIPHERS)
+    target_compile_definitions(SQLiteCpp PUBLIC SQLITE_HAS_CODEC)
+endif ()
 
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
-if (SQLITECPP_INTERNAL_SQLITE)
+if (SQLITECPP_INTERNAL_SQLITE AND TARGET SQLite::SQLite3)
+    message(FATAL_ERROR "SQLite::SQLite3 target has already been defined, cannot use internal SQLite3.")
+elseif (SQLITECPP_INTERNAL_SQLITE)
+    # Build the provided copy of the SQLite3 C library
     message(STATUS "Compile sqlite3 from source in subdirectory")
     option(SQLITE_ENABLE_RTREE "Enable RTree extension when building internal sqlite3 library." OFF)
     option(SQLITE_ENABLE_DBSTAT_VTAB "Enable DBSTAT read-only eponymous virtual table extension when building internal sqlite3 library." OFF)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
     target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
-else (SQLITECPP_INTERNAL_SQLITE)
-    # When using the SQLite codec, we need to link against the sqlcipher lib & include <sqlcipher/sqlite3.h>
-    # So this gets the lib & header, and links/includes everything
-    if(SQLITE_HAS_CODEC)
-        # Make PkgConfig optional since Windows doesn't usually have it installed.
-        find_package(PkgConfig QUIET)
-        if(PKG_CONFIG_FOUND)
-            # IMPORTED_TARGET was added in 3.6.3
-            if(CMAKE_VERSION VERSION_LESS 3.6.3)
-                pkg_check_modules(sqlcipher REQUIRED sqlcipher)
-                # Only used in Database.cpp so PRIVATE to hide from end-user
-                # Since we can't use IMPORTED_TARGET on this older Cmake version, manually link libs & includes
-                target_link_libraries(SQLiteCpp PRIVATE ${sqlcipher_LIBRARIES})
-                target_include_directories(SQLiteCpp PRIVATE ${sqlcipher_INCLUDE_DIRS})
-            else()
-                pkg_check_modules(sqlcipher REQUIRED IMPORTED_TARGET sqlcipher)
-                # Only used in Database.cpp so PRIVATE to hide from end-user
-                target_link_libraries(SQLiteCpp PRIVATE PkgConfig::sqlcipher)
-            endif()
-        else()
-            # Since we aren't using pkgconf here, find it manually
-            find_library(sqlcipher_LIBRARY "sqlcipher")
-            find_path(sqlcipher_INCLUDE_DIR "sqlcipher/sqlite3.h"
-                PATH_SUFFIXES
-                    "include"
-                    "includes"
-            )
-            # Hides it from the GUI
-            mark_as_advanced(sqlcipher_LIBRARY sqlcipher_INCLUDE_DIR)
-            if(NOT sqlcipher_INCLUDE_DIR)
-                message(FATAL_ERROR "${PROJECT_NAME} requires the \"<sqlcipher/sqlite3.h>\" header to use the codec functionality but it wasn't found.")
-            elseif(NOT sqlcipher_LIBRARY)
-                message(FATAL_ERROR "${PROJECT_NAME} requires the sqlcipher library to use the codec functionality but it wasn't found.")
-            endif()
-            # Only used in Database.cpp so PRIVATE to hide from end-user
-            target_include_directories(SQLiteCpp PRIVATE "${sqlcipher_INCLUDE_DIR}/sqlcipher")
-            target_link_libraries(SQLiteCpp PRIVATE ${sqlcipher_LIBRARY})
-        endif()
-    else()
-        find_package (SQLite3 REQUIRED)
-        message(STATUS "Link to sqlite3 system library")
-        target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
-        if(SQLite3_VERSION VERSION_LESS "3.19")
-            set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
-        endif()
-    endif()
-endif (SQLITECPP_INTERNAL_SQLITE)
+    target_compile_definitions(SQLiteCpp PRIVATE SQLITECPP_INTERNAL_SQLITE)
+    #target_compile_definitions(SQLiteCpp PUBLIC SQLITE_HAS_CODEC)
+endif ()
+
+# Use the system library as fallback solution
+if (NOT TARGET SQLite::SQLite3)
+    find_package (SQLite3 REQUIRED)
+    message(STATUS "Link to sqlite3 system library")
+    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
+else (NOT TARGET SQLite::SQLite3)
+    message(STATUS "SQLite::SQLite3 target has already been defined, using it.")
+    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
+endif (NOT TARGET SQLite::SQLite3)
+
+# Check the version of the found SQLite3 implementation
+if(SQLite3_VERSION AND SQLite3_VERSION VERSION_LESS "3.19")
+    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
+endif()
 
 ## disable the optional support for std::filesystem (C++17)
 option(SQLITECPP_DISABLE_STD_FILESYSTEM "Disable the use of std::filesystem in SQLiteCpp." OFF)

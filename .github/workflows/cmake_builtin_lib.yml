@@ -1,0 +1,32 @@
+name: CMake SQLite3 builtin library
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Ubuntu Latest GCC",
+            os: ubuntu-latest,
+            generator: "Unix Makefiles",
+          }
+        - {
+            name: "macOS Latest Clang",
+            os: macos-latest,
+            generator: "Unix Makefiles",
+          }
+
+    steps:
+    - name: Checkout ${{ github.ref_name }}
+      uses: actions/checkout@v4
+    - run: git submodule update --init --recursive
+    - run: mkdir build
+    - run: cmake -G "Unix Makefiles" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Debug -DSQLITECPP_INTERNAL_SQLITE=OFF -DSQLITE_OMIT_LOAD_EXTENSION=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF .. 
+      working-directory: build
+    - run: cmake --build build --config Debug
+    - run: ctest --verbose --output-on-failure --test-dir build

@@ -190,6 +190,7 @@ if (SQLITECPP_INCLUDE_SCRIPT)
      .gitbugtraq
      .github/dependabot.yml
      .github/workflows/cmake.yml
+     .github/workflows/cmake_builtin_lib.yml
      .github/workflows/cmake_subdir_example.yml
      .github/workflows/meson.yml
      .gitignore

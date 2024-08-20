@@ -210,8 +210,12 @@ if (SQLITECPP_INCLUDE_SCRIPT)
     source_group(scripts FILES ${SQLITECPP_SCRIPT})
 endif()
 
-# add sources of the wrapper as a "SQLiteCpp" static library
-add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
+# Build the "SQLiteCpp" wrapper as a static library
+option(SQLITECPP_BUILD_LIBRARY "Build SQLiteCpp wrapper as a library." ON)
+if (SQLITECPP_BUILD_LIBRARY)
+    # Note: add doc and script files to display them in the Visual Studio solution
+    add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
+endif (SQLITECPP_BUILD_LIBRARY)
 
 # Options relative to SQLite and SQLiteC++ functions
 
@@ -255,9 +259,11 @@ if (SQLITE_OMIT_LOAD_EXTENSION)
     target_compile_definitions(SQLiteCpp PUBLIC SQLITE_OMIT_LOAD_EXTENSION)
 endif (SQLITE_OMIT_LOAD_EXTENSION)
 
-if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
-    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
-endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
+if (SQLITECPP_BUILD_LIBRARY)
+    if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
+        set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
+    endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
+endif (SQLITECPP_BUILD_LIBRARY)
 
 option(SQLITECPP_USE_ASAN "Use Address Sanitizer." OFF)
 if (SQLITECPP_USE_ASAN)
@@ -276,16 +282,18 @@ if (SQLITECPP_USE_GCOV)
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fkeep-inline-functions -fkeep-static-functions")
 endif ()
 
-## Build provided copy of SQLite3 C library ##
+## Build the SQLite3 C library, or link to the installed one
 
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
 if (SQLITECPP_INTERNAL_SQLITE)
-    message(STATUS "Compile sqlite3 from source in subdirectory")
-    option(SQLITE_ENABLE_RTREE "Enable RTree extension when building internal sqlite3 library." OFF)
-    option(SQLITE_ENABLE_DBSTAT_VTAB "Enable DBSTAT read-only eponymous virtual table extension when building internal sqlite3 library." OFF)
-    # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
-    add_subdirectory(sqlite3)
-    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
+    if (SQLITECPP_BUILD_LIBRARY)
+        message(STATUS "Compile sqlite3 from source in subdirectory")
+        option(SQLITE_ENABLE_RTREE "Enable RTree extension when building internal sqlite3 library." OFF)
+        option(SQLITE_ENABLE_DBSTAT_VTAB "Enable DBSTAT read-only eponymous virtual table extension when building internal sqlite3 library." OFF)
+        # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
+        add_subdirectory(sqlite3)
+        target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
+    endif (SQLITECPP_BUILD_LIBRARY)
 else (SQLITECPP_INTERNAL_SQLITE)
     # When using the SQLite codec, we need to link against the sqlcipher lib & include <sqlcipher/sqlite3.h>
     # So this gets the lib & header, and links/includes everything
@@ -349,44 +357,48 @@ if (SQLITECPP_DISABLE_EXPANDED_SQL)
 endif (SQLITECPP_DISABLE_EXPANDED_SQL)
 
 # Link target with pthread and dl for Unix
-if (UNIX)
+if (UNIX AND SQLITECPP_BUILD_LIBRARY)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
     target_link_libraries(SQLiteCpp PUBLIC Threads::Threads ${CMAKE_DL_LIBS})
-endif (UNIX)
+endif ()
 
 # Set includes for target and transitive downstream targets
 
-target_include_directories(SQLiteCpp
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/>)
+if (SQLITECPP_BUILD_LIBRARY)
+    target_include_directories(SQLiteCpp
+      PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include/>)
+endif (SQLITECPP_BUILD_LIBRARY)
 
 # Allow the library to be installed via "make install" and found with "find_package"
 
-include(GNUInstallDirs)
-install(TARGETS SQLiteCpp
-    EXPORT ${PROJECT_NAME}Targets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    COMPONENT libraries)
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
-install(EXPORT ${PROJECT_NAME}Targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-install(FILES ${PROJECT_SOURCE_DIR}/package.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
+if (SQLITECPP_BUILD_LIBRARY)
+    include(GNUInstallDirs)
+    install(TARGETS SQLiteCpp
+        EXPORT ${PROJECT_NAME}Targets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        COMPONENT libraries)
+    install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT headers FILES_MATCHING REGEX ".*\\.(hpp|h)$")
+    install(EXPORT ${PROJECT_NAME}Targets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    install(FILES ${PROJECT_SOURCE_DIR}/package.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME})
 
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    cmake/${PROJECT_NAME}ConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion)
-configure_package_config_file(
-    cmake/${PROJECT_NAME}Config.cmake.in
-    cmake/${PROJECT_NAME}Config.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
-install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    include(CMakePackageConfigHelpers)
+    write_basic_package_version_file(
+        cmake/${PROJECT_NAME}ConfigVersion.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY AnyNewerVersion)
+    configure_package_config_file(
+        cmake/${PROJECT_NAME}Config.cmake.in
+        cmake/${PROJECT_NAME}Config.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+endif (SQLITECPP_BUILD_LIBRARY)
 
 # Optional additional targets:
 
@@ -398,25 +410,25 @@ if (SQLITECPP_RUN_CPPLINT)
         if (PYTHONINTERP_FOUND)
             # add a cpplint target to the "all" target
             add_custom_target(SQLiteCpp_cpplint
-            ALL
-            COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
+             ALL
+             COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
             )
         endif (PYTHONINTERP_FOUND)
     else()
         find_package(Python)
-        if (PYTHON_INTERPRETER_FOUND)
+        if (Python_Interpreter_FOUND)
             # add a cpplint target to the "all" target
             add_custom_target(SQLiteCpp_cpplint
-            ALL
-            COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
+             ALL
+             COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
             )
-        endif (PYTHON_INTERPRETER_FOUND)
+        endif (Python_Interpreter_FOUND)
     endif()
 else (SQLITECPP_RUN_CPPLINT)
     message(STATUS "SQLITECPP_RUN_CPPLINT OFF")
 endif (SQLITECPP_RUN_CPPLINT)
 
-option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." ON)
+option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." OFF)
 if (SQLITECPP_RUN_CPPCHECK)
     find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
     if (CPPCHECK_EXECUTABLE)
@@ -426,7 +438,7 @@ if (SQLITECPP_RUN_CPPCHECK)
          COMMAND ${CPPCHECK_EXECUTABLE} -j 8 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
         )
         execute_process(COMMAND "${CPPCHECK_EXECUTABLE}" --version OUTPUT_VARIABLE CPPCHECK_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-        message(STATUS "Found Cppcheck: ${CPPCHECK_EXECUTABLE} ${CPPCHECK_VERSION}")
+        message(STATUS "Found Cppcheck: ${CPPCHECK_EXECUTABLE} (found version ${CPPCHECK_VERSION})")
     else (CPPCHECK_EXECUTABLE)
         message(STATUS "Could NOT find cppcheck")
     endif (CPPCHECK_EXECUTABLE)
@@ -516,4 +528,6 @@ else (SQLITECPP_BUILD_TESTS)
 endif (SQLITECPP_BUILD_TESTS)
 
 # API version for SQLiteCpp shared library.
-set_property(TARGET SQLiteCpp PROPERTY SOVERSION 0)
+if (SQLITECPP_BUILD_LIBRARY)
+    set_property(TARGET SQLiteCpp PROPERTY SOVERSION 0)
+endif (SQLITECPP_BUILD_LIBRARY)

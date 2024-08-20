@@ -390,7 +390,7 @@ install(FILES
 
 # Optional additional targets:
 
-option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." ON)
+option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." OFF)
 if (SQLITECPP_RUN_CPPLINT)
     # The minimum version of CMAKE is 3.5, but as of 3.12 the PythonInterp package is deprecated.
     if(${CMAKE_VERSION} VERSION_LESS "3.12.0") 

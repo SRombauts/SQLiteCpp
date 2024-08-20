@@ -392,14 +392,26 @@ install(FILES
 
 option(SQLITECPP_RUN_CPPLINT "Run cpplint.py tool for Google C++ StyleGuide." ON)
 if (SQLITECPP_RUN_CPPLINT)
-    find_package(PythonInterp)
-    if (PYTHONINTERP_FOUND)
-        # add a cpplint target to the "all" target
-        add_custom_target(SQLiteCpp_cpplint
-         ALL
-         COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
-        )
-    endif (PYTHONINTERP_FOUND)
+    # The minimum version of CMAKE is 3.5, but as of 3.12 the PythonInterp package is deprecated.
+    if(${CMAKE_VERSION} VERSION_LESS "3.12.0") 
+        find_package(PythonInterp)
+        if (PYTHONINTERP_FOUND)
+            # add a cpplint target to the "all" target
+            add_custom_target(SQLiteCpp_cpplint
+            ALL
+            COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
+            )
+        endif (PYTHONINTERP_FOUND)
+    else()
+        find_package(Python)
+        if (PYTHON_INTERPRETER_FOUND)
+            # add a cpplint target to the "all" target
+            add_custom_target(SQLiteCpp_cpplint
+            ALL
+            COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/cpplint.py ${CPPLINT_ARG_OUTPUT} ${CPPLINT_ARG_VERBOSE} ${CPPLINT_ARG_LINELENGTH} ${SQLITECPP_SRC} ${SQLITECPP_INC}
+            )
+        endif (PYTHON_INTERPRETER_FOUND)
+    endif()
 else (SQLITECPP_RUN_CPPLINT)
     message(STATUS "SQLITECPP_RUN_CPPLINT OFF")
 endif (SQLITECPP_RUN_CPPLINT)

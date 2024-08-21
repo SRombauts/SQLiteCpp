@@ -4807,8 +4807,8 @@ def main():
     ProcessFile(filename, _cpplint_state.verbose_level)
   _cpplint_state.PrintErrorCounts()
 
-  # SRombauts: do not break build for cpplint style warnings
-  #sys.exit(_cpplint_state.error_count > 0)
+  # SRombauts: break the build for cpplint style warnings
+  sys.exit(_cpplint_state.error_count > 0)
 
 
 if __name__ == '__main__':

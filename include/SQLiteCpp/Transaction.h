@@ -59,7 +59,7 @@ public:
      *
      * Exception is thrown in case of error, then the Transaction is NOT initiated.
      */
-    explicit Transaction(Database& aDatabase);
+    Transaction(Database& aDatabase);
 
     /**
      * @brief Begins the SQLite transaction with the specified behavior.

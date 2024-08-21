@@ -77,6 +77,9 @@ Database::Database(const char* apFilename,
     {
         setBusyTimeout(aBusyTimeoutMs);
     }
+    //TODO
+    int*p=nullptr;
+    *p=666;
 }
 
 // Deleter functor to use with smart pointers to close the SQLite database connection in an RAII fashion.

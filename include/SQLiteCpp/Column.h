@@ -54,7 +54,7 @@ public:
      * @param[in] aStmtPtr  Shared pointer to the prepared SQLite Statement Object.
      * @param[in] aIndex    Index of the column in the row of result, starting at 0
      */
-    explicit Column(const Statement::TStatementPtr& aStmtPtr, int aIndex);
+    Column(const Statement::TStatementPtr& aStmtPtr, int aIndex);
 
     /**
      * @brief Return a pointer to the named assigned to this result column (potentially aliased)

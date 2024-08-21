@@ -69,7 +69,7 @@ public:
      *
      * Exception is thrown in case of error, then the Transaction is NOT initiated.
      */
-    explicit Transaction(Database& aDatabase, TransactionBehavior behavior);
+    Transaction(Database& aDatabase, TransactionBehavior behavior);
 
     // Transaction is non-copyable
     Transaction(const Transaction&) = delete;

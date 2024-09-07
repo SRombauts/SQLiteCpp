@@ -14,6 +14,7 @@
 #include <SQLiteCpp/Exception.h>
 #include <SQLiteCpp/Utils.h> // SQLITECPP_PURE_FUNC
 
+#include <cstdint>
 #include <string>
 #include <map>
 #include <memory>

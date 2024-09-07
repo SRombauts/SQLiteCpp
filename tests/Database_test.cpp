@@ -563,7 +563,7 @@ TEST(Database, getHeaderInfo)
 // NOTE on macOS FindSQLite3 find an unrelated sqlite3.h from Mono.framework that doesn't match the actual package version!
 #if defined(SQLITECPP_INTERNAL_SQLITE) || !defined(__APPLE__)
         EXPECT_EQ(h.sqliteVersion, SQLITE_VERSION_NUMBER);
-#endif  && !defined(__APPLE__)
+#endif
     }
     remove("test.db3");
 }

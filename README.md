@@ -199,7 +199,8 @@ You can build SQLiteCpp with [meson](https://mesonbuild.com/) using the provided
 
 you can install meson using pip: `pip install meson` however you may need to install ninja and other dependencies depending on your platform as an compiler toolchain
 
-Arch Linux:
+<details>
+<summary>Arch Linux</summary>
 
 ```sh
 # install clang (compiler toolchain) and ninja (recommended build system)
@@ -209,8 +210,10 @@ sudo pacman -Syu python python-pip
 # install meson 
 pip install meson
 ```
+</details>
 
-Ubuntu:
+<details>
+<summary>Ubuntu</summary>
 
 ```sh
 # install gcc(compiler toolchain) and ninja (recommended build system)
@@ -220,8 +223,9 @@ sudo apt install python3 python3-pip
 # install meson
 pip install meson
 ```
+</details>
 
-for example you can build the library using the default options with:
+then you can build the library using the default options with:
 
 ```sh
 # setup the build directory
@@ -241,9 +245,11 @@ meson compile -C builddir
 
 #### Using SQLiteCpp as subproject in meson
 
-please check the examples in the examples folder for usage of SQLiteCpp as a subproject in meson, as for the wrap file you can use the one provided in the subprojects folder called `SQLiteCpp.wrap`
+please check the examples in the examples folder for usage of SQLiteCpp as a subproject in meson, alternatively you can fetch the latest release from the meson wrapdb
 
-> keep in mind that even that this wrap should be up to date, it is recommended to check the latest version of SQLiteCpp and update the wrap file accordingly
+```sh
+meson wrap install sqlitecpp
+```
 
 #### System SQLiteCpp support under meson
 

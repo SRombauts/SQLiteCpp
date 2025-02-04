@@ -47,11 +47,19 @@ import getopt
 import math  # for log
 import os
 import re
-import sre_compile
 import string
 import sys
 import unicodedata
 
+# sre_compile will be/has been removed in Python 3.13
+# use re._compiler instead
+# Refs: https://github.com/python/cpython/issues/105456
+# Refs: https://github.com/python/cpython/issues/91308
+try:
+    srecompile = re._compiler.compile
+except AttributeError:
+    import sre_compile
+    srecompile = sre_compile.compile
 
 try:
     xrange(0,1)
@@ -506,7 +514,7 @@ def Match(pattern, s):
   # performance reasons; factoring it out into a separate function turns out
   # to be noticeably expensive.
   if pattern not in _regexp_compile_cache:
-    _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
+    _regexp_compile_cache[pattern] = srecompile(pattern)
   return _regexp_compile_cache[pattern].match(s)
 
 
@@ -524,14 +532,14 @@ def ReplaceAll(pattern, rep, s):
     string with replacements made (or original string if no replacements)
   """
   if pattern not in _regexp_compile_cache:
-    _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
+    _regexp_compile_cache[pattern] = srecompile(pattern)
   return _regexp_compile_cache[pattern].sub(rep, s)
 
 
 def Search(pattern, s):
   """Searches the string for the pattern, caching the compiled regexp."""
   if pattern not in _regexp_compile_cache:
-    _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
+    _regexp_compile_cache[pattern] = srecompile(pattern)
   return _regexp_compile_cache[pattern].search(s)
 
 
@@ -879,7 +887,7 @@ class FileInfo:
     If we have a real absolute path name here we can try to do something smart:
     detecting the root of the checkout and truncating /path/to/checkout from
     the name so that we get header guards that don't include things like
-    "C:\Documents and Settings\..." or "/home/username/..." in them and thus
+    "C:/Documents and Settings/..." or "/home/username/..." in them and thus
     people on different computers who have checked the source out to different
     locations won't see bogus errors.
     """
@@ -2707,7 +2715,7 @@ def CheckSpacing(filename, clean_lines, linenum, nesting_state, error):
   line = clean_lines.elided[linenum]  # get rid of comments and strings
 
   # Don't try to do spacing checks for operator methods
-  line = re.sub(r'operator(==|!=|<|<<|<=|>=|>>|>)\(', 'operator\(', line)
+  line = re.sub(r'operator(==|!=|<|<<|<=|>=|>>|>)\(', r'operator\(', line)
 
   # We allow no-spaces around = within an if: "if ( (a=Foo()) == 0 )".
   # Otherwise not.  Note we only check for non-spaces on *both* sides;
@@ -2909,8 +2917,8 @@ def CheckSpacing(filename, clean_lines, linenum, nesting_state, error):
 
   # In range-based for, we wanted spaces before and after the colon, but
   # not around "::" tokens that might appear.
-  if (Search('for *\(.*[^:]:[^: ]', line) or
-      Search('for *\(.*[^: ]:[^:]', line)):
+  if (Search(r'for *\(.*[^:]:[^: ]', line) or
+      Search(r'for *\(.*[^: ]:[^:]', line)):
     error(filename, linenum, 'whitespace/forcolon', 2,
           'Missing space around colon in range-based for loop')
 
@@ -4799,8 +4807,8 @@ def main():
     ProcessFile(filename, _cpplint_state.verbose_level)
   _cpplint_state.PrintErrorCounts()
 
-  # SRombauts: do not break build for cpplint style warnings
-  #sys.exit(_cpplint_state.error_count > 0)
+  # SRombauts: break the build for cpplint style warnings
+  sys.exit(_cpplint_state.error_count > 0)
 
 
 if __name__ == '__main__':

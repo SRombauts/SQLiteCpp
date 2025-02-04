@@ -1,0 +1,16 @@
+name: cpplint C++ linter
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Ubuntu Latest
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout ${{ github.ref_name }}
+      uses: actions/checkout@v4
+    - run: git submodule update --init --recursive
+    - run: mkdir build
+    - run: cmake -G "Unix Makefiles" -DSQLITECPP_BUILD_LIBRARY=OFF -DSQLITE_ENABLE_COLUMN_METADATA=OFF -DSQLITECPP_RUN_CPPLINT=ON ..
+      working-directory: build
+    - run: cmake --build ./build/

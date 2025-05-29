@@ -165,7 +165,7 @@ if(SQLITECPP_BUILD_MODULES)
         message(WARNING "Skipping SQLiteCpp C++ modules (requires CMake 3.28+, found ${CMAKE_VERSION})")
     endif()
 else()
-    message(STATUS "SQLiteCpp C++ modules support is disabled. Enable with -SQLITECPP_BUILD_MODULES=ON")
+    message(STATUS "SQLiteCpp C++ modules support is disabled. Enable with -DSQLITECPP_BUILD_MODULES=ON")
 endif()
 
 # list of test files of the library

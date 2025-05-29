@@ -12,7 +12,7 @@ export module sqlitecpp.exception;
 import sqlitecpp.sqlite3forward;
 
 /**
- * @namespace sqlite
+ * @namespace SQLite
  * @brief The SQLite SQLite:: namespace
  */
 export namespace SQLite {

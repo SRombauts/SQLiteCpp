@@ -12,7 +12,7 @@ export module sqlitecpp.column;
 import sqlitecpp.sqlite3forward;
 
 /**
- * @namespace sqlite
+ * @namespace SQLite
  * @brief The SQLite SQLite:: namespace
  */
 export namespace SQLite {

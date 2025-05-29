@@ -239,6 +239,8 @@ meson setup builddir -DSQLITECPP_BUILD_TESTS=true -DSQLITECPP_BUILD_EXAMPLES=tru
 meson compile -C builddir
 ```
 
+To enable building with C++20 modules (and importing the library with `import sqlite;`), pass `SQLITECPP_BUILD_MODULE` to the build system.
+
 #### Using SQLiteCpp as subproject in meson
 
 please check the examples in the examples folder for usage of SQLiteCpp as a subproject in meson, as for the wrap file you can use the one provided in the subprojects folder called `SQLiteCpp.wrap`

@@ -7,11 +7,11 @@ module;
 
 #include <SQLiteCpp/Transaction.h>
 
-export module sqlitecpp.transaction;
+export module sqlite.transaction;
 
-export import sqlitecpp.database;
+export import sqlite.database;
 
-import sqlitecpp.sqlite3forward;
+import sqlite.sqlite3forward;
 
 /**
  * @namespace SQLite
@@ -21,3 +21,5 @@ export namespace SQLite {
     using SQLite::TransactionBehavior;
     using SQLite::Transaction;
 }
+
+export namespace sqlite = SQLite;

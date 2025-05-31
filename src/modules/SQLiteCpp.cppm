@@ -3,10 +3,10 @@
  * @brief File containing the module declaration for SQLiteC++.
  */
 
-export module sqlitecpp;
+export module sqlite;
 
-export import sqlitecpp.column;
-export import sqlitecpp.database;
-export import sqlitecpp.exception;
-export import sqlitecpp.statement;
-export import sqlitecpp.transaction;
+export import sqlite.column;
+export import sqlite.database;
+export import sqlite.exception;
+export import sqlite.statement;
+export import sqlite.transaction;

@@ -7,9 +7,9 @@ module;
 
 #include <SQLiteCpp/Database.h>
 
-export module sqlitecpp.database;
+export module sqlite.database;
 
-import sqlitecpp.sqlite3forward;
+import sqlite.sqlite3forward;
 
 /**
  * @namespace SQLite
@@ -36,3 +36,5 @@ export namespace SQLite {
     using SQLite::Header;
     using SQLite::Database;
 }
+
+export namespace sqlite = SQLite;

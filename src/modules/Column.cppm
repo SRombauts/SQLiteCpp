@@ -7,9 +7,9 @@ module;
 
 #include <SQLiteCpp/Column.h>
 
-export module sqlitecpp.column;
+export module sqlite.column;
 
-import sqlitecpp.sqlite3forward;
+import sqlite.sqlite3forward;
 
 /**
  * @namespace SQLite
@@ -26,3 +26,5 @@ export namespace SQLite {
 
     using SQLite::operator<<;
 }
+
+export namespace sqlite = SQLite;

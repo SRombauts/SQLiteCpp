@@ -7,7 +7,7 @@ module;
 
 #include <sqlite3.h>
 
-export module sqlitecpp.sqlite3forward;
+export module sqlite.sqlite3forward;
 
 /**
  * @namespace SQLite

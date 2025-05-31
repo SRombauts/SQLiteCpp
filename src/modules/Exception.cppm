@@ -7,9 +7,9 @@ module;
 
 #include <SQLiteCpp/Exception.h>
 
-export module sqlitecpp.exception;
+export module sqlite.exception;
 
-import sqlitecpp.sqlite3forward;
+import sqlite.sqlite3forward;
 
 /**
  * @namespace SQLite
@@ -18,3 +18,5 @@ import sqlitecpp.sqlite3forward;
 export namespace SQLite {
     using SQLite::Exception;
 }
+
+export namespace sqlite = SQLite;

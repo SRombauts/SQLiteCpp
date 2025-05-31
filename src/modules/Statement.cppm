@@ -7,12 +7,12 @@ module;
 
 #include <SQLiteCpp/Statement.h>
 
-export module sqlitecpp.statement;
+export module sqlite.statement;
 
-export import sqlitecpp.column;
-export import sqlitecpp.database;
+export import sqlite.column;
+export import sqlite.database;
 
-import sqlitecpp.sqlite3forward;
+import sqlite.sqlite3forward;
 
 /**
  * @namespace SQLite
@@ -21,3 +21,5 @@ import sqlitecpp.sqlite3forward;
 export namespace SQLite {
     using SQLite::Statement;
 }
+
+export namespace sqlite = SQLite;

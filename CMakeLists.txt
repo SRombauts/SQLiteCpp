@@ -4,7 +4,7 @@
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # custom CMake modules like FindSQLiteCpp
 project(SQLiteCpp VERSION 3.3.3)
 

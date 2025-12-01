@@ -23,7 +23,7 @@ jobs:
 
     steps:
     - name: Checkout ${{ github.ref_name }}
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - run: git submodule update --init --recursive
     - run: mkdir build
     - run: cmake -G "Unix Makefiles" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Debug -DSQLITECPP_INTERNAL_SQLITE=OFF -DSQLITE_OMIT_LOAD_EXTENSION=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF .. 

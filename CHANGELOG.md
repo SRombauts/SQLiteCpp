@@ -1,3 +1,7 @@
+Version 3.3.4 - TBD
+- Added support for prepared statement flags (PREPARE_PERSISTENT, PREPARE_DONT_LOG, etc.)
+- Statement constructor now accepts optional prepFlags parameter
+
 2012 Mar 30
 - Start of a new thin C++ SQLite wrapper
 

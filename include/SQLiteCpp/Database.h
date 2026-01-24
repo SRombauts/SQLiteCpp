@@ -106,6 +106,15 @@ SQLITECPP_API extern const int OPEN_PRIVATECACHE; // SQLITE_OPEN_PRIVATECACHE
 /// Database filename is not allowed to be a symbolic link (Note: only since SQlite 3.31.0 from 2020-01-22)
 SQLITECPP_API extern const int OPEN_NOFOLLOW;     // SQLITE_OPEN_NOFOLLOW
 
+/// Prepared statement will be retained and reused many times (hint to the query planner)
+SQLITECPP_API extern const int PREPARE_PERSISTENT; // SQLITE_PREPARE_PERSISTENT
+/// Normalize the prepared statement (no-op, kept for compatibility)
+SQLITECPP_API extern const int PREPARE_NORMALIZE;  // SQLITE_PREPARE_NORMALIZE
+/// Return error if statement uses any virtual tables
+SQLITECPP_API extern const int PREPARE_NO_VTAB;    // SQLITE_PREPARE_NO_VTAB
+/// Prevents SQL compiler errors from being sent to the error log (useful for testing SQL syntax)
+SQLITECPP_API extern const int PREPARE_DONT_LOG;   // SQLITE_PREPARE_DONT_LOG
+
 
 SQLITECPP_API extern const int OK;                ///< SQLITE_OK (used by check() bellow)
 

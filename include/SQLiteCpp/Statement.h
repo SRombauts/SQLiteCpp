@@ -57,21 +57,23 @@ public:
      *
      * @param[in] aDatabase the SQLite Database Connection
      * @param[in] apQuery   an UTF-8 encoded query string
+     * @param[in] aPrepFlags Optional prepare flags (e.g., SQLite::PREPARE_PERSISTENT)
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    Statement(const Database& aDatabase, const char* apQuery);
+    Statement(const Database& aDatabase, const char* apQuery, const unsigned int aPrepFlags = 0);
 
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
      *
      * @param[in] aDatabase the SQLite Database Connection
      * @param[in] aQuery    an UTF-8 encoded query string
+     * @param[in] aPrepFlags Optional prepare flags (e.g., SQLite::PREPARE_PERSISTENT)
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    Statement(const Database& aDatabase, const std::string& aQuery) :
-        Statement(aDatabase, aQuery.c_str())
+    Statement(const Database& aDatabase, const std::string& aQuery, const unsigned int aPrepFlags = 0) :
+        Statement(aDatabase, aQuery.c_str(), aPrepFlags)
     {}
 
     // Statement is non-copyable
@@ -717,6 +719,7 @@ private:
     int                     mColumnCount = 0;       //!< Number of columns in the result of the prepared statement
     bool                    mbHasRow = false;       //!< true when a row has been fetched with executeStep()
     bool                    mbDone = false;         //!< true when the last executeStep() had no more row to fetch
+    unsigned int            mPrepFlags = 0;         //!< Prepared statement flags (SQLITE_PREPARE_*)
 
     /// Map of columns index by name (mutable so getColumnIndex can be const)
     mutable std::map<std::string, int>  mColumnNames;

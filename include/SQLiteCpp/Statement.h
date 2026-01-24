@@ -701,9 +701,10 @@ private:
     /**
      * @brief Prepare statement object.
      * 
+     * @param[in] aPrepFlags Optional prepare flags (e.g., SQLite::PREPARE_PERSISTENT)
      * @return Shared pointer to prepared statement object
      */
-    TStatementPtr prepareStatement();
+    TStatementPtr prepareStatement(const unsigned int aPrepFlags);
 
     /**
      * @brief Return a prepared statement object.
@@ -719,7 +720,6 @@ private:
     int                     mColumnCount = 0;       //!< Number of columns in the result of the prepared statement
     bool                    mbHasRow = false;       //!< true when a row has been fetched with executeStep()
     bool                    mbDone = false;         //!< true when the last executeStep() had no more row to fetch
-    unsigned int            mPrepFlags = 0;         //!< Prepared statement flags (SQLITE_PREPARE_*)
 
     /// Map of columns index by name (mutable so getColumnIndex can be const)
     mutable std::map<std::string, int>  mColumnNames;

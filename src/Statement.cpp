@@ -34,10 +34,8 @@ namespace SQLite
 Statement::Statement(const Database& aDatabase, const char* apQuery, const unsigned int aPrepFlags) :
     mQuery(apQuery),
     mpSQLite(aDatabase.getHandle()),
-    mpPreparedStatement(nullptr), // Will be initialized after mPrepFlags
-    mPrepFlags(aPrepFlags)
+    mpPreparedStatement(prepareStatement(aPrepFlags)) // prepare the SQL query (needs Database friendship)
 {
-    mpPreparedStatement = prepareStatement(); // prepare the SQL query (needs Database friendship)
     mColumnCount = sqlite3_column_count(mpPreparedStatement.get());
 }
 
@@ -48,7 +46,6 @@ Statement::Statement(Statement&& aStatement) noexcept :
     mColumnCount(aStatement.mColumnCount),
     mbHasRow(aStatement.mbHasRow),
     mbDone(aStatement.mbDone),
-    mPrepFlags(aStatement.mPrepFlags),
     mColumnNames(std::move(aStatement.mColumnNames))
 {
     aStatement.mpSQLite = nullptr;
@@ -360,20 +357,19 @@ std::string Statement::getExpandedSQL() const {
 
 
 // Prepare SQLite statement object and return shared pointer to this object
-Statement::TStatementPtr Statement::prepareStatement()
+Statement::TStatementPtr Statement::prepareStatement(const unsigned int aPrepFlags)
 {
     sqlite3_stmt* statement;
     int ret;
     
-    // Use sqlite3_prepare_v3 if prepare flags are specified, otherwise use sqlite3_prepare_v2
-    if (mPrepFlags != 0)
-    {
-        ret = sqlite3_prepare_v3(mpSQLite, mQuery.c_str(), static_cast<int>(mQuery.size()), mPrepFlags, &statement, nullptr);
-    }
-    else
-    {
-        ret = sqlite3_prepare_v2(mpSQLite, mQuery.c_str(), static_cast<int>(mQuery.size()), &statement, nullptr);
-    }
+    // Use sqlite3_prepare_v3 when available (SQLite >= 3.20.0), otherwise fall back to sqlite3_prepare_v2
+#if SQLITE_VERSION_NUMBER >= 3020000
+    ret = sqlite3_prepare_v3(mpSQLite, mQuery.c_str(), static_cast<int>(mQuery.size()), aPrepFlags, &statement, nullptr);
+#else
+    // sqlite3_prepare_v3 not available, ignore prepFlags and use sqlite3_prepare_v2
+    (void)aPrepFlags; // Avoid unused parameter warning
+    ret = sqlite3_prepare_v2(mpSQLite, mQuery.c_str(), static_cast<int>(mQuery.size()), &statement, nullptr);
+#endif
     
     if (SQLITE_OK != ret)
     {

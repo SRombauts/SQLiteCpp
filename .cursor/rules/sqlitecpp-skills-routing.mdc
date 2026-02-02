@@ -1,0 +1,23 @@
+---
+description: SQLiteCpp project basics and skill routing for Cursor/Claude Code.
+globs:
+alwaysApply: true
+---
+
+# SQLiteCpp Basics and Skill Routing
+
+## Project basics
+- SQLiteCpp is a C++11 RAII wrapper around SQLite3.
+- Public API uses Doxygen and avoids `sqlite3.h` in headers.
+- Portability: Windows, Linux, macOS.
+
+## Use skills for task guidance
+Skills live under `.claude/skills/`. Load the relevant skill(s) based on the task:
+- `sqlitecpp-coding-standards`: core library edits, public API rules, style and naming.
+- `sqlitecpp-workflow`: add methods/classes, tests, build file updates, changelog.
+- `sqlitecpp-git-branching`: branch creation and naming rules.
+- `sqlitecpp-build-cmake`: CMake builds, options, tests.
+- `sqlitecpp-build-meson`: Meson builds, options, tests.
+- `sqlitecpp-ci-workflows`: CI config updates and build matrices.
+- `sqlitecpp-troubleshooting`: compiler/linker/build issues.
+- `sqlitecpp-sqlite-flags`: SQLite/SQLiteCpp feature flags.

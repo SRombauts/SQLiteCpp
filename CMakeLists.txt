@@ -279,6 +279,7 @@ endif ()
 ## Build provided copy of SQLite3 C library ##
 
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
+option(SQLITECPP_FIND_SQLITE "Attempt to find SQLite via find_package (requires SQLITECPP_INTERNAL_SQLITE=OFF).  If disabled then a SQLite::SQLite3 cmake target must already exist." ON)
 if (SQLITECPP_INTERNAL_SQLITE)
     message(STATUS "Compile sqlite3 from source in subdirectory")
     option(SQLITE_ENABLE_RTREE "Enable RTree extension when building internal sqlite3 library." OFF)
@@ -286,7 +287,7 @@ if (SQLITECPP_INTERNAL_SQLITE)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
     target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
-else (SQLITECPP_INTERNAL_SQLITE)
+elseif (SQLITECPP_FIND_SQLITE)
     # When using the SQLite codec, we need to link against the sqlcipher lib & include <sqlcipher/sqlite3.h>
     # So this gets the lib & header, and links/includes everything
     if(SQLITE_HAS_CODEC)
@@ -332,7 +333,14 @@ else (SQLITECPP_INTERNAL_SQLITE)
             set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
         endif()
     endif()
-endif (SQLITECPP_INTERNAL_SQLITE)
+else ()
+    if (NOT TARGET SQLite::SQLite3)
+        message(FATAL_ERROR "SQLITECPP_FIND_SQLITE=OFF requires a pre-existing SQLite::SQLite3 cmake target")
+    endif()
+
+    message(STATUS "Using pre-existing SQLite::SQLite3 cmake target")
+    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
+endif ()
 
 ## disable the optional support for std::filesystem (C++17)
 option(SQLITECPP_DISABLE_STD_FILESYSTEM "Disable the use of std::filesystem in SQLiteCpp." OFF)

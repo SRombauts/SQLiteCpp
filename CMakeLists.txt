@@ -4,7 +4,7 @@
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.5...4.0)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # custom CMake modules like FindSQLiteCpp
 project(SQLiteCpp VERSION 3.3.3)
 
@@ -459,7 +459,11 @@ if (SQLITECPP_BUILD_EXAMPLES)
     
     target_link_libraries(SQLiteCpp_example1 SQLiteCpp)
     if (MSYS OR MINGW)
-        target_link_libraries(SQLiteCpp_example1 ssp)
+        # Check if libssp exists before linking (newer MinGW versions may not have it)
+        find_library(SSP_LIBRARY ssp)
+        if (SSP_LIBRARY)
+            target_link_libraries(SQLiteCpp_example1 ${SSP_LIBRARY})
+        endif ()
     endif ()
 else (SQLITECPP_BUILD_EXAMPLES)
     message(STATUS "SQLITECPP_BUILD_EXAMPLES OFF")

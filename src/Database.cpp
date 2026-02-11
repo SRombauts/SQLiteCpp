@@ -224,13 +224,17 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
 }
 
 // Set the key for the current sqlite database instance.
+#if __cplusplus >= 201703L // C++17
+void Database::key(const std::string_view aKey) const
+#else
 void Database::key(const std::string& aKey) const
+#endif
 {
     int passLen = static_cast<int>(aKey.length());
 #ifdef SQLITE_HAS_CODEC
     if (passLen > 0)
     {
-        const int ret = sqlite3_key(getHandle(), aKey.c_str(), passLen);
+        const int ret = sqlite3_key(getHandle(), aKey.data(), passLen);
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
@@ -242,13 +246,17 @@ void Database::key(const std::string& aKey) const
 }
 
 // Reset the key for the current sqlite database instance.
+#if __cplusplus >= 201703L // C++17
+void Database::rekey(const std::string_view aNewKey) const
+#else
 void Database::rekey(const std::string& aNewKey) const
+#endif
 {
 #ifdef SQLITE_HAS_CODEC
     int passLen = aNewKey.length();
     if (passLen > 0)
     {
-        const int ret = sqlite3_rekey(getHandle(), aNewKey.c_str(), passLen);
+        const int ret = sqlite3_rekey(getHandle(), aNewKey.data(), passLen);
         check(ret);
     }
     else

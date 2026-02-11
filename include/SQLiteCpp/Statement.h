@@ -415,7 +415,7 @@ public:
      *
      * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
      */
-    void bindNoCopy(const std::string& aName, const std::string& aValue)
+    void bindNoCopy(const std::string& aName, const std::string_view aValue)
     {
         bindNoCopy(aName.c_str(), aValue);
     }

@@ -18,6 +18,7 @@
 // c++17: macOS unless targetting compatibility with macOS < 10.15
 #ifndef SQLITECPP_HAVE_STD_EXPERIMENTAL_FILESYSTEM
 #if __cplusplus >= 201703L
+    #include <string_view>
     #if defined(__MINGW32__) || defined(__MINGW64__)
         #if __GNUC__ > 8 // MinGW requires GCC version > 8 for std::filesystem
             #define SQLITECPP_HAVE_STD_FILESYSTEM
@@ -533,7 +534,11 @@ public:
     *
     * @throw SQLite::Exception in case of error
     */
+#if __cplusplus >= 201703L // C++17
+    void key(const std::string_view aKey) const;
+#else
     void key(const std::string& aKey) const;
+#endif
 
     /**
     * @brief Reset the key for the current sqlite database instance.
@@ -549,7 +554,11 @@ public:
     *
     * @throw SQLite::Exception in case of error
     */
+#if __cplusplus >= 201703L // C++17
+    void rekey(const std::string_view aNewKey) const;
+#else
     void rekey(const std::string& aNewKey) const;
+#endif
 
     /**
     * @brief Test if a file contains an unencrypted database.

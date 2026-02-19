@@ -18,7 +18,6 @@
 // c++17: macOS unless targetting compatibility with macOS < 10.15
 #ifndef SQLITECPP_HAVE_STD_EXPERIMENTAL_FILESYSTEM
 #if __cplusplus >= 201703L
-    #include <string_view>
     #if defined(__MINGW32__) || defined(__MINGW64__)
         #if __GNUC__ > 8 // MinGW requires GCC version > 8 for std::filesystem
             #define SQLITECPP_HAVE_STD_FILESYSTEM
@@ -524,71 +523,99 @@ public:
     void loadExtension(const char* apExtensionName, const char* apEntryPointName);
 
     /**
-    * @brief Set the key for the current sqlite database instance.
-    *
-    *  This is the equivalent of the sqlite3_key call and should thus be called
-    *  directly after opening the database.
-    *  Open encrypted database -> call db.key("secret") -> database ready
-    *
-    * @param[in] aKey   Key to decode/encode the database
-    *
-    * @throw SQLite::Exception in case of error
-    */
-#if __cplusplus >= 201703L // C++17
-    void key(const std::string_view aKey) const;
-#else
-    void key(const std::string& aKey) const;
-#endif
+     * @brief Set the key for the current sqlite database instance.
+     *
+     *  This is the equivalent of the sqlite3_key call and should thus be called
+     *  directly after opening the database.
+     *  Open encrypted database -> call db.key("secret") -> database ready
+     *
+     * @param[in] aKey   Key to decode/encode the database
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    void key(const char* apKey, const int aSize ) const;
 
     /**
-    * @brief Reset the key for the current sqlite database instance.
-    *
-    *  This is the equivalent of the sqlite3_rekey call and should thus be called
-    *  after the database has been opened with a valid key. To decrypt a
-    *  database, call this method with an empty string.
-    *  Open normal database -> call db.rekey("secret") -> encrypted database, database ready
-    *  Open encrypted database -> call db.key("secret") -> call db.rekey("newsecret") -> change key, database ready
-    *  Open encrypted database -> call db.key("secret") -> call db.rekey("") -> decrypted database, database ready
-    *
-    * @param[in] aNewKey   New key to encode the database
-    *
-    * @throw SQLite::Exception in case of error
-    */
-#if __cplusplus >= 201703L // C++17
-    void rekey(const std::string_view aNewKey) const;
-#else
-    void rekey(const std::string& aNewKey) const;
-#endif
+     * @brief Set the key for the current sqlite database instance.
+     *
+     *  This is the equivalent of the sqlite3_key call and should thus be called
+     *  directly after opening the database.
+     *  Open encrypted database -> call db.key("secret") -> database ready
+     *
+     * @param[in] aKey   Key to decode/encode the database
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    void key(const std::string& aKey) const
+    {
+        key(aKey.data(), aKey.size());
+    }
 
     /**
-    * @brief Test if a file contains an unencrypted database.
-    *
-    *  This is a simple test that reads the first bytes of a database file and
-    *  compares them to the standard header for unencrypted databases. If the
-    *  header does not match the standard string, we assume that we have an
-    *  encrypted file.
-    *
-    * @param[in] aFilename path/uri to a file
-    *
-    * @return true if the database has the standard header.
-    *
-    * @throw SQLite::Exception in case of error
-    */
+     * @brief Reset the key for the current sqlite database instance.
+     *
+     *  This is the equivalent of the sqlite3_rekey call and should thus be called
+     *  after the database has been opened with a valid key. To decrypt a
+     *  database, call this method with an empty string.
+     *  Open normal database -> call db.rekey("secret") -> encrypted database, database ready
+     *  Open encrypted database -> call db.key("secret") -> call db.rekey("newsecret") -> change key, database ready
+     *  Open encrypted database -> call db.key("secret") -> call db.rekey("") -> decrypted database, database ready
+     *
+     * @param[in] apNewKey   New key to encode the database
+     * @param[in] aSize      Length of apNewKey
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    void rekey(const char* apNewKey, const int aSize ) const;
+
+    /**
+     * @brief Reset the key for the current sqlite database instance.
+     *
+     *  This is the equivalent of the sqlite3_rekey call and should thus be called
+     *  after the database has been opened with a valid key. To decrypt a
+     *  database, call this method with an empty string.
+     *  Open normal database -> call db.rekey("secret") -> encrypted database, database ready
+     *  Open encrypted database -> call db.key("secret") -> call db.rekey("newsecret") -> change key, database ready
+     *  Open encrypted database -> call db.key("secret") -> call db.rekey("") -> decrypted database, database ready
+     *
+     * @param[in] aNewKey   New key to encode the database
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    void rekey(const std::string& aNewKey) const
+    {
+        rekey(aNewKey.data(), aNewKey.size());
+    }
+
+    /**
+     * @brief Test if a file contains an unencrypted database.
+     *
+     *  This is a simple test that reads the first bytes of a database file and
+     *  compares them to the standard header for unencrypted databases. If the
+     *  header does not match the standard string, we assume that we have an
+     *  encrypted file.
+     *
+     * @param[in] aFilename path/uri to a file
+     *
+     * @return true if the database has the standard header.
+     *
+     * @throw SQLite::Exception in case of error
+     */
     static bool isUnencrypted(const std::string& aFilename);
 
     /**
-    * @brief Parse SQLite header data from a database file.
-    *
-    *  This function reads the first 100 bytes of a SQLite database file
-    *  and reconstructs groups of individual bytes into the associated fields
-    *  in a Header object.
-    *
-    * @param[in] aFilename path/uri to a file
-    *
-    * @return Header object containing file data
-    *
-    * @throw SQLite::Exception in case of error
-    */
+     * @brief Parse SQLite header data from a database file.
+     *
+     *  This function reads the first 100 bytes of a SQLite database file
+     *  and reconstructs groups of individual bytes into the associated fields
+     *  in a Header object.
+     *
+     * @param[in] aFilename path/uri to a file
+     *
+     * @return Header object containing file data
+     *
+     * @throw SQLite::Exception in case of error
+     */
     static Header getHeaderInfo(const std::string& aFilename);
 
     // Parse SQLite header data from a database file.

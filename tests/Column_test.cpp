@@ -62,15 +62,15 @@ static void test_column_basis(bool utf16)
 
     // validates every variant of cast operators, and conversions of types
     {
-        const int64_t       id1     = query.getColumn(0); // operator int64_t()
-        const int32_t       id2     = query.getColumn(0); // operator int32_t()
-        const int           id3     = query.getColumn(0); // operator int32_t()
-        const int16_t       id4     = query.getColumn(0); // operator int32_t()
-        const short         id5     = query.getColumn(0); // operator int32_t()
-        const int8_t        id6     = query.getColumn(0); // operator int32_t()
-        const char          id7     = query.getColumn(0); // operator int32_t()
+        const std::int64_t       id1     = query.getColumn(0); // operator std::int64_t()
+        const std::int32_t       id2     = query.getColumn(0); // operator std::int32_t()
+        const int           id3     = query.getColumn(0); // operator std::int32_t()
+        const std::int16_t       id4     = query.getColumn(0); // operator std::int32_t()
+        const short         id5     = query.getColumn(0); // operator std::int32_t()
+        const std::int8_t        id6     = query.getColumn(0); // operator std::int32_t()
+        const char          id7     = query.getColumn(0); // operator std::int32_t()
         const unsigned int  uint1   = query.getColumn(0); // operator unsigned int()
-        const uint32_t      uint2   = query.getColumn(0); // operator unsigned int()
+        const std::uint32_t      uint2   = query.getColumn(0); // operator unsigned int()
         const unsigned char uint3   = query.getColumn(0); // operator unsigned char()
         const unsigned short uint4  = query.getColumn(0); // operator unsigned short()
         const char*         ptxt    = query.getColumn(1); // operator const char*()
@@ -112,9 +112,9 @@ static void test_column_basis(bool utf16)
 
     // validates every variant of explicit getters
     {
-        int64_t             id      = query.getColumn(0).getInt64();
+        std::int64_t             id      = query.getColumn(0).getInt64();
         const unsigned int  uint1   = query.getColumn(0).getUInt();
-        const uint32_t      uint2   = query.getColumn(0).getUInt();
+        const std::uint32_t      uint2   = query.getColumn(0).getUInt();
         const std::string   msg1    = query.getColumn(1).getString();
         const char*         ptxt    = query.getColumn(1).getText();
         const std::string   msg2    = query.getColumn(1).getText();

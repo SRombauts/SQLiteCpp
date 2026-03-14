@@ -126,15 +126,15 @@ public:
     /**
      * @brief Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const int32_t       aValue);
+    void bind(const int aIndex, const std::int32_t       aValue);
     /**
      * @brief Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const uint32_t      aValue);
+    void bind(const int aIndex, const std::uint32_t      aValue);
     /**
      * @brief Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const int64_t       aValue);
+    void bind(const int aIndex, const std::int64_t       aValue);
     /**
      * @brief Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
@@ -194,21 +194,21 @@ public:
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const int32_t         aValue)
+    void bind(const char* apName, const std::int32_t         aValue)
     {
         bind(getIndex(apName), aValue);
     }
     /**
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const uint32_t        aValue)
+    void bind(const char* apName, const std::uint32_t        aValue)
     {
         bind(getIndex(apName), aValue);
     }
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const int64_t         aValue)
+    void bind(const char* apName, const std::int64_t         aValue)
     {
         bind(getIndex(apName), aValue);
     }
@@ -295,21 +295,21 @@ public:
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const int32_t         aValue)
+    void bind(const std::string& aName, const std::int32_t         aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
      * @brief Bind a 32bits unsigned int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const uint32_t        aValue)
+    void bind(const std::string& aName, const std::uint32_t        aValue)
     {
         bind(aName.c_str(), aValue);
     }
     /**
      * @brief Bind a 64bits int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const std::string& aName, const int64_t         aValue)
+    void bind(const std::string& aName, const std::int64_t         aValue)
     {
         bind(aName.c_str(), aValue);
     }

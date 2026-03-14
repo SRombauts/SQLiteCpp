@@ -81,21 +81,21 @@ int Statement::getIndex(const char * const apName) const
 }
 
 // Bind an 32bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const int32_t aValue)
+void Statement::bind(const int aIndex, const std::int32_t aValue)
 {
     const int ret = sqlite3_bind_int(getPreparedStatement(), aIndex, aValue);
     check(ret);
 }
 
 // Bind a 32bits unsigned int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const uint32_t aValue)
+void Statement::bind(const int aIndex, const std::uint32_t aValue)
 {
     const int ret = sqlite3_bind_int64(getPreparedStatement(), aIndex, aValue);
     check(ret);
 }
 
 // Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const int64_t aValue)
+void Statement::bind(const int aIndex, const std::int64_t aValue)
 {
     const int ret = sqlite3_bind_int64(getPreparedStatement(), aIndex, aValue);
     check(ret);

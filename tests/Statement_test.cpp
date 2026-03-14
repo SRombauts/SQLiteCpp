@@ -12,7 +12,7 @@
 #include <SQLiteCpp/Database.h>
 #include <SQLiteCpp/Statement.h>
 
-#include <cstdint>   // for int64_t
+#include <cstdint>   // for std::int64_t
 #include <sqlite3.h> // for SQLITE_DONE
 
 #include <gtest/gtest.h>
@@ -165,10 +165,10 @@ TEST(Statement, executeStep)
     query.executeStep();
     EXPECT_TRUE (query.hasRow());
     EXPECT_FALSE(query.isDone());
-    const int64_t       id      = query.getColumn(0);
+    const std::int64_t       id      = query.getColumn(0);
     const std::string   msg     = query.getColumn(1);
     const int           integer = query.getColumn(2);
-    const int64_t       integer2= query.getColumn(2);
+    const std::int64_t       integer2= query.getColumn(2);
     const double        real    = query.getColumn(3);
     EXPECT_EQ(1,        id);
     EXPECT_EQ("first",  msg);
@@ -218,10 +218,10 @@ TEST(Statement, tryExecuteStep)
     EXPECT_EQ(query.tryExecuteStep(), SQLITE_ROW);
     EXPECT_TRUE (query.hasRow());
     EXPECT_FALSE(query.isDone());
-    const int64_t       id      = query.getColumn(0);
+    const std::int64_t       id      = query.getColumn(0);
     const std::string   msg     = query.getColumn(1);
     const int           integer = query.getColumn(2);
-    const int64_t       integer2= query.getColumn(2);
+    const std::int64_t       integer2= query.getColumn(2);
     const double        real    = query.getColumn(3);
     EXPECT_EQ(1,        id);
     EXPECT_EQ("first",  msg);
@@ -328,7 +328,7 @@ TEST(Statement, bindings)
     // Fourth row with string/int64/float
     {
         const std::string   fourth("fourth");
-        const int64_t       int64 = 12345678900000LL;
+        const std::int64_t       int64 = 12345678900000LL;
         const float         float32 = 0.234f;
         insert.bind(1, fourth);
         insert.bind(2, int64);
@@ -371,10 +371,10 @@ TEST(Statement, bindings)
     // reset() without clearbindings()
     insert.reset();
 
-    // Sixth row with uint32_t unsigned value and a long value (which is either a 32b int or a 64b int64_t)
+    // Sixth row with std::uint32_t unsigned value and a long value (which is either a 32b int or a 64b std::int64_t)
     {
-        const uint32_t  uint32 = 4294967295U;
-        const int64_t   integer = -123;
+        const std::uint32_t  uint32 = 4294967295U;
+        const std::int64_t   integer = -123;
         insert.bind(2, uint32);
         insert.bind(3, integer);
         EXPECT_EQ(1, insert.exec());
@@ -395,7 +395,7 @@ TEST(Statement, bindings)
 
     // Seventh row using another variant of int64 type
     {
-        const int64_t   int64 = 12345678900000LL;
+        const std::int64_t   int64 = 12345678900000LL;
         insert.bind(2, int64);
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
@@ -492,8 +492,8 @@ TEST(Statement, bindByName)
     // Second row with string/int64/float
     {
         const std::string   second("second");
-        const int32_t       int32 = -123;
-        const int64_t       int64 = 12345678900000LL;
+        const std::int32_t       int32 = -123;
+        const std::int64_t       int64 = 12345678900000LL;
         const float         float32 = 0.234f;
         insert.bind("@msg",      second);
         insert.bind("@int",      int32);
@@ -537,10 +537,10 @@ TEST(Statement, bindByName)
     // reset() without clearbindings()
     insert.reset();
 
-    // Fourth row with uint32_t unsigned value and int64_t 64bits value
+    // Fourth row with std::uint32_t unsigned value and std::int64_t 64bits value
     {
-        const uint32_t  uint32 = 4294967295U;
-        const int64_t   int64 = 12345678900000LL;
+        const std::uint32_t  uint32 = 4294967295U;
+        const std::int64_t   int64 = 12345678900000LL;
         insert.bind("@int", uint32);
         insert.bind("@long", int64);
         EXPECT_EQ(1, insert.exec());
@@ -605,8 +605,8 @@ TEST(Statement, bindByNameString)
     // Second row with string/int64/float
     {
         const std::string   second("second");
-        const int64_t       int64 = 12345678900000LL;
-        const int64_t       integer = -123;
+        const std::int64_t       int64 = 12345678900000LL;
+        const std::int64_t       integer = -123;
         const float         float32 = 0.234f;
         insert.bind(amsg, second);
         insert.bind(aint, int64);
@@ -650,10 +650,10 @@ TEST(Statement, bindByNameString)
     // reset() without clearbindings()
     insert.reset();
 
-    // Fourth row with uint32_t unsigned value and int64_t 64bits value
+    // Fourth row with std::uint32_t unsigned value and std::int64_t 64bits value
     {
-        const uint32_t  uint32 = 4294967295U;
-        const int64_t   int64 = 12345678900000LL;
+        const std::uint32_t  uint32 = 4294967295U;
+        const std::int64_t   int64 = 12345678900000LL;
         insert.bind(aint, uint32);
         insert.bind(along, int64);
         EXPECT_EQ(1, insert.exec());

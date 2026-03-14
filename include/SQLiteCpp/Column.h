@@ -75,11 +75,11 @@ public:
 #endif
 
     /// Return the integer value of the column.
-    int32_t     getInt() const noexcept;
+    std::int32_t     getInt() const noexcept;
     /// Return the 32bits unsigned integer value of the column (note that SQLite3 does not support unsigned 64bits).
-    uint32_t    getUInt() const noexcept;
+    std::uint32_t    getUInt() const noexcept;
     /// Return the 64bits integer value of the column (note that SQLite3 does not support unsigned 64bits).
-    int64_t     getInt64() const noexcept;
+    std::int64_t     getInt64() const noexcept;
     /// Return the double (64bits float) value of the column
     double      getDouble() const noexcept;
     /**
@@ -164,31 +164,31 @@ public:
     {
         return static_cast<char>(getInt());
     }
-    operator int8_t() const
+    operator std::int8_t() const
     {
-        return static_cast<int8_t>(getInt());
+        return static_cast<std::int8_t>(getInt());
     }
-    operator uint8_t() const
+    operator std::uint8_t() const
     {
-        return static_cast<uint8_t>(getInt());
+        return static_cast<std::uint8_t>(getInt());
     }
-    operator int16_t() const
+    operator std::int16_t() const
     {
-        return static_cast<int16_t>(getInt());
+        return static_cast<std::int16_t>(getInt());
     }
-    operator uint16_t() const
+    operator std::uint16_t() const
     {
-        return static_cast<uint16_t>(getInt());
+        return static_cast<std::uint16_t>(getInt());
     }
-    operator int32_t() const
+    operator std::int32_t() const
     {
         return getInt();
     }
-    operator uint32_t() const
+    operator std::uint32_t() const
     {
         return getUInt();
     }
-    operator int64_t() const
+    operator std::int64_t() const
     {
         return getInt64();
     }

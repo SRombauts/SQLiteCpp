@@ -381,6 +381,18 @@ if (SQLITECPP_INSTALL)
         ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+
+    cmake_path(
+        RELATIVE_PATH CMAKE_INSTALL_FULL_LIBDIR
+        BASE_DIRECTORY ${CMAKE_INSTALL_PREFIX}
+        OUTPUT_VARIABLE PC_RELATIVE_LIBDIR)
+    string(JOIN " -l" PC_LIBS_PRIVATE "" ${CMAKE_DL_LIBS})
+    string(PREPEND PC_LIBS_PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+    # Use lowercase name for compatibility with Meson build
+    configure_file(cmake/sqlitecpp.pc.in cmake/sqlitecpp.pc @ONLY)
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/sqlitecpp.pc
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig/)
 endif (SQLITECPP_INSTALL)
 
 # Optional additional targets:

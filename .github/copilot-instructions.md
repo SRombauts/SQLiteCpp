@@ -37,9 +37,13 @@
 1. Run `git status` to check current branch.
 2. If on `master` or wrong branch, create a task-specific branch from `master`.
 
-**Branch naming:** `<issue>-<type>-<short-description>`
+**Branch naming:** `<issue>-<type>-<short-description>` or `<type>-<short-description>`
 - `123-fix-short-description` for bug fixes
 - `123-feature-short-description` for new features
+- `fix-short-description` or `feature-short-description` when there is no issue/ticket number
+  (issue ID is optional; do not use `000-`)
+
+**If user only requests a branch:** create it and stop (no file changes).
 
 **Commits:**
 - Imperative mood, ~50 char first line, body wrapped at 72 chars.

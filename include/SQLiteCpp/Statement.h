@@ -18,6 +18,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <cstdint>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3;
@@ -73,6 +74,110 @@ public:
     Statement(const Database& aDatabase, const std::string& aQuery) :
         Statement(aDatabase, aQuery.c_str())
     {}
+
+#ifdef __cpp_unicode_characters
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery    an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const std::u16string& aQuery);
+
+#if WCHAR_MAX == 0xffff
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery    an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const std::wstring& aQuery) :
+#ifdef __cpp_lib_string_view
+        Statement(aDatabase, std::u16string_view(reinterpret_cast<const char16_t*>(aQuery.data()), aQuery.size()))
+#else
+        Statement(aDatabase, std::u16string(reinterpret_cast<const char16_t*>(aQuery.data()), aQuery.size()))
+#endif
+    {}
+#endif  // WCHAR_MAX == 0xffff
+#endif  // __cpp_unicode_characters
+
+#ifdef __cpp_lib_string_view
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery    an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const std::string_view aQuery);
+
+#ifdef __cpp_char8_t
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery    an UTF-8 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const std::u8string_view aQuery) :
+        Statement(aDatabase, std::string_view(reinterpret_cast<const char*>(aQuery.data()), aQuery.size()))
+    {}
+#endif  // __cpp_char8_t
+
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] apQuery   an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const char16_t* apQuery) :
+        Statement(aDatabase, std::u16string_view(apQuery))
+    {}
+
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery    an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, std::u16string_view aQuery);
+
+#if WCHAR_MAX == 0xffff
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] apQuery   an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const wchar_t* apQuery) :
+        Statement(aDatabase, std::u16string_view(reinterpret_cast<const char16_t*>(apQuery)))
+    {}
+
+    /**
+     * @brief Compile and register the SQL query for the provided SQLite Database Connection
+     *
+     * @param[in] aDatabase the SQLite Database Connection
+     * @param[in] aQuery   an UTF-16 encoded query string
+     *
+     * Exception is thrown in case of error, then the Statement object is NOT constructed.
+     */
+    Statement(const Database& aDatabase, const std::wstring_view aQuery) :
+        Statement(aDatabase, std::u16string_view(reinterpret_cast<const char16_t*>(aQuery.data()), aQuery.size()))
+    {}
+#endif  // WCHAR_MAX == 0xffff
+#endif  // __cpp_lib_string_view
 
     // Statement is non-copyable
     Statement(const Statement&) = delete;
@@ -151,6 +256,83 @@ public:
      * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
      */
     void bind(const int aIndex, const char*         apValue);
+#ifdef __cpp_unicode_characters
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const int aIndex, const std::u16string& aValue);
+#if WCHAR_MAX == 0xffff
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const int aIndex, const std::wstring& aValue)
+    {
+#ifdef __cpp_lib_string_view
+        bind(aIndex, std::u16string_view(reinterpret_cast<const char16_t*>(aValue.data()), aValue.size()));
+#else
+        bind(aIndex, std::u16string(reinterpret_cast<const char16_t*>(aValue.data()), aValue.size()));
+#endif
+    }
+#endif
+#endif
+#ifdef __cpp_lib_string_view
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const int aIndex, const std::string_view aValue);
+#ifdef __cpp_char8_t
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const int aIndex, const std::u8string_view aValue)
+    {
+        bind(aIndex, std::string_view(reinterpret_cast<const char*>(aValue.data()), aValue.size()));
+    }
+#endif
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const int aIndex, const std::u16string_view aValue);
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const int aIndex, const char16_t* aValue)
+    {
+        bind(aIndex, std::u16string_view(aValue));
+    }
+#if WCHAR_MAX == 0xffff
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const int aIndex, const wchar_t* aValue)
+    {
+        bind(aIndex, std::u16string_view(reinterpret_cast<const char16_t*>(aValue)));
+    }
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind(const int aIndex, const std::wstring_view aValue)
+    {
+        bind(aIndex, std::u16string_view(reinterpret_cast<const char16_t*>(aValue.data()), aValue.size()));
+    }
+#endif
+#endif
     /**
      * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
@@ -173,6 +355,95 @@ public:
      * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
      */
     void bindNoCopy(const int aIndex, const char*           apValue);
+#ifdef __cpp_unicode_characters
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bindNoCopy(const int aIndex, const std::u16string& aValue);
+#if WCHAR_MAX == 0xffff
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bindNoCopy(const int aIndex, const std::wstring& aValue)
+    {
+#if __cpp_lib_string_view
+        bindNoCopy(aIndex, std::u16string_view(reinterpret_cast<const char16_t*>(aValue.data()), aValue.size()));
+#else
+        bindNoCopy(aIndex, std::u16string(reinterpret_cast<const char16_t*>(aValue.data()), aValue.size()));
+#endif
+    }
+#endif
+#endif
+#if __cpp_lib_string_view
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1).
+     *
+     * The string can contain null characters as it is binded using its size.
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    void bindNoCopy(const int aIndex, const std::string_view aValue);
+#ifdef __cpp_char8_t
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1).
+     *
+     * The string can contain null characters as it is binded using its size.
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    void bindNoCopy(const int aIndex, const std::u8string_view aValue)
+    {
+        bindNoCopy(aIndex, std::string_view(reinterpret_cast<const char*>(aValue.data()), aValue.size()));
+    }
+#endif
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1).
+     *
+     * The string can contain null characters as it is binded using its size.
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    void bindNoCopy(const int aIndex, const std::u16string_view aValue);
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1).
+     *
+     * The string can contain null characters as it is binded using its size.
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    void bindNoCopy(const int aIndex, const char16_t* aValue)
+    {
+        bindNoCopy(aIndex, std::u16string_view(aValue));
+    }
+#if WCHAR_MAX == 0xffff
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1).
+     *
+     * The string can contain null characters as it is binded using its size.
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    void bindNoCopy(const int aIndex, const wchar_t* aValue)
+    {
+        bindNoCopy(aIndex, std::u16string_view(reinterpret_cast<const char16_t*>(aValue)));
+    }
+    /**
+     * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1).
+     *
+     * The string can contain null characters as it is binded using its size.
+     *
+     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
+     */
+    void bindNoCopy(const int aIndex, const std::wstring_view aValue)
+    {
+        bindNoCopy(aIndex, std::u16string_view(reinterpret_cast<const char16_t*>(aValue.data()), aValue.size()));
+    }
+#endif
+#endif
     /**
      * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
@@ -190,6 +461,28 @@ public:
      * @see clearBindings() to set all bound parameters to NULL.
      */
     void bind(const int aIndex);
+
+    template<typename T>
+    inline void bind(const char* apName, T&& aValue)
+    {
+        bind(getIndex(apName), std::forward<T>(aValue));
+    }
+    template<typename T>
+    inline void bindNoCopy(const char* apName, T&& aValue)
+    {
+        bindNoCopy(getIndex(apName), std::forward<T>(aValue));
+    }
+    template<typename T>
+    inline void bind(const std::string& aName, T&& aValue)
+    {
+        bind(getIndex(aName.c_str()), std::forward<T>(aValue));
+    }
+    template<typename T>
+    inline void bindNoCopy(const std::string& aName, T&& aValue)
+    {
+        bindNoCopy(getIndex(aName.c_str()), std::forward<T>(aValue));
+    }
+
 
     /**
      * @brief Bind an int value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
@@ -702,6 +995,24 @@ private:
      * @return Shared pointer to prepared statement object
      */
     TStatementPtr prepareStatement();
+
+#ifdef __cpp_unicode_characters
+    /**
+     * @brief Prepare statement object.
+     *
+     * @return Shared pointer to prepared statement object
+     */
+    TStatementPtr prepareStatement(const std::u16string& query);
+#endif  // __cpp_unicode_characters
+
+#ifdef __cpp_lib_string_view
+    /**
+     * @brief Prepare statement object.
+     *
+     * @return Shared pointer to prepared statement object
+     */
+    TStatementPtr prepareStatement(const std::u16string_view query);
+#endif  // __cpp_lib_string_view
 
     /**
      * @brief Return a prepared statement object.

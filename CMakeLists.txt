@@ -228,11 +228,12 @@ if (SQLITE_ENABLE_ASSERT_HANDLER)
     target_compile_definitions(SQLiteCpp PUBLIC SQLITECPP_ENABLE_ASSERT_HANDLER)
 endif (SQLITE_ENABLE_ASSERT_HANDLER)
 
-option(SQLITE_HAS_CODEC "Enable database encryption API. Not available in the public release of SQLite." OFF)
+option(SQLITE_HAS_CODEC "Enables usage of the Database key() and rekey() methods. Requires a custom SQLite providing the key API such as sqlcipher/sql-ee/sqlite-multi-ciphers" OFF)
 if (SQLITE_HAS_CODEC)
-    # Enable database encryption API. Requires implementations of sqlite3_key & sqlite3_key_v2.
-    # Eg. SQLCipher (libsqlcipher-dev) is an SQLite extension that provides 256 bit AES encryption of database files. 
-    target_compile_definitions(SQLiteCpp PUBLIC SQLITE_HAS_CODEC)
+    # Enable database encryption API. Requires implementations of sqlite3_key & sqlite3_rekey.
+    # SQLCipher, SQLite Multiple Ciphers, and the commercial SQLite Encryption Extensions provide
+    # these API functions for encrypting a database.
+    target_compile_definitions(SQLiteCpp PRIVATE SQLITE_HAS_CODEC)
 endif (SQLITE_HAS_CODEC)
 
 option(SQLITE_USE_LEGACY_STRUCT "Fallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)" OFF)
@@ -279,14 +280,19 @@ endif ()
 ## Build provided copy of SQLite3 C library ##
 
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ON)
+option(SQLITECPP_FIND_SQLITE "Attempt to find SQLite (or sqlcipher, with SQLITE_HAS_CODEC) automatically. Requires SQLITECPP_INTERNAL_SQLITE=OFF. If disabled then a SQLite::SQLite3 cmake target must already exist." ON)
 if (SQLITECPP_INTERNAL_SQLITE)
+    if (SQLITE_HAS_CODEC)
+        message(FATAL_ERROR "Internal sqlite3 source does not support SQLITE_HAS_CODEC")
+    endif()
+
     message(STATUS "Compile sqlite3 from source in subdirectory")
     option(SQLITE_ENABLE_RTREE "Enable RTree extension when building internal sqlite3 library." OFF)
     option(SQLITE_ENABLE_DBSTAT_VTAB "Enable DBSTAT read-only eponymous virtual table extension when building internal sqlite3 library." OFF)
     # build the SQLite3 C library (for ease of use/compatibility) versus Linux sqlite3-dev package
     add_subdirectory(sqlite3)
     target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
-else (SQLITECPP_INTERNAL_SQLITE)
+elseif (SQLITECPP_FIND_SQLITE)
     # When using the SQLite codec, we need to link against the sqlcipher lib & include <sqlcipher/sqlite3.h>
     # So this gets the lib & header, and links/includes everything
     if(SQLITE_HAS_CODEC)
@@ -332,7 +338,14 @@ else (SQLITECPP_INTERNAL_SQLITE)
             set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-DSQLITECPP_HAS_MEM_STRUCT")
         endif()
     endif()
-endif (SQLITECPP_INTERNAL_SQLITE)
+else ()
+    if (NOT TARGET SQLite::SQLite3)
+        message(FATAL_ERROR "SQLITECPP_FIND_SQLITE=OFF requires a pre-existing SQLite::SQLite3 cmake target")
+    endif()
+
+    message(STATUS "Using pre-existing SQLite::SQLite3 cmake target")
+    target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
+endif ()
 
 ## disable the optional support for std::filesystem (C++17)
 option(SQLITECPP_DISABLE_STD_FILESYSTEM "Disable the use of std::filesystem in SQLiteCpp." OFF)

@@ -15,6 +15,7 @@
 #include <SQLiteCpp/Utils.h> // SQLITECPP_PURE_FUNC
 
 #include <cstdint>
+#include <iterator>
 #include <string>
 #include <map>
 #include <memory>
@@ -679,6 +680,12 @@ public:
      */
     struct RowIterator
     {
+        using iterator_category = std::input_iterator_tag;
+        using value_type        = Statement;
+        using difference_type   = std::ptrdiff_t;
+        using pointer           = Statement*;
+        using reference         = Statement&;
+
         Statement* mpStatement = nullptr; ///< Pointer to the iterated Statement, nullptr when done
 
         /// Construct an end sentinel (no associated Statement).

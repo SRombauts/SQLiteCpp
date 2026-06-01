@@ -12,8 +12,10 @@
 #include <SQLiteCpp/Database.h>
 #include <SQLiteCpp/Statement.h>
 
-#include <cstdint>   // for int64_t
-#include <sqlite3.h> // for SQLITE_DONE
+#include <cstdint>     // for int64_t
+#include <iterator>    // for std::iterator_traits, std::input_iterator_tag
+#include <type_traits> // for std::is_same
+#include <sqlite3.h>   // for SQLITE_DONE
 
 #include <gtest/gtest.h>
 
@@ -1012,6 +1014,23 @@ TEST(Statement, getColumns)
 #endif
 
 #if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
+
+TEST(Statement, rowIteratorTraits)
+{
+    using Iter = SQLite::Statement::RowIterator;
+    using Traits = std::iterator_traits<Iter>;
+
+    static_assert(std::is_same<Traits::iterator_category, std::input_iterator_tag>::value,
+                  "RowIterator must be an input iterator");
+    static_assert(std::is_same<Traits::value_type, SQLite::Statement>::value,
+                  "value_type must be Statement");
+    static_assert(std::is_same<Traits::reference, SQLite::Statement&>::value,
+                  "reference must be Statement&");
+    static_assert(std::is_same<Traits::pointer, SQLite::Statement*>::value,
+                  "pointer must be Statement*");
+    static_assert(std::is_same<Traits::difference_type, std::ptrdiff_t>::value,
+                  "difference_type must be ptrdiff_t");
+}
 
 TEST(Statement, rangeBasedFor)
 {

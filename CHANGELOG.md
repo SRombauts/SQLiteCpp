@@ -289,3 +289,7 @@ Version 3.3.3 - 2025 May 20
 - Update googletest to v1.16.0 (#506)
 - update meson dependencies (#508)
 
+Version 3.3.4 - WIP
+
+- Add Statement::RowIterator to support range-based for loops over query results (#181)
+

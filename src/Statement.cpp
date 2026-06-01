@@ -342,7 +342,6 @@ const char* Statement::getErrorMsg() const noexcept
     return sqlite3_errmsg(mpSQLite);
 }
 
-
 // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
 std::string Statement::getExpandedSQL() const {
     #ifdef SQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL
@@ -355,6 +354,38 @@ std::string Statement::getExpandedSQL() const {
     #endif
 }
 
+Statement::RowIterator::RowIterator(Statement* apStatement): mpStatement(apStatement)
+{}
+
+Statement::RowIterator& Statement::RowIterator::operator++()
+{
+    if (!mpStatement->executeStep())
+        mpStatement = nullptr;
+    return *this;
+}
+
+bool Statement::RowIterator::operator!=(const RowIterator& aOther) const
+{
+    return mpStatement != aOther.mpStatement;
+}
+
+Statement& Statement::RowIterator::operator*() const
+{
+    return *mpStatement;
+}
+
+Statement::RowIterator Statement::begin()
+{
+    reset();
+    if (executeStep())
+        return RowIterator { this };
+    return RowIterator { nullptr };
+}
+
+Statement::RowIterator Statement::end()
+{
+    return RowIterator{ nullptr };
+}
 
 // Prepare SQLite statement object and return shared pointer to this object
 Statement::TStatementPtr Statement::prepareStatement()

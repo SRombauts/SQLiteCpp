@@ -365,9 +365,21 @@ Statement::RowIterator& Statement::RowIterator::operator++()
     return *this;
 }
 
+Statement::RowIterator Statement::RowIterator::operator++(int)
+{
+    const RowIterator tmp(*this);
+    ++(*this);
+    return tmp;
+}
+
+bool Statement::RowIterator::operator==(const RowIterator& aOther) const
+{
+    return mpStatement == aOther.mpStatement;
+}
+
 bool Statement::RowIterator::operator!=(const RowIterator& aOther) const
 {
-    return mpStatement != aOther.mpStatement;
+    return !this->operator==(aOther);
 }
 
 Statement& Statement::RowIterator::operator*() const

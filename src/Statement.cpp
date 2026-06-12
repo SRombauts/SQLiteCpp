@@ -342,6 +342,7 @@ const char* Statement::getErrorMsg() const noexcept
     return sqlite3_errmsg(mpSQLite);
 }
 
+
 // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
 std::string Statement::getExpandedSQL() const {
     #ifdef SQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL
@@ -386,6 +387,7 @@ Statement::RowIterator Statement::end()
 {
     return RowIterator{ nullptr };
 }
+
 
 // Prepare SQLite statement object and return shared pointer to this object
 Statement::TStatementPtr Statement::prepareStatement()

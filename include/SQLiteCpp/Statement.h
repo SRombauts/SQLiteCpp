@@ -690,7 +690,6 @@ public:
 
         /// Construct an end sentinel (no associated Statement).
         RowIterator() = default;
-        RowIterator(const RowIterator&) = default;
 
         /// Construct an iterator pointing to the current row of apStatement.
         SQLITECPP_API explicit RowIterator(Statement* apStatement);

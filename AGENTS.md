@@ -84,3 +84,4 @@ Skills live under `.claude/skills/`. Load the relevant skill(s) based on the tas
 - `sqlitecpp-testing-practices`: GoogleTest patterns and test structure.
 - `sqlitecpp-troubleshooting`: compiler/linker/build issues.
 - `sqlitecpp-sqlite-flags`: SQLite/SQLiteCpp feature flags.
+- `humanizer`: Remove signs of AI-generated writing from text.

@@ -69,7 +69,7 @@ Now requires a C++11 compiler. Use branch [sqlitecpp-2.x](https://github.com/SRo
 
 Developments and tests are done under the following OSs:
 - Ubuntu 14.04, 16.04 and 18.04 (Travis CI and Github Actions)
-- Windows 10, and Windows Server 2012 R2, Windows Server 2016, Windows Server 2022 (AppVeyor and Github Actions)
+- Windows 10, and Windows Server 2012 R2, Windows Server 2016, Windows Server 2022, Windows Server 2025 (AppVeyor and Github Actions)
 - MacOS 10.11 and 11.7 (Travis CI and Github Actions)
 - Valgrind memcheck tool
 
@@ -78,7 +78,7 @@ And the following IDEs/Compilers
 - Clang 5 and 7 (Travis CI)
 - AppleClang 8, 9 and 13 (Travis CI and Github Actions)
 - Xcode 8 & 9 (Travis CI)
-- Visual Studio Community/Entreprise 2022, 2019, 2017, and 2015 (AppVeyor and Github Actions)
+- Visual Studio Community/Entreprise 2026, 2022, 2019, 2017, and 2015 (AppVeyor and Github Actions)
 
 ### Dependencies
 

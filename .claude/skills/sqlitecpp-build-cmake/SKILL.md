@@ -6,10 +6,10 @@ description: Build SQLiteCpp with CMake. Use for CMake builds, tests, options, o
 # SQLiteCpp CMake Build
 
 ## Quick builds
-- Windows (VS 2022):
+- Windows (VS 2026):
   - `mkdir build`
   - `cd build`
-  - `cmake -G "Visual Studio 17 2022" -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON ..`
+  - `cmake -G "Visual Studio 18 2026" -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON ..`
   - `cmake --build . --config Release`
 - Unix/macOS:
   - `mkdir build && cd build`

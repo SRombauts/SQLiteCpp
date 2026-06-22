@@ -289,3 +289,15 @@ Version 3.3.3 - 2025 May 20
 - Update googletest to v1.16.0 (#506)
 - update meson dependencies (#508)
 
+Version 3.4.0 - 2026 ???
+
+- Update SQLite from 3.49.2 to 3.51.3 (2026-03-13) (#526) (#538)
+- Add a `SQLITECPP_install` CMake option to make the install targets optional (#512)
+- Generalize the CMake SQLite and key API to ease use of SQLite3 Multiple Ciphers (#532)
+- Set `cmake_minimum_required` policy max to support CMake 4.0 (#519)
+- Update example2 to `cmake_minimum_required(VERSION 3.5...4.0)` (committed directly to master)
+- Fix a faulty `#undef` of the experimental filesystem feature macro (#509)
+- Fix compilation with newer GoogleTest (#514)
+- Fix the MinGW build by conditionally linking libssp (#527)
+- Add AI coding guidelines for GitHub Copilot and Cursor (#529)
+- Replace the monolithic Copilot instructions with granular agent skills and an AGENTS.md router (#531)

@@ -57,21 +57,23 @@ public:
      *
      * @param[in] aDatabase the SQLite Database Connection
      * @param[in] apQuery   an UTF-8 encoded query string
+     * @param[in] aPrepFlags Optional prepare flags (e.g., SQLite::PREPARE_PERSISTENT)
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    Statement(const Database& aDatabase, const char* apQuery);
+    Statement(const Database& aDatabase, const char* apQuery, const unsigned int aPrepFlags = 0);
 
     /**
      * @brief Compile and register the SQL query for the provided SQLite Database Connection
      *
      * @param[in] aDatabase the SQLite Database Connection
      * @param[in] aQuery    an UTF-8 encoded query string
+     * @param[in] aPrepFlags Optional prepare flags (e.g., SQLite::PREPARE_PERSISTENT)
      *
      * Exception is thrown in case of error, then the Statement object is NOT constructed.
      */
-    Statement(const Database& aDatabase, const std::string& aQuery) :
-        Statement(aDatabase, aQuery.c_str())
+    Statement(const Database& aDatabase, const std::string& aQuery, const unsigned int aPrepFlags = 0) :
+        Statement(aDatabase, aQuery.c_str(), aPrepFlags)
     {}
 
     // Statement is non-copyable
@@ -699,9 +701,10 @@ private:
     /**
      * @brief Prepare statement object.
      * 
+     * @param[in] aPrepFlags Optional prepare flags (e.g., SQLite::PREPARE_PERSISTENT)
      * @return Shared pointer to prepared statement object
      */
-    TStatementPtr prepareStatement();
+    TStatementPtr prepareStatement(const unsigned int aPrepFlags);
 
     /**
      * @brief Return a prepared statement object.

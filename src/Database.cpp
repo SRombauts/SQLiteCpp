@@ -43,6 +43,19 @@ const int   OPEN_NOFOLLOW     = SQLITE_OPEN_NOFOLLOW;
 const int   OPEN_NOFOLLOW     = 0;
 #endif
 
+// Prepared statement flags (available since SQLite 3.20.0)
+#if SQLITE_VERSION_NUMBER >= 3020000
+const int   PREPARE_PERSISTENT = SQLITE_PREPARE_PERSISTENT;
+const int   PREPARE_NORMALIZE  = SQLITE_PREPARE_NORMALIZE;
+const int   PREPARE_NO_VTAB    = SQLITE_PREPARE_NO_VTAB;
+const int   PREPARE_DONT_LOG   = SQLITE_PREPARE_DONT_LOG;
+#else
+const int   PREPARE_PERSISTENT = 0;
+const int   PREPARE_NORMALIZE  = 0;
+const int   PREPARE_NO_VTAB    = 0;
+const int   PREPARE_DONT_LOG   = 0;
+#endif
+
 const char* const VERSION        = SQLITE_VERSION;
 const int         VERSION_NUMBER = SQLITE_VERSION_NUMBER;
 

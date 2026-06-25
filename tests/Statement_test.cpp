@@ -1026,3 +1026,39 @@ TEST(Statement, getBindParameterCount)
     SQLite::Statement query3(db, "SELECT id, msg FROM test");
     EXPECT_EQ(0, query3.getBindParameterCount());
 }
+
+TEST(Statement, prepareFlags)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT)"));
+
+    // Test creating a statement with PREPARE_PERSISTENT flag
+    SQLite::Statement query1(db, "SELECT * FROM test", SQLite::PREPARE_PERSISTENT);
+    EXPECT_STREQ("SELECT * FROM test", query1.getQuery().c_str());
+    EXPECT_EQ(2, query1.getColumnCount());
+    
+    // Test creating a statement with PREPARE_DONT_LOG flag
+    // This should not throw even though we're testing SQL syntax
+    SQLite::Statement query2(db, "SELECT * FROM test", SQLite::PREPARE_DONT_LOG);
+    EXPECT_STREQ("SELECT * FROM test", query2.getQuery().c_str());
+    EXPECT_EQ(2, query2.getColumnCount());
+    
+    // Test creating a statement with combined flags
+    SQLite::Statement query3(db, "SELECT * FROM test", 
+                             SQLite::PREPARE_PERSISTENT | SQLite::PREPARE_DONT_LOG);
+    EXPECT_STREQ("SELECT * FROM test", query3.getQuery().c_str());
+    EXPECT_EQ(2, query3.getColumnCount());
+    
+    // Test that the statement works correctly
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (1, 'hello')"));
+    EXPECT_TRUE(query3.executeStep());
+    EXPECT_EQ(1, query3.getColumn(0).getInt());
+    EXPECT_STREQ("hello", query3.getColumn(1).getText());
+    
+    // Test PREPARE_DONT_LOG with invalid SQL (should throw but not log)
+    // We can't easily verify it's not logged, but we can verify the exception is still thrown
+    EXPECT_THROW(SQLite::Statement(db, "SELECT * FROM nonexistent", SQLite::PREPARE_DONT_LOG), 
+                 SQLite::Exception);
+}
+

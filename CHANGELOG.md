@@ -301,3 +301,4 @@ Version 3.4.0 - 2026 ???
 - Fix the MinGW build by conditionally linking libssp (#527)
 - Add AI coding guidelines for GitHub Copilot and Cursor (#529)
 - Replace the monolithic Copilot instructions with granular agent skills and an AGENTS.md router (#531)
+- Add a GitHub Actions workflow computing unit test & example code coverage (GCov) and publishing it to Coveralls (#549)

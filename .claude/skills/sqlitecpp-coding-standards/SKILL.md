@@ -20,6 +20,8 @@ description: SQLiteCpp coding standards and API rules for core edits, public hea
 ## Documentation and style
 - Doxygen required for public API (`@brief`, `@param`, `@return`, `@throw`).
 - ASCII only, 4 spaces, Allman braces, max 120 chars, LF line endings, final newline.
+- LF line endings are enforced repo-wide by `.gitattributes` (`* text=auto eol=lf`), matching
+  `.editorconfig` (`end_of_line = lf`); never commit CRLF. Run `git add --renormalize .` if a file drifts.
 - Use `#pragma once` in headers.
 
 ## Naming conventions

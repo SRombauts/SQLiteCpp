@@ -1,0 +1,8 @@
+# Enforce LF line endings for all text files across platforms.
+# Matches .editorconfig (end_of_line = lf): git normalizes on commit/checkout
+# regardless of the contributor OS, editor, or tooling.
+* text=auto eol=lf
+
+# Known binary assets: never normalize or diff these.
+*.db3 binary
+*.png binary

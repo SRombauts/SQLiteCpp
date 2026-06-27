@@ -72,6 +72,36 @@ TEST(Backup, executeStepOne)
     remove("backup_test.db3.backup");
 }
 
+TEST(Backup, executeStepStringNames)
+{
+    remove("backup_test.db3");
+    remove("backup_test.db3.backup");
+    {
+        SQLite::Database srcDB("backup_test.db3", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+        srcDB.exec("CREATE TABLE backup_test (id INTEGER PRIMARY KEY, value TEXT)");
+        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (1, 'first')"));
+        ASSERT_EQ(1, srcDB.exec("INSERT INTO backup_test VALUES (2, 'second')"));
+
+        SQLite::Database destDB("backup_test.db3.backup", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+        // Exercise the constructor taking the schema names as std::string
+        const std::string destName = "main";
+        const std::string srcName = "main";
+        SQLite::Backup backup(destDB, destName, srcDB, srcName);
+        const int res = backup.executeStep(); // execute all steps at once
+        ASSERT_EQ(SQLITE_DONE, res);
+
+        SQLite::Statement query(destDB, "SELECT * FROM backup_test ORDER BY id ASC");
+        ASSERT_TRUE(query.executeStep());
+        EXPECT_EQ(1, query.getColumn(0).getInt());
+        EXPECT_STREQ("first", query.getColumn(1));
+        ASSERT_TRUE(query.executeStep());
+        EXPECT_EQ(2, query.getColumn(0).getInt());
+        EXPECT_STREQ("second", query.getColumn(1));
+    }
+    remove("backup_test.db3");
+    remove("backup_test.db3.backup");
+}
+
 TEST(Backup, executeStepAll)
 {
     remove("backup_test.db3");

@@ -1,0 +1,55 @@
+name: Coverage
+
+on: [push, pull_request]
+
+jobs:
+  coverage:
+    name: Ubuntu GCC GCov Coverage
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout ${{ github.ref_name }}
+      uses: actions/checkout@v4
+    - run: git submodule update --init --recursive
+
+    - name: Install lcov
+      run: sudo apt-get update && sudo apt-get install -y lcov
+
+    - run: mkdir build
+
+    # Debug build with GCov instrumentation, building both unit tests and the example
+    - name: Configure with GCov instrumentation
+      working-directory: build
+      env:
+        CC: gcc
+        CXX: g++
+      run: cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DSQLITECPP_USE_GCOV=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF ..
+
+    - name: Build
+      run: cmake --build build --config Debug
+
+    # Run both the unit tests (UnitTests) and the example (Example1Run) to exercise the library
+    - name: Run unit tests and example
+      run: ctest --verbose --output-on-failure --test-dir build
+
+    # Capture coverage of the library only, excluding third-party, tests and examples sources
+    - name: Capture coverage with lcov
+      run: |
+        lcov --capture --directory build --base-directory "$GITHUB_WORKSPACE" \
+             --output-file coverage.info \
+             --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch,gcov
+        lcov --remove coverage.info \
+             '/usr/*' \
+             "$GITHUB_WORKSPACE/googletest/*" \
+             "$GITHUB_WORKSPACE/sqlite3/*" \
+             "$GITHUB_WORKSPACE/examples/*" \
+             "$GITHUB_WORKSPACE/tests/*" \
+             --output-file coverage.info --ignore-errors unused
+        lcov --list coverage.info
+
+    - name: Publish coverage to Coveralls
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        file: coverage.info
+        format: lcov

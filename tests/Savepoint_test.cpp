@@ -104,3 +104,20 @@ TEST(Savepoint, commitRollback)
     }
     EXPECT_EQ(1, nbRows);
 }
+
+TEST(Savepoint, destructorSwallowsException)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+
+    // A destructor must never throw: if the rollback/release fails while the Savepoint
+    // is being destroyed, the exception has to be caught and swallowed internally.
+    EXPECT_NO_THROW({
+        SQLite::Savepoint savepoint(db, "sp");
+        // The name is quoted to 'sp' internally; release it directly behind the object's
+        // back so that the destructor's ROLLBACK TO / RELEASE SAVEPOINT will fail and throw.
+        db.exec("RELEASE SAVEPOINT 'sp'");
+    }); // end of scope: the automatic rollback must not let the exception escape
+}

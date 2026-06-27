@@ -138,6 +138,8 @@ TEST(Statement, moveConstructor)
     // Moved statements should throw
     EXPECT_THROW(query.getColumnIndex("value"), SQLite::Exception);
     EXPECT_THROW(query.getColumn(index), SQLite::Exception);
+    // Binding to a moved-from statement throws because it has no prepared statement anymore
+    EXPECT_THROW(query.bind(1, 1), SQLite::Exception);
 }
 
 #endif
@@ -1025,4 +1027,26 @@ TEST(Statement, getBindParameterCount)
 
     SQLite::Statement query3(db, "SELECT id, msg FROM test");
     EXPECT_EQ(0, query3.getBindParameterCount());
+}
+
+TEST(Statement, getChanges)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
+
+    // A single-row INSERT reports one change
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, 'first')");
+    EXPECT_EQ(1, insert.exec());
+    EXPECT_EQ(1, insert.getChanges());
+
+    // A second INSERT, executed by reusing the prepared statement, still reports one change
+    insert.reset();
+    EXPECT_EQ(1, insert.exec());
+    EXPECT_EQ(1, insert.getChanges());
+
+    // An UPDATE touching every row reports the number of rows modified
+    SQLite::Statement update(db, "UPDATE test SET value = 'updated'");
+    EXPECT_EQ(2, update.exec());
+    EXPECT_EQ(2, update.getChanges());
 }

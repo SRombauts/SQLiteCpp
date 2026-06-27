@@ -40,6 +40,9 @@ TEST(Transaction, commitRollback)
 
         // Commit again throw an exception
         EXPECT_THROW(transaction.commit(), SQLite::Exception);
+
+        // Rollback after commit also throws an exception
+        EXPECT_THROW(transaction.rollback(), SQLite::Exception);
     }
 
     // ensure transactions with different types are well-formed

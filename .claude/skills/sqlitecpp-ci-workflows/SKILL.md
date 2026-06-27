@@ -37,3 +37,28 @@ description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, AppVeyor, T
 ## Travis CI
 - Multiple GCC/Clang versions across Linux and macOS.
 - Variants for ASAN, GCov, Valgrind, shared libs, external sqlite3.
+
+## Coverage (Coveralls)
+The `Coverage` workflow (`.github/workflows/coverage.yml`) builds with `-DSQLITECPP_USE_GCOV=ON`
+(GCC only), runs `ctest` (both `UnitTests` and `Example1Run`), captures with `lcov` while
+excluding `/usr`, `googletest`, `sqlite3`, `examples` and `tests`, and uploads to Coveralls.
+
+To find which lines are still uncovered without rebuilding locally, query the Coveralls JSON API
+for the master repo (the build id comes from the repo summary):
+
+```sh
+# Overall percentage and the latest build id
+curl -s https://coveralls.io/github/SRombauts/SQLiteCpp.json   # covered_percent, badge, build id
+
+# Per-file missed counts for a build (source_files is a JSON-encoded string inside the payload)
+curl -s "https://coveralls.io/builds/<BUILD_ID>/source_files.json?per_page=100"
+
+# Exact missed line numbers for one file (array of hit counts; null/0 entries are uncovered)
+curl -s "https://coveralls.io/builds/<BUILD_ID>/source.json?filename=src/Statement.cpp"
+```
+
+Some misses are not worth chasing: gcov often marks a function's closing brace or a template's
+`std::initializer_list` line as uncovered, and pure defensive guards (an internal invariant that
+public callers cannot reach, e.g. a "Statement was not prepared" check guarded by an earlier
+`checkRow()`) and platform-specific success paths (loading a real SQLite extension) may be
+impractical to exercise portably. Cover the genuinely reachable lines and leave the rest.

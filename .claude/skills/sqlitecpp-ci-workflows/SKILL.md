@@ -57,8 +57,23 @@ curl -s "https://coveralls.io/builds/<BUILD_ID>/source_files.json?per_page=100"
 curl -s "https://coveralls.io/builds/<BUILD_ID>/source.json?filename=src/Statement.cpp"
 ```
 
-Some misses are not worth chasing: gcov often marks a function's closing brace or a template's
-`std::initializer_list` line as uncovered, and pure defensive guards (an internal invariant that
-public callers cannot reach, e.g. a "Statement was not prepared" check guarded by an earlier
-`checkRow()`) and platform-specific success paths (loading a real SQLite extension) may be
-impractical to exercise portably. Cover the genuinely reachable lines and leave the rest.
+Before giving up on a miss, work out the root cause; some look like artifacts but are fixable:
+
+- **Multi-line pack expansion** (`(void)std::initializer_list<int>{ ... };` split across lines for
+  variadic `bind`/`execute_many`). When the per-element call can throw, gcov puts the post-call
+  edge on the standalone `initializer_list` line and reports it uncovered even though the calls run.
+  Collapse the expansion onto a single line so gcov attributes it to the tested call expression.
+- **A guard that looks unreachable** may still be reachable through a public constructor. The
+  `Column` "Statement was destroyed" check is shadowed by `checkRow()` on the normal path, but
+  `Column`'s constructor and `Statement::TStatementPtr` are public, so a test can construct a
+  `Column` from a null pointer directly. Check the public surface before assuming dead code.
+
+Genuinely not worth chasing:
+
+- **Closing-brace lines** that gcov marks uncovered as exception-unwinding landing pads. These are
+  compiler-version specific (a local gcc may not even reproduce what CI's gcc reports), and removing
+  them means contorting the function. Leave them.
+- **Platform-specific success paths**, e.g. the normal return of `loadExtension`, which the only
+  portable test cannot reach without a real loadable extension binary.
+
+Cover the genuinely reachable lines and leave the rest.

@@ -86,4 +86,6 @@ Skills live under `.claude/skills/`. Load the relevant skill(s) based on the tas
 - `sqlitecpp-sqlite-flags`: SQLite/SQLiteCpp feature flags.
 - `sqlitecpp-update-sqlite`: updating the bundled SQLite3 amalgamation and the Meson wrap.
 - `sqlitecpp-release`: how to release (version bump, CHANGELOG finalization, tagging).
+- `windows-shell-commands`: Windows PowerShell vs Bash tool usage and safe multi-line arguments
+  (commit messages, PR bodies); use before running git/gh with multi-line or quoted text.
 - `humanizer`: Remove signs of AI-generated writing from text.

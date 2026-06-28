@@ -49,10 +49,8 @@ void execute_many(Database& aDatabase, const char* apQuery, Arg&& aArg, Types&&.
 {
     SQLite::Statement query(aDatabase, apQuery);
     bind_exec(query, std::forward<Arg>(aArg));
-    (void)std::initializer_list<int>
-    {
-        ((void)reset_bind_exec(query, std::forward<Types>(aParams)), 0)...
-    };
+    // Keep the pack expansion on a single line so GCov attributes the (tested) calls correctly
+    (void)std::initializer_list<int>{ ((void)reset_bind_exec(query, std::forward<Types>(aParams)), 0)... };
 }
 
 /**

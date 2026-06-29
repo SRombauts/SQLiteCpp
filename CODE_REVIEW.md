@@ -75,7 +75,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 ### Database — `code-review/Database-review.md` (H1 M4 L4 I2)
 | Done | ID | Sev | Conf | Title |
 |:--:|----|-----|------|-------|
-| [ ] | DB-01 | High | High | `isUnencrypted()` `getline()` makes the 16-byte magic compare unreliable + reads uninitialized stack on short files (security gate) |
+| [x] #553 | DB-01 | High | High | `isUnencrypted()` `getline()` makes the 16-byte magic compare unreliable + reads uninitialized stack on short files (security gate) |
 | [ ] | DB-02 | Med | High | `getHeaderInfo()` big-endian assembly is signed left-shift **UB**; sign-extends on LP64 |
 | [ ] | DB-03 | Med | High | `Header` struct uses platform-variable `unsigned long` → cross-platform field-width mismatch |
 | [x] #552 | DB-04 | Med | High | Constructor `mFilename(apFilename)` is UB on a null `const char*` |
@@ -162,7 +162,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 ### ExecuteMany — `code-review/ExecuteMany-review.md` (M1 L2 I3)
 | Done | ID | Sev | Conf | Title |
 |:--:|----|-----|------|-------|
-| [ ] | EM-01 | Med | High | Stale bindings leak between parameter sets (`reset()` without `clearBindings()`) → **silent data corruption** for variable-arity sets |
+| [x] #554 | EM-01 | Med | High | Stale bindings leak between parameter sets (`reset()` without `clearBindings()`) → **silent data corruption** for variable-arity sets |
 | [ ] | EM-02 | Low | High | First set not reset; relies on a fresh Statement (public `bind_exec` footgun) |
 | [ ] | EM-03 | Low | High | `bind_exec`/`reset_bind_exec` pollute `SQLite` namespace, used-before-definition, `apQuery` mis-prefixed |
 | [ ] | EM-04 | Info | High | `execute_many` requires ≥1 set, undocumented |
@@ -190,7 +190,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | [ ] | HDR-08 | Info | Med | Macro args not defensively parenthesized |
 
 ### Cross-cutting themes
-- **Null C-pointer → `std::string`/`runtime_error` UB**: STMT-01, STMT-02, EXC-02, DB-04 (and the read in DB-01). A small, uniform "guard the pointer" pattern fixes all. _(STMT-01, STMT-02, EXC-02, DB-04 fixed in #552; DB-01 still open.)_
+- **Null C-pointer → `std::string`/`runtime_error` UB**: STMT-01, STMT-02, EXC-02, DB-04 (and the read in DB-01). A small, uniform "guard the pointer" pattern fixes all. _(STMT-01, STMT-02, EXC-02, DB-04 fixed in #552; DB-01 fixed in #553.)_
 - **Destructor error handling / terminal-state flags**: TXN-01, TXN-04, SP-02, SP-03 — library-wide habit of swallowing all exceptions and lacking a "finished" flag; route through `SQLITECPP_ASSERT`, broaden to `catch(...)`, track terminal state.
 - **`SQLITECPP_NODISCARD` macro**: requested by STMT-08, COL-09, BKP-01/03, EXC-03 — one feature-gated macro (like the existing `SQLITECPP_PURE_FUNC`) serves all; functionally important for `Backup::executeStep`.
 - **Fixed-width / sign correctness in header parsing**: DB-02 + DB-03.
@@ -203,9 +203,9 @@ Ranked by Severity × Likelihood × (inverse) Effort, with confidence. **P0** = 
 ### P0 — fix first (correctness / UB / security; low effort, high confidence)
 | Done | # | Fix | Finding(s) | Files | Effort |
 |:--:|---|-----|-----------|-------|--------|
-| [ ] | 1 | Read 16 raw bytes (`read`+`gcount`+`memcmp`) instead of `getline()` in `isUnencrypted()` (reuse `getHeaderInfo` pattern) | DB-01 | `src/Database.cpp` | S |
+| [x] #553 | 1 | Read 16 raw bytes (`read`+`gcount`+`memcmp`) instead of `getline()` in `isUnencrypted()` (reuse `getHeaderInfo` pattern) | DB-01 | `src/Database.cpp` | S |
 | [x] #552 | 2 | Guard `sqlite3_expanded_sql()` NULL before constructing `std::string` (throw or empty) | STMT-01 | `src/Statement.cpp` | S |
-| [ ] | 3 | Add `clearBindings()` to `reset_bind_exec()`; add decreasing-arity regression test | EM-01 | `include/SQLiteCpp/ExecuteMany.h`, `tests/ExecuteMany_test.cpp` | S |
+| [x] #554 | 3 | Add `clearBindings()` to `reset_bind_exec()`; add decreasing-arity regression test | EM-01 | `include/SQLiteCpp/ExecuteMany.h`, `tests/ExecuteMany_test.cpp` | S |
 | [x] #552 | 4 | Skip NULL `sqlite3_column_name()` when building the column-name map | STMT-02 | `src/Statement.cpp` | S |
 | [x] #552 | 5 | Guard null message in `Exception(const char*, int)` (`msg ? msg : ""`) | EXC-02 | `src/Exception.cpp` | S |
 | [x] #552 | 6 | Guard null `apFilename` in the raw-`const char*` `Database` ctor | DB-04 | `src/Database.cpp` | S |

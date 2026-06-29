@@ -16,7 +16,7 @@ namespace SQLite
 {
 
 Exception::Exception(const char* aErrorMessage, int ret) :
-    std::runtime_error(aErrorMessage),
+    std::runtime_error(aErrorMessage ? aErrorMessage : ""),
     mErrcode(ret),
     mExtendedErrcode(-1)
 {

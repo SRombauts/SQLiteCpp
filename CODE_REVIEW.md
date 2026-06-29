@@ -78,7 +78,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | [ ] | DB-01 | High | High | `isUnencrypted()` `getline()` makes the 16-byte magic compare unreliable + reads uninitialized stack on short files (security gate) |
 | [ ] | DB-02 | Med | High | `getHeaderInfo()` big-endian assembly is signed left-shift **UB**; sign-extends on LP64 |
 | [ ] | DB-03 | Med | High | `Header` struct uses platform-variable `unsigned long` → cross-platform field-width mismatch |
-| [ ] | DB-04 | Med | High | Constructor `mFilename(apFilename)` is UB on a null `const char*` |
+| [x] #552 | DB-04 | Med | High | Constructor `mFilename(apFilename)` is UB on a null `const char*` |
 | [ ] | DB-05 | Med | Med | `key()`/`rekey()` declared `const` but mutate the database |
 | [ ] | DB-06 | Low | High | `loadExtension()` discards SQLite's error message (passes `0` as `pzErrMsg`) |
 | [ ] | DB-07 | Low | Med | No guard/warning against unsupported Serialized mode (`OPEN_FULLMUTEX`) |
@@ -90,8 +90,8 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 ### Statement — `code-review/Statement-review.md` (H1 M4 L3 I2)
 | Done | ID | Sev | Conf | Title |
 |:--:|----|-----|------|-------|
-| [ ] | STMT-01 | High | High | `getExpandedSQL()` builds `std::string` from possibly-NULL `sqlite3_expanded_sql()` (**UB**; reachable via size-limit) |
-| [ ] | STMT-02 | Med | Med | Lazy column-name map inserts possibly-NULL `sqlite3_column_name()` (**UB**) |
+| [x] #552 | STMT-01 | High | High | `getExpandedSQL()` builds `std::string` from possibly-NULL `sqlite3_expanded_sql()` (**UB**; reachable via size-limit) |
+| [x] #552 | STMT-02 | Med | Med | Lazy column-name map inserts possibly-NULL `sqlite3_column_name()` (**UB**) |
 | [ ] | STMT-03 | Med | High | `getChanges()` is connection-wide, not statement-specific; misleading on shared connections |
 | [ ] | STMT-04 | Med | High | Defaulted move-assignment leaves moved-from object partially live (inconsistent with move ctor) |
 | [ ] | STMT-05 | Med | Med | blob/text binds cast `size()`→`int` (truncation/UB for >2 GB) |
@@ -140,7 +140,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | Done | ID | Sev | Conf | Title |
 |:--:|----|-----|------|-------|
 | [ ] | EXC-01 | Med | High | Extended error code is silently `-1` for the `(const char*, int)` ctor (getters disagree for same error) |
-| [ ] | EXC-02 | Med | Med | `Exception(const char*, int)` forwards a possibly-null message to `std::runtime_error` (**UB**) |
+| [x] #552 | EXC-02 | Med | Med | `Exception(const char*, int)` forwards a possibly-null message to `std::runtime_error` (**UB**) |
 | [ ] | EXC-03 | Low | High | Accessors are good `[[nodiscard]]` candidates |
 | [ ] | EXC-04 | Low | High | `getErrorStr()` pointer-lifetime undocumented; `SQLITECPP_PURE_FUNC` candidate |
 | [ ] | EXC-05 | Low | Med | Error-code members intentionally non-`const` (undocumented rationale) |
@@ -204,11 +204,11 @@ Ranked by Severity × Likelihood × (inverse) Effort, with confidence. **P0** = 
 | Done | # | Fix | Finding(s) | Files | Effort |
 |:--:|---|-----|-----------|-------|--------|
 | [ ] | 1 | Read 16 raw bytes (`read`+`gcount`+`memcmp`) instead of `getline()` in `isUnencrypted()` (reuse `getHeaderInfo` pattern) | DB-01 | `src/Database.cpp` | S |
-| [ ] | 2 | Guard `sqlite3_expanded_sql()` NULL before constructing `std::string` (throw or empty) | STMT-01 | `src/Statement.cpp` | S |
+| [x] #552 | 2 | Guard `sqlite3_expanded_sql()` NULL before constructing `std::string` (throw or empty) | STMT-01 | `src/Statement.cpp` | S |
 | [ ] | 3 | Add `clearBindings()` to `reset_bind_exec()`; add decreasing-arity regression test | EM-01 | `include/SQLiteCpp/ExecuteMany.h`, `tests/ExecuteMany_test.cpp` | S |
-| [ ] | 4 | Skip NULL `sqlite3_column_name()` when building the column-name map | STMT-02 | `src/Statement.cpp` | S |
-| [ ] | 5 | Guard null message in `Exception(const char*, int)` (`msg ? msg : ""`) | EXC-02 | `src/Exception.cpp` | S |
-| [ ] | 6 | Guard null `apFilename` in the raw-`const char*` `Database` ctor | DB-04 | `src/Database.cpp` | S |
+| [x] #552 | 4 | Skip NULL `sqlite3_column_name()` when building the column-name map | STMT-02 | `src/Statement.cpp` | S |
+| [x] #552 | 5 | Guard null message in `Exception(const char*, int)` (`msg ? msg : ""`) | EXC-02 | `src/Exception.cpp` | S |
+| [x] #552 | 6 | Guard null `apFilename` in the raw-`const char*` `Database` ctor | DB-04 | `src/Database.cpp` | S |
 
 ### P1 — should fix (correctness / robustness / UB-by-design)
 | Done | # | Fix | Finding(s) | Files | Effort |

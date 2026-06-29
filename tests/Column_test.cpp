@@ -297,3 +297,10 @@ TEST(Column, shared_ptr)
 
     EXPECT_STREQ("id", column0.getName());
 }
+
+TEST(Column, invalidStatementPtr)
+{
+    // Constructing a Column from a null (destroyed) statement pointer must throw
+    const SQLite::Statement::TStatementPtr nullStmtPtr;
+    EXPECT_THROW(SQLite::Column column(nullStmtPtr, 0), SQLite::Exception);
+}

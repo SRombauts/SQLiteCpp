@@ -635,6 +635,8 @@ TEST(Database, encryptAndDecrypt)
         // Reopen the database file and encrypt it
         EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
+        // An empty key is a no-op even when built without encryption support
+        EXPECT_NO_THROW(db.key(""));
         // Encrypt the database
         EXPECT_THROW(db.key("123secret"), SQLite::Exception);
         EXPECT_THROW(db.rekey("123secret"), SQLite::Exception);

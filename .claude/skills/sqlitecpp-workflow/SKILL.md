@@ -32,6 +32,12 @@ if it does not exist yet.
 Finalizing the version heading and tagging belong to the release process: see
 [[sqlitecpp-release]].
 
+## Pull requests
+- Open PRs with `gh pr create` against `master`.
+- The maintainer wants a **short and tight** PR description: one or two sentences on what the PR
+  does and why, plus a brief bullet list only when it genuinely helps review. No filler, no
+  restating the diff, no marketing. ASCII only, no em dashes; run it through `humanizer` if unsure.
+
 ## Add a method
 1. Declare in `include/SQLiteCpp/<Class>.h` with Doxygen.
 2. Implement in `src/<Class>.cpp`.

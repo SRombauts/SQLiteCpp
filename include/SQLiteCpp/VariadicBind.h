@@ -48,9 +48,8 @@ template<class ...Args>
 void bind(SQLite::Statement& query, const Args& ... args)
 {
     int pos = 0;
-    (void)std::initializer_list<int>{
-        ((void)query.bind(++pos, std::forward<decltype(args)>(args)), 0)...
-    };
+    // Keep the pack expansion on a single line so GCov attributes the (tested) bind calls correctly
+    (void)std::initializer_list<int>{ ((void)query.bind(++pos, std::forward<decltype(args)>(args)), 0)... };
 }
 
 #if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015

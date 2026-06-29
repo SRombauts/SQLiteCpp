@@ -1,0 +1,892 @@
+############ CONFIGURE (Clang + Ninja, Debug, ASAN) ############
+-- The C compiler identification is Clang 22.1.0 with GNU-like command-line
+-- The CXX compiler identification is Clang 22.1.0 with GNU-like command-line
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/LLVM/bin/clang.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/LLVM/bin/clang++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Using c++ standard c++11
+-- CMake version: 3.29.2
+-- Project version: 3.3.3
+-- Using Stack Protection hardening
+-- CMAKE_CXX_COMPILER 'C:/Program Files/LLVM/bin/clang++.exe' 'Clang' '22.1.0'
+-- CMAKE_CXX_FLAGS                ' -Wall -Wextra -Wpedantic -Wswitch-enum -Wshadow -Wno-long-long'
+-- CMAKE_CXX_FLAGS_DEBUG          '-O0'
+-- Using Address Sanitizer
+-- Compile sqlite3 from source in subdirectory
+-- SQLITECPP_RUN_CPPLINT OFF
+-- SQLITECPP_RUN_CPPCHECK OFF
+-- SQLITECPP_RUN_DOXYGEN OFF
+-- SQLITECPP_BUILD_EXAMPLES OFF
+-- Could NOT find GTest (missing: GTEST_LIBRARY GTEST_INCLUDE_DIR GTEST_MAIN_LIBRARY) 
+-- Compile googletest from source in submodule
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Check if compiler accepts -pthread
+-- Check if compiler accepts -pthread - no
+-- Found Threads: TRUE
+-- Configuring done (10.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: C:/UnitySrc/SQLiteCpp/build-asan
+############ CONFIGURE EXIT: 0 ############
+############ BUILD ############
+[1/24] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Exception.cpp.obj
+In file included from C:/UnitySrc/SQLiteCpp/src/Exception.cpp:13:
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:301:11: warning: extension used [-Wlanguage-extension-token]
+  301 |   typedef __int64 sqlite_int64;
+      |           ^
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:302:20: warning: extension used [-Wlanguage-extension-token]
+  302 |   typedef unsigned __int64 sqlite_uint64;
+      |                    ^
+2 warnings generated.
+[2/24] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Backup.cpp.obj
+In file included from C:/UnitySrc/SQLiteCpp/src/Backup.cpp:16:
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:301:11: warning: extension used [-Wlanguage-extension-token]
+  301 |   typedef __int64 sqlite_int64;
+      |           ^
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:302:20: warning: extension used [-Wlanguage-extension-token]
+  302 |   typedef unsigned __int64 sqlite_uint64;
+      |                    ^
+2 warnings generated.
+[3/24] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Savepoint.cpp.obj
+[4/24] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Column.cpp.obj
+In file included from C:/UnitySrc/SQLiteCpp/src/Column.cpp:13:
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:301:11: warning: extension used [-Wlanguage-extension-token]
+  301 |   typedef __int64 sqlite_int64;
+      |           ^
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:302:20: warning: extension used [-Wlanguage-extension-token]
+  302 |   typedef unsigned __int64 sqlite_uint64;
+      |                    ^
+2 warnings generated.
+[5/24] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Transaction.cpp.obj
+In file included from C:/UnitySrc/SQLiteCpp/src/Transaction.cpp:16:
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:301:11: warning: extension used [-Wlanguage-extension-token]
+  301 |   typedef __int64 sqlite_int64;
+      |           ^
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:302:20: warning: extension used [-Wlanguage-extension-token]
+  302 |   typedef unsigned __int64 sqlite_uint64;
+      |                    ^
+2 warnings generated.
+[6/24] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Statement.cpp.obj
+In file included from C:/UnitySrc/SQLiteCpp/src/Statement.cpp:18:
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:301:11: warning: extension used [-Wlanguage-extension-token]
+  301 |   typedef __int64 sqlite_int64;
+      |           ^
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:302:20: warning: extension used [-Wlanguage-extension-token]
+  302 |   typedef unsigned __int64 sqlite_uint64;
+      |                    ^
+2 warnings generated.
+[7/24] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Database.cpp.obj
+In file included from C:/UnitySrc/SQLiteCpp/src/Database.cpp:18:
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:301:11: warning: extension used [-Wlanguage-extension-token]
+  301 |   typedef __int64 sqlite_int64;
+      |           ^
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:302:20: warning: extension used [-Wlanguage-extension-token]
+  302 |   typedef unsigned __int64 sqlite_uint64;
+      |                    ^
+2 warnings generated.
+[8/24] Building CXX object googletest/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.obj
+[9/24] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Savepoint_test.cpp.obj
+C:/UnitySrc/SQLiteCpp/tests/Savepoint_test.cpp:21:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   21 | TEST(Savepoint, commitRollback)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+1 warning generated.
+[10/24] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Transaction_test.cpp.obj
+C:/UnitySrc/SQLiteCpp/tests/Transaction_test.cpp:21:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   21 | TEST(Transaction, commitRollback)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+1 warning generated.
+[11/24] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Backup_test.cpp.obj
+In file included from C:/UnitySrc/SQLiteCpp/tests/Backup_test.cpp:18:
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:301:11: warning: extension used [-Wlanguage-extension-token]
+  301 |   typedef __int64 sqlite_int64;
+      |           ^
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:302:20: warning: extension used [-Wlanguage-extension-token]
+  302 |   typedef unsigned __int64 sqlite_uint64;
+      |                    ^
+C:/UnitySrc/SQLiteCpp/tests/Backup_test.cpp:24:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   24 | TEST(Backup, initException)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Backup_test.cpp:40:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   40 | TEST(Backup, executeStepOne)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Backup_test.cpp:75:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   75 | TEST(Backup, executeStepAll)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Backup_test.cpp:106:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  106 | TEST(Backup, executeStepException)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+6 warnings generated.
+[12/24] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Exception_test.cpp.obj
+C:/UnitySrc/SQLiteCpp/tests/Exception_test.cpp:18:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   18 | TEST(Exception, copy)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Exception_test.cpp:29:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   29 | TEST(Exception, assignment)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Exception_test.cpp:43:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   43 | TEST(Exception, throw_catch)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Exception_test.cpp:57:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   57 | TEST(Exception, constructor)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+4 warnings generated.
+[13/24] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/VariadicBind_test.cpp.obj
+C:/UnitySrc/SQLiteCpp/tests/VariadicBind_test.cpp:23:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   23 | TEST(VariadicBind, invalid)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+1 warning generated.
+[14/24] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/ExecuteMany_test.cpp.obj
+C:/UnitySrc/SQLiteCpp/tests/ExecuteMany_test.cpp:22:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   22 | TEST(ExecuteMany, invalid)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+1 warning generated.
+[15/24] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Column_test.cpp.obj
+C:/UnitySrc/SQLiteCpp/tests/Column_test.cpp:202:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  202 | TEST(Column, basis)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Column_test.cpp:207:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  207 | TEST(Column, basis16)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Column_test.cpp:212:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  212 | TEST(Column, getName)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Column_test.cpp:240:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  240 | TEST(Column, stream)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Column_test.cpp:265:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  265 | TEST(Column, shared_ptr)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+5 warnings generated.
+[16/24] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Database_test.cpp.obj
+In file included from C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:14:
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:301:11: warning: extension used [-Wlanguage-extension-token]
+  301 |   typedef __int64 sqlite_int64;
+      |           ^
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:302:20: warning: extension used [-Wlanguage-extension-token]
+  302 |   typedef unsigned __int64 sqlite_uint64;
+      |                    ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:39:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   39 | TEST(SQLiteCpp, version)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:48:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   48 | TEST(Database, ctorExecCreateDropExist)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:89:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   89 | TEST(Database, moveConstructor)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:107:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  107 | TEST(Database, createCloseReopen)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:128:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  128 | TEST(Database, inMemory)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:147:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  147 | TEST(Database, backup)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:171:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  171 | TEST(Database, busyTimeout)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:209:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  209 | TEST(Database, exec)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:279:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  279 | TEST(Database, tryExec)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:345:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  345 | TEST(Database, execAndGet)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:365:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  365 | TEST(Database, execException)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:404:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  404 | TEST(Database, tryExecError)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:463:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  463 | TEST(Database, createFunction)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:479:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  479 | TEST(Database, loadExtension)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:489:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  489 | TEST(Database, getHeaderInfo)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Database_test.cpp:619:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  619 | TEST(Database, encryptAndDecrypt)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+18 warnings generated.
+[17/24] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Statement_test.cpp.obj
+In file included from C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:16:
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:301:11: warning: extension used [-Wlanguage-extension-token]
+  301 |   typedef __int64 sqlite_int64;
+      |           ^
+C:/UnitySrc/SQLiteCpp/sqlite3\sqlite3.h:302:20: warning: extension used [-Wlanguage-extension-token]
+  302 |   typedef unsigned __int64 sqlite_uint64;
+      |                    ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:25:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+   25 | TEST(Statement, invalid)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:108:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  108 | TEST(Statement, moveConstructor)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:145:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  145 | TEST(Statement, executeStep)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:198:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  198 | TEST(Statement, tryExecuteStep)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:244:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  244 | TEST(Statement, bindings)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:412:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  412 | TEST(Statement, bindNoCopy)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:452:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  452 | TEST(Statement, bindByName)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:560:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  560 | TEST(Statement, bindByNameString)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:672:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  672 | TEST(Statement, bindNoCopyByName)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:742:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  742 | TEST(Statement, isColumnNull)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:805:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  805 | TEST(Statement, isColumnNullByName)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:868:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  868 | TEST(Statement, getColumnByName)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:905:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  905 | TEST(Statement, getName)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:931:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  931 | TEST(Statement, getColumnDeclaredType)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:958:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+  958 | TEST(Statement, getColumns)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+C:/UnitySrc/SQLiteCpp/tests/Statement_test.cpp:1014:1: warning: use of the 'maybe_unused' attribute is a C++17 extension [-Wc++17-attribute-extensions]
+ 1014 | TEST(Statement, getBindParameterCount)
+      | ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2192:42: note: expanded from macro 'TEST'
+ 2192 | #define TEST(test_suite_name, test_name) GTEST_TEST(test_suite_name, test_name)
+      |                                          ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/gtest.h:2186:3: note: expanded from macro 'GTEST_TEST'
+ 2186 |   GTEST_TEST_(test_suite_name, test_name, ::testing::Test, \
+      |   ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-internal.h:1504:5: note: expanded from macro 'GTEST_TEST_'
+ 1504 |     GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED static ::testing::TestInfo* const    \
+      |     ^
+C:/UnitySrc/SQLiteCpp/googletest/googletest/include\gtest/internal/gtest-port.h:784:49: note: expanded from macro 'GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED'
+  784 | #define GTEST_INTERNAL_ATTRIBUTE_MAYBE_UNUSED [[maybe_unused]]
+      |                                                 ^
+18 warnings generated.
+[18/24] Building C object sqlite3/CMakeFiles/sqlite3.dir/sqlite3.c.obj
+[19/24] Building CXX object googletest/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj
+In file included from C:/UnitySrc/SQLiteCpp/googletest/googletest/src/gtest-all.cc:49:
+C:/UnitySrc/SQLiteCpp/googletest/googletest\src/gtest.cc:2645:3: warning: extension used [-Wlanguage-extension-token]
+ 2645 |   __try {
+      |   ^
+1 warning generated.
+[20/24] Linking CXX static library lib\gtest.lib
+[21/24] Linking C static library sqlite3\sqlite3.lib
+[22/24] Linking CXX static library lib\gtest_main.lib
+[23/24] Linking CXX static library SQLiteCpp.lib
+[24/24] Linking CXX executable bin\SQLiteCpp_tests.exe
+FAILED: bin/SQLiteCpp_tests.exe 
+C:\Windows\system32\cmd.exe /C "cd . && C:\PROGRA~1\LLVM\bin\CLANG_~1.EXE -nostartfiles -nostdlib -Wall -Wextra -Wpedantic -Wswitch-enum -Wshadow -Wno-long-long -O0 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Xclang -gcodeview -fsanitize=address  -Xlinker /subsystem:console  -fuse-ld=lld-link CMakeFiles/SQLiteCpp_tests.dir/tests/Column_test.cpp.obj CMakeFiles/SQLiteCpp_tests.dir/tests/Database_test.cpp.obj CMakeFiles/SQLiteCpp_tests.dir/tests/Savepoint_test.cpp.obj CMakeFiles/SQLiteCpp_tests.dir/tests/Statement_test.cpp.obj CMakeFiles/SQLiteCpp_tests.dir/tests/Backup_test.cpp.obj CMakeFiles/SQLiteCpp_tests.dir/tests/Transaction_test.cpp.obj CMakeFiles/SQLiteCpp_tests.dir/tests/VariadicBind_test.cpp.obj CMakeFiles/SQLiteCpp_tests.dir/tests/Exception_test.cpp.obj CMakeFiles/SQLiteCpp_tests.dir/tests/ExecuteMany_test.cpp.obj -o bin\SQLiteCpp_tests.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:SQLiteCpp_tests.lib -Xlinker /pdb:bin\SQLiteCpp_tests.pdb -Xlinker /version:0.0   SQLiteCpp.lib  lib/gtest_main.lib  sqlite3/sqlite3.lib  lib/gtest.lib  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames  && cd ."
+lld-link: error: /failifmismatch: mismatch detected for 'annotate_string':
+>>> CMakeFiles/SQLiteCpp_tests.dir/tests/ExecuteMany_test.cpp.obj has value 0
+>>> SQLiteCpp.lib(Backup.cpp.obj) has value 1
+clang++: error: linker command failed with exit code 1 (use -v to see invocation)
+ninja: build stopped: subcommand failed.
+############ BUILD EXIT: 1 ############

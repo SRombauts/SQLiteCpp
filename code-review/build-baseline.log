@@ -1,0 +1,56 @@
+############ CONFIGURE (GCC + Ninja, Debug) ############
+-- The C compiler identification is GNU 13.2.0
+-- The CXX compiler identification is GNU 13.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Strawberry/c/bin/gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Strawberry/c/bin/g++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Using c++ standard c++11
+-- CMake version: 3.29.2
+-- Project version: 3.3.3
+-- CMAKE_CXX_COMPILER 'C:/Strawberry/c/bin/g++.exe' 'GNU' '13.2.0'
+-- CMAKE_CXX_FLAGS                ' -Wall -Wextra -Wpedantic -Wswitch-enum -Wshadow -Wno-long-long'
+-- CMAKE_CXX_FLAGS_DEBUG          '-g'
+-- Compile sqlite3 from source in subdirectory
+-- SQLITECPP_RUN_CPPLINT OFF
+-- SQLITECPP_RUN_CPPCHECK OFF
+-- SQLITECPP_RUN_DOXYGEN OFF
+-- Could NOT find GTest (missing: GTEST_LIBRARY GTEST_INCLUDE_DIR GTEST_MAIN_LIBRARY) 
+-- Compile googletest from source in submodule
+-- Configuring done (13.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: C:/UnitySrc/SQLiteCpp/build-review
+############ BUILD ############
+[1/26] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Exception.cpp.obj
+[2/26] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Transaction.cpp.obj
+[3/26] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Savepoint.cpp.obj
+[4/26] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Backup.cpp.obj
+[5/26] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Column.cpp.obj
+[6/26] Building CXX object CMakeFiles/SQLiteCpp_example1.dir/examples/example1/main.cpp.obj
+[7/26] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Database.cpp.obj
+[8/26] Building CXX object googletest/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.obj
+[9/26] Building CXX object CMakeFiles/SQLiteCpp.dir/src/Statement.cpp.obj
+[10/26] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Exception_test.cpp.obj
+[11/26] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Savepoint_test.cpp.obj
+[12/26] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Transaction_test.cpp.obj
+[13/26] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Backup_test.cpp.obj
+[14/26] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/ExecuteMany_test.cpp.obj
+[15/26] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/VariadicBind_test.cpp.obj
+[16/26] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Column_test.cpp.obj
+[17/26] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Database_test.cpp.obj
+[18/26] Building CXX object CMakeFiles/SQLiteCpp_tests.dir/tests/Statement_test.cpp.obj
+[19/26] Building CXX object googletest/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj
+[20/26] Linking CXX static library lib\libgtest.a
+[21/26] Linking CXX static library lib\libgtest_main.a
+[22/26] Building C object sqlite3/CMakeFiles/sqlite3.dir/sqlite3.c.obj
+[23/26] Linking C static library sqlite3\libsqlite3.a
+[24/26] Linking CXX static library libSQLiteCpp.a
+[25/26] Linking CXX executable bin\SQLiteCpp_example1.exe
+[26/26] Linking CXX executable bin\SQLiteCpp_tests.exe
+############ BUILD EXIT: 0 ############

@@ -164,7 +164,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | [ ] | TXN-05 | Low | High | Move ops not explicitly declared (Rule-of-5 intent implicit) |
 | [ ] | TXN-06 | Info | High | `Database&` lifetime contract (documented, inherent) |
 | [ ] | TXN-07 | Info | High | `[[nodiscard]]` on the guard type (N/A under C++11) |
-| [ ] | TXN-08 | Med | High | _(2nd pass)_ Destructor (`src/Transaction.cpp:58`) catches only `SQLite::Exception` → `std::bad_alloc` (from building the exception during `ROLLBACK`) escapes → `std::terminate`. **Same defect just fixed for Savepoint in afa51d3 (SP-03), not propagated to Transaction.** Fix: broaden to `catch(...)`. |
+| [x] #559 | TXN-08 | Med | High | _(2nd pass)_ Destructor (`src/Transaction.cpp:58`) catches only `SQLite::Exception` → `std::bad_alloc` (from building the exception during `ROLLBACK`) escapes → `std::terminate`. **Same defect just fixed for Savepoint in afa51d3 (SP-03), not propagated to Transaction.** Fixed in `5e4908a`: broadened to `catch(...)`. |
 
 ### ExecuteMany — `code-review/ExecuteMany-review.md` (M1 L2 I3)
 | Done | ID | Sev | Conf | Title |
@@ -259,7 +259,7 @@ Ranked by Severity × Likelihood × (inverse) Effort, with confidence. **P0** = 
 | [ ] | 16 | Reject savepoint names with embedded NUL (or document truncation) | SP-04 | `src/Savepoint.cpp` | S |
 | [ ] | 17 | Document `getChanges()` connection-scope (or cache per-statement) | STMT-03 | `include/SQLiteCpp/Statement.h`, `src/Statement.cpp` | S |
 | [ ] | 18 | Hand-write `Statement` move-assignment to mirror the move ctor (scrub source) | STMT-04 | `include/SQLiteCpp/Statement.h`, `src/Statement.cpp` | S |
-| [ ] | 32 | _(2nd pass)_ Broaden `~Transaction()` to `catch(...)` — finishes the SP-03 fix that wasn't propagated | TXN-08 | `src/Transaction.cpp` | S |
+| [x] #559 | 32 | _(2nd pass)_ Broaden `~Transaction()` to `catch(...)` — finishes the SP-03 fix that wasn't propagated | TXN-08 | `src/Transaction.cpp` | S |
 | [ ] | 33 | _(2nd pass)_ `meson.build`: `sqlitecpp_cxx_flags` → `sqlitecpp_args` (Meson build broken for `SQLITECPP_DISABLE_STD_FILESYSTEM`) | BLD-001 | `meson.build` | S |
 | [ ] | 34 | _(2nd pass)_ example1: cap `fread` at `sizeof(buffer)-1` (or drop NUL write) — fixes 1-byte stack overflow | EXM-001 | `examples/example1/main.cpp` | S |
 | [ ] | 35 | _(2nd pass)_ example1: RAII the `FILE*` (or unconditional `fclose`) — fixes leak on no-row/exception path | EXM-002 | `examples/example1/main.cpp` | S |

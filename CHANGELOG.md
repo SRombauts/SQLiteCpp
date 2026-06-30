@@ -307,3 +307,4 @@ Version 3.4.0 - 2026 ???
 - Fix Database::isUnencrypted() to compare the full 16-byte header in binary mode (#553)
 - Fix execute_many() to clear stale bindings between parameter sets (#554)
 - Fix Column::operator<< to stream the exact column bytes via getString() (#556)
+- Restore the Coverity Scan static analysis as a GitHub Actions workflow, replacing the old Travis CI job

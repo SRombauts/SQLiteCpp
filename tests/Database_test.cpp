@@ -144,6 +144,16 @@ TEST(Database, inMemory)
     } // Close an destroy DB
 }
 
+TEST(Database, nullFilename)
+{
+    // A null filename must not invoke UB in the std::string member; SQLite treats a
+    // null/empty filename as a private, temporary on-disk database.
+    SQLite::Database db(static_cast<const char*>(nullptr), SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_STREQ("", db.getFilename().c_str());
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
+    EXPECT_TRUE(db.tableExists("test"));
+}
+
 TEST(Database, backup)
 {
     // Create a new in-memory database

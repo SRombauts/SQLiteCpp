@@ -303,4 +303,5 @@ Version 3.4.0 - 2026 ???
 - Replace the monolithic Copilot instructions with granular agent skills and an AGENTS.md router (#531)
 - Add a GitHub Actions workflow computing unit test & example code coverage (GCov) and publishing it to Coveralls (#549)
 - Add unit tests covering error and edge-case paths to raise code coverage (#551)
+- Guard against null C pointers in Exception, Database, and Statement to avoid undefined behavior (#552)
 - Fix Database::isUnencrypted() to compare the full 16-byte header in binary mode (#553)

@@ -286,7 +286,10 @@ int Statement::getColumnIndex(const char* apName) const
         for (int i = 0; i < mColumnCount; ++i)
         {
             const char* pName = sqlite3_column_name(getPreparedStatement(), i);
-            mColumnNames[pName] = i;
+            if (pName)
+            {
+                mColumnNames[pName] = i;
+            }
         }
     }
 
@@ -349,7 +352,7 @@ std::string Statement::getExpandedSQL() const {
     throw SQLite::Exception("this version of SQLiteCpp does not support expanded SQL");
     #else
     char* expanded = sqlite3_expanded_sql(getPreparedStatement());
-    std::string expandedString(expanded);
+    std::string expandedString(expanded ? expanded : "");
     sqlite3_free(expanded);
     return expandedString;
     #endif

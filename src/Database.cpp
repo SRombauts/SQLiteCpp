@@ -64,7 +64,7 @@ Database::Database(const char* apFilename,
                    const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
                    const char* apVfs          /* = nullptr*/) :
-    mFilename(apFilename)
+    mFilename(apFilename ? apFilename : "")
 {
     sqlite3* handle;
     const int ret = sqlite3_open_v2(apFilename, &handle, aFlags, apVfs);
@@ -277,7 +277,6 @@ bool Database::isUnencrypted(const std::string& aFilename)
         fileBuffer.seekg(0, std::ios::beg);
         fileBuffer.read(header, 16);
         fileBuffer.close();
-        // A file shorter than the 16-byte header cannot match the magic string.
         if (fileBuffer.gcount() != 16)
         {
             return false;

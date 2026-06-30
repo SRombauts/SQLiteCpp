@@ -64,6 +64,7 @@ namespace filesystem = experimental::filesystem;
 
 #endif // SQLITECPP_HAVE_STD_EXPERIMENTAL_FILESYSTEM
 
+#include <cstdint>
 #include <memory>
 #include <string.h>
 
@@ -120,28 +121,28 @@ SQLITECPP_API int   getLibVersionNumber() noexcept;
 // Public structure for representing all fields contained within the SQLite header.
 // Official documentation for fields: https://www.sqlite.org/fileformat.html#the_database_header
 struct Header {
-    unsigned char headerStr[16];
-    unsigned int pageSizeBytes;
-    unsigned char fileFormatWriteVersion;
-    unsigned char fileFormatReadVersion;
-    unsigned char reservedSpaceBytes;
-    unsigned char maxEmbeddedPayloadFrac;
-    unsigned char minEmbeddedPayloadFrac;
-    unsigned char leafPayloadFrac;
-    unsigned long fileChangeCounter;
-    unsigned long  databaseSizePages;
-    unsigned long firstFreelistTrunkPage;
-    unsigned long totalFreelistPages;
-    unsigned long schemaCookie;
-    unsigned long schemaFormatNumber;
-    unsigned long defaultPageCacheSizeBytes;
-    unsigned long largestBTreePageNumber;
-    unsigned long databaseTextEncoding;
-    unsigned long userVersion;
-    unsigned long incrementalVaccumMode;
-    unsigned long applicationId;
-    unsigned long versionValidFor;
-    unsigned long sqliteVersion;
+    std::uint8_t headerStr[16];
+    std::uint32_t pageSizeBytes;
+    std::uint8_t fileFormatWriteVersion;
+    std::uint8_t fileFormatReadVersion;
+    std::uint8_t reservedSpaceBytes;
+    std::uint8_t maxEmbeddedPayloadFrac;
+    std::uint8_t minEmbeddedPayloadFrac;
+    std::uint8_t leafPayloadFrac;
+    std::uint32_t fileChangeCounter;
+    std::uint32_t databaseSizePages;
+    std::uint32_t firstFreelistTrunkPage;
+    std::uint32_t totalFreelistPages;
+    std::uint32_t schemaCookie;
+    std::uint32_t schemaFormatNumber;
+    std::uint32_t defaultPageCacheSizeBytes;
+    std::uint32_t largestBTreePageNumber;
+    std::uint32_t databaseTextEncoding;
+    std::uint32_t userVersion;
+    std::uint32_t incrementalVaccumMode;
+    std::uint32_t applicationId;
+    std::uint32_t versionValidFor;
+    std::uint32_t sqliteVersion;
 };
 
 /**

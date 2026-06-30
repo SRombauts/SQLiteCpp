@@ -262,6 +262,87 @@ TEST(Column, stream)
     EXPECT_EQ(content, str);
 }
 
+// COL-01 probe: try to break operator<< with multibyte UTF-8 TEXT.
+// Bytes are written with \x escapes so the test does not depend on the source file encoding.
+TEST(Column, streamUtf8Text)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (msg TEXT)"));
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (?)");
+
+    const std::string utf8 =
+        "caf\xC3\xA9"               // cafe with e-acute (U+00E9)
+        " \xE4\xB8\x96\xE7\x95\x8C"  // CJK "world" (U+4E16 U+754C)
+        " \xF0\x9F\x98\x80";         // grinning face emoji (U+1F600)
+
+    insert.bind(1, utf8);
+    EXPECT_EQ(1, insert.exec());
+
+    SQLite::Statement query(db, "SELECT msg FROM test");
+    ASSERT_TRUE(query.executeStep());
+
+    std::stringstream ss;
+    ss << query.getColumn(0);
+    const std::string streamed = ss.str();
+
+    // operator<< must reproduce the exact UTF-8 byte sequence and agree with getString()
+    EXPECT_EQ(streamed.size(), utf8.size());
+    EXPECT_EQ(streamed, utf8);
+    EXPECT_EQ(streamed, query.getColumn(0).getString());
+}
+
+// COL-01 probe: multibyte UTF-8 TEXT on both sides of an embedded NUL byte.
+TEST(Column, streamUtf8EmbeddedNul)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (msg TEXT)"));
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (?)");
+
+    const char raw[] = "caf\xC3\xA9\x00\xF0\x9F\x98\x80"; // "cafe" + NUL + emoji
+    const std::string utf8(raw, sizeof(raw) - 1);         // keep the embedded NUL, drop the literal terminator
+
+    insert.bind(1, utf8);
+    EXPECT_EQ(1, insert.exec());
+
+    SQLite::Statement query(db, "SELECT msg FROM test");
+    ASSERT_TRUE(query.executeStep());
+
+    std::stringstream ss;
+    ss << query.getColumn(0);
+    const std::string streamed = ss.str();
+
+    EXPECT_EQ(streamed.size(), utf8.size());
+    EXPECT_EQ(streamed, utf8);
+}
+
+// COL-01 probe: the same UTF-8 bytes stored as a BLOB (the case the review flags).
+TEST(Column, streamUtf8Blob)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (data BLOB)"));
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (?)");
+
+    const std::string utf8 =
+        "caf\xC3\xA9"
+        " \xE4\xB8\x96\xE7\x95\x8C"
+        " \xF0\x9F\x98\x80";
+
+    insert.bind(1, utf8.data(), static_cast<int>(utf8.size())); // store as a BLOB
+    EXPECT_EQ(1, insert.exec());
+
+    SQLite::Statement query(db, "SELECT data FROM test");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_TRUE(query.getColumn(0).isBlob());
+
+    std::stringstream ss;
+    ss << query.getColumn(0);
+    const std::string streamed = ss.str();
+
+    EXPECT_EQ(streamed.size(), utf8.size());
+    EXPECT_EQ(streamed, utf8);
+    EXPECT_EQ(streamed, query.getColumn(0).getString());
+}
+
 TEST(Column, shared_ptr)
 {
     // Create a new database

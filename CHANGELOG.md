@@ -306,3 +306,4 @@ Version 3.4.0 - 2026 ???
 - Guard against null C pointers in Exception, Database, and Statement to avoid undefined behavior (#552)
 - Fix Database::isUnencrypted() to compare the full 16-byte header in binary mode (#553)
 - Fix Column::operator<< to stream the exact column bytes via getString() (#556)
+- Restore the Coverity Scan static analysis as a GitHub Actions workflow, replacing the old Travis CI job

@@ -1,0 +1,41 @@
+name: Coverity Scan
+
+# Coverity Scan static analysis. The action needs the secret project token,
+# which forks cannot read, so this runs only on pushes to master in the
+# upstream repository, plus manual dispatch.
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  coverity:
+    name: Ubuntu GCC Coverity Scan
+    runs-on: ubuntu-24.04
+    if: github.repository == 'SRombauts/SQLiteCpp'
+
+    steps:
+    - name: Checkout ${{ github.ref_name }}
+      uses: actions/checkout@v4
+    - run: git submodule update --init --recursive
+
+    - run: mkdir build
+
+    # Configure before Coverity wraps the compilation. The analysis only needs
+    # the library to compile, so the tests and examples are left out.
+    - name: Configure
+      working-directory: build
+      env:
+        CC: gcc
+        CXX: g++
+      run: cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DSQLITECPP_BUILD_TESTS=OFF -DSQLITECPP_BUILD_EXAMPLES=OFF -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF ..
+
+    # Download the Coverity build tool, run the build through cov-build, then
+    # upload the result to https://scan.coverity.com/projects/srombauts-sqlitecpp
+    - name: Coverity Scan
+      uses: vapier/coverity-scan-action@v1
+      with:
+        project: SRombauts/SQLiteCpp
+        email: sebastien.rombauts@gmail.com
+        token: ${{ secrets.COVERITY_SCAN_TOKEN }}
+        command: cmake --build build --config Debug

@@ -55,7 +55,7 @@ Transaction::~Transaction()
         {
             mDatabase.exec("ROLLBACK TRANSACTION");
         }
-        catch (SQLite::Exception&)
+        catch (...)
         {
             // Never throw an exception in a destructor: error if already rollbacked, but no harm is caused by this.
         }

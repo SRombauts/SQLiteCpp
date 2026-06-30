@@ -5,6 +5,8 @@ _Generated 2026-06-26. Scope: include/SQLiteCpp/*.h and src/*.cpp (wrapper only;
 > **Fix tracking:** every findings table and the ranked-fix tables below carry a `Done` column.
 > `[ ]` is open, `[x]` is fixed (the PR that fixed it is noted in the same cell). Tick an item when its fix merges.
 
+> **Merged 2026-06-30/07-01 from a second, independent review pass** (full report `CODE_REVIEW_2.md`; detail in `code-review/findings-*.md`, `code-review/triage.md`, `code-review/verification_2.md`). The two passes agreed on the wrapper internals (the second pass's findings mostly map onto IDs already here). New items the second pass added are tagged **_(2nd pass)_** and extend coverage to three areas this report did not originally include: **build/CI/supply-chain (BLD-*)**, **examples (EXM-*)**, and **test portability (TST-*)** — plus **TXN-08**, the Transaction sibling of the now-fixed Savepoint SP-03. The second pass independently confirmed the SP-02/SP-03 fixes landed by `afa51d3` on this branch.
+
 ## 1. Scoring Matrix
 
 | File | Lines | Complexity | Importance | Bug Risk | Security Risk | Notes |
@@ -86,6 +88,8 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | [ ] | DB-09 | Low | Med | `getHeaderInfo()` reads `gcount()` after `close()` (fragile) |
 | [ ] | DB-10 | Info | High | `execAndGet`/`tableExists` rely on `executeStep()`+`getColumn` throwing (cross-class coupling) |
 | [ ] | DB-11 | Info | Med | `backup()` opens a `Load` source with `READWRITE\|CREATE` (creates empty file instead of failing) |
+| [ ] | DB-12 | Med | High | _(2nd pass)_ Defaulted `Database` move can orphan live `Statement`s / close a busy handle → use-after-free + `SQLITE_BUSY` leak; precondition undocumented & unenforced |
+| [ ] | DB-13 | Low | Med | _(2nd pass)_ `getHeaderInfo().defaultPageCacheSizeBytes` is unsigned but the field is **signed** in the file format (negative = KiB), and the name misleads (refines DB-02/DB-03) |
 
 ### Statement — `code-review/Statement-review.md` (H1 M4 L3 I2)
 | Done | ID | Sev | Conf | Title |
@@ -100,6 +104,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | [ ] | STMT-08 | Low | High | Missing `[[nodiscard]]`/`noexcept` opportunities |
 | [ ] | STMT-09 | Info | High | `bind(uint32_t)`→`int64` is correct (documented non-issue) |
 | [ ] | STMT-10 | Info | High | shared_ptr + finalize ownership model verified correct |
+| [ ] | STMT-11 | Low | High | _(2nd pass)_ Binding by an unknown parameter name reports "column index out of range" instead of "unknown bind parameter" (`sqlite3_bind_parameter_index` returns 0 → `bind(0,…)`); read side already errors clearly |
 
 ### Column — `code-review/Column-review.md` (H1 M3 L3 I2)
 | Done | ID | Sev | Conf | Title |
@@ -118,8 +123,8 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | Done | ID | Sev | Conf | Title |
 |:--:|----|-----|------|-------|
 | [ ] | SP-01 | High | High | Destructor `rollback()`+`release()` always discards work; differs from `Transaction`, conflicts with `release()` "commit" doc (footgun) |
-| [ ] | SP-02 | Med | High | Only `mbReleased` flag; no rolled-back state → fragile double-rollback, can leak a savepoint |
-| [ ] | SP-03 | Med | High | Destructor catches only `SQLite::Exception` → `std::bad_alloc` escapes → `std::terminate` |
+| [x] afa51d3 | SP-02 | Med | High | Only `mbReleased` flag; no rolled-back state → fragile double-rollback, can leak a savepoint _(fixed on this branch: added `mbRolledBack`)_ |
+| [x] afa51d3 | SP-03 | Med | High | Destructor catches only `SQLite::Exception` → `std::bad_alloc` escapes → `std::terminate` _(fixed on this branch: broadened to `catch(...)`)_ |
 | [ ] | SP-04 | Med | High | `quote()` truncates name at first embedded NUL (silent name change) |
 | [ ] | SP-05 | Low | High | Non-movable reference-holding RAII type |
 | [ ] | SP-06 | Low | Med | `rollback()` lacks `[[deprecated]]`; `release()` doc overstates "commit" for nested savepoints |
@@ -135,6 +140,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | [ ] | BKP-04 | Low | Med | Step-failure exception drops extended code + connection message (poorer than init path) |
 | [ ] | BKP-05 | Info | High | No retained `Database` ref → latent use-after-free if a connection is destroyed first (documented design) |
 | [ ] | BKP-06 | Info | High | Deleter swallowing `backup_finish` code verified correct |
+| [ ] | BKP-07 | Low | Med | _(2nd pass)_ Page-count getters return 0 (meaningless) before the first `executeStep()`; undocumented → progress-bar divide-by-zero |
 
 ### Exception — `code-review/Exception-review.md` (M2 L3 I2)
 | Done | ID | Sev | Conf | Title |
@@ -158,6 +164,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | [ ] | TXN-05 | Low | High | Move ops not explicitly declared (Rule-of-5 intent implicit) |
 | [ ] | TXN-06 | Info | High | `Database&` lifetime contract (documented, inherent) |
 | [ ] | TXN-07 | Info | High | `[[nodiscard]]` on the guard type (N/A under C++11) |
+| [ ] | TXN-08 | Med | High | _(2nd pass)_ Destructor (`src/Transaction.cpp:58`) catches only `SQLite::Exception` → `std::bad_alloc` (from building the exception during `ROLLBACK`) escapes → `std::terminate`. **Same defect just fixed for Savepoint in afa51d3 (SP-03), not propagated to Transaction.** Fix: broaden to `catch(...)`. |
 
 ### ExecuteMany — `code-review/ExecuteMany-review.md` (M1 L2 I3)
 | Done | ID | Sev | Conf | Title |
@@ -189,12 +196,39 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | [ ] | HDR-07 | Info | High | `SQLITECPP_VERSION` string is non-canonical `"3.03.03"` (should be `"3.3.3"`) |
 | [ ] | HDR-08 | Info | Med | Macro args not defensively parenthesized |
 
+### Build / CI / supply chain — `code-review/findings-build-examples.md` (H1 M2 L5) — _new unit, 2nd review pass_
+| Done | ID | Sev | Conf | Title |
+|:--:|----|-----|------|-------|
+| [ ] | BLD-001 | High | High | `meson.build:132` appends to undeclared `sqlitecpp_cxx_flags` (rest of file uses `sqlitecpp_args`) → `meson setup -DSQLITECPP_DISABLE_STD_FILESYSTEM=true` aborts. Option unusable; no Meson CI job sets it |
+| [ ] | BLD-002 | Med | High | googletest submodule pinned to a stale 2018 commit (`release-1.8.0-3518-g6910c9d9`), divergent from the Meson `gtest.wrap` (1.15.0); Dependabot tracks only `github-actions` |
+| [ ] | BLD-003 | Med | High | All GitHub Actions pinned to mutable tags (`@v4`, `@v1`/`@v2`); `coverity.yml` hands `COVERITY_SCAN_TOKEN` to an unpinned third-party action; no `permissions:` blocks |
+| [ ] | BLD-004 | Low | Med | Dead `.travis.yml` still ships an encrypted Coverity token; `appveyor.yml` lists retired VS2015 images |
+| [ ] | BLD-005 | Low | Med | `coverage.yml` / `coverity.yml` lack least-privilege `permissions:` blocks |
+| [ ] | BLD-006 | Low | Med | `SQLITECPP_USE_ASAN` forces GCC `-fuse-ld=gold` (absent on many toolchains incl. Windows MinGW); no Actions job runs sanitizers (corroborates the verification ASAN gap) |
+| [ ] | BLD-007 | Low | Med | `examples/example2/CMakeLists.txt` uses `CACHE BOOL "" FORCE` → clobbers consuming-project options; bad embed template |
+| [ ] | BLD-008 | Low | Med | `sqlite3/CMakeLists.txt` shared-build export macro is directory-global + export-only (`add_definitions(-DSQLITE_API=__declspec(dllexport))`) |
+
+### Examples — `code-review/findings-build-examples.md` (M2 L1) — _new unit, 2nd review pass_
+| Done | ID | Sev | Conf | Title |
+|:--:|----|-----|------|-------|
+| [ ] | EXM-001 | Med | High | `examples/example1/main.cpp:415-419` writes `buffer[size]='\0'` where `fread` can fill the buffer → 1-byte out-of-bounds **stack write**; `static_assert` only checks the logo size, not the `fread` cap |
+| [ ] | EXM-002 | Med | High | `examples/example1/main.cpp:441-462` leaks the `FILE*` on the no-row / exception paths (`fclose` only inside `if (executeStep())`) — leaky idiom users copy |
+| [ ] | EXM-003 | Low | High | `examples/example2/src/main.cpp:53,57,61` use double-quoted SQL string literals → break under `SQLITE_DQS=0` (example1 correctly uses single quotes) |
+
+### Tests — _new, 2nd review pass_
+| Done | ID | Sev | Conf | Title |
+|:--:|----|-----|------|-------|
+| [ ] | TST-001 | Low | High | All `tests/*_test.cpp` use the C++17 `[[maybe_unused]]` attribute while the project default is C++11 → clang emits `-Wc++17-attribute-extensions` per `TEST(...)`; a `-Werror` C++11 build would fail. g++ accepts it silently |
+
 ### Cross-cutting themes
 - **Null C-pointer → `std::string`/`runtime_error` UB**: STMT-01, STMT-02, EXC-02, DB-04 (and the read in DB-01). A small, uniform "guard the pointer" pattern fixes all. _(STMT-01, STMT-02, EXC-02, DB-04 fixed in #552; DB-01 fixed in #553.)_
 - **Destructor error handling / terminal-state flags**: TXN-01, TXN-04, SP-02, SP-03 — library-wide habit of swallowing all exceptions and lacking a "finished" flag; route through `SQLITECPP_ASSERT`, broaden to `catch(...)`, track terminal state.
 - **`SQLITECPP_NODISCARD` macro**: requested by STMT-08, COL-09, BKP-01/03, EXC-03 — one feature-gated macro (like the existing `SQLITECPP_PURE_FUNC`) serves all; functionally important for `Backup::executeStep`.
 - **Fixed-width / sign correctness in header parsing**: DB-02 + DB-03.
 - **Move-semantics consistency**: BKP-02, SP-05, TXN-05.
+- **Throw-from-destructor not propagated** _(2nd pass)_: SP-03 was fixed on this branch (afa51d3) but the identical defect remains in `Transaction` (**TXN-08**). One `catch(...)` finishes the job the branch started.
+- **Supply-chain / CI hardening** _(2nd pass, new scope)_: BLD-002 (stale gtest), BLD-003/BLD-005 (pin actions to SHAs + add `permissions:`), BLD-004 (dead Travis token), BLD-006 (gold linker + add a Linux ASan/UBSan CI job — also closes the verification ASAN gap).
+- **Examples teach footguns** _(2nd pass, new scope)_: EXM-001 (OOB write), EXM-002 (`FILE*` leak), EXM-003 (double-quoted SQL) are copy-paste hazards in canonical teaching code.
 
 ## 4. Ranked Fixes
 
@@ -225,6 +259,11 @@ Ranked by Severity × Likelihood × (inverse) Effort, with confidence. **P0** = 
 | [ ] | 16 | Reject savepoint names with embedded NUL (or document truncation) | SP-04 | `src/Savepoint.cpp` | S |
 | [ ] | 17 | Document `getChanges()` connection-scope (or cache per-statement) | STMT-03 | `include/SQLiteCpp/Statement.h`, `src/Statement.cpp` | S |
 | [ ] | 18 | Hand-write `Statement` move-assignment to mirror the move ctor (scrub source) | STMT-04 | `include/SQLiteCpp/Statement.h`, `src/Statement.cpp` | S |
+| [ ] | 32 | _(2nd pass)_ Broaden `~Transaction()` to `catch(...)` — finishes the SP-03 fix that wasn't propagated | TXN-08 | `src/Transaction.cpp` | S |
+| [ ] | 33 | _(2nd pass)_ `meson.build`: `sqlitecpp_cxx_flags` → `sqlitecpp_args` (Meson build broken for `SQLITECPP_DISABLE_STD_FILESYSTEM`) | BLD-001 | `meson.build` | S |
+| [ ] | 34 | _(2nd pass)_ example1: cap `fread` at `sizeof(buffer)-1` (or drop NUL write) — fixes 1-byte stack overflow | EXM-001 | `examples/example1/main.cpp` | S |
+| [ ] | 35 | _(2nd pass)_ example1: RAII the `FILE*` (or unconditional `fclose`) — fixes leak on no-row/exception path | EXM-002 | `examples/example1/main.cpp` | S |
+| [ ] | 36 | _(2nd pass)_ Document + enforce "no outstanding statements" on `Database` move/close (assert count==0) | DB-12 | `include/SQLiteCpp/Database.h` | M |
 
 ### P2 — nice to have (API / modernization / docs / build hygiene)
 | Done | # | Fix | Finding(s) | Effort |
@@ -242,6 +281,16 @@ Ranked by Severity × Likelihood × (inverse) Effort, with confidence. **P0** = 
 | [ ] | 29 | Version string `"3.03.03"` → `"3.3.3"` (sync with `sqlitecpp-release`) | HDR-07 | S |
 | [ ] | 30 | `backup()` `Load` should open source `READONLY`; seed `Exception` extended code from `ret`; doc/typo fixes | DB-11, EXC-01, EXC-06 | S |
 | [ ] | 31 | Normalize line endings to LF / address cpplint style set | cpplint | S |
+| [ ] | 37 | _(2nd pass)_ Pin GitHub Actions to commit SHAs; add least-privilege `permissions:` blocks | BLD-003, BLD-005 | M |
+| [ ] | 38 | _(2nd pass)_ Bump googletest submodule to a current tag (≈1.15.0, matching the wrap) | BLD-002 | S |
+| [ ] | 39 | _(2nd pass)_ Drop forced `-fuse-ld=gold`; add a Linux ASan/UBSan CI job (closes the verification ASAN gap) | BLD-006 | M |
+| [ ] | 40 | _(2nd pass)_ Remove dead `.travis.yml` (rotate the embedded Coverity token) + retired `appveyor.yml` images | BLD-004 | S |
+| [ ] | 41 | _(2nd pass)_ example2: single-quote SQL string literals (DQS-safe) | EXM-003 | S |
+| [ ] | 42 | _(2nd pass)_ Friendlier error when binding an unknown parameter name | STMT-11 | S |
+| [ ] | 43 | _(2nd pass)_ Document Backup page-counts are 0 before the first `executeStep()` | BKP-07 | S |
+| [ ] | 44 | _(2nd pass)_ `defaultPageCacheSizeBytes` → signed `int32_t` (negative = KiB) | DB-13 | S |
+| [ ] | 45 | _(2nd pass)_ Raise tests to C++17 or drop C++17 `[[maybe_unused]]` at C++11 | TST-001 | S |
+| [ ] | 46 | _(2nd pass)_ `examples/example2/CMakeLists.txt`: drop `FORCE`; `sqlite3` export via `target_compile_definitions(... PRIVATE)` | BLD-007, BLD-008 | S |
 
 > **Note on EXC-01 / EXC-related test churn:** seeding the extended code from `ret` changes existing `tests/Exception_test.cpp` expectations (`-1`), so it's a deliberate API decision to confirm before applying.
 

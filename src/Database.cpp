@@ -271,19 +271,24 @@ bool Database::isUnencrypted(const std::string& aFilename)
     }
 
     std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
-    char header[16];
+    char header[16] = {};
     if (fileBuffer.is_open())
     {
         fileBuffer.seekg(0, std::ios::beg);
-        fileBuffer.getline(header, 16);
+        fileBuffer.read(header, 16);
         fileBuffer.close();
+        // A file shorter than the 16-byte header cannot match the magic string.
+        if (fileBuffer.gcount() != 16)
+        {
+            return false;
+        }
     }
     else
     {
         throw SQLite::Exception("Error opening file: " + aFilename);
     }
 
-    return strncmp(header, "SQLite format 3\000", 16) == 0;
+    return memcmp(header, "SQLite format 3\000", 16) == 0;
 }
 
 // Parse header data from a database.

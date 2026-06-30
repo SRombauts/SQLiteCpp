@@ -54,7 +54,7 @@ void execute_many(Database& aDatabase, const char* apQuery, Arg&& aArg, Types&&.
 }
 
 /**
- * \brief Convenience function to reset a statement and call bind_exec to 
+ * \brief Convenience function to reset a statement and call bind_exec to
  * bind new values to the statement and execute it
  *
  * This feature requires a c++14 capable compiler.
@@ -66,6 +66,7 @@ template <typename TupleT>
 void reset_bind_exec(Statement& apQuery, TupleT&& aTuple)
 {
     apQuery.reset();
+    apQuery.clearBindings();
     bind_exec(apQuery, std::forward<TupleT>(aTuple));
 }
 

@@ -308,3 +308,4 @@ Version 3.4.0 - 2026 ???
 - Fix execute_many() to clear stale bindings between parameter sets (#554)
 - Fix Column::operator<< to stream the exact column bytes via getString() (#556)
 - Restore the Coverity Scan static analysis as a GitHub Actions workflow, replacing the old Travis CI job
+- Fix Database::getHeaderInfo() signed-shift UB and use fixed-width types for the Header struct (#558)

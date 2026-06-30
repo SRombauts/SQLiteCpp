@@ -104,7 +104,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 ### Column — `code-review/Column-review.md` (H1 M3 L3 I2)
 | Done | ID | Sev | Conf | Title |
 |:--:|----|-----|------|-------|
-| [ ] | COL-01 | High | Med | `operator<<` writes `getText()` data with `getBytes()` length — wrong count for BLOBs + unspecified arg eval order |
+| [x] #556 | COL-01 | High | Med | `operator<<` writes `getText()` data with `getBytes()` length — wrong count for BLOBs + unspecified arg eval order |
 | [ ] | COL-02 | Med | High | All `noexcept` getters deref raw `sqlite3_stmt*` with no row/index guard (UB by design; doc-only contract) |
 | [ ] | COL-03 | Med | High | `getUInt()` truncates a 64-bit value to 32 bits |
 | [ ] | COL-04 | Med | High | Implicit conversion operators: cross-compiler ambiguity + silent narrowing |
@@ -214,7 +214,7 @@ Ranked by Severity × Likelihood × (inverse) Effort, with confidence. **P0** = 
 | Done | # | Fix | Finding(s) | Files | Effort |
 |:--:|---|-----|-----------|-------|--------|
 | [ ] | 7 | Cast bytes to `uint32_t` before shifting in `getHeaderInfo()`; move `Header` to fixed-width types | DB-02, DB-03 | `src/Database.cpp`, `include/SQLiteCpp/Database.h` | M |
-| [ ] | 8 | Fix `operator<<` byte-count/eval-order (use `getString()` or sequence text-then-bytes) + BLOB test | COL-01 | `src/Column.cpp`, `tests/Column_test.cpp` | S |
+| [x] #556 | 8 | Fix `operator<<` byte-count/eval-order (use `getString()` or sequence text-then-bytes) + BLOB test | COL-01 | `src/Column.cpp`, `tests/Column_test.cpp` | S |
 | [ ] | 9 | Broaden Savepoint destructor to `catch(...)`; add terminal-state flag; minimize dtor commands | SP-02, SP-03 | `src/Savepoint.cpp`, `include/SQLiteCpp/Savepoint.h` | M |
 | [ ] | 10 | Route swallowed destructor errors through `SQLITECPP_ASSERT`; add a single "finished" flag (Transaction + Savepoint) | TXN-01, TXN-04 | `src/Transaction.cpp`, `src/Savepoint.cpp` | M |
 | [ ] | 11 | Reject/throw on bind sizes > `INT_MAX` in blob/text binds | STMT-05 | `src/Statement.cpp` | S |

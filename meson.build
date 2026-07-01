@@ -129,7 +129,7 @@ endif
 
 ## C++17 disable the support for std::filesystem (by default off)
 if get_option('SQLITECPP_DISABLE_STD_FILESYSTEM')
-    sqlitecpp_cxx_flags += ['-DSQLITECPP_DISABLE_STD_FILESYSTEM']
+    sqlitecpp_args += ['-DSQLITECPP_DISABLE_STD_FILESYSTEM']
 endif
 
 ## get the user option for the SQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL

@@ -83,7 +83,7 @@ Scores 1–5 (5 = highest/worst). Compact view:
 
 ## 4. Cross-cutting themes (one fix resolves several)
 
-- **[ ] T1 — Throw-from-destructor safety is incomplete.** The branch's own headline fix (Savepoint `catch (...)`, afa51d3) was **not propagated to `Transaction`** (TX-001), which still catches only `SQLite::Exception&` and can `std::terminate` on `bad_alloc`. Audit all RAII destructors for the same pattern. *Resolves TX-001; confirms SP design.*
+- **[x] #559 T1 — Throw-from-destructor safety is incomplete.** The branch's own headline fix (Savepoint `catch (...)`, afa51d3) was **not propagated to `Transaction`** (TX-001), which still catches only `SQLite::Exception&` and can `std::terminate` on `bad_alloc`. Audit all RAII destructors for the same pattern. *Resolves TX-001; confirms SP design.*
 - **[ ] T2 — `size_t`→`int` narrowing without overflow guards.** ST-004 (bind/bindNoCopy string + prepare), DB-002 (rekey), and the lone `-Wsign-conversion` hit COL-001 (`Column.cpp:101`) share one root. A small checked-narrowing helper covers all. *Resolves ST-004, DB-002, COL-001.*
 - **[ ] T3 — Defaulted moves leave inconsistent/dangerous moved-from state.** ST-001 (Statement move-assign copies raw ptr + stale flags) and DB-001 (Database move with live Statements) are the same root cause; both need a user-defined move-assignment / documented-and-enforced precondition. *Resolves ST-001, DB-001.*
 - **[ ] T4 — Inconsistent `Exception` construction loses error context.** BK-001 uses `sqlite3_errstr(res)` (no message, no extended code) and ST-002 reports a misleading message; standardize on `Exception(sqlite3*, ret)`. *Resolves BK-001, ST-002.*
@@ -103,7 +103,7 @@ Scores 1–5 (5 = highest/worst). Compact view:
 
 | Done | ID | Sev / Conf | Effort | Breaking? | Files | Fix |
 |:--:|----|-----------|:--:|----|-------|-----|
-| [ ] | **TX-001** | med / high | S | Behavior (catches more); add test | `src/Transaction.cpp:58` | Broaden `catch (SQLite::Exception&)` → `catch (...)`, matching the just-landed Savepoint fix. |
+| [x] #559 | **TX-001** | med / high | S | Behavior (catches more); add test | `src/Transaction.cpp:58` | Broaden `catch (SQLite::Exception&)` → `catch (...)`, matching the just-landed Savepoint fix. |
 | [ ] | **BLD-001** | high / high | S | No | `meson.build:132` | `sqlitecpp_cxx_flags` → `sqlitecpp_args`; Meson build is currently broken for `SQLITECPP_DISABLE_STD_FILESYSTEM`. |
 | [ ] | **DB-005** | med / med | M | **Behavior** (Load no longer creates) | `src/Database.cpp:365-379` | Open the `Load` source `OPEN_READONLY`; today a bad source path silently creates an empty DB and **wipes the destination**. Add a test. |
 | [ ] | **EXM-001** | med / high | S | No | `examples/example1/main.cpp:415-419` | Cap `fread` at `sizeof(buffer)-1` (or drop the NUL write) — current code can write 1 byte past a stack buffer. |

@@ -311,3 +311,4 @@ Version 3.4.0 - 2026 ???
 - Fix Database::getHeaderInfo() signed-shift UB and use fixed-width types for the Header struct (#558)
 - Fix Savepoint destructor to catch all exceptions and track rollback state to avoid std::terminate (#559)
 - Fix Transaction destructor to catch all exceptions to avoid std::terminate (#559)
+- Fix the Meson build when the SQLITECPP_DISABLE_STD_FILESYSTEM option is enabled (#560)

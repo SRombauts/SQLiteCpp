@@ -78,8 +78,8 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 | Done | ID | Sev | Conf | Title |
 |:--:|----|-----|------|-------|
 | [x] #553 | DB-01 | High | High | `isUnencrypted()` `getline()` makes the 16-byte magic compare unreliable + reads uninitialized stack on short files (security gate) |
-| [ ] | DB-02 | Med | High | `getHeaderInfo()` big-endian assembly is signed left-shift **UB**; sign-extends on LP64 |
-| [ ] | DB-03 | Med | High | `Header` struct uses platform-variable `unsigned long` → cross-platform field-width mismatch |
+| [x] #558 | DB-02 | Med | High | `getHeaderInfo()` big-endian assembly is signed left-shift **UB**; sign-extends on LP64 |
+| [x] #558 | DB-03 | Med | High | `Header` struct uses platform-variable `unsigned long` → cross-platform field-width mismatch |
 | [x] #552 | DB-04 | Med | High | Constructor `mFilename(apFilename)` is UB on a null `const char*` |
 | [ ] | DB-05 | Med | Med | `key()`/`rekey()` declared `const` but mutate the database |
 | [ ] | DB-06 | Low | High | `loadExtension()` discards SQLite's error message (passes `0` as `pzErrMsg`) |
@@ -224,7 +224,7 @@ Full per-finding detail (description, impact, proposed fix, file:line) is in `co
 - **Null C-pointer → `std::string`/`runtime_error` UB**: STMT-01, STMT-02, EXC-02, DB-04 (and the read in DB-01). A small, uniform "guard the pointer" pattern fixes all. _(STMT-01, STMT-02, EXC-02, DB-04 fixed in #552; DB-01 fixed in #553.)_
 - **Destructor error handling / terminal-state flags**: TXN-01, TXN-04, SP-02, SP-03 — library-wide habit of swallowing all exceptions and lacking a "finished" flag; route through `SQLITECPP_ASSERT`, broaden to `catch(...)`, track terminal state.
 - **`SQLITECPP_NODISCARD` macro**: requested by STMT-08, COL-09, BKP-01/03, EXC-03 — one feature-gated macro (like the existing `SQLITECPP_PURE_FUNC`) serves all; functionally important for `Backup::executeStep`.
-- **Fixed-width / sign correctness in header parsing**: DB-02 + DB-03.
+- **Fixed-width / sign correctness in header parsing**: DB-02 + DB-03. _(Both fixed in #558: `getHeaderInfo()` now assembles via a `uint32_t`-casting `readBE32` helper, and `Header` uses fixed-width `<cstdint>` types.)_
 - **Move-semantics consistency**: BKP-02, SP-05, TXN-05.
 - **Throw-from-destructor not propagated** _(2nd pass)_: SP-03 was fixed on this branch (afa51d3) but the identical defect remains in `Transaction` (**TXN-08**). One `catch(...)` finishes the job the branch started.
 - **Supply-chain / CI hardening** _(2nd pass, new scope)_: BLD-002 (stale gtest), BLD-003/BLD-005 (pin actions to SHAs + add `permissions:`), BLD-004 (dead Travis token), BLD-006 (gold linker + add a Linux ASan/UBSan CI job — also closes the verification ASAN gap).
@@ -247,7 +247,7 @@ Ranked by Severity × Likelihood × (inverse) Effort, with confidence. **P0** = 
 ### P1 — should fix (correctness / robustness / UB-by-design)
 | Done | # | Fix | Finding(s) | Files | Effort |
 |:--:|---|-----|-----------|-------|--------|
-| [ ] | 7 | Cast bytes to `uint32_t` before shifting in `getHeaderInfo()`; move `Header` to fixed-width types | DB-02, DB-03 | `src/Database.cpp`, `include/SQLiteCpp/Database.h` | M |
+| [x] #558 | 7 | Cast bytes to `uint32_t` before shifting in `getHeaderInfo()`; move `Header` to fixed-width types | DB-02, DB-03 | `src/Database.cpp`, `include/SQLiteCpp/Database.h` | M |
 | [x] #556 | 8 | Fix `operator<<` byte-count/eval-order (use `getString()` or sequence text-then-bytes) + BLOB test | COL-01 | `src/Column.cpp`, `tests/Column_test.cpp` | S |
 | [ ] | 9 | Broaden Savepoint destructor to `catch(...)`; add terminal-state flag; minimize dtor commands | SP-02, SP-03 | `src/Savepoint.cpp`, `include/SQLiteCpp/Savepoint.h` | M |
 | [ ] | 10 | Route swallowed destructor errors through `SQLITECPP_ASSERT`; add a single "finished" flag (Transaction + Savepoint) | TXN-01, TXN-04 | `src/Transaction.cpp`, `src/Savepoint.cpp` | M |

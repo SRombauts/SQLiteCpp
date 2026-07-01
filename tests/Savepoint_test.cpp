@@ -105,6 +105,31 @@ TEST(Savepoint, commitRollback)
     EXPECT_EQ(1, nbRows);
 }
 
+TEST(Savepoint, rollbackToThenRelease)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+
+    {
+        SQLite::Savepoint savepoint(db, "sp");
+
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'rolled back')"));
+
+        // A manual rollback leaves the savepoint on the stack, so releasing it afterwards succeeds.
+        savepoint.rollbackTo();
+        EXPECT_NO_THROW(savepoint.release());
+
+        // end of scope: already released, the destructor must do nothing and not throw
+    }
+
+    // The rolled-back insert must not be persisted
+    SQLite::Statement query(db, "SELECT COUNT(*) FROM test");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_EQ(0, query.getColumn(0).getInt());
+}
+
 TEST(Savepoint, destructorSwallowsException)
 {
     // Create a new database

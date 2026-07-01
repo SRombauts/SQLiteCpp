@@ -90,9 +90,10 @@ public:
     void rollback() { rollbackTo(); }
 
 private:
-    Database&   mDatabase;          ///< Reference to the SQLite Database Connection
-    std::string msName;             ///< Name of the Savepoint
-    bool        mbReleased = false; ///< True when release has been called
+    Database&   mDatabase;            ///< Reference to the SQLite Database Connection
+    std::string msName;               ///< Name of the Savepoint
+    bool        mbReleased = false;   ///< True when release has been called
+    bool        mbRolledBack = false; ///< True when a rollback to the savepoint has been done
 };
 
 }  // namespace SQLite

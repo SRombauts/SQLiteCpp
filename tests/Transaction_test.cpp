@@ -119,3 +119,32 @@ TEST(Transaction, commitRollback)
     }
     EXPECT_EQ(1, nbRows);
 }
+
+TEST(Transaction, finishedAfterRollback)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+
+    {
+        // Begin transaction
+        SQLite::Transaction transaction(db);
+
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'rolled back')"));
+
+        // A manual rollback marks the transaction as finished
+        transaction.rollback();
+
+        // Once finished, further commit()/rollback() calls are rejected
+        EXPECT_THROW(transaction.commit(), SQLite::Exception);
+        EXPECT_THROW(transaction.rollback(), SQLite::Exception);
+
+        // end of scope: the destructor must do nothing (no second ROLLBACK) and not throw
+    }
+
+    // The rolled-back insert must not be persisted
+    SQLite::Statement query(db, "SELECT COUNT(*) FROM test");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_EQ(0, query.getColumn(0).getInt());
+}

@@ -92,7 +92,7 @@ public:
 
 private:
     Database&   mDatabase;              ///< Reference to the SQLite Database Connection
-    bool        mbCommited = false;     ///< True when commit has been called
+    bool        mbFinished = false;     ///< True when the transaction has been committed or rolled back
 };
 
 }  // namespace SQLite

@@ -49,15 +49,20 @@ Transaction::Transaction(Database &aDatabase) :
 // Safely rollback the transaction if it has not been committed.
 Transaction::~Transaction()
 {
-    if (false == mbCommited)
+    if (false == mbFinished)
     {
         try
         {
             mDatabase.exec("ROLLBACK TRANSACTION");
         }
+        catch (SQLite::Exception& e)
+        {
+            // Never throw an exception in a destructor: report it through the assertion handler instead.
+            SQLITECPP_ASSERT(false, e.what());
+        }
         catch (...)
         {
-            // Never throw an exception in a destructor: error if already rollbacked, but no harm is caused by this.
+            // Never throw an exception in a destructor.
         }
     }
 }
@@ -65,10 +70,10 @@ Transaction::~Transaction()
 // Commit the transaction.
 void Transaction::commit()
 {
-    if (false == mbCommited)
+    if (false == mbFinished)
     {
         mDatabase.exec("COMMIT TRANSACTION");
-        mbCommited = true;
+        mbFinished = true;
     }
     else
     {
@@ -79,9 +84,10 @@ void Transaction::commit()
 // Rollback the transaction
 void Transaction::rollback()
 {
-    if (false == mbCommited)
+    if (false == mbFinished)
     {
         mDatabase.exec("ROLLBACK TRANSACTION");
+        mbFinished = true;
     }
     else
     {

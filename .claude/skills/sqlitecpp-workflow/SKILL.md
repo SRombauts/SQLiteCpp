@@ -7,6 +7,28 @@ description: >-
 
 # SQLiteCpp Workflow
 
+## Task branch, commits, and publishing
+
+Every change follows the same shape. Do NOT commit fixes onto `master`, `code-review`, or
+whatever branch you happen to be on.
+
+1. **Branch.** Create a dedicated task branch from `master` (see [[sqlitecpp-git-branching]] for
+   naming). One branch per issue/fix, even when several fixes are in flight.
+2. **Code fix commit.** Commit the code (and its tests) as its own commit. No `CHANGELOG.md` in
+   this commit. Bug-fix diffs stay comment-free.
+3. **CHANGELOG commit.** Commit the `CHANGELOG.md` entry separately (see below). Keep it out of the
+   code-fix commit.
+4. **Publish.** Only push the branch and open the PR when the user says to **handle it auto** (or
+   has otherwise pre-authorized publishing). Otherwise stop after the local commits and **ask for
+   permission to publish** (push + `gh pr create`). Committing locally is not publishing.
+
+### Why the code fix and the CHANGELOG are separate commits
+The CHANGELOG entry needs the PR number (`(#NNN)`), which you can guess upfront but do not truly
+know until the PR exists. Keeping it in its own commit means:
+- the code fix is ready to review without waiting on a PR number, and
+- CHANGELOG lines do not collide when several bug fixes are tackled in parallel (every PR touches
+  the same few lines of `CHANGELOG.md`, so shared code-fix commits would conflict constantly).
+
 ## Change checklist
 - [ ] Public API has Doxygen (`@brief`, `@param`, `@return`, `@throw`).
 - [ ] Tests added under `tests/`.
@@ -14,9 +36,10 @@ description: >-
 - [ ] `CHANGELOG.md` updated for user-facing changes.
 
 ## CHANGELOG conventions
-Update `CHANGELOG.md` in the same PR that makes the change, not in a later batch. Add one line per
-PR under the current unreleased version heading (`Version X.Y.Z - <year> ???`). Create that heading
-if it does not exist yet.
+Update `CHANGELOG.md` in the same PR that makes the change, not in a later batch, but in its **own
+commit** separate from the code fix (see the publishing section above). Add one line per PR under
+the current unreleased version heading (`Version X.Y.Z - <year> ???`). Create that heading if it
+does not exist yet.
 
 - One bullet per PR: `- <description> (#NNN)`. The PR number is the last token, in parentheses.
 - Write in the imperative mood, present tense: "Add", "Fix", "Update", "Remove". Not "Added",

@@ -130,6 +130,33 @@ TEST(Savepoint, rollbackToThenRelease)
     EXPECT_EQ(0, query.getColumn(0).getInt());
 }
 
+TEST(Savepoint, autoRollbackAfterManualRollbackTo)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+    db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+
+    {
+        SQLite::Savepoint savepoint(db, "sp");
+
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'first')"));
+
+        // Execute a manual rollback
+        savepoint.rollbackTo();
+
+        // Insert a second value after the manual rollback, without releasing the savepoint
+        EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, 'second')"));
+
+        // end of scope: automatic rollback must also discard the second insert
+    }
+
+    // Nothing must have been persisted
+    SQLite::Statement query(db, "SELECT COUNT(*) FROM test");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_EQ(0, query.getColumn(0).getInt());
+}
+
 TEST(Savepoint, destructorSwallowsException)
 {
     // Create a new database

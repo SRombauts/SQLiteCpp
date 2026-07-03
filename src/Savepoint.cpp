@@ -40,10 +40,7 @@ Savepoint::~Savepoint()
     {
         try
         {
-            if (!mbRolledBack)
-            {
-                rollbackTo();
-            }
+            rollbackTo();
             release();
         }
         catch (...)

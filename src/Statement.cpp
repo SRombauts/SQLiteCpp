@@ -365,11 +365,9 @@ Statement::RowIterator& Statement::RowIterator::operator++()
     return *this;
 }
 
-Statement::RowIterator Statement::RowIterator::operator++(int)
+void Statement::RowIterator::operator++(int)
 {
-    const RowIterator tmp(*this);
     ++(*this);
-    return tmp;
 }
 
 bool Statement::RowIterator::operator==(const RowIterator& aOther) const

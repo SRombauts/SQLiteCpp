@@ -697,8 +697,8 @@ public:
         /// Advance to the next row. Becomes the end sentinel when no rows remain.
         SQLITECPP_API RowIterator& operator++();
 
-        /// Post-increment: advance to the next row, return a copy of the iterator before advancing.
-        SQLITECPP_API RowIterator operator++(int);
+        /// Post-increment: advance to the next row.
+        SQLITECPP_API void operator++(int);
 
         /// Return true when both iterators refer to the same statement, or are both the end sentinel.
         SQLITECPP_API bool operator==(const RowIterator& aOther) const;

@@ -700,10 +700,10 @@ public:
         /// Post-increment: advance to the next row, return a copy of the iterator before advancing.
         SQLITECPP_API RowIterator operator++(int);
 
-        /// Return true when two iterators point to the same row.
+        /// Return true when both iterators refer to the same statement, or are both the end sentinel.
         SQLITECPP_API bool operator==(const RowIterator& aOther) const;
 
-        /// Return true when two iterators do not point to the same row.
+        /// Return true when the iterators do not refer to the same statement.
         SQLITECPP_API bool operator!=(const RowIterator& aOther) const;
 
         /// Dereference to the Statement, giving access to getColumn().

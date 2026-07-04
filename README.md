@@ -354,6 +354,19 @@ catch (std::exception& e)
 }
 ```
 
+`Statement` also provides a `RowIterator`, so the loop above can be written as a range-based `for`:
+
+```C++
+for (auto&& row : query)
+{
+    int         id      = row.getColumn(0);
+    const char* value   = row.getColumn(1);
+    int         size    = row.getColumn(2);
+
+    std::cout << "row: " << id << ", " << value << ", " << size << std::endl;
+}
+```
+
 ### The second sample shows how to manage a transaction:
 
 ```C++

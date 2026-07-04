@@ -86,4 +86,11 @@ TEST(Exception, constructor)
         EXPECT_EQ(ex.getExtendedErrorCode(), -1);
         EXPECT_STREQ(ex.getErrorStr(), "unknown error");
     }
+    {
+        // A null message must not be forwarded as-is to std::runtime_error (would be UB)
+        const SQLite::Exception ex(static_cast<const char*>(nullptr), 1);
+        EXPECT_STREQ(ex.what(), "");
+        EXPECT_EQ(ex.getErrorCode(), 1);
+        EXPECT_EQ(ex.getExtendedErrorCode(), -1);
+    }
 }

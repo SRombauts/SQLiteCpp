@@ -13,7 +13,7 @@ jobs:
         - {
             name: "Windows Latest MSVC",
             os: windows-latest,
-            generator: "Visual Studio 17 2022",
+            generator: "Visual Studio 18 2026",
             build_type: "Debug",
             cc: "cl", cxx: "cl",
             extra_path: "",

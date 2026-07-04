@@ -116,7 +116,8 @@ int Column::getBytes() const noexcept
 // Standard std::ostream inserter
 std::ostream& operator<<(std::ostream& aStream, const Column& aColumn)
 {
-    aStream.write(aColumn.getText(), aColumn.getBytes());
+    const std::string value = aColumn.getString();
+    aStream.write(value.data(), static_cast<std::streamsize>(value.size()));
     return aStream;
 }
 

@@ -22,5 +22,10 @@ description: SQLiteCpp branch naming and creation rules for starting tasks, issu
   - `feature-short-description`
 - Issue ID is optional; do not use a `000-` prefix.
 
+## Maintenance branch conventions
+- Updating the bundled SQLite3: `update-sqlite-X.Y.Z` (e.g. `update-sqlite-3.52.2`).
+  See [[sqlitecpp-update-sqlite]].
+- Cutting a release: `release-X.Y.Z`. See [[sqlitecpp-release]].
+
 ## Branch-only requests
 - If the user only requests a branch, create it and stop (no file changes).

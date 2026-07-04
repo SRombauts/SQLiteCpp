@@ -64,7 +64,7 @@ Database::Database(const char* apFilename,
                    const int   aFlags         /* = SQLite::OPEN_READONLY*/,
                    const int   aBusyTimeoutMs /* = 0 */,
                    const char* apVfs          /* = nullptr*/) :
-    mFilename(apFilename)
+    mFilename(apFilename ? apFilename : "")
 {
     sqlite3* handle;
     const int ret = sqlite3_open_v2(apFilename, &handle, aFlags, apVfs);
@@ -271,19 +271,23 @@ bool Database::isUnencrypted(const std::string& aFilename)
     }
 
     std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
-    char header[16];
+    char header[16] = {};
     if (fileBuffer.is_open())
     {
         fileBuffer.seekg(0, std::ios::beg);
-        fileBuffer.getline(header, 16);
+        fileBuffer.read(header, 16);
         fileBuffer.close();
+        if (fileBuffer.gcount() != 16)
+        {
+            return false;
+        }
     }
     else
     {
         throw SQLite::Exception("Error opening file: " + aFilename);
     }
 
-    return strncmp(header, "SQLite format 3\000", 16) == 0;
+    return memcmp(header, "SQLite format 3\000", 16) == 0;
 }
 
 // Parse header data from a database.
@@ -325,97 +329,35 @@ Header Database::getHeaderInfo(const std::string& aFilename)
         throw SQLite::Exception("Invalid or encrypted SQLite header in file " + aFilename);
     }
 
-    h.pageSizeBytes = (buf[16] << 8) | buf[17];
+    const auto readBE32 = [&buf](std::size_t offset) -> std::uint32_t
+    {
+        return (static_cast<std::uint32_t>(buf[offset])     << 24) |
+               (static_cast<std::uint32_t>(buf[offset + 1]) << 16) |
+               (static_cast<std::uint32_t>(buf[offset + 2]) <<  8) |
+               (static_cast<std::uint32_t>(buf[offset + 3]) <<  0);
+    };
+
+    h.pageSizeBytes = (static_cast<std::uint32_t>(buf[16]) << 8) | static_cast<std::uint32_t>(buf[17]);
     h.fileFormatWriteVersion = buf[18];
     h.fileFormatReadVersion = buf[19];
     h.reservedSpaceBytes = buf[20];
     h.maxEmbeddedPayloadFrac = buf[21];
     h.minEmbeddedPayloadFrac = buf[22];
     h.leafPayloadFrac = buf[23];
-
-    h.fileChangeCounter =
-        (buf[24] << 24) |
-        (buf[25] << 16) |
-        (buf[26] << 8)  |
-        (buf[27] << 0);
-
-    h.databaseSizePages =
-        (buf[28] << 24) |
-        (buf[29] << 16) |
-        (buf[30] << 8)  |
-        (buf[31] << 0);
-
-    h.firstFreelistTrunkPage =
-        (buf[32] << 24) |
-        (buf[33] << 16) |
-        (buf[34] << 8)  |
-        (buf[35] << 0);
-
-    h.totalFreelistPages =
-        (buf[36] << 24) |
-        (buf[37] << 16) |
-        (buf[38] << 8)  |
-        (buf[39] << 0);
-
-    h.schemaCookie =
-        (buf[40] << 24) |
-        (buf[41] << 16) |
-        (buf[42] << 8)  |
-        (buf[43] << 0);
-
-    h.schemaFormatNumber =
-        (buf[44] << 24) |
-        (buf[45] << 16) |
-        (buf[46] << 8)  |
-        (buf[47] << 0);
-
-    h.defaultPageCacheSizeBytes =
-        (buf[48] << 24) |
-        (buf[49] << 16) |
-        (buf[50] << 8)  |
-        (buf[51] << 0);
-
-    h.largestBTreePageNumber =
-        (buf[52] << 24) |
-        (buf[53] << 16) |
-        (buf[54] << 8)  |
-        (buf[55] << 0);
-
-    h.databaseTextEncoding =
-        (buf[56] << 24) |
-        (buf[57] << 16) |
-        (buf[58] << 8)  |
-        (buf[59] << 0);
-
-    h.userVersion =
-        (buf[60] << 24) |
-        (buf[61] << 16) |
-        (buf[62] << 8)  |
-        (buf[63] << 0);
-
-    h.incrementalVaccumMode =
-        (buf[64] << 24) |
-        (buf[65] << 16) |
-        (buf[66] << 8)  |
-        (buf[67] << 0);
-
-    h.applicationId =
-        (buf[68] << 24) |
-        (buf[69] << 16) |
-        (buf[70] << 8)  |
-        (buf[71] << 0);
-
-    h.versionValidFor =
-        (buf[92] << 24) |
-        (buf[93] << 16) |
-        (buf[94] << 8)  |
-        (buf[95] << 0);
-
-    h.sqliteVersion =
-        (buf[96] << 24) |
-        (buf[97] << 16) |
-        (buf[98] << 8)  |
-        (buf[99] << 0);
+    h.fileChangeCounter = readBE32(24);
+    h.databaseSizePages = readBE32(28);
+    h.firstFreelistTrunkPage = readBE32(32);
+    h.totalFreelistPages = readBE32(36);
+    h.schemaCookie = readBE32(40);
+    h.schemaFormatNumber = readBE32(44);
+    h.defaultPageCacheSizeBytes = readBE32(48);
+    h.largestBTreePageNumber = readBE32(52);
+    h.databaseTextEncoding = readBE32(56);
+    h.userVersion = readBE32(60);
+    h.incrementalVaccumMode = readBE32(64);
+    h.applicationId = readBE32(68);
+    h.versionValidFor = readBE32(92);
+    h.sqliteVersion = readBE32(96);
 
     return h;
 }

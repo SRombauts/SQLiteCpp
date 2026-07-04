@@ -40,10 +40,13 @@ Savepoint::~Savepoint()
     {
         try
         {
-            rollback();
+            if (!mbRolledBack)
+            {
+                rollbackTo();
+            }
             release();
         }
-        catch (SQLite::Exception&)
+        catch (...)
         {
             // Never throw an exception in a destructor: error if already released,
             // but no harm is caused by this.
@@ -71,6 +74,7 @@ void Savepoint::rollbackTo()
     if (!mbReleased)
     {
         mDatabase.exec(std::string("ROLLBACK TO SAVEPOINT ") + msName);
+        mbRolledBack = true;
     }
     else
     {

@@ -144,6 +144,16 @@ TEST(Database, inMemory)
     } // Close an destroy DB
 }
 
+TEST(Database, nullFilename)
+{
+    // A null filename must not invoke UB in the std::string member; SQLite treats a
+    // null/empty filename as a private, temporary on-disk database.
+    SQLite::Database db(static_cast<const char*>(nullptr), SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_STREQ("", db.getFilename().c_str());
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)"));
+    EXPECT_TRUE(db.tableExists("test"));
+}
+
 TEST(Database, backup)
 {
     // Create a new in-memory database
@@ -568,6 +578,51 @@ TEST(Database, getHeaderInfo)
     remove("test.db3");
 }
 
+TEST(Database, isUnencryptedHeaderCheck)
+{
+    remove("test.db3");
+    {
+        // Empty filename and non-existent file are reported as errors
+        EXPECT_THROW(SQLite::Database::isUnencrypted(""), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isUnencrypted("test.db3"), SQLite::Exception);
+
+        // A real SQLite database file is reported as unencrypted
+        {
+            SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+            db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+        }
+        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        remove("test.db3");
+
+        // A file shorter than the 16-byte header must not match and must not crash
+        {
+            const char shortData[] = "SQLite format";  // 13 bytes, no trailing NUL written
+            remove("short.db3");
+            std::ofstream shortDb;
+            shortDb.open("short.db3", std::ios::trunc | std::ios::binary);
+            shortDb.write(shortData, sizeof(shortData) - 1);
+            shortDb.close();
+
+            EXPECT_FALSE(SQLite::Database::isUnencrypted("short.db3"));
+            remove("short.db3");
+        }
+
+        // A 16-byte file with a garbage header does not match the magic string
+        {
+            const char garbage[16] = "garbage header";
+            remove("garbage.db3");
+            std::ofstream garbageDb;
+            garbageDb.open("garbage.db3", std::ios::trunc | std::ios::binary);
+            garbageDb.write(garbage, sizeof(garbage));
+            garbageDb.close();
+
+            EXPECT_FALSE(SQLite::Database::isUnencrypted("garbage.db3"));
+            remove("garbage.db3");
+        }
+    }
+    remove("test.db3");
+}
+
 #ifdef SQLITE_HAS_CODEC
 TEST(Database, encryptAndDecrypt)
 {
@@ -635,6 +690,8 @@ TEST(Database, encryptAndDecrypt)
         // Reopen the database file and encrypt it
         EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
+        // An empty key is a no-op even when built without encryption support
+        EXPECT_NO_THROW(db.key(""));
         // Encrypt the database
         EXPECT_THROW(db.key("123secret"), SQLite::Exception);
         EXPECT_THROW(db.rekey("123secret"), SQLite::Exception);

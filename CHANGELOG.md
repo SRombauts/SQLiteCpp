@@ -289,7 +289,27 @@ Version 3.3.3 - 2025 May 20
 - Update googletest to v1.16.0 (#506)
 - update meson dependencies (#508)
 
-Version 3.3.4 - WIP
+Version 3.4.0 - 2026 ???
 
+- Update SQLite from 3.49.2 to 3.53.2 (2026-06-03) (#526) (#538) (#548)
+- Add a `SQLITECPP_install` CMake option to make the install targets optional (#512)
+- Generalize the CMake SQLite and key API to ease use of SQLite3 Multiple Ciphers (#532)
+- Set `cmake_minimum_required` policy max to support CMake 4.0 (#519)
+- Update example2 to `cmake_minimum_required(VERSION 3.5...4.0)` (committed directly to master)
+- Fix a faulty `#undef` of the experimental filesystem feature macro (#509)
+- Fix compilation with newer GoogleTest (#514)
+- Fix the MinGW build by conditionally linking libssp (#527)
+- Add AI coding guidelines for GitHub Copilot and Cursor (#529)
+- Replace the monolithic Copilot instructions with granular agent skills and an AGENTS.md router (#531)
+- Add a GitHub Actions workflow computing unit test & example code coverage (GCov) and publishing it to Coveralls (#549)
+- Add unit tests covering error and edge-case paths to raise code coverage (#551)
+- Guard against null C pointers in Exception, Database, and Statement to avoid undefined behavior (#552)
+- Fix Database::isUnencrypted() to compare the full 16-byte header in binary mode (#553)
+- Fix execute_many() to clear stale bindings between parameter sets (#554)
+- Fix Column::operator<< to stream the exact column bytes via getString() (#556)
+- Restore the Coverity Scan static analysis as a GitHub Actions workflow, replacing the old Travis CI job
+- Fix Database::getHeaderInfo() signed-shift UB and use fixed-width types for the Header struct (#558)
+- Fix Savepoint destructor to catch all exceptions and track rollback state to avoid std::terminate (#559)
+- Fix Transaction destructor to catch all exceptions to avoid std::terminate (#559)
+- Fix the Meson build when the SQLITECPP_DISABLE_STD_FILESYSTEM option is enabled (#560)
 - Add Statement::RowIterator to support range-based for loops over query results (#181)
-

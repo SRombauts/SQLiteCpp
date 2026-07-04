@@ -63,11 +63,11 @@ git checkout -b 123-fix-short-description origin/master
 
 ## Build and Test
 ### Quick Build Commands
-**Windows (Visual Studio 2022):**
+**Windows (Visual Studio 2026):**
 ```batch
 mkdir build
 cd build
-cmake -G "Visual Studio 17 2022" -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON ..
+cmake -G "Visual Studio 18 2026" -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON ..
 cmake --build . --config Release
 ```
 

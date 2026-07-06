@@ -358,6 +358,49 @@ std::string Statement::getExpandedSQL() const {
     #endif
 }
 
+Statement::RowIterator::RowIterator(Statement* apStatement): mpStatement(apStatement)
+{}
+
+Statement::RowIterator& Statement::RowIterator::operator++()
+{
+    if (!mpStatement->executeStep())
+        mpStatement = nullptr;
+    return *this;
+}
+
+void Statement::RowIterator::operator++(int)
+{
+    ++(*this);
+}
+
+bool Statement::RowIterator::operator==(const RowIterator& aOther) const
+{
+    return mpStatement == aOther.mpStatement;
+}
+
+bool Statement::RowIterator::operator!=(const RowIterator& aOther) const
+{
+    return !this->operator==(aOther);
+}
+
+Statement& Statement::RowIterator::operator*() const
+{
+    return *mpStatement;
+}
+
+Statement::RowIterator Statement::begin()
+{
+    reset();
+    if (executeStep())
+        return RowIterator { this };
+    return RowIterator { nullptr };
+}
+
+Statement::RowIterator Statement::end()
+{
+    return RowIterator{ nullptr };
+}
+
 
 // Prepare SQLite statement object and return shared pointer to this object
 Statement::TStatementPtr Statement::prepareStatement()

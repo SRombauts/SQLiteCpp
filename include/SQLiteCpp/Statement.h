@@ -15,6 +15,7 @@
 #include <SQLiteCpp/Utils.h> // SQLITECPP_PURE_FUNC
 
 #include <cstdint>
+#include <iterator>
 #include <string>
 #include <map>
 #include <memory>
@@ -659,6 +660,73 @@ public:
 
     /// Shared pointer to SQLite Prepared Statement Object
     using TStatementPtr = std::shared_ptr<sqlite3_stmt>;
+
+    /**
+     * @brief Input iterator over the rows of a prepared SELECT statement.
+     *
+     *  Allows range-based for loops over query results:
+     * @code
+     *  SQLite::Statement query(db, "SELECT id, name FROM test");
+     *  for (SQLite::Statement& row : query)
+     *  {
+     *      std::cout << row.getColumn(0).getInt() << "\n";
+     *  }
+     * @endcode
+     *
+     *  Each increment calls executeStep() to advance to the next row.
+     *  Dereferencing returns the Statement itself, giving access to getColumn().
+     *
+     * @warning Only one active RowIterator per Statement is supported.
+     */
+    struct RowIterator
+    {
+        using iterator_category = std::input_iterator_tag;
+        using value_type        = Statement;
+        using difference_type   = std::ptrdiff_t;
+        using pointer           = Statement*;
+        using reference         = Statement&;
+
+        Statement* mpStatement = nullptr; ///< Pointer to the iterated Statement, nullptr when done
+
+        /// Construct an end sentinel (no associated Statement).
+        RowIterator() = default;
+
+        /// Construct an iterator pointing to the current row of apStatement.
+        SQLITECPP_API explicit RowIterator(Statement* apStatement);
+
+        /// Advance to the next row. Becomes the end sentinel when no rows remain.
+        SQLITECPP_API RowIterator& operator++();
+
+        /// Post-increment: advance to the next row.
+        SQLITECPP_API void operator++(int);
+
+        /// Return true when both iterators refer to the same statement, or are both the end sentinel.
+        SQLITECPP_API bool operator==(const RowIterator& aOther) const;
+
+        /// Return true when the iterators do not refer to the same statement.
+        SQLITECPP_API bool operator!=(const RowIterator& aOther) const;
+
+        /// Dereference to the Statement, giving access to getColumn().
+        SQLITECPP_API Statement& operator*() const;
+    };
+
+    /**
+     * @brief Return an iterator to the first row of the result set.
+     *
+     *  Calls reset() then executeStep() so that iterating the same Statement
+     *  a second time always starts from the beginning.
+     *  Returns the end iterator immediately if the result set is empty.
+     *
+     * @note Bindings set before the loop are preserved across reset().
+     *
+     * @throw SQLite::Exception in case of error
+     */
+    RowIterator begin();
+
+    /**
+     * @brief Return the end sentinel iterator (past the last row).
+     */
+    RowIterator end();
 
 private:
     /**

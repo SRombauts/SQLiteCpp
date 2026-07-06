@@ -12,8 +12,10 @@
 #include <SQLiteCpp/Database.h>
 #include <SQLiteCpp/Statement.h>
 
-#include <cstdint>   // for int64_t
-#include <sqlite3.h> // for SQLITE_DONE
+#include <cstdint>     // for int64_t
+#include <iterator>    // for std::iterator_traits, std::input_iterator_tag
+#include <type_traits> // for std::is_same
+#include <sqlite3.h>   // for SQLITE_DONE
 
 #include <gtest/gtest.h>
 
@@ -1012,6 +1014,95 @@ TEST(Statement, getColumns)
     EXPECT_DOUBLE_EQ(0.0, testStruct2.real);
 }
 #endif
+
+#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
+
+TEST(Statement, rowIteratorTraits)
+{
+    using Iter = SQLite::Statement::RowIterator;
+    using Traits = std::iterator_traits<Iter>;
+
+    static_assert(std::is_same<Traits::iterator_category, std::input_iterator_tag>::value,
+                  "RowIterator must be an input iterator");
+    static_assert(std::is_same<Traits::value_type, SQLite::Statement>::value,
+                  "value_type must be Statement");
+    static_assert(std::is_same<Traits::reference, SQLite::Statement&>::value,
+                  "reference must be Statement&");
+    static_assert(std::is_same<Traits::pointer, SQLite::Statement*>::value,
+                  "pointer must be Statement*");
+    static_assert(std::is_same<Traits::difference_type, std::ptrdiff_t>::value,
+                  "difference_type must be ptrdiff_t");
+}
+
+TEST(Statement, rangeBasedFor)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, msg TEXT, val INTEGER)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (1, 'first',  10)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (2, 'second', 20)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (3, 'third',  30)"));
+
+    // Basic range-based for loop: iterator dereferences to the Statement itself
+    SQLite::Statement query(db, "SELECT id, msg, val FROM test ORDER BY id");
+    int rowCount = 0;
+    for (SQLite::Statement& row : query)
+    {
+        ++rowCount;
+        EXPECT_EQ(rowCount,            row.getColumn(0).getInt());
+        EXPECT_EQ(rowCount * 10,       row.getColumn(2).getInt());
+    }
+    EXPECT_EQ(3, rowCount);
+
+    // Re-iterating the same Statement must reset and start over
+    rowCount = 0;
+    for (SQLite::Statement& row : query)
+    {
+        ++rowCount;
+        EXPECT_EQ(rowCount, row.getColumn(0).getInt());
+    }
+    EXPECT_EQ(3, rowCount);
+}
+
+TEST(Statement, rangeBasedForEmpty)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY)"));
+
+    // Empty table: loop body must never execute
+    SQLite::Statement query(db, "SELECT * FROM test");
+    int rowCount = 0;
+    for (SQLite::Statement& row : query)
+    {
+        (void)row;
+        ++rowCount;
+    }
+    EXPECT_EQ(0, rowCount);
+}
+
+TEST(Statement, rangeBasedForWithBind)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, val INTEGER)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (1, 5)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (2, 15)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (3, 25)"));
+
+    // Only rows with val > 10 should be visited
+    SQLite::Statement query(db, "SELECT id, val FROM test WHERE val > ? ORDER BY id");
+    query.bind(1, 10);
+    int rowCount = 0;
+    for (SQLite::Statement& row : query)
+    {
+        ++rowCount;
+        EXPECT_GT(row.getColumn(1).getInt(), 10);
+    }
+    EXPECT_EQ(2, rowCount);
+}
+
+#endif // C++11
 
 TEST(Statement, getBindParameterCount)
 {

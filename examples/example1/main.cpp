@@ -241,6 +241,20 @@ int main()
             weight    = query.getColumn(2).getInt();
             std::cout << "row (" << id << ", \"" << value << "\", " << weight << ")\n";
         }
+
+        ///// e) Loop using the range-based for loop provided by Statement::begin()/end()
+
+        // Reset the query to use it again
+        query.reset();
+        std::cout << "SQLite statement '" << query.getQuery().c_str() << "' reseted (" << query.getColumnCount() << " columns in the result)\n";
+
+        for (auto&& row : query)
+        {
+            const int         rid     = row.getColumn(0);
+            const std::string rvalue  = row.getColumn(1);
+            const double      rweight = row.getColumn(2);
+            std::cout << "row (" << rid << ", \"" << rvalue.c_str() << "\" " << rweight << ")\n";
+        }
     }
     catch (std::exception& e)
     {

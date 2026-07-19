@@ -1,8 +1,9 @@
 ---
 name: sqlitecpp-update-sqlite
 description: >-
-  How to update the bundled SQLite3 amalgamation (sqlite3/sqlite3.c and sqlite3.h) and the Meson
-  wrap. Use when upgrading SQLite, refreshing the vendored amalgamation, or bumping the sqlite3 wrap.
+  How to update the bundled SQLite3 amalgamation (sqlite3/sqlite3.c and sqlite3.h), the Meson
+  wrap, README.md, and CHANGELOG.md. Use when upgrading SQLite, refreshing the vendored
+  amalgamation, or bumping the sqlite3 wrap.
 ---
 
 # Updating the bundled SQLite3
@@ -44,7 +45,8 @@ PR from the amalgamation drop.
 ## 6. Build, test, and record
 - Build and run the tests on both CMake and Meson (see [[sqlitecpp-build-cmake]] and
   [[sqlitecpp-build-meson]]).
-- Add the CHANGELOG entry per [[sqlitecpp-workflow]]:
+- Update `CHANGELOG.md` following [[sqlitecpp-workflow]] conventions:
+  Add one line (or update the existing one) under the current unreleased version heading:
   `- Update SQLite from A.B.C to X.Y.Z (YYYY-MM-DD) (#NNN)`.
 
 The SQLite version bump is independent of the SQLiteCpp version. Bumping the SQLiteCpp version and

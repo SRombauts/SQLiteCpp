@@ -38,6 +38,11 @@ Finalizing the version heading and tagging belong to the release process: see
   does and why, plus a brief bullet list only when it genuinely helps review. No filler, no
   restating the diff, no marketing. ASCII only, no em dashes; run it through `humanizer` if unsure.
 
+## Git commits and pushing
+- Make **small, atomic commits** that each address a single logical change. Do not mix unrelated changes (e.g., bug fix + feature + formatting) in one commit.
+- Each commit should be **complete and self-contained**: it must compile and pass tests independently.
+- Before pushing a branch to the remote, **ask the user for explicit permission** stating the branch name and action (e.g., "Push branch `update-sqlite-3.52.2` to origin?"). Push only after receiving approval.
+
 ## Add a method
 1. Declare in `include/SQLiteCpp/<Class>.h` with Doxygen.
 2. Implement in `src/<Class>.cpp`.

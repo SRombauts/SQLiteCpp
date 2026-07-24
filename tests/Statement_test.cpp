@@ -1102,6 +1102,67 @@ TEST(Statement, rangeBasedForWithBind)
     EXPECT_EQ(2, rowCount);
 }
 
+TEST(Statement, rowIteratorDirectUsage)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, val INTEGER)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (1, 10)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (2, 20)"));
+    EXPECT_EQ(1, db.exec("INSERT INTO test VALUES (3, 30)"));
+
+    SQLite::Statement query(db, "SELECT id, val FROM test ORDER BY id");
+    
+    // Test direct usage of begin() and end()
+    auto it = query.begin();
+    auto endIt = query.end();
+    
+    // Test operator!= (already covered by range-based for, but explicit test for clarity)
+    int count = 0;
+    while (it != endIt)
+    {
+        ++count;
+        EXPECT_EQ(count, (*it).getColumn(0).getInt());
+        ++it;
+    }
+    EXPECT_EQ(3, count);
+    
+    // Reset and test post-increment operator
+    it = query.begin();
+    count = 0;
+    while (it != endIt)
+    {
+        ++count;
+        EXPECT_EQ(count, (*it).getColumn(0).getInt());
+        it++;
+    }
+    EXPECT_EQ(3, count);
+    
+    // Test operator== with end iterator
+    it = query.end();
+    EXPECT_TRUE(it == endIt);
+    EXPECT_FALSE(it != endIt);
+    
+    // Test operator== and operator!= with end iterator obtained from a different call
+    SQLite::Statement query2(db, "SELECT id, val FROM test ORDER BY id");
+    auto it2 = query2.end();
+    EXPECT_TRUE(it == it2);
+    EXPECT_FALSE(it != it2);
+    
+    // Test operator!= with different statements
+    SQLite::Statement query3(db, "SELECT id, val FROM test ORDER BY id");
+    auto it3 = query3.begin();
+    auto endIt3 = query3.end();
+    EXPECT_TRUE(it3 != endIt3);
+    EXPECT_FALSE(it3 == endIt3);
+    
+    // Advance to end and check equality
+    while (it3 != endIt3)
+        ++it3;
+    EXPECT_TRUE(it3 == endIt3);
+    EXPECT_FALSE(it3 != endIt3);
+}
+
 #endif // C++11
 
 TEST(Statement, getBindParameterCount)

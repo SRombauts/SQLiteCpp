@@ -313,3 +313,4 @@ Version 3.4.0 - 2026 ???
 - Fix Transaction destructor to catch all exceptions to avoid std::terminate (#559)
 - Fix the Meson build when the SQLITECPP_DISABLE_STD_FILESYSTEM option is enabled (#560)
 - Add Statement::RowIterator to support range-based for loops over query results (#181)
+- Add unit tests for Statement::RowIterator to fix coverage regression (#562)

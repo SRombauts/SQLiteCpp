@@ -13,6 +13,9 @@ description: SQLiteCpp branch naming and creation rules for starting tasks, issu
 1. Run `git status` to check current branch.
 2. If on `master` or wrong branch, create a task-specific branch from `master`.
 
+Create the branch before the first edit. If edits were accidentally made on `master`, create the task
+branch with the working tree intact before continuing.
+
 ## Branch naming
 - With issue: `<issue>-<type>-<short-description>`
   - `123-fix-short-description`

@@ -1,11 +1,24 @@
 ---
 name: sqlitecpp-workflow
 description: >-
-  SQLiteCpp change workflow checklists for API, tests, build files, and CHANGELOG updates.
-  Use when adding a method or class, editing build files, or writing a CHANGELOG entry for a PR.
+  SQLiteCpp workflow for branches, implementation, tests, commits, pull requests, and CHANGELOG
+  updates. Use when changing the repository.
 ---
 
 # SQLiteCpp Workflow
+
+## Required workflow
+For an implementation request, complete the local Git workflow before handing the work back:
+
+1. Load `sqlitecpp-git-branching`, inspect `git status`, and create the task branch before editing.
+2. Implement the change and its tests, public API documentation, and any required build-file updates.
+3. Build and run the relevant tests.
+4. Commit the completed work according to the atomic and independent commit rules below.
+5. Report the branch name, commit hashes, and validation results.
+
+If work was accidentally started on `master`, create the correctly named branch immediately while
+preserving the working tree, then continue the workflow there. Do not leave completed implementation
+changes uncommitted unless the user explicitly asks for an uncommitted patch.
 
 ## Change checklist
 - [ ] Public API has Doxygen (`@brief`, `@param`, `@return`, `@throw`).
@@ -48,26 +61,26 @@ included in the CHANGELOG entry.
   restating the diff, no marketing. ASCII only, no em dashes; run it through `humanizer` if unsure.
 
 ## Git commits and pushing
-- Make **small, atomic commits** that each address a single logical change. Do not mix unrelated changes (e.g., bug fix + feature + formatting) in one commit.
+- Make commits **atomic and independent**. Each commit must have exactly one purpose and be reviewable
+  on its own. Include only the implementation, tests, and documentation required for that purpose.
+- Do not mix distinct bug fixes, API additions, refactoring, formatting, workflow changes, or other
+  unrelated work in one commit. A task containing separable outcomes, such as fixing existing behavior
+  and adding a new API, requires separate commits.
 - **CHANGELOG.md updates must be in a separate commit** from source code changes, created after the PR is opened so the PR number can be included.
-- Each commit should be **complete and self-contained**: it must compile and pass tests independently.
+- Each commit must leave the repository in a valid state: it must compile and pass its relevant tests
+  when checked out at that point in the branch history.
 - Before pushing a branch to the remote, **ask the user for explicit permission** stating the branch name and action (e.g., "Push branch `update-sqlite-3.52.2` to origin?"). Push only after receiving approval.
 
 ## Add a method
-1. Declare in `include/SQLiteCpp/<Class>.h` with Doxygen.
-2. Implement in `src/<Class>.cpp`.
-3. Add tests in `tests/<Class>_test.cpp`.
-4. Commit the changes from steps 1-3.
-5. Push the branch and open the PR.
-6. Add CHANGELOG entry with the PR number in a separate commit.
+Follow the required workflow above. Include:
+
+- A declaration with Doxygen in `include/SQLiteCpp/<Class>.h`.
+- The implementation in `src/<Class>.cpp`.
+- Tests in `tests/<Class>_test.cpp`.
 
 ## Add a class
-1. Create `include/SQLiteCpp/NewClass.h` and `src/NewClass.cpp`.
-2. Add files to `CMakeLists.txt` (`SQLITECPP_SRC` and `SQLITECPP_INC`).
-3. Add files to `meson.build`.
-4. Include in `SQLiteCpp.h` if public API.
-5. Create `tests/NewClass_test.cpp`.
-6. Add test to `CMakeLists.txt` and `meson.build`.
-7. Commit all changes from steps 1-6.
-8. Push the branch and open the PR.
-9. Add CHANGELOG entry with the PR number in a separate commit.
+Follow the required workflow above. Include:
+
+- `include/SQLiteCpp/NewClass.h`, `src/NewClass.cpp`, and `tests/NewClass_test.cpp`.
+- The new files in `CMakeLists.txt` and `meson.build`.
+- The public header in `SQLiteCpp.h` when the class is public API.

@@ -331,7 +331,7 @@ TEST(Statement, bindings)
 
     // Fourth row with string/int64/float
     {
-        const std::string   fourth("fourth");
+        const std::string   fourth("fou\0rth", sizeof("fou\0rth") - 1);
         const int64_t       int64 = 12345678900000LL;
         const float         float32 = 0.234f;
         insert.bind(1, fourth);
@@ -345,7 +345,8 @@ TEST(Statement, bindings)
         EXPECT_TRUE (query.hasRow());
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(4,                query.getColumn(0).getInt64());
-        EXPECT_EQ(fourth,           query.getColumn(1).getText());
+        EXPECT_EQ(fourth,           query.getColumn(1).getString());
+        EXPECT_EQ(static_cast<int>(fourth.size()), query.getColumn(1).getBytes());
         EXPECT_EQ(12345678900000LL, query.getColumn(2).getInt64());
         EXPECT_FLOAT_EQ(0.234f,     (float)query.getColumn(3).getDouble());
     }

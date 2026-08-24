@@ -434,7 +434,7 @@ TEST(Statement, bindNoCopy)
     // Insert one row with all variants of bindNoCopy()
     {
         const char*         txt1   = "first";
-        const std::string   txt2   = "sec\0nd";
+        const std::string   txt2("sec\0nd", sizeof("sec\0nd") - 1);
         const char          blob[] = {'b','l','\0','b'};
         insert.bindNoCopy(1, txt1);
         insert.bindNoCopy(2, txt2);
@@ -448,7 +448,8 @@ TEST(Statement, bindNoCopy)
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(1, query.getColumn(0).getInt64());
         EXPECT_STREQ(txt1, query.getColumn(1).getText());
-        EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
+        EXPECT_EQ(txt2, query.getColumn(2).getString());
+        EXPECT_EQ(static_cast<int>(txt2.size()), query.getColumn(2).getBytes());
         EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
     }
 }
@@ -694,7 +695,7 @@ TEST(Statement, bindNoCopyByName)
     // Insert one row with all variants of bindNoCopy()
     {
         const char*         txt1 = "first";
-        const std::string   txt2 = "sec\0nd";
+        const std::string   txt2("sec\0nd", sizeof("sec\0nd") - 1);
         const char          blob[] = { 'b','l','\0','b' };
         insert.bindNoCopy("@txt1", txt1);
         insert.bindNoCopy("@txt2", txt2);
@@ -709,7 +710,8 @@ TEST(Statement, bindNoCopyByName)
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(1, query.getColumn(0).getInt64());
         EXPECT_STREQ(txt1, query.getColumn(1).getText());
-        EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
+        EXPECT_EQ(txt2, query.getColumn(2).getString());
+        EXPECT_EQ(static_cast<int>(txt2.size()), query.getColumn(2).getBytes());
         EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
     }
 
@@ -722,7 +724,7 @@ TEST(Statement, bindNoCopyByName)
         const std::string   atxt2 = "@txt2";
         const std::string   ablob = "@blob";
         const char*         txt1 = "first2";
-        const std::string   txt2 = "sec\0nd2";
+        const std::string   txt2("sec\0nd2", sizeof("sec\0nd2") - 1);
         const char          blob[] = { 'b','l','\0','b','2' };
         insert.bindNoCopy(atxt1, txt1);
         insert.bindNoCopy(atxt2, txt2);
@@ -738,7 +740,8 @@ TEST(Statement, bindNoCopyByName)
         EXPECT_FALSE(query.isDone());
         EXPECT_EQ(2, query.getColumn(0).getInt64());
         EXPECT_STREQ(txt1, query.getColumn(1).getText());
-        EXPECT_EQ(0, memcmp(&txt2[0], &query.getColumn(2).getString()[0], txt2.size()));
+        EXPECT_EQ(txt2, query.getColumn(2).getString());
+        EXPECT_EQ(static_cast<int>(txt2.size()), query.getColumn(2).getBytes());
         EXPECT_EQ(0, memcmp(blob, &query.getColumn(3).getString()[0], sizeof(blob)));
     }
 }

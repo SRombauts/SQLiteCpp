@@ -3,20 +3,21 @@
 # build format
 version: "{build}"
 
+# Build the master branch and pull requests targeting master, but not pushes to task branches.
+branches:
+  only:
+    - master
+
 # scripts that run after cloning repository
 install:
   - git submodule update --init --recursive
  
 image:
-# Note: reduced the number of images to test on AppVeyor, to speed up the build
   - Visual Studio 2022
-#  - Visual Studio 2019
-#  - Visual Studio 2017
-  - Visual Studio 2015
-  
-# configurations to add to build matrix
+  - Visual Studio 2019
+
+# GitHub Actions covers Debug builds; AppVeyor tests Release builds on supported Visual Studio versions.
 configuration:
-  - Debug
   - Release
 
 environment:
@@ -26,12 +27,8 @@ environment:
 
 init:
   - echo %APPVEYOR_BUILD_WORKER_IMAGE% - %configuration% - %arch%
-  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" (set vs=Visual Studio 15 2017)
-  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (set vs=Visual Studio 14 2015)
-  - if "%arch%"=="x64" (set generator="%vs% Win64") else (set generator="%vs%")
-  # CMake uses a different grammar for Visual Studio 2019, with -A to specify architecture:
-  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" (set generator="Visual Studio 16 2019" -A %arch%)
   - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2022" (set generator="Visual Studio 17 2022" -A %arch%)
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" (set generator="Visual Studio 16 2019" -A %arch%)
   - echo %generator%
  
 # scripts to run before build

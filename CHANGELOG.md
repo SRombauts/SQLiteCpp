@@ -316,3 +316,4 @@ Version 3.4.0 - 2026 ???
 - Add unit tests for Statement::RowIterator to fix coverage regression (#562)
 - Fix large `std::string` binding sizes (#563)
 - Add 64-bit BLOB binding methods (#564)
+- Limit AppVeyor to Visual Studio 2022 and 2019 Release builds on master and pull requests (#565)

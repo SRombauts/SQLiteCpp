@@ -224,17 +224,18 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
 }
 
 // Set the key for the current sqlite database instance.
-void Database::key(const std::string& aKey) const
+void Database::key(const char* apKey, const int aSize) const
 {
-    int passLen = static_cast<int>(aKey.length());
 #ifdef SQLITE_HAS_CODEC
-    if (passLen > 0)
+    if (aSize > 0)
     {
-        const int ret = sqlite3_key(getHandle(), aKey.c_str(), passLen);
+        const int ret = sqlite3_key(getHandle(), apKey, aSize);
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
-    if (passLen > 0)
+    // Silence unused parameter warning
+    static_cast<void>(apKey);
+    if (aSize > 0)
     {
         throw SQLite::Exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
     }
@@ -242,13 +243,12 @@ void Database::key(const std::string& aKey) const
 }
 
 // Reset the key for the current sqlite database instance.
-void Database::rekey(const std::string& aNewKey) const
+void Database::rekey(const char* apNewKey, const int aSize) const
 {
 #ifdef SQLITE_HAS_CODEC
-    int passLen = aNewKey.length();
-    if (passLen > 0)
+    if (aSize > 0)
     {
-        const int ret = sqlite3_rekey(getHandle(), aNewKey.c_str(), passLen);
+        const int ret = sqlite3_rekey(getHandle(), apNewKey, aSize);
         check(ret);
     }
     else
@@ -257,7 +257,10 @@ void Database::rekey(const std::string& aNewKey) const
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
-    static_cast<void>(aNewKey); // silence unused parameter warning
+    // Silence unused parameter warnings
+    static_cast<void>(apNewKey);
+    static_cast<void>(aSize);
+
     throw SQLite::Exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
 #endif // SQLITE_HAS_CODEC
 }

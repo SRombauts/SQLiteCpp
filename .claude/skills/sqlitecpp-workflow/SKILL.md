@@ -28,15 +28,18 @@ changes uncommitted unless the user explicitly asks for an uncommitted patch.
 
 ## CHANGELOG conventions
 Update `CHANGELOG.md` in the same PR that makes the change, but **in a separate commit** created after
-the PR is opened so the PR number is known. Add one line per PR under the current unreleased
+the PR is opened so the PR number is known. Normally add one line per PR under the current unreleased
 version heading (`Version X.Y.Z - <year> ???`). Create that heading if it does not exist yet.
 
-- One bullet per PR: `- <description> (#NNN)`. The PR number is the **last token**, in parentheses.
+- Append a new bullet at the end of the current unreleased section by default. Do not reorder existing
+  entries or insert the new entry by category unless there is a clear reason to group related changes.
+- Related PRs may be kept together or combined when that makes the history clearer. For example, keep
+  consecutive updates to the bundled SQLite library together instead of separating them by append order.
+- Normally use one bullet per PR: `- <description> (#NNN)`. Keep all PR numbers at the end when related
+  PRs share an entry: `- <description> (#NNN) (#MMM)`.
 - Write in the imperative mood, present tense: "Add", "Fix", "Update", "Remove". Not "Added",
   "Fixes", or "Adding".
 - Keep each entry to a single line that names the user-facing effect, not the internal mechanics.
-- Put the SQLite version bump first when the release includes one (see [[sqlitecpp-update-sqlite]]).
-- Order the rest roughly as features, fixes, build/CI, then docs and tooling.
 - A change merged straight to master without a PR still gets a bullet; omit the `(#NNN)` and note
   it was committed directly to master.
 - ASCII only, no em dashes. Run the entry through the `humanizer` skill before committing so the
@@ -48,11 +51,12 @@ Finalizing the version heading and tagging belong to the release process: see
 **Workflow for CHANGELOG updates:**
 1. Commit source code changes (tests, implementation, etc.) in one or more atomic commits
 2. Push the branch and open the PR to obtain the PR number
-3. Create a separate commit adding only the CHANGELOG entry with the PR number
+3. Create a separate final commit adding only the CHANGELOG entry with the PR number
 4. Push the CHANGELOG commit to the same branch
 
 This keeps commits atomic (CHANGELOG is separate from code) and allows the PR number to be
-included in the CHANGELOG entry.
+included in the CHANGELOG entry. Keep the CHANGELOG commit last in the PR history. If review follow-ups
+add source, test, or documentation commits after it, reorder the branch before pushing again.
 
 ## Pull requests
 - Open PRs with `gh pr create` against `master`.
@@ -66,7 +70,8 @@ included in the CHANGELOG entry.
 - Do not mix distinct bug fixes, API additions, refactoring, formatting, workflow changes, or other
   unrelated work in one commit. A task containing separable outcomes, such as fixing existing behavior
   and adding a new API, requires separate commits.
-- **CHANGELOG.md updates must be in a separate commit** from source code changes, created after the PR is opened so the PR number can be included.
+- **CHANGELOG.md updates must be in a separate final commit** from source code changes, created after the
+  PR is opened so the PR number can be included.
 - Each commit must leave the repository in a valid state: it must compile and pass its relevant tests
   when checked out at that point in the branch history.
 - Before pushing a branch to the remote, **ask the user for explicit permission** stating the branch name and action (e.g., "Push branch `update-sqlite-3.52.2` to origin?"). Push only after receiving approval.

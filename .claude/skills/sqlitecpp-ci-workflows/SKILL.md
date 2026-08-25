@@ -30,9 +30,11 @@ description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, AppVeyor, T
 - Test: `meson test -C builddir`.
 
 ## AppVeyor
-- Visual Studio 2022/2015, Debug/Release, Win32/x64.
+- Visual Studio 2022/2019, Release, Win32/x64. GitHub Actions provides the overlapping Debug coverage.
 - CMake config: `-DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF`.
 - Build and run `ctest --output-on-failure`.
+- Configure `branches.only: master` in `appveyor.yml`; its presence overrides branch filtering from the AppVeyor
+  project UI. Pull requests targeting `master` are still built, while pushes to task branches are skipped.
 
 ## Travis CI
 - Multiple GCC/Clang versions across Linux and macOS.

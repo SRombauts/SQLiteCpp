@@ -199,7 +199,8 @@ public:
      * @param[in] aSize   Size of the binary data in bytes
      * @throw SQLite::Exception in case of error
      *
-     * @warning Uses the SQLITE_STATIC flag. The data must remain unchanged while executing the statement.
+     * @warning Uses the SQLITE_STATIC flag. The data must remain valid and unchanged until the parameter is
+     *          rebound or the statement is finalized. Resetting the statement does not clear the binding.
      */
     void bindNoCopy64(const int aIndex, const void* apValue, const uint64_t aSize);
     /**
@@ -322,7 +323,8 @@ public:
      * @param[in] aSize   Size of the binary data in bytes
      * @throw SQLite::Exception in case of error
      *
-     * @warning Uses the SQLITE_STATIC flag. The data must remain unchanged while executing the statement.
+     * @warning Uses the SQLITE_STATIC flag. The data must remain valid and unchanged until the parameter is
+     *          rebound or the statement is finalized. Resetting the statement does not clear the binding.
      */
     void bindNoCopy64(const char* apName, const void* apValue, const uint64_t aSize)
     {
@@ -451,7 +453,8 @@ public:
      * @param[in] aSize   Size of the binary data in bytes
      * @throw SQLite::Exception in case of error
      *
-     * @warning Uses the SQLITE_STATIC flag. The data must remain unchanged while executing the statement.
+     * @warning Uses the SQLITE_STATIC flag. The data must remain valid and unchanged until the parameter is
+     *          rebound or the statement is finalized. Resetting the statement does not clear the binding.
      */
     void bindNoCopy64(const std::string& aName, const void* apValue, const uint64_t aSize)
     {

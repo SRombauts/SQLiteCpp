@@ -291,7 +291,7 @@ Version 3.3.3 - 2025 May 20
 
 Version 3.4.0 - 2026 ???
 
-- Update SQLite from 3.49.2 to 3.53.3 (2026-06-26) (#526) (#538) (#548) (#561)
+- Update SQLite from 3.49.2 to 3.53.4 (2026-07-24) (#526) (#538) (#548) (#561) (#566)
 - Add a `SQLITECPP_install` CMake option to make the install targets optional (#512)
 - Generalize the CMake SQLite and key API to ease use of SQLite3 Multiple Ciphers (#532)
 - Set `cmake_minimum_required` policy max to support CMake 4.0 (#519)

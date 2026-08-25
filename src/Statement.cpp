@@ -130,6 +130,14 @@ void Statement::bind(const int aIndex, const void* apValue, const int aSize)
     check(ret);
 }
 
+// Bind a binary blob using a 64-bit size and SQLITE_TRANSIENT
+void Statement::bind64(const int aIndex, const void* apValue, const uint64_t aSize)
+{
+    const int ret = sqlite3_bind_blob64(getPreparedStatement(), aIndex, apValue,
+                                        static_cast<sqlite3_uint64>(aSize), SQLITE_TRANSIENT);
+    check(ret);
+}
+
 // Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bindNoCopy(const int aIndex, const std::string& aValue)
 {
@@ -149,6 +157,14 @@ void Statement::bindNoCopy(const int aIndex, const char* apValue)
 void Statement::bindNoCopy(const int aIndex, const void* apValue, const int aSize)
 {
     const int ret = sqlite3_bind_blob(getPreparedStatement(), aIndex, apValue, aSize, SQLITE_STATIC);
+    check(ret);
+}
+
+// Bind a binary blob using a 64-bit size and SQLITE_STATIC
+void Statement::bindNoCopy64(const int aIndex, const void* apValue, const uint64_t aSize)
+{
+    const int ret = sqlite3_bind_blob64(getPreparedStatement(), aIndex, apValue,
+                                        static_cast<sqlite3_uint64>(aSize), SQLITE_STATIC);
     check(ret);
 }
 

@@ -307,7 +307,6 @@ Version 3.4.0 - 2026 ???
 - Fix Database::isUnencrypted() to compare the full 16-byte header in binary mode (#553)
 - Fix execute_many() to clear stale bindings between parameter sets (#554)
 - Fix Column::operator<< to stream the exact column bytes via getString() (#556)
-- Fix large `std::string` binding sizes (#563)
 - Restore the Coverity Scan static analysis as a GitHub Actions workflow, replacing the old Travis CI job
 - Fix Database::getHeaderInfo() signed-shift UB and use fixed-width types for the Header struct (#558)
 - Fix Savepoint destructor to catch all exceptions and track rollback state to avoid std::terminate (#559)
@@ -315,3 +314,5 @@ Version 3.4.0 - 2026 ???
 - Fix the Meson build when the SQLITECPP_DISABLE_STD_FILESYSTEM option is enabled (#560)
 - Add Statement::RowIterator to support range-based for loops over query results (#181)
 - Add unit tests for Statement::RowIterator to fix coverage regression (#562)
+- Fix large `std::string` binding sizes (#563)
+- Add 64-bit BLOB binding methods (#564)

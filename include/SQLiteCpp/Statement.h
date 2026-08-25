@@ -159,6 +159,17 @@ public:
      */
     void bind(const int aIndex, const void*         apValue, const int aSize);
     /**
+     * @brief Bind a binary blob using a 64-bit size.
+     *
+     * @param[in] aIndex  Index of the parameter to bind (aIndex >= 1)
+     * @param[in] apValue Pointer to the binary data
+     * @param[in] aSize   Size of the binary data in bytes
+     * @throw SQLite::Exception in case of error
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind64(const int aIndex, const void* apValue, const uint64_t aSize);
+    /**
      * @brief Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1).
      *
      * The string can contain null characters as it is binded using its size.
@@ -180,6 +191,18 @@ public:
      * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remains unchanged while executing the statement.
      */
     void bindNoCopy(const int aIndex, const void*           apValue, const int aSize);
+    /**
+     * @brief Bind a binary blob using a 64-bit size without copying it.
+     *
+     * @param[in] aIndex  Index of the parameter to bind (aIndex >= 1)
+     * @param[in] apValue Pointer to the binary data
+     * @param[in] aSize   Size of the binary data in bytes
+     * @throw SQLite::Exception in case of error
+     *
+     * @warning Uses the SQLITE_STATIC flag. The data must remain valid and unchanged until the parameter is
+     *          rebound or the statement is finalized. Resetting the statement does not clear the binding.
+     */
+    void bindNoCopy64(const int aIndex, const void* apValue, const uint64_t aSize);
     /**
      * @brief Deleted, because the value's lifetime could not be guaranteed. Use bind().
      */
@@ -248,6 +271,20 @@ public:
         bind(getIndex(apName), apValue, aSize);
     }
     /**
+     * @brief Bind a binary blob to a named parameter using a 64-bit size.
+     *
+     * @param[in] apName  Name of the parameter to bind
+     * @param[in] apValue Pointer to the binary data
+     * @param[in] aSize   Size of the binary data in bytes
+     * @throw SQLite::Exception in case of error
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind64(const char* apName, const void* apValue, const uint64_t aSize)
+    {
+        bind64(getIndex(apName), apValue, aSize);
+    }
+    /**
      * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * The string can contain null characters as it is binded using its size.
@@ -277,6 +314,21 @@ public:
     void bindNoCopy(const char* apName, const void*         apValue, const int aSize)
     {
         bindNoCopy(getIndex(apName), apValue, aSize);
+    }
+    /**
+     * @brief Bind a binary blob to a named parameter using a 64-bit size without copying it.
+     *
+     * @param[in] apName  Name of the parameter to bind
+     * @param[in] apValue Pointer to the binary data
+     * @param[in] aSize   Size of the binary data in bytes
+     * @throw SQLite::Exception in case of error
+     *
+     * @warning Uses the SQLITE_STATIC flag. The data must remain valid and unchanged until the parameter is
+     *          rebound or the statement is finalized. Resetting the statement does not clear the binding.
+     */
+    void bindNoCopy64(const char* apName, const void* apValue, const uint64_t aSize)
+    {
+        bindNoCopy64(getIndex(apName), apValue, aSize);
     }
     /**
      * @brief Deleted, because the value's lifetime could not be guaranteed. Use bind().
@@ -349,6 +401,20 @@ public:
         bind(aName.c_str(), apValue, aSize);
     }
     /**
+     * @brief Bind a binary blob to a named parameter using a 64-bit size.
+     *
+     * @param[in] aName   Name of the parameter to bind
+     * @param[in] apValue Pointer to the binary data
+     * @param[in] aSize   Size of the binary data in bytes
+     * @throw SQLite::Exception in case of error
+     *
+     * @note Uses the SQLITE_TRANSIENT flag, making a copy of the data, for SQLite internal use
+     */
+    void bind64(const std::string& aName, const void* apValue, const uint64_t aSize)
+    {
+        bind64(aName.c_str(), apValue, aSize);
+    }
+    /**
      * @brief Bind a string value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      *
      * The string can contain null characters as it is binded using its size.
@@ -378,6 +444,21 @@ public:
     void bindNoCopy(const std::string& aName, const void*        apValue, const int aSize)
     {
         bindNoCopy(aName.c_str(), apValue, aSize);
+    }
+    /**
+     * @brief Bind a binary blob to a named parameter using a 64-bit size without copying it.
+     *
+     * @param[in] aName   Name of the parameter to bind
+     * @param[in] apValue Pointer to the binary data
+     * @param[in] aSize   Size of the binary data in bytes
+     * @throw SQLite::Exception in case of error
+     *
+     * @warning Uses the SQLITE_STATIC flag. The data must remain valid and unchanged until the parameter is
+     *          rebound or the statement is finalized. Resetting the statement does not clear the binding.
+     */
+    void bindNoCopy64(const std::string& aName, const void* apValue, const uint64_t aSize)
+    {
+        bindNoCopy64(aName.c_str(), apValue, aSize);
     }
     /**
      * @brief Deleted, because the value's lifetime could not be guaranteed. Use bind().

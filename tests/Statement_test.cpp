@@ -455,6 +455,41 @@ TEST(Statement, bindNoCopy)
     }
 }
 
+TEST(Statement, bind64)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    SQLite::Statement query(db, "SELECT :copyIndex, :copyName, :copyStringName, :noCopyIndex, :noCopyName");
+
+    const char copyIndex[] = {'c', '\0', 'i'};
+    const char copyName[] = {'c', '\0', 'n'};
+    const char copyStringName[] = {'c', '\0', 's'};
+    const char noCopyIndex[] = {'n', '\0', 'i'};
+    const char noCopyName[] = {'n', '\0', 'n'};
+
+    query.bind64(1, copyIndex, static_cast<uint64_t>(sizeof(copyIndex)));
+    query.bind64(":copyName", copyName, static_cast<uint64_t>(sizeof(copyName)));
+    query.bind64(std::string(":copyStringName"), copyStringName, static_cast<uint64_t>(sizeof(copyStringName)));
+    query.bindNoCopy64(4, noCopyIndex, static_cast<uint64_t>(sizeof(noCopyIndex)));
+    query.bindNoCopy64(std::string(":noCopyName"), noCopyName, static_cast<uint64_t>(sizeof(noCopyName)));
+
+    ASSERT_TRUE(query.executeStep());
+    ASSERT_EQ(static_cast<int>(sizeof(copyIndex)), query.getColumn(0).getBytes());
+    ASSERT_EQ(static_cast<int>(sizeof(copyName)), query.getColumn(1).getBytes());
+    ASSERT_EQ(static_cast<int>(sizeof(copyStringName)), query.getColumn(2).getBytes());
+    ASSERT_EQ(static_cast<int>(sizeof(noCopyIndex)), query.getColumn(3).getBytes());
+    ASSERT_EQ(static_cast<int>(sizeof(noCopyName)), query.getColumn(4).getBytes());
+    EXPECT_EQ(0, memcmp(copyIndex, query.getColumn(0).getBlob(), sizeof(copyIndex)));
+    EXPECT_EQ(0, memcmp(copyName, query.getColumn(1).getBlob(), sizeof(copyName)));
+    EXPECT_EQ(0, memcmp(copyStringName, query.getColumn(2).getBlob(), sizeof(copyStringName)));
+    EXPECT_EQ(0, memcmp(noCopyIndex, query.getColumn(3).getBlob(), sizeof(noCopyIndex)));
+    EXPECT_EQ(0, memcmp(noCopyName, query.getColumn(4).getBlob(), sizeof(noCopyName)));
+
+    SQLite::Statement oversized(db, "SELECT ?");
+    const uint64_t oversizedLength = static_cast<uint64_t>(INT_MAX) + 1U;
+    EXPECT_THROW(oversized.bind64(1, copyIndex, oversizedLength), SQLite::Exception);
+    EXPECT_THROW(oversized.bindNoCopy64(1, noCopyIndex, oversizedLength), SQLite::Exception);
+}
+
 TEST(Statement, bindByName)
 {
     // Create a new database

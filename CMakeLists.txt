@@ -8,15 +8,6 @@ cmake_minimum_required(VERSION 3.5...4.0)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # custom CMake modules like FindSQLiteCpp
 project(SQLiteCpp VERSION 3.3.3)
 
-# SQLiteC++ 3.x requires C++11 features
-if (NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 11)
-elseif (CMAKE_CXX_STANDARD LESS 11)
-    message(WARNING "CMAKE_CXX_STANDARD has been set to '${CMAKE_CXX_STANDARD}' which is lower than the minimum required standard (c++11).")
-endif ()
-message(STATUS "Using c++ standard c++${CMAKE_CXX_STANDARD}")
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 message (STATUS "CMake version: ${CMAKE_VERSION}")
 message (STATUS "Project version: ${PROJECT_VERSION}")
 
@@ -212,6 +203,8 @@ endif()
 
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
+# SQLiteC++ 3.x requires C++11 features
+target_compile_features(SQLiteCpp PUBLIC cxx_std_11)
 
 # Options relative to SQLite and SQLiteC++ functions
 
@@ -401,6 +394,18 @@ if (SQLITECPP_INSTALL)
         ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+
+    cmake_path(
+        RELATIVE_PATH CMAKE_INSTALL_FULL_LIBDIR
+        BASE_DIRECTORY ${CMAKE_INSTALL_PREFIX}
+        OUTPUT_VARIABLE PC_RELATIVE_LIBDIR)
+    string(JOIN " -l" PC_LIBS_PRIVATE "" ${CMAKE_DL_LIBS})
+    string(PREPEND PC_LIBS_PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+    # Use lowercase name for compatibility with Meson build
+    configure_file(cmake/sqlitecpp.pc.in cmake/sqlitecpp.pc @ONLY)
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/sqlitecpp.pc
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig/)
 endif (SQLITECPP_INSTALL)
 
 # Optional additional targets:
@@ -488,10 +493,15 @@ if (SQLITECPP_BUILD_TESTS)
     target_link_libraries(SQLiteCpp_tests SQLiteCpp)
 
     find_package(GTest)
-    if (GTEST_FOUND)
+    if (GTest_FOUND)
         message(STATUS "Link to GTest system library")
         target_link_libraries(SQLiteCpp_tests GTest::GTest GTest::Main)
-    else (GTEST_FOUND)
+        if (GTest_VERSION AND (GTest_VERSION VERSION_LESS 1.17))
+            target_compile_features(SQLiteCpp_tests PRIVATE cxx_std_14)
+        else()
+            target_compile_features(SQLiteCpp_tests PRIVATE cxx_std_17)
+        endif()
+    else (GTest_FOUND)
         message(STATUS "Compile googletest from source in submodule")
         # deactivate some warnings for compiling the googletest library
         if (NOT MSVC)
@@ -518,7 +528,8 @@ if (SQLITECPP_BUILD_TESTS)
         endif (MSVC)
 
         target_link_libraries(SQLiteCpp_tests gtest_main)
-    endif (GTEST_FOUND)
+        target_compile_features(SQLiteCpp_tests PUBLIC cxx_std_17)
+    endif (GTest_FOUND)
 
     # add a "test" target:
     enable_testing()

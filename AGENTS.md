@@ -57,6 +57,14 @@ clarifications.
 - ASCII only in code and comments
 - Max 120 characters per line
 
+## Build System Compatibility
+- Minimum build-tool versions are deliberate baselines, not permanent compatibility promises.
+- Raising the minimum CMake version is acceptable when it materially simplifies maintenance,
+  enables cleaner modern CMake, or makes external contributions easier.
+- Choose a new minimum deliberately and update the configuration, documentation, and CI together.
+  Changing a version requires at least a minimum version update, not just a patch.
+- CI should exercise the declared minimum version rather than only current CMake releases.
+
 ## Repository Structure
 ```
 include/SQLiteCpp/    # Public headers

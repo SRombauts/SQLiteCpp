@@ -320,3 +320,4 @@ Version 3.4.0 - 2026 ???
 - Fix GCov linking in shared-library builds (#567)
 - Add ASan, UBSan, and cppcheck quality gates (#568)
 - Add CodeQL security and quality analysis (#569)
+- Refresh the README CI badges (#570)

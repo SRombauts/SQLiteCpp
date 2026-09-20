@@ -265,13 +265,25 @@ option(SQLITECPP_USE_ASAN "Use Address Sanitizer." OFF)
 if (SQLITECPP_USE_ASAN)
     if ((CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 6) OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
         message (STATUS "Using Address Sanitizer")
-        set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fsanitize=address -fno-omit-frame-pointer")
+        target_compile_options(SQLiteCpp PRIVATE -fsanitize=address -fno-omit-frame-pointer)
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address")
         if (CMAKE_COMPILER_IS_GNUCXX)
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold")
+            set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=gold")
         endif ()
     endif ()
 endif (SQLITECPP_USE_ASAN)
+
+option(SQLITECPP_USE_UBSAN "Use Undefined Behavior Sanitizer." OFF)
+if (SQLITECPP_USE_UBSAN)
+    if ((CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 6) OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
+        message (STATUS "Using Undefined Behavior Sanitizer")
+        target_compile_options(SQLiteCpp PRIVATE -fsanitize=undefined -fno-omit-frame-pointer)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=undefined")
+    endif ()
+endif (SQLITECPP_USE_UBSAN)
 
 if (SQLITECPP_USE_GCOV)
     # Prevent the compiler from removing the unused inline functions so that they get tracked as "non-covered"
@@ -436,10 +448,16 @@ option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." ON)
 if (SQLITECPP_RUN_CPPCHECK)
     find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
     if (CPPCHECK_EXECUTABLE)
-        # add a cppcheck target to the "all" target
+        # Add an explicit cppcheck target for the quality workflow.
         add_custom_target(SQLiteCpp_cppcheck
-         ALL
-         COMMAND ${CPPCHECK_EXECUTABLE} -j 8 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
+            COMMAND ${CPPCHECK_EXECUTABLE}
+                -j 8
+                --enable=style
+                --error-exitcode=1
+                --quiet
+                --std=c++11
+                ${CPPCHECK_ARG_TEMPLATE}
+                ${PROJECT_SOURCE_DIR}/src
         )
         execute_process(COMMAND "${CPPCHECK_EXECUTABLE}" --version OUTPUT_VARIABLE CPPCHECK_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
         message(STATUS "Found Cppcheck: ${CPPCHECK_EXECUTABLE} ${CPPCHECK_VERSION}")

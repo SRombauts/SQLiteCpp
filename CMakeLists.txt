@@ -448,10 +448,16 @@ option(SQLITECPP_RUN_CPPCHECK "Run cppcheck C++ static analysis tool." ON)
 if (SQLITECPP_RUN_CPPCHECK)
     find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
     if (CPPCHECK_EXECUTABLE)
-        # add a cppcheck target to the "all" target
+        # Add an explicit cppcheck target for the quality workflow.
         add_custom_target(SQLiteCpp_cppcheck
-         ALL
-         COMMAND ${CPPCHECK_EXECUTABLE} -j 8 cppcheck --enable=style --quiet ${CPPCHECK_ARG_TEMPLATE} ${PROJECT_SOURCE_DIR}/src
+            COMMAND ${CPPCHECK_EXECUTABLE}
+                -j 8
+                --enable=style
+                --error-exitcode=1
+                --quiet
+                --std=c++11
+                ${CPPCHECK_ARG_TEMPLATE}
+                ${PROJECT_SOURCE_DIR}/src
         )
         execute_process(COMMAND "${CPPCHECK_EXECUTABLE}" --version OUTPUT_VARIABLE CPPCHECK_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
         message(STATUS "Found Cppcheck: ${CPPCHECK_EXECUTABLE} ${CPPCHECK_VERSION}")

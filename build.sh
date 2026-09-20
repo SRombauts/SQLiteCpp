@@ -21,5 +21,5 @@ ctest --output-on-failure
 
 # And with Valgrind
 echo "Note: uncomment to run valgrind memcheck"
-#valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./SQLiteCpp_example1
-#valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./SQLiteCpp_tests
+#valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./bin/SQLiteCpp_example1
+#valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./bin/SQLiteCpp_tests

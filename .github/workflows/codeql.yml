@@ -1,0 +1,58 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: C/C++ analysis
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+    - name: Checkout ${{ github.ref_name }}
+      uses: actions/checkout@v4
+    - run: git submodule update --init --recursive
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v4
+      with:
+        languages: c-cpp
+        build-mode: manual
+        queries: security-and-quality
+
+    - name: Install SQLite3 development files
+      run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
+
+    - name: Configure
+      env:
+        CC: gcc
+        CXX: g++
+      run: >-
+        cmake -S . -B build
+        -DCMAKE_BUILD_TYPE=Debug
+        -DBUILD_SHARED_LIBS=ON
+        -DSQLITECPP_INTERNAL_SQLITE=OFF
+        -DSQLITECPP_BUILD_TESTS=OFF
+        -DSQLITECPP_BUILD_EXAMPLES=OFF
+        -DSQLITECPP_RUN_CPPCHECK=OFF
+        -DSQLITECPP_RUN_CPPLINT=OFF
+
+    - name: Build
+      run: cmake --build build --config Debug
+
+    - name: Analyze
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: /language:c-cpp

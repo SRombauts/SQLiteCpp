@@ -3,9 +3,11 @@ SQLiteC++
 
 [![release](https://img.shields.io/github/release/SRombauts/SQLiteCpp.svg)](https://github.com/SRombauts/SQLiteCpp/releases)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/SRombauts/SQLiteCpp/blob/master/LICENSE.txt)
-[![Travis CI Linux Build Status](https://travis-ci.org/SRombauts/SQLiteCpp.svg?branch=master)](https://travis-ci.org/SRombauts/SQLiteCpp "Travis CI Linux Build Status")
+[![CMake](https://github.com/SRombauts/SQLiteCpp/actions/workflows/cmake.yml/badge.svg?branch=master)](https://github.com/SRombauts/SQLiteCpp/actions/workflows/cmake.yml "CMake build status")
+[![Meson](https://github.com/SRombauts/SQLiteCpp/actions/workflows/meson.yml/badge.svg?branch=master)](https://github.com/SRombauts/SQLiteCpp/actions/workflows/meson.yml "Meson build status")
+[![Quality](https://github.com/SRombauts/SQLiteCpp/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/SRombauts/SQLiteCpp/actions/workflows/quality.yml "Quality checks")
+[![CodeQL](https://github.com/SRombauts/SQLiteCpp/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/SRombauts/SQLiteCpp/actions/workflows/codeql.yml "CodeQL analysis")
 [![AppVeyor Windows Build status](https://ci.appveyor.com/api/projects/status/github/SRombauts/SQLiteCpp?svg=true)](https://ci.appveyor.com/project/SbastienRombauts/SQLiteCpp "AppVeyor Windows Build status")
-[![GitHub Actions Build status](https://github.com/SRombauts/SQLiteCpp/workflows/build/badge.svg)](https://github.com/SRombauts/SQLiteCpp/actions "GitHhub Actions Build status")
 [![Coveralls](https://img.shields.io/coveralls/github/SRombauts/SQLiteCpp/master.svg)](https://coveralls.io/github/SRombauts/SQLiteCpp "Coveralls test coverage")
 [![Coverity](https://img.shields.io/coverity/scan/14508.svg)](https://scan.coverity.com/projects/srombauts-sqlitecpp "Coverity Scan Build Status")
 [![Join the chat at https://gitter.im/SRombauts/SQLiteCpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/SRombauts/SQLiteCpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

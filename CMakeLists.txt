@@ -91,6 +91,7 @@ else (MSVC) # Unix/macOS/MinGW
             message (STATUS "Using GCov instrumentation")
             add_compile_options (-coverage)
             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -coverage")
+            set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -coverage")
         endif ()
     endif (CMAKE_COMPILER_IS_GNUCXX)
 endif (MSVC)

@@ -319,3 +319,4 @@ Version 3.4.0 - 2026 ???
 - Limit AppVeyor to Visual Studio 2022 and 2019 Release builds on master and pull requests (#565)
 - Fix GCov linking in shared-library builds (#567)
 - Add ASan, UBSan, and cppcheck quality gates (#568)
+- Add CodeQL security and quality analysis (#569)

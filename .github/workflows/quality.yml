@@ -1,0 +1,72 @@
+name: Quality
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  sanitizers:
+    name: ${{ matrix.config.name }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - name: AddressSanitizer
+          cmake_option: SQLITECPP_USE_ASAN
+          runtime_options: detect_leaks=1:halt_on_error=1
+        - name: UndefinedBehaviorSanitizer
+          cmake_option: SQLITECPP_USE_UBSAN
+          runtime_options: print_stacktrace=1:halt_on_error=1
+
+    steps:
+    - name: Checkout ${{ github.ref_name }}
+      uses: actions/checkout@v4
+    - run: git submodule update --init --recursive
+
+    - name: Configure
+      env:
+        CC: clang
+        CXX: clang++
+      run: >-
+        cmake -S . -B build
+        -DCMAKE_BUILD_TYPE=Debug
+        -DBUILD_SHARED_LIBS=ON
+        -D${{ matrix.config.cmake_option }}=ON
+        -DSQLITECPP_BUILD_TESTS=ON
+        -DSQLITECPP_BUILD_EXAMPLES=ON
+        -DSQLITECPP_RUN_CPPCHECK=OFF
+        -DSQLITECPP_RUN_CPPLINT=OFF
+
+    - name: Build
+      run: cmake --build build --config Debug
+
+    - name: Test
+      env:
+        ASAN_OPTIONS: ${{ matrix.config.runtime_options }}
+        UBSAN_OPTIONS: ${{ matrix.config.runtime_options }}
+      run: ctest --verbose --output-on-failure --test-dir build
+
+  cppcheck:
+    name: cppcheck
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout ${{ github.ref_name }}
+      uses: actions/checkout@v4
+    - run: git submodule update --init --recursive
+
+    - name: Install cppcheck
+      run: sudo apt-get update && sudo apt-get install -y cppcheck
+
+    - name: Configure
+      run: >-
+        cmake -S . -B build
+        -DSQLITECPP_BUILD_TESTS=OFF
+        -DSQLITECPP_BUILD_EXAMPLES=OFF
+        -DSQLITECPP_RUN_CPPCHECK=ON
+        -DSQLITECPP_RUN_CPPLINT=OFF
+
+    - name: Run cppcheck
+      run: cmake --build build --target SQLiteCpp_cppcheck

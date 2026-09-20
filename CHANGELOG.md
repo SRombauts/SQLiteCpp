@@ -317,3 +317,4 @@ Version 3.4.0 - 2026 ???
 - Fix large `std::string` binding sizes (#563)
 - Add 64-bit BLOB binding methods (#564)
 - Limit AppVeyor to Visual Studio 2022 and 2019 Release builds on master and pull requests (#565)
+- Fix GCov linking in shared-library builds (#567)

@@ -75,6 +75,7 @@ static void test_column_basis(bool utf16)
         const unsigned short uint4  = query.getColumn(0); // operator unsigned short()
         const char*         ptxt    = query.getColumn(1); // operator const char*()
         const std::string   msg     = query.getColumn(1); // operator std::string() (or const char* with MSVC)
+        const std::string_view sv   = query.getColumn(1); // operator std::string() (or const char* with MSVC)
         const int           integer = query.getColumn(2); // operator int()
         const double        real    = query.getColumn(3); // operator double()
         const void*         pblob   = query.getColumn(4); // operator void*()
@@ -97,6 +98,7 @@ static void test_column_basis(bool utf16)
         EXPECT_EQ(1U,           uint4);
         EXPECT_STREQ("first",   ptxt);
         EXPECT_EQ("first",      msg);
+        EXPECT_EQ("first",      sv);
         EXPECT_EQ(-123,         integer);
         EXPECT_DOUBLE_EQ(0.123, real);
         EXPECT_EQ(0,            memcmp("bl\0b", pblob, size));
@@ -112,26 +114,30 @@ static void test_column_basis(bool utf16)
 
     // validates every variant of explicit getters
     {
-        int64_t             id      = query.getColumn(0).getInt64();
-        const unsigned int  uint1   = query.getColumn(0).getUInt();
-        const uint32_t      uint2   = query.getColumn(0).getUInt();
-        const std::string   msg1    = query.getColumn(1).getString();
-        const char*         ptxt    = query.getColumn(1).getText();
-        const std::string   msg2    = query.getColumn(1).getText();
-        const int           integer = query.getColumn(2).getInt();
-        const double        real    = query.getColumn(3).getDouble();
-        const void*         pblob   = query.getColumn(4).getBlob();
-        const std::string   sblob   = query.getColumn(4).getString();
+        int64_t             id        = query.getColumn(0).getInt64();
+        const unsigned int  uint1     = query.getColumn(0).getUInt();
+        const uint32_t      uint2     = query.getColumn(0).getUInt();
+        const std::string   msg1      = query.getColumn(1).getString();
+        const char*         ptxt      = query.getColumn(1).getText();
+        const std::string   msg2      = query.getColumn(1).getText();
+        const std::string_view sv     = query.getColumn(1).getStringView();
+        const int           integer   = query.getColumn(2).getInt();
+        const double        real      = query.getColumn(3).getDouble();
+        const void*         pblob     = query.getColumn(4).getBlob();
+        const std::string   sblob     = query.getColumn(4).getString();
+        const std::string_view svblob = query.getColumn(4).getStringView();
         EXPECT_EQ(1,            id);
         EXPECT_EQ(1U,           uint1);
         EXPECT_EQ(1U,           uint2);
         EXPECT_STREQ("first",   ptxt);
         EXPECT_EQ("first",      msg1);
         EXPECT_EQ("first",      msg2);
+        EXPECT_EQ("first",      sv);
         EXPECT_EQ(-123,         integer);
         EXPECT_DOUBLE_EQ(0.123, real);
         EXPECT_EQ(0,            memcmp("bl\0b", pblob, 4));
         EXPECT_EQ(0,            memcmp("bl\0b", &sblob[0], 4));
+        EXPECT_EQ(0,            memcmp("bl\0b", svblob.data(), 4));
     }
 
     // Validate getBytes(), getType(), isInteger(), isNull()...

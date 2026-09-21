@@ -40,10 +40,7 @@ Savepoint::~Savepoint()
     {
         try
         {
-            if (!mbRolledBack)
-            {
-                rollbackTo();
-            }
+            rollbackTo();
             release();
         }
         catch (...)
@@ -74,7 +71,6 @@ void Savepoint::rollbackTo()
     if (!mbReleased)
     {
         mDatabase.exec(std::string("ROLLBACK TO SAVEPOINT ") + msName);
-        mbRolledBack = true;
     }
     else
     {

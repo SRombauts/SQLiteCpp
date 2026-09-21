@@ -1,6 +1,6 @@
 ---
 name: sqlitecpp-ci-workflows
-description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, AppVeyor, Travis, matrices, or test steps.
+description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, AppVeyor, matrices, or test steps.
 ---
 
 # SQLiteCpp CI Workflows
@@ -35,10 +35,6 @@ description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, AppVeyor, T
 - Build and run `ctest --output-on-failure`.
 - Configure `branches.only: master` in `appveyor.yml`; its presence overrides branch filtering from the AppVeyor
   project UI. Pull requests targeting `master` are still built, while pushes to task branches are skipped.
-
-## Travis CI
-- Multiple GCC/Clang versions across Linux and macOS.
-- Variants for ASAN, GCov, Valgrind, shared libs, external sqlite3.
 
 ## Coverage (Coveralls)
 The `Coverage` workflow (`.github/workflows/coverage.yml`) builds with `-DSQLITECPP_USE_GCOV=ON`

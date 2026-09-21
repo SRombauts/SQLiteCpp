@@ -289,7 +289,7 @@ Version 3.3.3 - 2025 May 20
 - Update googletest to v1.16.0 (#506)
 - update meson dependencies (#508)
 
-Version 3.4.0 - 2026 ???
+Version 3.4.0 - 2026 Sep 21
 
 - Update SQLite from 3.49.2 to 3.53.4 (2026-07-24) (#526) (#538) (#548) (#561) (#566)
 - Add a `SQLITECPP_install` CMake option to make the install targets optional (#512)

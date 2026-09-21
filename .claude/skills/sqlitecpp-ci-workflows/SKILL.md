@@ -1,6 +1,6 @@
 ---
 name: sqlitecpp-ci-workflows
-description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, AppVeyor, matrices, or test steps.
+description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, matrices, or test steps.
 ---
 
 # SQLiteCpp CI Workflows
@@ -13,6 +13,9 @@ description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, AppVeyor, m
 
 ## GitHub Actions (CMake)
 - Matrix across Windows (MSVC/MinGW), Ubuntu, macOS.
+- Keep the latest-MSVC Windows build in Debug mode.
+- Complement it with one Visual Studio 2022 Release build for Win32/x86; do not recreate older or broader
+  Visual Studio matrices.
 - CMake config includes:
   - `-DBUILD_SHARED_LIBS=ON`
   - `-DSQLITECPP_BUILD_TESTS=ON`
@@ -28,13 +31,6 @@ description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, AppVeyor, m
   `meson setup builddir -DSQLITECPP_BUILD_TESTS=true -DSQLITECPP_BUILD_EXAMPLES=true --force-fallback-for=sqlite3`.
 - Build: `meson compile -C builddir`.
 - Test: `meson test -C builddir`.
-
-## AppVeyor
-- Visual Studio 2022/2019, Release, Win32/x64. GitHub Actions provides the overlapping Debug coverage.
-- CMake config: `-DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_RUN_CPPCHECK=OFF`.
-- Build and run `ctest --output-on-failure`.
-- Configure `branches.only: master` in `appveyor.yml`; its presence overrides branch filtering from the AppVeyor
-  project UI. Pull requests targeting `master` are still built, while pushes to task branches are skipped.
 
 ## Coverage (Coveralls)
 The `Coverage` workflow (`.github/workflows/coverage.yml`) builds with `-DSQLITECPP_USE_GCOV=ON`

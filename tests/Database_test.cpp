@@ -19,6 +19,8 @@
 #include  <filesystem>
 #endif // c++17
 
+#include <climits>
+#include <cstddef>
 #include <cstdio>
 #include <fstream>
 
@@ -623,6 +625,18 @@ TEST(Database, isUnencryptedHeaderCheck)
     remove("test.db3");
 }
 
+TEST(Database, keyAndRekeyValidateBufferArguments)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    const unsigned char dummy = 0;
+    const std::size_t tooLarge = static_cast<std::size_t>(INT_MAX) + 1;
+
+    EXPECT_THROW(db.key(nullptr, 1), SQLite::Exception);
+    EXPECT_THROW(db.rekey(nullptr, 1), SQLite::Exception);
+    EXPECT_THROW(db.key(&dummy, tooLarge), SQLite::Exception);
+    EXPECT_THROW(db.rekey(&dummy, tooLarge), SQLite::Exception);
+}
+
 #ifdef SQLITE_HAS_CODEC
 TEST(Database, encryptAndDecrypt)
 {
@@ -670,6 +684,34 @@ TEST(Database, encryptAndDecrypt)
     } // Close DB test.db3
     remove("test.db3");
 }
+
+TEST(Database, encryptAndDecryptWithBinaryKey)
+{
+    const unsigned char key[] = { '1', '2', '3', 0, 's', 'e', 'c', 'r', 'e', 't' };
+    remove("binary-key.db3");
+    {
+        SQLite::Database db("binary-key.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+        db.rekey(key, sizeof(key));
+    } // Close DB binary-key.db3
+    {
+        SQLite::Database db("binary-key.db3", SQLite::OPEN_READONLY);
+        db.key(key, 3);
+        EXPECT_THROW(db.tableExists("test"), SQLite::Exception);
+    } // Close DB binary-key.db3
+    {
+        SQLite::Database db("binary-key.db3", SQLite::OPEN_READWRITE);
+        db.key(key, sizeof(key));
+        EXPECT_TRUE(db.tableExists("test"));
+        db.rekey(nullptr, 0);
+    } // Close DB binary-key.db3
+    {
+        EXPECT_TRUE(SQLite::Database::isUnencrypted("binary-key.db3"));
+        SQLite::Database db("binary-key.db3", SQLite::OPEN_READWRITE);
+        EXPECT_TRUE(db.tableExists("test"));
+    } // Close DB binary-key.db3
+    remove("binary-key.db3");
+}
 #else // SQLITE_HAS_CODEC
 TEST(Database, encryptAndDecrypt)
 {
@@ -692,9 +734,14 @@ TEST(Database, encryptAndDecrypt)
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
         // An empty key is a no-op even when built without encryption support
         EXPECT_NO_THROW(db.key(""));
+        EXPECT_NO_THROW(db.key(nullptr, 0));
         // Encrypt the database
         EXPECT_THROW(db.key("123secret"), SQLite::Exception);
         EXPECT_THROW(db.rekey("123secret"), SQLite::Exception);
+        const unsigned char key[] = { '1', '2', '3', 0, 's', 'e', 'c', 'r', 'e', 't' };
+        EXPECT_THROW(db.key(key, sizeof(key)), SQLite::Exception);
+        EXPECT_THROW(db.rekey(nullptr, 0), SQLite::Exception);
+        EXPECT_THROW(db.rekey(key, sizeof(key)), SQLite::Exception);
     } // Close DB test.db3
     remove("test.db3");
 }

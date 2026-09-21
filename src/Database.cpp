@@ -16,6 +16,7 @@
 #include <SQLiteCpp/Statement.h>
 
 #include <sqlite3.h>
+#include <climits>
 #include <fstream>
 #include <string.h>
 
@@ -226,14 +227,30 @@ void Database::loadExtension(const char* apExtensionName, const char *apEntryPoi
 // Set the key for the current sqlite database instance.
 void Database::key(const std::string& aKey) const
 {
-    int passLen = static_cast<int>(aKey.length());
+    key(aKey.data(), aKey.size());
+}
+
+// Set the key for the current sqlite database instance from a binary buffer.
+void Database::key(const void* apKey, const std::size_t aSize) const
+{
+    if ((nullptr == apKey) && (aSize > 0))
+    {
+        throw SQLite::Exception("Encryption key buffer must not be null when its size is positive.");
+    }
+    if (aSize > static_cast<std::size_t>(INT_MAX))
+    {
+        throw SQLite::Exception("Encryption key is too large.");
+    }
+
+    const int passLen = static_cast<int>(aSize);
 #ifdef SQLITE_HAS_CODEC
     if (passLen > 0)
     {
-        const int ret = sqlite3_key(getHandle(), aKey.c_str(), passLen);
+        const int ret = sqlite3_key(getHandle(), apKey, passLen);
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
+    static_cast<void>(apKey); // silence unused parameter warning
     if (passLen > 0)
     {
         throw SQLite::Exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
@@ -244,11 +261,26 @@ void Database::key(const std::string& aKey) const
 // Reset the key for the current sqlite database instance.
 void Database::rekey(const std::string& aNewKey) const
 {
+    return rekey(aNewKey.data(), aNewKey.size()); // LCOV_EXCL_LINE
+}
+
+// Reset the key for the current sqlite database instance from a binary buffer.
+void Database::rekey(const void* apNewKey, const std::size_t aSize) const
+{
+    if ((nullptr == apNewKey) && (aSize > 0))
+    {
+        throw SQLite::Exception("Encryption key buffer must not be null when its size is positive.");
+    }
+    if (aSize > static_cast<std::size_t>(INT_MAX))
+    {
+        throw SQLite::Exception("Encryption key is too large.");
+    }
+
+    const int passLen = static_cast<int>(aSize);
 #ifdef SQLITE_HAS_CODEC
-    int passLen = aNewKey.length();
     if (passLen > 0)
     {
-        const int ret = sqlite3_rekey(getHandle(), aNewKey.c_str(), passLen);
+        const int ret = sqlite3_rekey(getHandle(), apNewKey, passLen);
         check(ret);
     }
     else
@@ -257,7 +289,8 @@ void Database::rekey(const std::string& aNewKey) const
         check(ret);
     }
 #else // SQLITE_HAS_CODEC
-    static_cast<void>(aNewKey); // silence unused parameter warning
+    static_cast<void>(apNewKey); // silence unused parameter warning
+    static_cast<void>(passLen); // silence unused parameter warning
     throw SQLite::Exception("No encryption support, recompile with SQLITE_HAS_CODEC to enable.");
 #endif // SQLITE_HAS_CODEC
 }

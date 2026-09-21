@@ -23,6 +23,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <fstream>
+#include <type_traits>
 
 #ifdef SQLITECPP_ENABLE_ASSERT_HANDLER
 namespace SQLite
@@ -35,6 +36,10 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 }
 }
 #endif
+
+// Keep the SQLite::Header public field representation ABI-compatible with SQLiteCpp 3.x.
+static_assert(std::is_same<decltype(SQLite::Header::fileChangeCounter), unsigned long>::value,
+              "SQLite::Header 32-bit database fields must retain their SQLiteCpp 3.x public type");
 
 // NOTE on macOS FindSQLite3 find an unrelated sqlite3.h from Mono.framework that doesn't match the actual package version!
 #if defined(SQLITECPP_INTERNAL_SQLITE) || !defined(__APPLE__)

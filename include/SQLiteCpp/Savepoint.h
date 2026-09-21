@@ -5,7 +5,7 @@
  * secured operation. Similar to a transaction while allowing child savepoints.
  *
  * Copyright (c) 2020 Kelvin Hammond (hammond.kelvin@gmail.com)
- * Copyright (c) 2020-2025 Sebastien Rombauts (sebastien.rombauts@gmail.com)
+ * Copyright (c) 2020-2026 Sebastien Rombauts (sebastien.rombauts@gmail.com)
  *
  * Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt or
  * copy at http://opensource.org/licenses/MIT)

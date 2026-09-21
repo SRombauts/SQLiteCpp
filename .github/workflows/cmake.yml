@@ -16,15 +16,27 @@ jobs:
             generator: "Visual Studio 18 2026",
             generator_options: "",
             build_type: "Debug",
+            build_shared_libs: "ON",
             cc: "cl", cxx: "cl",
             extra_path: "",
           }
         - {
-            name: "Windows VS2022 x86 Release",
+            name: "Windows VS2022 x86 Release Shared",
             os: windows-2022,
             generator: "Visual Studio 17 2022",
             generator_options: "-A Win32",
             build_type: "Release",
+            build_shared_libs: "ON",
+            cc: "cl", cxx: "cl",
+            extra_path: "",
+          }
+        - {
+            name: "Windows VS2022 x86 Release Static",
+            os: windows-2022,
+            generator: "Visual Studio 17 2022",
+            generator_options: "-A Win32",
+            build_type: "Release",
+            build_shared_libs: "OFF",
             cc: "cl", cxx: "cl",
             extra_path: "",
           }
@@ -34,6 +46,7 @@ jobs:
             generator: "MinGW Makefiles",
             generator_options: "",
             build_type: "Debug",
+            build_shared_libs: "ON",
             cc: "gcc", cxx: "g++",
             extra_path: "C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin",
           }
@@ -43,6 +56,7 @@ jobs:
             generator: "Unix Makefiles",
             generator_options: "",
             build_type: "Debug",
+            build_shared_libs: "ON",
             cc: "gcc", cxx: "g++",
             extra_path: "",
           }
@@ -52,6 +66,7 @@ jobs:
             generator: "Unix Makefiles",
             generator_options: "",
             build_type: "Debug",
+            build_shared_libs: "ON",
             cc: "gcc", cxx: "g++",
             extra_path: "",
           }
@@ -61,6 +76,7 @@ jobs:
             generator: "Unix Makefiles",
             generator_options: "",
             build_type: "Debug",
+            build_shared_libs: "ON",
             cc: "clang", cxx: "clang++",
             extra_path: "",
           }
@@ -78,7 +94,7 @@ jobs:
         set(ENV{CC} ${{ matrix.config.cc }})
         set(ENV{CXX} ${{ matrix.config.cxx }})
     - run: mkdir build
-    - run: cmake -G "${{ matrix.config.generator }}" ${{ matrix.config.generator_options }} -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DBUILD_SHARED_LIBS=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF ..
+    - run: cmake -G "${{ matrix.config.generator }}" ${{ matrix.config.generator_options }} -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DBUILD_SHARED_LIBS=${{ matrix.config.build_shared_libs }} -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF ..
       working-directory: build
     - run: cmake --build build --config ${{ matrix.config.build_type }}
     - run: ctest --verbose --output-on-failure --test-dir build -C ${{ matrix.config.build_type }}

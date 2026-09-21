@@ -72,7 +72,8 @@ Now requires a C++11 compiler. Use branch [sqlitecpp-2.x](https://github.com/SRo
 The continuous integration builds and tests on:
 
 - Ubuntu 22.04 and 24.04, plus the current Ubuntu GitHub Actions runner
-- the current Windows GitHub Actions runner, plus a Visual Studio 2022 Release build for Win32/x86
+- the current Windows GitHub Actions runner, plus Visual Studio 2022 Release builds for Win32/x86 with shared
+  and static libraries
 - the current macOS GitHub Actions runner
 
 The build matrices cover GCC, Clang, AppleClang, MinGW, and MSVC. The core library requires C++11;
@@ -211,7 +212,7 @@ You can:
 
 GitHub Actions builds and tests the CMake and Meson configurations on Linux, Windows, and macOS.
 Separate workflows run AddressSanitizer, UndefinedBehaviorSanitizer, cppcheck, CodeQL, coverage, and Coverity Scan.
-The CMake workflow also runs a Visual Studio 2022 Release build for Win32/x86.
+The CMake workflow also runs Visual Studio 2022 Release builds for Win32/x86 with shared and static libraries.
 
 Detailed results can be seen online:
  - [GitHub Actions](https://github.com/SRombauts/SQLiteCpp/actions)

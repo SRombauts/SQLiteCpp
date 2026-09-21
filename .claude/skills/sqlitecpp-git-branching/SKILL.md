@@ -29,6 +29,8 @@ branch with the working tree intact before continuing.
 - Updating the bundled SQLite3: `update-sqlite-X.Y.Z` (e.g. `update-sqlite-3.52.2`).
   See [[sqlitecpp-update-sqlite]].
 - Cutting a release: `release-X.Y.Z`. See [[sqlitecpp-release]].
+- Maintaining a released minor line: `sqlitecpp-X.Y.x` (e.g. `sqlitecpp-3.4.x`). Branch from the
+  final release commit. Do not reuse an older major-line development branch such as `sqlitecpp-3.x`.
 
 ## Branch-only requests
 - If the user only requests a branch, create it and stop (no file changes).

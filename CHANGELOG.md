@@ -324,3 +324,4 @@ Version 3.4.0 - 2026 ???
 - Allow Database encryption keys to be supplied as binary buffers (#571)
 - Remove obsolete Travis CI configuration and active references (#572)
 - Remove AppVeyor and retain Visual Studio 2022 Release Win32/x86 coverage in GitHub Actions (#573)
+- Add C++11 & C++17 standard tests (#574)

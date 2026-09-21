@@ -51,6 +51,8 @@ All of the code and documentation in SQLite has been dedicated to the public dom
 - to keep dependencies to a minimum (C++11 STL and SQLite3)
 - to be portable
 - to be light and fast
+
+**C++11 support:** SQLiteCpp 3.4.x is the final release line supporting C++11. After 3.4.0, maintenance fixes for the 3.x series will be made on the `sqlitecpp-3.x` branch, while `master` moves to SQLiteCpp 4.x with a newer C++ and CMake baseline.
 - to be thread-safe only as much as SQLite "Multi-thread" mode (see below)
 - to have a good unit test coverage
 - to use API names sticking with those of the SQLite library

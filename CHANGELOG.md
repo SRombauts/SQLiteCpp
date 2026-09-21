@@ -322,3 +322,4 @@ Version 3.4.0 - 2026 ???
 - Add CodeQL security and quality analysis (#569)
 - Refresh the README CI badges (#570)
 - Allow Database encryption keys to be supplied as binary buffers (#571)
+- Remove obsolete Travis CI configuration and active references (#572)

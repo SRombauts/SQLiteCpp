@@ -14,7 +14,17 @@ jobs:
             name: "Windows Latest MSVC",
             os: windows-latest,
             generator: "Visual Studio 18 2026",
+            generator_options: "",
             build_type: "Debug",
+            cc: "cl", cxx: "cl",
+            extra_path: "",
+          }
+        - {
+            name: "Windows VS2022 x86 Release",
+            os: windows-2022,
+            generator: "Visual Studio 17 2022",
+            generator_options: "-A Win32",
+            build_type: "Release",
             cc: "cl", cxx: "cl",
             extra_path: "",
           }
@@ -22,6 +32,7 @@ jobs:
             name: "Windows Latest MinGW",
             os: windows-latest,
             generator: "MinGW Makefiles",
+            generator_options: "",
             build_type: "Debug",
             cc: "gcc", cxx: "g++",
             extra_path: "C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw64\\bin",
@@ -30,6 +41,7 @@ jobs:
             name: "Ubuntu 24.04 GCC",
             os: ubuntu-24.04,
             generator: "Unix Makefiles",
+            generator_options: "",
             build_type: "Debug",
             cc: "gcc", cxx: "g++",
             extra_path: "",
@@ -38,6 +50,7 @@ jobs:
             name: "Ubuntu 22.04 GCC",
             os: ubuntu-22.04,
             generator: "Unix Makefiles",
+            generator_options: "",
             build_type: "Debug",
             cc: "gcc", cxx: "g++",
             extra_path: "",
@@ -46,6 +59,7 @@ jobs:
             name: "macOS Latest Clang",
             os: macos-latest,
             generator: "Unix Makefiles",
+            generator_options: "",
             build_type: "Debug",
             cc: "clang", cxx: "clang++",
             extra_path: "",
@@ -64,7 +78,7 @@ jobs:
         set(ENV{CC} ${{ matrix.config.cc }})
         set(ENV{CXX} ${{ matrix.config.cxx }})
     - run: mkdir build
-    - run: cmake -G "${{ matrix.config.generator }}" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DBUILD_SHARED_LIBS=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF .. 
+    - run: cmake -G "${{ matrix.config.generator }}" ${{ matrix.config.generator_options }} -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DBUILD_SHARED_LIBS=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF ..
       working-directory: build
     - run: cmake --build build --config ${{ matrix.config.build_type }}
     - run: ctest --verbose --output-on-failure --test-dir build

@@ -330,3 +330,4 @@ Version 3.4.0 - 2026 ???
 - Remove obsolete Travis CI configuration and active references (#572)
 - Remove AppVeyor and retain Visual Studio 2022 Release Win32/x86 coverage in GitHub Actions (#573)
 - Add C++11 & C++17 standard tests (#574)
+- Update copyright years to 2026 across project files (#578)

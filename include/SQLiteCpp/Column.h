@@ -117,7 +117,10 @@ public:
     std::string_view getStringView() const {
         // See getString implementation
         (void)getBytes();
-        return std::string_view(static_cast<const char*>(getBlob()), getBytes());
+        auto data = static_cast<const char*>(getBlob());
+        if (data == nullptr)
+            return {};
+        return std::string_view(data, getBytes());
     }
 #endif // c++17
 

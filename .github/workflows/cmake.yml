@@ -81,4 +81,4 @@ jobs:
     - run: cmake -G "${{ matrix.config.generator }}" ${{ matrix.config.generator_options }} -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} -DBUILD_SHARED_LIBS=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF ..
       working-directory: build
     - run: cmake --build build --config ${{ matrix.config.build_type }}
-    - run: ctest --verbose --output-on-failure --test-dir build
+    - run: ctest --verbose --output-on-failure --test-dir build -C ${{ matrix.config.build_type }}

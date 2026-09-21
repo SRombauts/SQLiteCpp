@@ -1,0 +1,41 @@
+name: CMake consumer standards
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: C++${{ matrix.library_standard }} library / C++${{ matrix.consumer_standard }} consumer
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - library_standard: 11
+            consumer_standard: 11
+          - library_standard: 11
+            consumer_standard: 17
+          - library_standard: 17
+            consumer_standard: 17
+
+    env:
+      CC: gcc
+      CXX: g++
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: >
+          cmake
+          -S tests/consumer
+          -B build/consumer
+          -DCMAKE_BUILD_TYPE=Debug
+          -DSQLITECPP_CXX_STANDARD=${{ matrix.library_standard }}
+          -DCONSUMER_CXX_STANDARD=${{ matrix.consumer_standard }}
+
+      - name: Build
+        run: cmake --build build/consumer --config Debug
+
+      - name: Test
+        run: ctest --test-dir build/consumer --build-config Debug --output-on-failure

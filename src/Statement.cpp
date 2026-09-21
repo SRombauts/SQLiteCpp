@@ -116,16 +116,6 @@ void Statement::bind(const int aIndex, const std::string& aValue)
     check(ret);
 }
 
-#if __cplusplus >= 201703L
-// Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const std::string_view aValue)
-{
-    const int ret = sqlite3_bind_text64(getPreparedStatement(), aIndex, apValue.data(),
-                                        static_cast<sqlite3_uint64>(aValue.size()), SQLITE_TRANSIENT, SQLITE_UTF8);
-    check(ret);
-}
-#endif // c++17
-
 // Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const char* apValue)
 {
@@ -155,16 +145,6 @@ void Statement::bindNoCopy(const int aIndex, const std::string& aValue)
                                         static_cast<sqlite3_uint64>(aValue.size()), SQLITE_STATIC, SQLITE_UTF8);
     check(ret);
 }
-
-#if __cplusplus >= 201703L
-// Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bindNoCopy(const int aIndex, const std::string_view aValue)
-{
-    const int ret = sqlite3_bind_text64(getPreparedStatement(), aIndex, aValue.data(),
-                                        static_cast<sqlite3_uint64>(aValue.size()), SQLITE_STATIC, SQLITE_UTF8);
-    check(ret);
-}
-#endif // c++17
 
 // Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bindNoCopy(const int aIndex, const char* apValue)
@@ -462,6 +442,22 @@ sqlite3_stmt* Statement::getPreparedStatement() const
         return ret;
     }
     throw SQLite::Exception("Statement was not prepared.");
+}
+
+// Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bindText64(const int aIndex, const char* apValue, const uint64_t aSize)
+{
+    const int ret = sqlite3_bind_text64(getPreparedStatement(), aIndex, apValue,
+                                        static_cast<sqlite3_uint64>(aSize), SQLITE_TRANSIENT, SQLITE_UTF8);
+    check(ret);
+}
+
+// Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bindTextNoCopy64(const int aIndex, const char* apValue, const uint64_t aSize)
+{
+    const int ret = sqlite3_bind_text64(getPreparedStatement(), aIndex, apValue,
+                                        static_cast<sqlite3_uint64>(aSize), SQLITE_STATIC, SQLITE_UTF8);
+    check(ret);
 }
 
 }  // namespace SQLite

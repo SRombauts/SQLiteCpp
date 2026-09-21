@@ -114,7 +114,11 @@ public:
      * @warning returned string_view is only valid until there is a type
      *      conversion or the statement is stepped or reset.
      */
-    std::string_view getStringView() const;
+    std::string_view getStringView() const {
+        // See getString implementation
+        (void)getBytes();
+        return std::string_view(static_cast<const char*>(getBlob()), getBytes());
+    }
 #endif // c++17
 
     /**

@@ -321,3 +321,4 @@ Version 3.4.0 - 2026 ???
 - Add ASan, UBSan, and cppcheck quality gates (#568)
 - Add CodeQL security and quality analysis (#569)
 - Refresh the README CI badges (#570)
+- Allow Database encryption keys to be supplied as binary buffers (#571)

@@ -7,7 +7,6 @@ SQLiteC++
 [![Meson](https://github.com/SRombauts/SQLiteCpp/actions/workflows/meson.yml/badge.svg?branch=master)](https://github.com/SRombauts/SQLiteCpp/actions/workflows/meson.yml "Meson build status")
 [![Quality](https://github.com/SRombauts/SQLiteCpp/actions/workflows/quality.yml/badge.svg?branch=master)](https://github.com/SRombauts/SQLiteCpp/actions/workflows/quality.yml "Quality checks")
 [![CodeQL](https://github.com/SRombauts/SQLiteCpp/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/SRombauts/SQLiteCpp/actions/workflows/codeql.yml "CodeQL analysis")
-[![AppVeyor Windows Build status](https://ci.appveyor.com/api/projects/status/github/SRombauts/SQLiteCpp?svg=true)](https://ci.appveyor.com/project/SbastienRombauts/SQLiteCpp "AppVeyor Windows Build status")
 [![Coveralls](https://img.shields.io/coveralls/github/SRombauts/SQLiteCpp/master.svg)](https://coveralls.io/github/SRombauts/SQLiteCpp "Coveralls test coverage")
 [![Coverity](https://img.shields.io/coverity/scan/14508.svg)](https://scan.coverity.com/projects/srombauts-sqlitecpp "Coverity Scan Build Status")
 [![Join the chat at https://gitter.im/SRombauts/SQLiteCpp](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/SRombauts/SQLiteCpp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -73,7 +72,8 @@ Now requires a C++11 compiler. Use branch [sqlitecpp-2.x](https://github.com/SRo
 The continuous integration builds and tests on:
 
 - Ubuntu 22.04 and 24.04, plus the current Ubuntu GitHub Actions runner
-- the current Windows GitHub Actions runner, with additional Visual Studio 2022 and 2019 Release builds on AppVeyor
+- the current Windows GitHub Actions runner, plus Visual Studio 2022 Release builds for Win32/x86 with shared
+  and static libraries
 - the current macOS GitHub Actions runner
 
 The build matrices cover GCC, Clang, AppleClang, MinGW, and MSVC. The core library requires C++11;
@@ -212,11 +212,10 @@ You can:
 
 GitHub Actions builds and tests the CMake and Meson configurations on Linux, Windows, and macOS.
 Separate workflows run AddressSanitizer, UndefinedBehaviorSanitizer, cppcheck, CodeQL, coverage, and Coverity Scan.
-AppVeyor also runs Release builds with Visual Studio 2022 and 2019.
+The CMake workflow also runs Visual Studio 2022 Release builds for Win32/x86 with shared and static libraries.
 
 Detailed results can be seen online:
  - [GitHub Actions](https://github.com/SRombauts/SQLiteCpp/actions)
- - [https://ci.appveyor.com/project/SbastienRombauts/SQLiteCpp](https://ci.appveyor.com/project/SbastienRombauts/SQLiteCpp)
 
 ### Thread-safety
 

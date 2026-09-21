@@ -196,7 +196,6 @@ if (SQLITECPP_INCLUDE_SCRIPT)
      .github/workflows/meson.yml
      .gitignore
      .gitmodules
-     appveyor.yml
      build.bat
      build.sh
      cmake/FindSQLite3.cmake

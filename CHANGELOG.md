@@ -323,3 +323,4 @@ Version 3.4.0 - 2026 ???
 - Refresh the README CI badges (#570)
 - Allow Database encryption keys to be supplied as binary buffers (#571)
 - Remove obsolete Travis CI configuration and active references (#572)
+- Remove AppVeyor and retain Visual Studio 2022 Release Win32/x86 coverage in GitHub Actions (#573)

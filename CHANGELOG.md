@@ -9,9 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Require CMake 3.16 or newer
-- Require C++17 and test C++20 compatibility
-- Adopt CMake 4.4 policies
+- Require C++17 and CMake 3.16 or newer (#580)
+- Adopt CMake 4.4 policies and test them (#581)
 
 ## [3.4.0] - 2026-09-21
 

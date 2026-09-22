@@ -4,7 +4,7 @@
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT) 
-cmake_minimum_required(VERSION 3.16...4.0)
+cmake_minimum_required(VERSION 3.16...4.4)
 project(SQLiteCpp_Example VERSION 2.0)
 
 # SQLiteCpp requires a C++17 compiler

@@ -1,0 +1,73 @@
+name: Latest CMake / 4.4 policies
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - name: Install latest CMake
+        run: python -m pip install --upgrade cmake
+
+      - name: Check CMake version
+        run: cmake --version
+
+      - name: Configure SQLiteCpp
+        run: >
+          cmake
+          -S .
+          -B build/main
+          -DCMAKE_BUILD_TYPE=Debug
+          -DSQLITECPP_BUILD_TESTS=ON
+          -DSQLITECPP_BUILD_EXAMPLES=ON
+          -DSQLITECPP_RUN_CPPCHECK=OFF
+          -DSQLITECPP_RUN_CPPLINT=OFF
+
+      - name: Build SQLiteCpp
+        run: cmake --build build/main --config Debug
+
+      - name: Test SQLiteCpp
+        run: ctest --test-dir build/main --build-config Debug --output-on-failure
+
+      - name: Configure C++20 consumer
+        run: >
+          cmake
+          -S tests/consumer
+          -B build/consumer
+          -DCMAKE_BUILD_TYPE=Debug
+          -DSQLITECPP_CXX_STANDARD=17
+          -DCONSUMER_CXX_STANDARD=20
+
+      - name: Build consumer
+        run: cmake --build build/consumer --config Debug
+
+      - name: Test consumer
+        run: ctest --test-dir build/consumer --build-config Debug --output-on-failure
+
+      - name: Configure subdirectory example
+        run: >
+          cmake
+          -S examples/example2
+          -B build/example2
+          -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build subdirectory example
+        run: cmake --build build/example2 --config Debug

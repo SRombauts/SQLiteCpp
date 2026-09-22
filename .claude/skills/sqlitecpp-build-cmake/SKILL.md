@@ -44,5 +44,5 @@ description: Build SQLiteCpp with CMake. Use for CMake builds, tests, options, o
 - If the submodule is needed: `git submodule update --init --recursive`.
 - SQLiteCpp requires CMake 3.16 or newer and C++17 or newer.
 - Keep the minimum CMake version deliberate and update CMake configuration and documentation together.
-- The `...4.0` policy maximum in `cmake_minimum_required` does not cap the supported CMake version;
-  it opts into policy behavior through CMake 4.0 while still allowing newer CMake releases.
+- The `...4.4` policy maximum in `cmake_minimum_required` does not cap the supported CMake version;
+  it opts into policy behavior through CMake 4.4 while still allowing newer CMake releases.

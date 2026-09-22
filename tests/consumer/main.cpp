@@ -1,7 +1,7 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 
 #if SQLITECPP_CONSUMER_CXX_STANDARD >= 17 && !defined(SQLITECPP_HAVE_STD_FILESYSTEM)
-#error "C++17 consumer should expose std::filesystem support"
+#error "C++17-or-newer consumer should expose std::filesystem support"
 #endif
 
 int main()

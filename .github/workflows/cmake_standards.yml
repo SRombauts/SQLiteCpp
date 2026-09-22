@@ -1,4 +1,4 @@
-name: CMake consumer standards
+name: CMake C++17/C++20 standards
 
 on: [push, pull_request]
 
@@ -11,12 +11,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - library_standard: 11
-            consumer_standard: 11
-          - library_standard: 11
-            consumer_standard: 17
           - library_standard: 17
             consumer_standard: 17
+          - library_standard: 17
+            consumer_standard: 20
+          - library_standard: 20
+            consumer_standard: 20
 
     env:
       CC: gcc

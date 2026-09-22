@@ -46,12 +46,12 @@ All of the code and documentation in SQLite has been dedicated to the public dom
 ### The goals of SQLiteC++ are:
 
 - to offer the best of the existing simple C++ SQLite wrappers
-- to be elegantly written with good C++11 design, STL, exceptions and RAII idiom
-- to keep dependencies to a minimum (C++11 STL and SQLite3)
+- to be elegantly written with modern C++17 design, STL, exceptions and RAII idiom
+- to keep dependencies to a minimum (C++17 STL and SQLite3)
 - to be portable
 - to be light and fast
 
-**C++11 support:** SQLiteCpp 3.4.x is the final release line supporting C++11. After 3.4.0, maintenance fixes for the 3.x series will be made on the `sqlitecpp-3.4.x` branch, while `master` moves to SQLiteCpp 4.x with a newer C++ and CMake baseline.
+**C++17 baseline:** SQLiteCpp 4.x requires C++17. SQLiteCpp 3.4.x is the final release line supporting C++11; maintenance fixes for the 3.x series remain on the `sqlitecpp-3.4.x` branch.
 - to be thread-safe only as much as SQLite "Multi-thread" mode (see below)
 - to have a good unit test coverage
 - to use API names sticking with those of the SQLite library
@@ -68,7 +68,7 @@ and then is always valid until destroyed.
 
 ### Supported platforms:
 
-Now requires a C++11 compiler. Use branch [sqlitecpp-2.x](https://github.com/SRombauts/SQLiteCpp/tree/sqlitecpp-2.x) for latest pre-C++11 developments.
+SQLiteCpp 4.x requires a C++17 compiler. Use branch [sqlitecpp-3.4.x](https://github.com/SRombauts/SQLiteCpp/tree/sqlitecpp-3.4.x) for the final C++11-compatible release line.
 
 The continuous integration builds and tests on:
 
@@ -77,13 +77,13 @@ The continuous integration builds and tests on:
   and static libraries
 - the current macOS GitHub Actions runner
 
-The build matrices cover GCC, Clang, AppleClang, MinGW, and MSVC. The core library requires C++11;
-selected headers use C++14 features as documented below.
+The build matrices cover GCC, Clang, AppleClang, MinGW, and MSVC. The library requires C++17,
+and the CMake compatibility workflow also exercises C++20.
 
 ### Dependencies
 
 - CMake 3.16 or newer when using the CMake build
-- a modern C++11 STL implementation with GCC, Clang, or Visual Studio 2015
+- a C++17-capable compiler and standard library
 - exception support (the class Exception inherits from std::runtime_error)
 - the SQLite library (3.8.7 minimum from 2014-10-17), either by linking to it dynamically or statically
   (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),

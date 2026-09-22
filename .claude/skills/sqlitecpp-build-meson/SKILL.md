@@ -31,5 +31,5 @@ description: Builds SQLiteCpp with Meson. Use when configuring Meson builds, tes
 - `SQLITE_OMIT_LOAD_EXTENSION`: omit load extension.
 
 ## Notes
-- Meson defaults to `cpp_std=c++17` to support newer gtest versions.
-- On Windows, Meson enforces at least C++14 if needed by headers.
+- C++17 is the SQLiteCpp project minimum; Meson defaults to `cpp_std=c++17` and rejects older standards.
+- C++20 can be selected explicitly for compatibility testing.

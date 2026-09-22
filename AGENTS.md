@@ -1,8 +1,8 @@
 # SQLiteCpp AI Agents Custom Instructions
 
 ## Project Overview
-- SQLiteCpp is a C++11 RAII wrapper around SQLite3 C APIs
-- Minimal dependencies: C++11 STL + SQLite3
+- SQLiteCpp is a C++17 RAII wrapper around SQLite3 C APIs
+- Minimal dependencies: C++17 STL + SQLite3
 - Cross-platform: Windows, Linux, macOS
 - Thread-safe at SQLite multi-thread level
 
@@ -20,7 +20,7 @@ clarifications.
 
 1. **RAII only**: Acquire resources in constructors, release in destructors
 2. **Never throw in destructors**: Use `SQLITECPP_ASSERT()` instead
-3. **C++11 core library**: C++14 only in VariadicBind.h and ExecuteMany.h
+3. **C++17 minimum**: do not require C++20 without an explicit baseline change
 4. **Public API isolation**: Headers must NOT include sqlite3.h
 5. **Export macros**: Public API must use `SQLITECPP_API` from SQLiteCppExport.h
 6. **Threading constraint**: One Database/Statement/Column per thread

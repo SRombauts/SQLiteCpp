@@ -8,7 +8,7 @@ description: SQLiteCpp coding standards and API rules for core edits, public hea
 ## Non-negotiables
 - RAII only: acquire in constructors, release in destructors.
 - Never throw in destructors; use `SQLITECPP_ASSERT()` instead.
-- C++11 only in core library (C++14 only in `VariadicBind.h` and `ExecuteMany.h`).
+- C++17 is the project minimum. Do not require C++20 without an explicit baseline change.
 - Public API headers must not include `sqlite3.h`.
 - Public API must use `SQLITECPP_API` from `SQLiteCppExport.h`.
 - One `Database`/`Statement`/`Column` per thread.

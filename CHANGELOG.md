@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Require CMake 3.16 or newer
+- Require C++17 and test C++20 compatibility
+
 ## [3.4.0] - 2026-09-21
 
 ### Added

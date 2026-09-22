@@ -1,10 +1,9 @@
 project(
     'SQLiteCpp', 'cpp',
-    # SQLiteCpp supports C++11
-    # however newer versions of gtest requires C++17
+    # SQLiteCpp requires C++17
     default_options: ['cpp_std=c++17', 'warning_level=3'],
     license: 'MIT',
-    version: '3.4.0',
+    version: '4.0.0',
 )
 
 cxx = meson.get_compiler('cpp')
@@ -88,18 +87,8 @@ sqlitecpp_test_srcs = files(
 sqlitecpp_test_args = []
 
 
-## using MSVC headers requires c++14, if not will show an error on xstddef as: 
-## 'auto' return without trailing return type; deduced return types are a C++14 extension
-if host_machine.system() == 'windows'
-    ## check if the std version is less than c++14
-    if cpp_std.version_compare('<c++14')
-        message('[WINDOWS] setting minimal version to c++14')
-        message('[WINDOWS] you can disable this warning by setting cpp_std to c++14 or newer.')
-        cpp_std = 'c++14'
-        sqlitecpp_opts += [
-            'cpp_std=' + cpp_std,
-        ]
-    endif
+if cpp_std.version_compare('<c++17')
+    error('SQLiteCpp requires C++17 or newer')
 endif
 # Options relative to SQLite and SQLiteC++ functions
 

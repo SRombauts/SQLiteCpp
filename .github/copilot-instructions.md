@@ -4,7 +4,7 @@
 - RAII only. Acquire in constructors, release in destructors.
 - NEVER throw in destructors. Use `SQLITECPP_ASSERT()` instead.
 - Errors: use `SQLite::Exception` for throwing APIs; `tryExec()`, `tryExecuteStep()`, `tryReset()` return SQLite codes.
-- C++11 only in core library. C++14 only in `VariadicBind.h` and `ExecuteMany.h`.
+- C++17 is the project minimum. Do not require C++20 without an explicit baseline change.
 - Public API headers must NOT include `sqlite3.h`. Use `SQLite::OPEN_*` flags from `Database.h`.
 - Export public API with `SQLITECPP_API` from `SQLiteCppExport.h`.
 - Threading: one `Database`/`Statement`/`Column` per thread.
@@ -137,8 +137,8 @@ Usually means missing SQLiteCpp library or missing source file in build.
 
 ## Reference
 ### Project Snapshot
-- SQLiteCpp is a lean C++11 RAII wrapper around SQLite3 C APIs.
-- Minimal dependencies (C++11 STL + SQLite3).
+- SQLiteCpp is a lean C++17 RAII wrapper around SQLite3 C APIs.
+- Minimal dependencies (C++17 STL + SQLite3).
 - Cross-platform, thread-safe at SQLite multi-thread level.
 - Keep naming close to SQLite.
 - Public headers avoid `sqlite3.h`; use `SQLite::OPEN_*` flags from `Database.h`.

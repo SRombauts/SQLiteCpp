@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16...4.0)
+cmake_minimum_required(VERSION 3.16...4.4)
 project(SQLiteCpp_Consumer LANGUAGES CXX)
 
 set(SQLITECPP_CXX_STANDARD 17 CACHE STRING "C++ standard used to build SQLiteCpp")

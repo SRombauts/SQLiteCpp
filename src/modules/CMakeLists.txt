@@ -1,8 +1,12 @@
-file(GLOB_RECURSE SQLITECPP_MODULES *.cppm)
-
-add_library(sqlitecpp_modules)
-
 cmake_minimum_required(VERSION 3.28)
+
+add_library(sqlitecpp_module)
+
+target_sources(sqlitecpp_module
+    PUBLIC
+        FILE_SET CXX_MODULES FILES
+            SQLiteCpp.cppm
+)
 
 if(NOT COMMAND configure_cpp_module_target)
   function(configure_cpp_module_target target)
@@ -15,16 +19,19 @@ if(NOT COMMAND configure_cpp_module_target)
   endfunction()
 endif()
 
-configure_cpp_module_target(sqlitecpp_modules)
+configure_cpp_module_target(sqlitecpp_module)
 
-target_link_libraries(sqlitecpp_modules
+target_link_libraries(sqlitecpp_module
   PUBLIC
     sqlitecpp
 )
 
-target_include_directories(sqlitecpp_modules
+target_include_directories(sqlitecpp_module
   PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
-target_compile_features(sqlitecpp_modules PUBLIC cxx_std_20)
+target_compile_features(sqlitecpp_module PUBLIC cxx_std_20)
+
+
+add_library(sqlitecpp::module ALIAS sqlitecpp_module)

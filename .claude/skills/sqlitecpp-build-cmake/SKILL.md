@@ -42,8 +42,7 @@ description: Build SQLiteCpp with CMake. Use for CMake builds, tests, options, o
 ## Notes
 - Tests can use a system `GTest`; otherwise they fall back to the `googletest` submodule.
 - If the submodule is needed: `git submodule update --init --recursive`.
-- The minimum CMake version is not required to remain at 3.5. Raising it is acceptable when a modest
-  version bump enables cleaner target-based CMake or matches bundled dependency requirements. Choose
-  the new minimum deliberately and update CMake configuration, documentation, and CI consistently.
-- The bundled GoogleTest 1.16 project already requires CMake 3.13 when tests use the submodule, even
-  though SQLiteCpp currently declares CMake 3.5 at the top level.
+- SQLiteCpp requires CMake 3.16 or newer.
+- Keep the minimum CMake version deliberate and update CMake configuration and documentation together.
+- The `...4.0` policy maximum in `cmake_minimum_required` does not cap the supported CMake version;
+  it opts into policy behavior through CMake 4.0 while still allowing newer CMake releases.

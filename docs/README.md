@@ -83,6 +83,7 @@ selected headers use C++14 features as documented below.
 
 ### Dependencies
 
+- CMake 3.16 or newer when using the CMake build
 - a modern C++11 STL implementation with GCC, Clang, or Visual Studio 2015
 - exception support (the class Exception inherits from std::runtime_error)
 - the SQLite library (3.7.15 minimum from 2012-12-12) either by linking to it dynamically or statically (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),

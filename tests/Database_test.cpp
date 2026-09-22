@@ -21,6 +21,7 @@
 
 #include <climits>
 #include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <fstream>
 #include <type_traits>
@@ -37,9 +38,34 @@ void assertion_failed(const char* apFile, const long apLine, const char* apFunc,
 }
 #endif
 
-// Keep the SQLite::Header public field representation ABI-compatible with SQLiteCpp 3.x.
-static_assert(std::is_same<decltype(SQLite::Header::fileChangeCounter), unsigned long>::value,
-              "SQLite::Header 32-bit database fields must retain their SQLiteCpp 3.x public type");
+// Keep the SQLite::Header public field types fixed-width across supported platforms.
+static_assert(
+    std::is_same_v<decltype(SQLite::Header::headerStr), std::uint8_t[16]> &&
+    std::is_same_v<decltype(SQLite::Header::fileFormatWriteVersion), std::uint8_t> &&
+    std::is_same_v<decltype(SQLite::Header::fileFormatReadVersion), std::uint8_t> &&
+    std::is_same_v<decltype(SQLite::Header::reservedSpaceBytes), std::uint8_t> &&
+    std::is_same_v<decltype(SQLite::Header::maxEmbeddedPayloadFrac), std::uint8_t> &&
+    std::is_same_v<decltype(SQLite::Header::minEmbeddedPayloadFrac), std::uint8_t> &&
+    std::is_same_v<decltype(SQLite::Header::leafPayloadFrac), std::uint8_t>,
+    "SQLite::Header byte fields must use std::uint8_t");
+
+static_assert(
+    std::is_same_v<decltype(SQLite::Header::pageSizeBytes), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::fileChangeCounter), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::databaseSizePages), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::firstFreelistTrunkPage), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::totalFreelistPages), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::schemaCookie), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::schemaFormatNumber), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::defaultPageCacheSizeBytes), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::largestBTreePageNumber), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::databaseTextEncoding), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::userVersion), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::incrementalVaccumMode), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::applicationId), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::versionValidFor), std::uint32_t> &&
+    std::is_same_v<decltype(SQLite::Header::sqliteVersion), std::uint32_t>,
+    "SQLite::Header multi-byte fields must use std::uint32_t");
 
 // NOTE on macOS FindSQLite3 find an unrelated sqlite3.h from Mono.framework that doesn't match the actual package version!
 #if defined(SQLITECPP_INTERNAL_SQLITE) || !defined(__APPLE__)

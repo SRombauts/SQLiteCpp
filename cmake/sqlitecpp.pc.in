@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+includedir=${prefix}/include
+libdir=${prefix}/@PC_RELATIVE_LIBDIR@
+
+Name: sqlitecpp
+Description: a smart and easy to use C++ SQLite3 wrapper.
+Version: @PROJECT_VERSION@
+Requires.private: sqlite3
+Libs: -L${libdir} -lsqlitecpp
+Libs.private: @PC_LIBS_PRIVATE@
+Cflags: -I${includedir}

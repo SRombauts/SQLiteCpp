@@ -223,7 +223,7 @@ libsqlitecpp = library(
     override_options: sqlitecpp_opts,
     install: true,
     # API version for SQLiteCpp shared library.
-    version: '0',)
+    soversion: '1',)
 
 
 

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Require C++17 and CMake 3.16 or newer (#580)
 - Adopt CMake 4.4 policies and test them (#581)
+- Bump the shared-library ABI version from 0 to 1 for SQLiteCpp 4.0
 
 ## [3.4.0] - 2026-09-21
 

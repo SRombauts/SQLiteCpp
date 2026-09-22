@@ -523,6 +523,8 @@ if (SQLITECPP_BUILD_TESTS)
         # don't build the googlemock subproject, only the main googletest library
         set(BUILD_GMOCK OFF CACHE BOOL "Builds the googlemock subproject")
         add_subdirectory(googletest)
+        get_directory_property(GOOGLETEST_VERSION DIRECTORY googletest DEFINITION GOOGLETEST_VERSION)
+        message(STATUS "GoogleTest submodule version: ${GOOGLETEST_VERSION}")
         include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
 
         # Add definitions to keep googletest from making the compilation fail

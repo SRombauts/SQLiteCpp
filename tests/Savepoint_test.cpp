@@ -40,7 +40,7 @@ TEST(Savepoint, releaseAndRollback)
 
         // Releasing or rolling back an already released savepoint throws.
         EXPECT_THROW(savepoint.release(), SQLite::Exception);
-        EXPECT_THROW(savepoint.rollback(), SQLite::Exception);
+        EXPECT_THROW(savepoint.rollbackTo(), SQLite::Exception);
     }
 
     // Automatic rollback if release() is not called before the end of scope.

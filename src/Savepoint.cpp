@@ -45,8 +45,7 @@ Savepoint::~Savepoint()
         }
         catch (...)
         {
-            // Never throw an exception in a destructor: error if already released,
-            // but no harm is caused by this.
+            // Never let best-effort rollback/release cleanup throw from the destructor.
         }
     }
 }

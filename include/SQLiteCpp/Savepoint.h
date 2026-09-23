@@ -86,8 +86,6 @@ public:
      * @brief Rollback to the savepoint, but don't release it.
      */
     void rollbackTo();
-    // @deprecated same as rollbackTo();
-    void rollback() { rollbackTo(); }
 
 private:
     Database&   mDatabase;          ///< Reference to the SQLite Database Connection

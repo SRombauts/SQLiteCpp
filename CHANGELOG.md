@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump the shared-library ABI version from 0 to 1 for SQLiteCpp 4.0
 - Use fixed-width integer types in `SQLite::Header`, making field widths consistent across platforms (ABI change) (#582)
 - Update googletest to v1.18.0 (#583)
+- Improve tests for `Savepoint::rollbackTo()` and scope-exit rollback semantics (#584)
 
 ## [3.4.0] - 2026-09-21
 

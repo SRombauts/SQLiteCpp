@@ -100,7 +100,10 @@ endif
 
 if get_option('SQLITE_ENABLE_ASSERT_HANDLER')
     sqlitecpp_args += [
-        '-DSQLITE_ENABLE_ASSERT_HANDLER',
+        '-DSQLITECPP_ENABLE_ASSERT_HANDLER',
+    ]
+    sqlitecpp_dep_args += [
+        '-DSQLITECPP_ENABLE_ASSERT_HANDLER',
     ]
 endif
 

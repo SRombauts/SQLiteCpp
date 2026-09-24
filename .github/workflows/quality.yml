@@ -23,7 +23,8 @@ jobs:
     steps:
     - name: Checkout ${{ github.ref_name }}
       uses: actions/checkout@v7
-    - run: git submodule update --init --recursive
+      with:
+        submodules: recursive
 
     - name: Configure
       env:
@@ -55,7 +56,6 @@ jobs:
     steps:
     - name: Checkout ${{ github.ref_name }}
       uses: actions/checkout@v7
-    - run: git submodule update --init --recursive
 
     - name: Install cppcheck
       run: sudo apt-get update && sudo apt-get install -y cppcheck

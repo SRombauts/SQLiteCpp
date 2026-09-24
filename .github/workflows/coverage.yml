@@ -2,6 +2,9 @@ name: Coverage
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   coverage:
     name: Ubuntu GCC GCov Coverage

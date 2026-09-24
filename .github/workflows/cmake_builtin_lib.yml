@@ -2,6 +2,9 @@ name: CMake SQLite3 builtin library
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: ${{ matrix.config.name }}

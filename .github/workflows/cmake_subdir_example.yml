@@ -2,6 +2,9 @@ name: CMake build of example in subdirectory
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: ${{ matrix.config.name }}

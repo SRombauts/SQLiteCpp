@@ -2,6 +2,9 @@ name: Meson build
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: (Meson) ${{ matrix.config.name }}

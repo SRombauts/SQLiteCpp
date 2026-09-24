@@ -2,6 +2,9 @@ name: CMake SQLite3 builtin library
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: ${{ matrix.config.name }}
@@ -24,7 +27,8 @@ jobs:
     steps:
     - name: Checkout ${{ github.ref_name }}
       uses: actions/checkout@v7
-    - run: git submodule update --init --recursive
+      with:
+        submodules: recursive
     - run: mkdir build
     - run: cmake -G "Unix Makefiles" -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Debug -DSQLITECPP_INTERNAL_SQLITE=OFF -DSQLITE_OMIT_LOAD_EXTENSION=ON -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF .. 
       working-directory: build

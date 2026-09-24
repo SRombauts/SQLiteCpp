@@ -89,9 +89,9 @@ const void* Column::getBlob() const noexcept
 // Return a std::string to a TEXT or BLOB column
 std::string Column::getString() const
 {
-    // Note: using sqlite3_column_blob and not sqlite3_column_text
+    // Note: using sqlite3_column_blob and not sqlite3_column_text:
     // - no need for sqlite3_column_text to add a \0 on the end, as we're getting the bytes length directly
-    //   however, we need to call sqlite3_column_bytes() to ensure correct format. It's a noop on a BLOB
+    // - however, we first call sqlite3_column_bytes() to convert TEXT values to UTF-8. It's a noop on a BLOB
     //   or a TEXT value with the correct encoding (UTF-8). Otherwise it'll do a conversion to TEXT (UTF-8).
     (void)sqlite3_column_bytes(mStmtPtr.get(), mIndex);
     auto data = static_cast<const char *>(sqlite3_column_blob(mStmtPtr.get(), mIndex));

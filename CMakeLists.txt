@@ -154,6 +154,20 @@ set(SQLITECPP_INC
 )
 source_group(include FILES ${SQLITECPP_INC})
 
+# modules
+option(SQLITECPP_BUILD_MODULE "Build C++ modules support" OFF)
+
+if(SQLITECPP_BUILD_MODULE)
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.28)
+        message(STATUS "Building SQLiteCpp C++ modules (CMake ${CMAKE_VERSION} supports modules)")
+        add_subdirectory(src/modules)
+    else()
+        message(WARNING "Skipping SQLiteCpp C++ modules (requires CMake 3.28+, found ${CMAKE_VERSION})")
+    endif()
+else()
+    message(STATUS "SQLiteCpp C++ modules support is disabled. Enable with -DSQLITECPP_BUILD_MODULE=ON")
+endif()
+
 # list of test files of the library
 set(SQLITECPP_TESTS
  tests/Column_test.cpp

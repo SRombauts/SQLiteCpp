@@ -11,7 +11,7 @@ jobs:
       matrix:
         build_type: [Debug, Release]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         submodules: recursive
     - name: Configure tests and example with custom assertions
@@ -117,7 +117,7 @@ jobs:
 
     steps:
     - name: Checkout ${{ github.ref_name }}
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     - run: git submodule update --init --recursive
     - name: set extra GITHUB_PATH ${{ matrix.config.extra_path }} (for MinGW)
       shell: bash

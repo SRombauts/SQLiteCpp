@@ -16,6 +16,9 @@
 
 #include <string>
 #include <memory>
+#if __cplusplus >= 201703L // c++17
+#include <string_view>
+#endif
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3_stmt;
@@ -102,6 +105,24 @@ public:
      * Note this correctly handles strings that contain null bytes.
      */
     std::string getString() const;
+#if __cplusplus >= 201703L
+    /**
+     * @brief Return a std::string_view for a TEXT or BLOB column.
+     * 
+     * Note this correctly handles strings that contain null bytes.
+     * 
+     * @warning returned string_view is only valid until there is a type
+     *      conversion or the statement is stepped or reset.
+     */
+    std::string_view getStringView() const {
+        // See getString implementation
+        (void)getBytes();
+        auto data = static_cast<const char*>(getBlob());
+        if (data == nullptr)
+            return {};
+        return std::string_view(data, getBytes());
+    }
+#endif // c++17
 
     /**
      * @brief Return the type of the value of the column using sqlite3_column_type()
@@ -226,6 +247,21 @@ public:
     {
         return getString();
     }
+
+#if __cplusplus >= 201703L
+
+    /**
+     * @brief Inline cast operator to std::string_view
+     *
+     * Handles BLOB or TEXT, which may contain null bytes within
+     *
+     * @see getStringView
+     */
+    operator std::string_view() const
+    {
+        return getStringView();
+    }
+#endif // c++17
 
 private:
     Statement::TStatementPtr    mStmtPtr;   ///< Shared Pointer to the prepared SQLite Statement Object

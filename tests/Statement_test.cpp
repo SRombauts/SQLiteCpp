@@ -1241,3 +1241,49 @@ TEST(Statement, getChanges)
     EXPECT_EQ(2, update.exec());
     EXPECT_EQ(2, update.getChanges());
 }
+
+// Test support for std::string_view which requries C++17
+#if __cplusplus >= 201703L
+TEST(Statement, stringViewSupport)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+
+    // Create a new table
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, txt1 TEXT, txt2 TEXT, txt3 TEXT, txt4 TEXT)"));
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+
+    // Insertion with bindable parameters
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?, ?)");
+
+    // Compile a SQL query to check the results
+    SQLite::Statement query(db, "SELECT * FROM test");
+    EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
+    EXPECT_EQ(5, query.getColumnCount());
+
+    // Insert one row with all string_view variants of bind/bindNoCopy
+    {
+        const char* text = "123\0test";
+        const std::string_view sv1{text, 8};
+        std::string_view sv2{"abcd"};
+        insert.bindNoCopy(1, sv1);
+        insert.bindNoCopy(2, sv2);
+        insert.bind(3, sv1);
+        insert.bind(4, sv2);
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check the result
+        query.executeStep();
+        EXPECT_TRUE(query.hasRow());
+        EXPECT_FALSE(query.isDone());
+        EXPECT_EQ(1, query.getColumn(0).getInt64());
+
+        EXPECT_EQ(sv1, query.getColumn(1).getStringView());
+        EXPECT_EQ(sv2, query.getColumn(2).getStringView());
+        EXPECT_EQ(sv1, query.getColumn(3).getStringView());
+        EXPECT_EQ(sv2, query.getColumn(4).getStringView());
+    }
+}
+#endif // c++17

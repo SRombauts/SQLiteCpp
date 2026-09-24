@@ -444,4 +444,20 @@ sqlite3_stmt* Statement::getPreparedStatement() const
     throw SQLite::Exception("Statement was not prepared.");
 }
 
+// Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bindText64(const int aIndex, const char* apValue, const uint64_t aSize)
+{
+    const int ret = sqlite3_bind_text64(getPreparedStatement(), aIndex, apValue,
+                                        static_cast<sqlite3_uint64>(aSize), SQLITE_TRANSIENT, SQLITE_UTF8);
+    check(ret);
+}
+
+// Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bindTextNoCopy64(const int aIndex, const char* apValue, const uint64_t aSize)
+{
+    const int ret = sqlite3_bind_text64(getPreparedStatement(), aIndex, apValue,
+                                        static_cast<sqlite3_uint64>(aSize), SQLITE_STATIC, SQLITE_UTF8);
+    check(ret);
+}
+
 }  // namespace SQLite

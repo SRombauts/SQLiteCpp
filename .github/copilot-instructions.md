@@ -46,7 +46,12 @@
 **If user only requests a branch:** create it and stop (no file changes).
 
 **Commits:**
-- Imperative mood, ~50 char first line, body wrapped at 72 chars.
+- Use a clean, short imperative headline, aiming for about 50 characters.
+- Nearly always add one short paragraph after a blank line: usually one or two sentences explaining why
+  the change is needed, including the failure condition when useful. Wrap at about 72 characters.
+- Keep messages self-explanatory without repeating the diff, listing routine validation, or recounting
+  the investigation. Add detail only when essential to understand the change; omit the body for a truly
+  self-explanatory change. Put fuller explanations and validation results in the PR description or task response.
 - Reference issue: `Closes #123` or `Fixes #123`.
 
 ```bash

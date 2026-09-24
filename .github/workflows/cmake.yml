@@ -3,6 +3,40 @@ name: CMake build
 on: [push, pull_request]
 
 jobs:
+  assertion-handler:
+    name: Custom assertion handler (${{ matrix.build_type }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Configure tests and example with custom assertions
+      run: >-
+        cmake -S . -B build/assertion-handler
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DBUILD_SHARED_LIBS=OFF
+        -DSQLITE_ENABLE_ASSERT_HANDLER=ON
+        -DSQLITECPP_BUILD_TESTS=ON
+        -DSQLITECPP_BUILD_EXAMPLES=ON
+        -DSQLITECPP_RUN_CPPCHECK=OFF
+        -DSQLITECPP_RUN_CPPLINT=OFF
+    - name: Build tests and example
+      run: cmake --build build/assertion-handler --parallel 2
+    - name: Run tests and example
+      run: ctest --test-dir build/assertion-handler --verbose --output-on-failure
+    - name: Configure subdirectory example with custom assertions
+      run: >-
+        cmake -S examples/example2 -B build/assertion-handler-example2
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DBUILD_SHARED_LIBS=OFF
+        -DSQLITE_ENABLE_ASSERT_HANDLER=ON
+    - name: Build subdirectory example
+      run: cmake --build build/assertion-handler-example2 --parallel 2
+
   build:
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}

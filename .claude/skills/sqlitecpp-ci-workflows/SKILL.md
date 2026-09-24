@@ -23,6 +23,10 @@ description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, matrices, o
   - `-DSQLITECPP_RUN_CPPCHECK=OFF`
   - `-DSQLITECPP_RUN_CPPLINT=OFF`
 - Tests: `ctest --verbose --output-on-failure`.
+- Keep explicit custom assertion handler coverage in Debug and Release. The
+  `SQLITE_ENABLE_ASSERT_HANDLER` CMake option defaults to `OFF`, so default builds of tests and examples
+  do not compile or link the application-provided handlers. The dedicated static-library job enables
+  this option and builds the unit tests and both examples to check their handler definitions.
 
 ## GitHub Actions (Meson)
 - Use `pipx install meson ninja`.

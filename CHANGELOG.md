@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove the deprecated `Savepoint::rollback()` alias; use `rollbackTo()` instead (#585)
 
+### Fixed
+
+- Track manually rolled-back transactions as finished and report destructor rollback failures through assertions (#586)
+
 ## [3.4.0] - 2026-09-21
 
 ### Added

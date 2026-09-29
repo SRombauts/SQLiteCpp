@@ -2,6 +2,9 @@ name: Coverage
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   coverage:
     name: Ubuntu GCC GCov Coverage
@@ -10,7 +13,8 @@ jobs:
     steps:
     - name: Checkout ${{ github.ref_name }}
       uses: actions/checkout@v7
-    - run: git submodule update --init --recursive
+      with:
+        submodules: recursive
 
     - name: Install lcov
       run: sudo apt-get update && sudo apt-get install -y lcov

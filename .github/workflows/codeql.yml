@@ -23,7 +23,6 @@ jobs:
     steps:
     - name: Checkout ${{ github.ref_name }}
       uses: actions/checkout@v7
-    - run: git submodule update --init --recursive
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4

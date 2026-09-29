@@ -2,6 +2,9 @@ name: Latest CMake / 4.4 policies
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: ${{ matrix.os }}

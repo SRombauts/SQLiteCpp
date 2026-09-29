@@ -2,6 +2,9 @@ name: CMake C++17/C++20 standards
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: C++${{ matrix.library_standard }} library / C++${{ matrix.consumer_standard }} consumer

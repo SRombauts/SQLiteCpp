@@ -13,11 +13,8 @@
 #include <SQLiteCpp/SQLiteCppExport.h>
 #include <SQLiteCpp/Column.h>
 
-// c++17: MinGW GCC version > 8
-// c++17: Visual Studio 2017 version 15.7
-// c++17: macOS unless targetting compatibility with macOS < 10.15
+// Detect filesystem availability for the target platform.
 #ifndef SQLITECPP_HAVE_STD_EXPERIMENTAL_FILESYSTEM
-#if __cplusplus >= 201703L
     #if defined(__MINGW32__) || defined(__MINGW64__)
         #if __GNUC__ > 8 // MinGW requires GCC version > 8 for std::filesystem
             #define SQLITECPP_HAVE_STD_FILESYSTEM
@@ -30,9 +27,6 @@ __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_13_0
     #else
         #define SQLITECPP_HAVE_STD_FILESYSTEM
     #endif
-#elif defined(_MSVC_LANG) && _MSVC_LANG >= 201703L
-    #define SQLITECPP_HAVE_STD_FILESYSTEM
-#endif
 
 // disable the support if the required header is not available
 #ifdef __has_include
@@ -44,7 +38,7 @@ __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_13_0
     #endif
 #endif
 
-// C++17 allow to disable std::filesystem support
+// Allow callers to disable std::filesystem support.
 #ifdef SQLITECPP_DISABLE_STD_FILESYSTEM
     #undef SQLITECPP_HAVE_STD_FILESYSTEM
     #undef SQLITECPP_HAVE_STD_EXPERIMENTAL_FILESYSTEM
@@ -52,7 +46,7 @@ __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_13_0
 
 #ifdef SQLITECPP_HAVE_STD_FILESYSTEM
 #include  <filesystem>
-#endif // c++17 and a suitable compiler
+#endif // SQLITECPP_HAVE_STD_FILESYSTEM
 
 #else // SQLITECPP_HAVE_STD_EXPERIMENTAL_FILESYSTEM
 

@@ -19,7 +19,6 @@
 
 #include <cstdio>
 
-#if (__cplusplus >= 201103L) || ( defined(_MSC_VER) && (_MSC_VER >= 1800) ) // c++11: Visual Studio 2013
 TEST(VariadicBind, invalid)
 {
     // Create a new database
@@ -69,7 +68,6 @@ TEST(VariadicBind, invalid)
         EXPECT_EQ(std::make_pair(2,std::string{"two"}), results.at(1));
         EXPECT_EQ(std::make_pair(3,std::string{"three"}), results.at(2));
     }
-    #if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
     {
         SQLite::Statement query(db, "INSERT INTO test2 VALUES (?, ?)");
 
@@ -104,6 +102,4 @@ TEST(VariadicBind, invalid)
         EXPECT_EQ(std::make_pair(2,std::string{"two"}), results.at(1));
         EXPECT_EQ(std::make_pair(3,std::string{"three"}), results.at(2));
     }
-    #endif // c++14
 }
-#endif // c++11

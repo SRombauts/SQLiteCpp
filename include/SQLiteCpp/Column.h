@@ -244,8 +244,6 @@ private:
  */
 SQLITECPP_API std::ostream& operator<<(std::ostream& aStream, const Column& aColumn);
 
-#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900) // c++14: Visual Studio 2015
-
 // Create an instance of T from the first N columns, see declaration in Statement.h for full details
 template<typename T, int N>
 T Statement::getColumns()
@@ -261,7 +259,5 @@ T Statement::getColumns(const std::integer_sequence<int, Is...>)
 {
     return T{Column(mpPreparedStatement, Is)...};
 }
-
-#endif
 
 }  // namespace SQLite

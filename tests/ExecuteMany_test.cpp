@@ -18,7 +18,6 @@
 
 #include <cstdio>
 
-#if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
 TEST(ExecuteMany, invalid)
 {
     // Create a new database
@@ -91,4 +90,3 @@ TEST(ExecuteMany, decreasingArity)
         EXPECT_TRUE(valueIsNull.at(1));
     }
 }
-#endif // c++14

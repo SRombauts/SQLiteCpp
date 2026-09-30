@@ -112,8 +112,6 @@ TEST(Database, ctorExecCreateDropExist)
     remove("test.db3");
 }
 
-#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
-
 SQLite::Database DatabaseBuilder(const char* apName)
 {
     return SQLite::Database(apName, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
@@ -134,8 +132,6 @@ TEST(Database, moveConstructor)
     } // Close DB test.db3
     remove("test.db3");
 }
-
-#endif
 
 TEST(Database, createCloseReopen)
 {

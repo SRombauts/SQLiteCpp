@@ -100,8 +100,6 @@ TEST(Statement, invalid)
     EXPECT_THROW(query.exec(), SQLite::Exception); // exec() shall throw as it does not expect a result
 }
 
-#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
-
 SQLite::Statement StatementBuilder(SQLite::Database& aDb, const char* apQuery)
 {
     return SQLite::Statement(aDb, apQuery);
@@ -143,8 +141,6 @@ TEST(Statement, moveConstructor)
     // Binding to a moved-from statement throws because it has no prepared statement anymore
     EXPECT_THROW(query.bind(1, 1), SQLite::Exception);
 }
-
-#endif
 
 TEST(Statement, executeStep)
 {
@@ -1054,8 +1050,6 @@ TEST(Statement, getColumns)
 }
 #endif
 
-#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER >= 1600)
-
 TEST(Statement, rowIteratorTraits)
 {
     using Iter = SQLite::Statement::RowIterator;
@@ -1201,8 +1195,6 @@ TEST(Statement, rowIteratorDirectUsage)
     EXPECT_TRUE(it3 == endIt3);
     EXPECT_FALSE(it3 != endIt3);
 }
-
-#endif // C++11
 
 TEST(Statement, getBindParameterCount)
 {

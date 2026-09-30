@@ -74,8 +74,6 @@ void bind(SQLite::Statement& query, const std::tuple<Types...> &tuple)
  * by forwarding them to the variadic template. This function is just needed to convert the tuples
  * to parameter packs
  *
- * This feature requires a c++14 capable compiler.
- * 
  * @param query     statement
  * @param tuple     tuple with values to bind
  */

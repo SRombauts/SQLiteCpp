@@ -21,6 +21,10 @@ clarifications.
 1. **RAII only**: Acquire resources in constructors, release in destructors
 2. **Never throw in destructors**: Use `SQLITECPP_ASSERT()` instead
 3. **C++17 minimum**: do not require C++20 without an explicit baseline change
+   - C++11/C++14 compatibility is not maintained on the C++17 baseline; remove redundant language guards.
+   - Add checks for optional newer features only when needed, preferring `__cpp_*` or `__cpp_lib_*` macros.
+     Language mode alone does not establish feature availability.
+   - Keep exported API and class definitions consistent between library and consumer compilation modes.
 4. **Public API isolation**: Headers must NOT include sqlite3.h
 5. **Export macros**: Public API must use `SQLITECPP_API` from SQLiteCppExport.h
 6. **Threading constraint**: One Database/Statement/Column per thread

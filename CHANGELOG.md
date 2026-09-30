@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove the deprecated `Savepoint::rollback()` alias; use `rollbackTo()` instead (#585)
 - Remove redundant C++11/C++14/C++17 compatibility guards (#589)
 
+### Fixed
+
+- Fix Meson builds with a custom assertion handler (#590)
+
 ## [3.4.0] - 2026-09-21
 
 ### Added

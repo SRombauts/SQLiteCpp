@@ -99,8 +99,14 @@ if get_option('SQLITE_ENABLE_COLUMN_METADATA')
 endif
 
 if get_option('SQLITE_ENABLE_ASSERT_HANDLER')
+    if get_option('default_library') != 'static'
+        error('SQLITE_ENABLE_ASSERT_HANDLER requires -Ddefault_library=static so the application can define the handler')
+    endif
     sqlitecpp_args += [
-        '-DSQLITE_ENABLE_ASSERT_HANDLER',
+        '-DSQLITECPP_ENABLE_ASSERT_HANDLER',
+    ]
+    sqlitecpp_dep_args += [
+        '-DSQLITECPP_ENABLE_ASSERT_HANDLER',
     ]
 endif
 

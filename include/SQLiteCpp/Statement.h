@@ -590,7 +590,6 @@ public:
      */
     Column  getColumn(const char* apName) const;
 
-#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900) // c++14: Visual Studio 2015
      /**
      * @brief Return an instance of T constructed from copies of the first N columns
      *
@@ -607,8 +606,6 @@ public:
      *
      * @tparam  T   Object type to construct
      * @tparam  N   Number of columns
-     *
-     * @note Requires std=C++14
      */
     template<typename T, int N>
     T       getColumns();
@@ -622,7 +619,6 @@ private:
     T       getColumns(const std::integer_sequence<int, Is...>);
 
 public:
-#endif
 
     /**
      * @brief Test if the column value is NULL

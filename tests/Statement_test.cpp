@@ -993,7 +993,6 @@ TEST(Statement, getColumnDeclaredType)
     EXPECT_THROW(pragma.getColumnDeclaredType(0), SQLite::Exception);
 }
 
-#if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
 TEST(Statement, getColumns)
 {
     struct GetRowTestStruct
@@ -1048,7 +1047,6 @@ TEST(Statement, getColumns)
     EXPECT_EQ(-1, testStruct2.integer);
     EXPECT_DOUBLE_EQ(0.0, testStruct2.real);
 }
-#endif
 
 TEST(Statement, rowIteratorTraits)
 {

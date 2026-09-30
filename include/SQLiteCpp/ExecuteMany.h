@@ -11,8 +11,6 @@
  */
 #pragma once
 
-#if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
-
 #include <SQLiteCpp/Statement.h>
 #include <SQLiteCpp/VariadicBind.h>
 
@@ -29,8 +27,6 @@ namespace SQLite
 /**
  * \brief Convenience function to execute a Statement with multiple Parameter sets once for each parameter set given.
  *
- *
- * This feature requires a c++14 capable compiler.
  *
  * \code{.cpp}
  * execute_many(db, "INSERT INTO test VALUES (?, ?)",
@@ -57,8 +53,6 @@ void execute_many(Database& aDatabase, const char* apQuery, Arg&& aArg, Types&&.
  * \brief Convenience function to reset a statement and call bind_exec to
  * bind new values to the statement and execute it
  *
- * This feature requires a c++14 capable compiler.
- *
  * @param apQuery   Query to use
  * @param aTuple    Tuple to bind
  */
@@ -73,8 +67,6 @@ void reset_bind_exec(Statement& apQuery, TupleT&& aTuple)
 /**
  * \brief Convenience function to bind values a the statement and execute it
  *
- * This feature requires a c++14 capable compiler.
- *
  * @param apQuery   Query to use
  * @param aTuple    Tuple to bind
  */
@@ -86,5 +78,3 @@ void bind_exec(Statement& apQuery, TupleT&& aTuple)
 }
 
 }  // namespace SQLite
-
-#endif // c++14

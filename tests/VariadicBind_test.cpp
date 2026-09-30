@@ -68,7 +68,6 @@ TEST(VariadicBind, invalid)
         EXPECT_EQ(std::make_pair(2,std::string{"two"}), results.at(1));
         EXPECT_EQ(std::make_pair(3,std::string{"three"}), results.at(2));
     }
-    #if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
     {
         SQLite::Statement query(db, "INSERT INTO test2 VALUES (?, ?)");
 
@@ -103,5 +102,4 @@ TEST(VariadicBind, invalid)
         EXPECT_EQ(std::make_pair(2,std::string{"two"}), results.at(1));
         EXPECT_EQ(std::make_pair(3,std::string{"three"}), results.at(2));
     }
-    #endif // c++14
 }

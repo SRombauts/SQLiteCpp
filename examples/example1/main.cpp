@@ -482,8 +482,7 @@ int main()
     }
     remove("out.png");
 
-#if (__cplusplus >= 201402L) || ( defined(_MSC_VER) && (_MSC_VER >= 1900) ) // c++14: Visual Studio 2015
-    // example with C++14 variadic bind
+    // example with variadic bind
     try
     {
         // Open a database file in create/write mode
@@ -513,7 +512,6 @@ int main()
         std::cout << "SQLite exception: " << e.what() << std::endl;
         return EXIT_FAILURE; // unexpected error : exit the example program
     }
-#endif
 
     std::cout << "everything ok, quitting\n";
 

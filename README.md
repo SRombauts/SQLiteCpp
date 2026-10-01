@@ -84,6 +84,7 @@ and the CMake compatibility workflow also exercises C++20.
 
 - CMake 3.16 or newer when using the CMake build
 - a C++17-capable compiler and standard library
+- Visual Studio 2017 15.9 (MSVC 19.16 / v141 toolset 14.16) or newer when using MSVC
 - exception support (the class Exception inherits from std::runtime_error)
 - the SQLite library (3.8.7 minimum from 2014-10-17), either by linking to it dynamically or statically
   (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),

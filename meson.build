@@ -90,6 +90,9 @@ sqlitecpp_test_args = []
 if cpp_std.version_compare('<c++17')
     error('SQLiteCpp requires C++17 or newer')
 endif
+if cxx.get_id() == 'msvc' and cxx.version().version_compare('<19.16')
+    error('SQLiteCpp requires Visual Studio 2017 15.9 (MSVC 19.16) or newer; detected MSVC ' + cxx.version())
+endif
 # Options relative to SQLite and SQLiteC++ functions
 
 if get_option('SQLITE_ENABLE_COLUMN_METADATA')

@@ -161,8 +161,8 @@ SQLiteCpp/
 |   +-- Backup.h          # Online backup
 |   +-- Exception.h       # SQLite::Exception
 |   +-- Assertion.h       # SQLITECPP_ASSERT macro
-|   +-- VariadicBind.h    # Bind helper (C++11/14)
-|   +-- ExecuteMany.h     # Batch execute (C++14)
+|   +-- VariadicBind.h    # Bind helper
+|   +-- ExecuteMany.h     # Batch execute
 |   +-- SQLiteCppExport.h # SQLITECPP_API macro
 +-- src/                  # Implementations
 +-- tests/                # Unit tests (*_test.cpp)

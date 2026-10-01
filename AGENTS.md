@@ -62,6 +62,9 @@ clarifications.
 - Max 120 characters per line
 
 ## Build System Compatibility
+- The MSVC minimum is Visual Studio 2017 15.9 (MSVC 19.16 / v141 toolset 14.16).
+  Keep its explicit build-system diagnostics and dedicated CI coverage aligned. Assert the actual
+  compiler version and exercise required library facilities so CI cannot silently use a newer toolset.
 - Explicit compiler minimum checks can provide useful diagnostics for unsupported toolchains.
   Do not assume a C++ standard requirement makes those checks redundant; verify the build tool's
   behavior for old compilers before removing a check.

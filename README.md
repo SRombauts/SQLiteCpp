@@ -75,6 +75,7 @@ The continuous integration builds and tests on:
 - Ubuntu 22.04 and 24.04, plus the current Ubuntu GitHub Actions runner
 - the current Windows GitHub Actions runner, plus Visual Studio 2022 Release builds for Win32/x86 with shared
   and static libraries
+- the minimum MSVC toolset, VS2017 15.9 / v141, installed on the Windows 2022 runner
 - the current macOS GitHub Actions runner
 
 The build matrices cover GCC, Clang, AppleClang, MinGW, and MSVC. The library requires C++17,

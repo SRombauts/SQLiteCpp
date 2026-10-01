@@ -92,6 +92,9 @@ examples/             # Example applications
 
 ## Use skills for task guidance
 Skills live under `.claude/skills/`. Load the relevant skill(s) based on the task:
+- `deep-code-review`: review-priority inventory and dedicated per-file bug/vulnerability review.
+  Keep `references/file-importance.md` limited to ranked file groups and scores; store findings and
+  review evidence separately in `references/findings-bugs.md` within that skill.
 - `sqlitecpp-coding-standards`: core library edits, public API rules, style and naming.
 - `sqlitecpp-workflow`: add methods/classes, tests, build file updates, changelog.
 - `sqlitecpp-git-branching`: branch creation and naming rules.

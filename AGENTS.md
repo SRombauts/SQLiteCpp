@@ -62,6 +62,9 @@ clarifications.
 - Max 120 characters per line
 
 ## Build System Compatibility
+- Explicit compiler minimum checks can provide useful diagnostics for unsupported toolchains.
+  Do not assume a C++ standard requirement makes those checks redundant; verify the build tool's
+  behavior for old compilers before removing a check.
 - Minimum build-tool versions are deliberate baselines, not permanent compatibility promises.
 - Raising the minimum CMake version is acceptable when it materially simplifies maintenance,
   enables cleaner modern CMake, or makes external contributions easier.

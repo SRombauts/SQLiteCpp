@@ -75,6 +75,7 @@ The continuous integration builds and tests on:
 - Ubuntu 22.04 and 24.04, plus the current Ubuntu GitHub Actions runner
 - the current Windows GitHub Actions runner, plus Visual Studio 2022 Release builds for Win32/x86 with shared
   and static libraries
+- the minimum MSVC toolset, VS2017 15.9 / v141, installed on the Windows 2022 runner
 - the current macOS GitHub Actions runner
 
 The build matrices cover GCC, Clang, AppleClang, MinGW, and MSVC. The library requires C++17,
@@ -84,6 +85,7 @@ and the CMake compatibility workflow also exercises C++20.
 
 - CMake 3.16 or newer when using the CMake build
 - a C++17-capable compiler and standard library
+- Visual Studio 2017 15.9 (MSVC 19.16 / v141 toolset 14.16) or newer when using MSVC
 - exception support (the class Exception inherits from std::runtime_error)
 - the SQLite library (3.8.7 minimum from 2014-10-17), either by linking to it dynamically or statically
   (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),

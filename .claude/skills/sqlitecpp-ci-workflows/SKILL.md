@@ -15,7 +15,11 @@ description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, matrices, o
 - Matrix across Windows (MSVC/MinGW), Ubuntu, macOS.
 - Keep the latest-MSVC Windows build in Debug mode.
 - Complement it with two Visual Studio 2022 Release builds for Win32/x86: one shared and one static. Do not
-  recreate older or broader Visual Studio matrices.
+  recreate broader Visual Studio matrices.
+- Keep the dedicated minimum-MSVC job on `windows-2022`: install the optional VS2017 15.9 / v141
+  toolset, select it with `-T v141`, and assert MSVC 1916 in the consumer. Run unit tests, the example,
+  and the consumer with standard filesystem and string_view checks. Do not assume a current runner
+  includes this optional toolset or let the baseline job silently use the default compiler.
 - CMake config includes:
   - `-DBUILD_SHARED_LIBS=ON` for standard configurations; VS2022 Win32/x86 Release covers both `ON` and `OFF`.
   - `-DSQLITECPP_BUILD_TESTS=ON`

@@ -66,10 +66,12 @@ if (MSVC)
             set(gtest_force_shared_crt ON CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
         endif (SQLITECPP_BUILD_TESTS)
     endif (SQLITECPP_USE_STATIC_RUNTIME)
-    # MSVC versions prior to 2015 are not supported anymore by SQLiteC++ 3.x
-    if (MSVC_VERSION LESS 1900) # OR MSVC_TOOLSET_VERSION LESS 140)
-      message(ERROR "Visual Studio prior to 2015 is not supported anymore.")
-    endif (MSVC_VERSION LESS 1900)
+    # VS2017 15.9 is the oldest MSVC toolset exercised by CI for the C++17 baseline.
+    if (MSVC_VERSION LESS 1916)
+        message(FATAL_ERROR
+            "SQLiteCpp requires Visual Studio 2017 15.9 (MSVC 19.16) or newer. "
+            "Detected MSVC_VERSION=${MSVC_VERSION}.")
+    endif ()
 else (MSVC) # Unix/macOS/MinGW
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
@@ -526,16 +528,6 @@ if (SQLITECPP_BUILD_TESTS)
         get_directory_property(GOOGLETEST_VERSION DIRECTORY googletest DEFINITION GOOGLETEST_VERSION)
         message(STATUS "GoogleTest submodule version: ${GOOGLETEST_VERSION}")
         include_directories("${PROJECT_SOURCE_DIR}/googletest/googletest/include")
-
-        # Add definitions to keep googletest from making the compilation fail
-        if (MSVC)
-            if (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919) # OR MSVC_TOOLSET_VERSION EQUAL 141)
-                target_compile_definitions(gtest PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-                target_compile_definitions(gtest_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-                target_compile_definitions(gmock PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-                target_compile_definitions(gmock_main PUBLIC _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-            endif (MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS_EQUAL 1919)
-        endif (MSVC)
 
         target_link_libraries(SQLiteCpp_tests gtest_main)
     endif (GTEST_FOUND)

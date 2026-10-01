@@ -6,6 +6,53 @@ permissions:
   contents: read
 
 jobs:
+  minimum-msvc:
+    name: Minimum MSVC (VS2017 15.9 / v141)
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        submodules: recursive
+    - name: Install VS2017 15.9 toolset
+      shell: pwsh
+      run: |
+        $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+        $vsPath = & $vswhere -latest -products '*' -version '[17.0,18.0)' `
+          -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+        if (!$vsPath) { throw 'Visual Studio 2022 installation not found' }
+        $installer = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\setup.exe"
+        $arguments = @('modify', '--installPath', "`"$vsPath`"", '--add',
+          'Microsoft.VisualStudio.Component.VC.v141.x86.x64', '--quiet', '--norestart')
+        $process = Start-Process -FilePath $installer -ArgumentList $arguments -Wait -PassThru
+        if ($process.ExitCode -notin @(0, 3010)) {
+          throw "v141 installation failed with exit code $($process.ExitCode)"
+        }
+        if (!(Test-Path "$vsPath\VC\Tools\MSVC\14.16.*\bin\Hostx64\x64\cl.exe")) {
+          throw 'VS2017 15.9 compiler was not installed'
+        }
+    - name: Configure library, tests and example with v141
+      run: >-
+        cmake -S . -B build/minimum-msvc
+        -G "Visual Studio 17 2022" -A x64 -T v141
+        -DCMAKE_CXX_STANDARD=17 -DBUILD_SHARED_LIBS=ON
+        -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=ON
+        -DSQLITECPP_RUN_CPPCHECK=OFF -DSQLITECPP_RUN_CPPLINT=OFF
+    - name: Build library, tests and example
+      run: cmake --build build/minimum-msvc --config Release --parallel 2
+    - name: Run unit tests and example
+      run: ctest --test-dir build/minimum-msvc -C Release --verbose --output-on-failure
+    - name: Configure C++17 filesystem and string_view consumer with v141
+      run: >-
+        cmake -S tests/consumer -B build/minimum-msvc-consumer
+        -G "Visual Studio 17 2022" -A x64 -T v141
+        -DSQLITECPP_CXX_STANDARD=17 -DCONSUMER_CXX_STANDARD=17
+        -DSQLITECPP_EXPECTED_MSVC_VERSION=1916
+    - name: Build consumer
+      run: cmake --build build/minimum-msvc-consumer --config Release --parallel 2
+    - name: Run consumer
+      run: ctest --test-dir build/minimum-msvc-consumer -C Release --output-on-failure
+
   assertion-handler:
     name: Custom assertion handler (${{ matrix.build_type }})
     runs-on: ubuntu-24.04

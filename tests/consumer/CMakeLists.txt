@@ -23,6 +23,14 @@ set_target_properties(SQLiteCpp_Consumer PROPERTIES
 target_compile_definitions(SQLiteCpp_Consumer PRIVATE
     SQLITECPP_CONSUMER_CXX_STANDARD=${CONSUMER_CXX_STANDARD}
 )
+if (DEFINED SQLITECPP_EXPECTED_MSVC_VERSION)
+    if (NOT MSVC OR NOT MSVC_VERSION EQUAL SQLITECPP_EXPECTED_MSVC_VERSION)
+        message(FATAL_ERROR "Expected MSVC_VERSION=${SQLITECPP_EXPECTED_MSVC_VERSION}; detected ${MSVC_VERSION}")
+    endif ()
+    target_compile_definitions(SQLiteCpp_Consumer PRIVATE
+        SQLITECPP_EXPECTED_MSVC_VERSION=${SQLITECPP_EXPECTED_MSVC_VERSION}
+    )
+endif ()
 target_link_libraries(SQLiteCpp_Consumer PRIVATE SQLiteCpp)
 
 enable_testing()

@@ -27,6 +27,8 @@ changes uncommitted unless the user explicitly asks for an uncommitted patch.
 - [ ] `CHANGELOG.md` updated for user-facing changes (in a **separate commit** after opening the PR).
 
 ## CHANGELOG conventions
+If the user explicitly requests no CHANGELOG change or entry, leave `CHANGELOG.md` unchanged.
+
 Update `CHANGELOG.md` in the same PR that makes the change, but **in a separate commit** created after
 the PR is opened so the PR number is known. Normally add one line per PR under the current unreleased
 version heading (`Version X.Y.Z - <year> ???`). Create that heading if it does not exist yet.
@@ -80,7 +82,9 @@ add source, test, or documentation commits after it, reorder the branch before p
   PR is opened so the PR number can be included.
 - Each commit must leave the repository in a valid state: it must compile and pass its relevant tests
   when checked out at that point in the branch history.
-- Before pushing a branch to the remote, **ask the user for explicit permission** stating the branch name and action (e.g., "Push branch `update-sqlite-3.52.2` to origin?"). Push only after receiving approval.
+- Push when the user has explicitly authorized pushing in the current session, including in the initial request.
+  Do not ask again when that authorization already covers the branch and action. Otherwise, ask for permission
+  stating the branch name and action (e.g., "Push branch `update-sqlite-3.52.2` to origin?").
 
 ## Add a method
 Follow the required workflow above. Include:

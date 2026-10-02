@@ -28,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Instrument unit tests and examples in UBSan builds (#593)
 
+### Fixed
+
+- Track manually rolled-back transactions as finished and report destructor rollback failures through assertions (#586)
+
 ## [3.4.0] - 2026-09-21
 
 ### Added

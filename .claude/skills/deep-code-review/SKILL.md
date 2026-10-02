@@ -2,7 +2,7 @@
 name: deep-code-review
 description: >-
   SQLiteCpp source prioritization and delegated bug or vulnerability review.
-  Use when ranking files for review or requesting a deep source audit.
+  Use when ranking files for review, requesting a deep source audit, or revalidating findings.
 ---
 
 # Deep Code Review
@@ -11,12 +11,27 @@ Choose the phase requested by the user. A priority inventory only ranks files; d
 request into a bug hunt, runtime reproductions, or fixes. An explicit deep review examines defects
 and vulnerabilities separately from the inventory. Neither phase authorizes fixes or publication.
 
+## Scope and source revision
+
+Choose an inventory, a full audit, or validation of specified findings/groups. Editing this skill
+alone does not request a source audit. Load build/testing skills only when running those checks.
+
+- Record the requested source commit and scope before changing branches. Default to the current
+  checkout, not `master`. Record relevant staged, unstaged, and untracked changes separately;
+  a commit hash alone does not identify a dirty source tree.
+- Follow the branching skill for artifact edits, reusing a suitable review branch. If its base
+  differs from the review target, inspect the target in a separate worktree or snapshot. Keep
+  source inspection, probes, headers, and library builds on the same recorded revision.
+- Enumerate all groups for an inventory or full audit. For a focused review, enumerate the
+  requested groups and inspect dependencies as needed; do not imply whole-library coverage.
+- Delegate when available and permitted, with the target revision and scope in each assignment.
+  If delegation is unavailable or disallowed, review groups sequentially and disclose the lack
+  of independent review. Preserve the same evidence and coverage requirements.
+
 ## Priority inventory workflow
 
-1. Read `AGENTS.md` and the branching, coding, testing, and skill-maintenance skills. Check the
-   working tree, create a dedicated `deep-code-review` branch from `master` before editing, and
-   record the reviewed commit. If that branch already exists, reuse it when appropriate or create
-   a uniquely suffixed review branch. Preserve unrelated user changes.
+1. Read `AGENTS.md` and the branching, coding, and skill-maintenance skills. Establish the scope
+   and source revision above before editing. Preserve unrelated user changes.
 2. Enumerate every source file under `src/` and every header under `include/`, recursively.
    Pair implementations with their corresponding headers. Assess each independent header too.
    Account for unmatched implementations and report generated headers separately if applicable.
@@ -68,18 +83,32 @@ High importance and risk dominate the ranking; test gaps break out further revie
 
 ## Reusing the report
 
-Read the ranked reference when selecting the next file for a detailed review. Re-enumerate and
-refresh evidence when the source revision changes. Read the separate findings reference for prior
-observations and validation limits. Reproductions and additional testing belong to an explicitly
-requested deep review. Fixes require the usual project workflow.
+Read the ranked reference when selecting the next file for a detailed review. Compare the old
+and target revisions across source, public headers, relevant tests, build flags, and bundled
+SQLite. A new commit alone does not invalidate unchanged evidence; document the compared paths
+when carrying it forward. Changes to a dependency can invalidate evidence for an unchanged API.
+Re-enumerate for a full audit, and refresh affected scores only when updating the inventory.
+
+Read [references/findings-bugs.md](references/findings-bugs.md) for prior findings and limits;
+[references/review-assessments.md](references/review-assessments.md) preserves historical scoring
+rationale. Keep stable finding IDs and original evidence. Record the last checked revision and
+configuration for each revalidated finding, with one of these outcomes:
+
+- **Confirmed:** the trigger and consequence are supported at the target revision.
+- **Resolved:** cite the changed code and a focused check showing the original trigger is fixed.
+- **Not reproduced:** record the attempted configuration and limits; this does not prove a fix.
+- **Not rechecked:** retain the prior revision/status explicitly as historical evidence.
+
+A partial recheck updates only its findings and coverage ledger. Do not relabel untouched findings,
+the historical assessments, or the full report as validated at the new revision. Reproductions
+and additional testing belong to an explicitly requested deep review. Fixes require the usual
+project workflow.
 
 
 ## Deep bug and vulnerability review
 
-1. Reuse the dedicated review branch when continuing a review. Record the current source commit;
-   do not assume the priority inventory covers the current revision. Re-enumerate all groups.
-   When validating an existing report, compare its source revision with the current source and
-   mark already-fixed findings as resolved. Scope delegated work to the reports under review.
+1. Establish the scope and source revision above. When validating an existing report, follow
+   the evidence reuse rules; scope delegated work to the findings/groups under review.
 2. For a full source audit, assign each source/header pair and independent header its own review.
    Prefer a separate agent per group. If the service limits the total number of agent threads,
    reuse completed reviewers with a fresh assignment for each queued group. Each assignment owns
@@ -116,7 +145,27 @@ requested deep review. Fixes require the usual project workflow.
    reports/groups and link retained historical assessments with their original revision. Keep the
    existing priority inventory separate. Preserve useful probe sources in
    `references/review-probes/` with exact build/run instructions when needed to make important
-   findings reproducible. Review results do not certify absence of vulnerabilities.
-9. Validate skill metadata, report links, complete file coverage, and the diff. Report the most
+   findings reproducible, following the probe requirements below. Review results do not certify
+   absence of vulnerabilities.
+9. Validate skill metadata, report links, coverage of the declared scope, and the diff. Report
    important confirmed findings and remaining limits. Commit review artifacts when the user's
    ongoing review workflow already authorizes it; do not commit unrelated changes.
+
+## Reproduction evidence
+
+Record the compiler/version, platform, C++ mode, SQLite source/version, feature definitions,
+optimization, and sanitizer settings that affect each result. Use a fresh temporary build/work
+folder per configuration, and build successfully before running a probe. Share only completed,
+immutable outputs built from the recorded source; never run a stale binary after a failed compile.
+
+For each probe, preserve the command, expected correct behavior, observed output, and exit status.
+A successful exit can demonstrate wrong results, while an intentional compile or sanitizer failure
+can confirm a defect. Check the diagnostic and cause, not just the exit code. A missing dependency,
+unsupported toolchain, or setup failure is a validation limit, not reproduction evidence.
+
+Use a nearby successful control when it distinguishes the defect from setup or caller misuse:
+for example, allocation failure disabled, a supported iterator operation, or a feature enabled.
+Keep control and failing runs on the same source/build except for the intended trigger. For a fix
+check, require the correct outcome and relevant control behavior; an absent crash alone is weak
+evidence. Run potentially blocking probes with a bounded timeout and record timeout as a limit
+unless the suspected hang itself is established.

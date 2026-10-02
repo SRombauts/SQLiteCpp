@@ -8,7 +8,7 @@ report update does not change the library, build configuration, or existing unit
 These standalone C++17 programs reproduce reported defects; they are not regression tests and
 must not be interpreted as passing correctness checks merely because they exit successfully.
 They create/remove only their named scratch databases below the supplied work directory.
-Use the dedicated scratch path shown here, not a directory containing useful databases.
+Use a fresh scratch directory as shown below, not a directory containing useful databases.
 
 - [findings_probe.cpp](findings_probe.cpp): B1-B4, B6-B7, the automatic-rollback ownership variant,
   and the failed-COMMIT retry behavior that a B2 fix must preserve.
@@ -37,10 +37,23 @@ Use the dedicated scratch path shown here, not a directory containing useful dat
 - [getindex_pure_probe.cpp](getindex_pure_probe.cpp): B15, optimized callers discard the throwing
   name lookup when its public declaration is incorrectly marked pure.
 
+## Running a new validation
+
+The outputs below are historical observations at the recorded revision, not expected passing
+results for every checkout. Record `git rev-parse HEAD`, relevant working-tree changes, compiler
+version, and configuration for a new run. Use matching headers and freshly built libraries from
+that target. Check each build succeeds before running its binary; stop on setup/build failure.
+Record both output and exit status, interpreting them against the reported behavior.
+
+Use the skill's [reproduction evidence requirements](../../SKILL.md#reproduction-evidence).
+For intentional compile failures, verify the specific diagnostic and compile a nearby supported
+control with the same flags. A missing include or library does not confirm the reported defect.
+For allocation injection, run the normal control as well as the failing case.
+
 ## Build and baseline tests
 
 ```sh
-review_build=/tmp/sqlitecpp-deep-review-15f2a5a
+review_build=$(mktemp -d /tmp/sqlitecpp-deep-review.XXXXXX)
 review_probes=.claude/skills/deep-code-review/references/review-probes
 cmake -S . -B "$review_build" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_STANDARD=17 \
   -DSQLITECPP_BUILD_TESTS=ON -DSQLITECPP_BUILD_EXAMPLES=OFF \

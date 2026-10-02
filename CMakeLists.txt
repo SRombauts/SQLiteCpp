@@ -280,9 +280,9 @@ option(SQLITECPP_USE_UBSAN "Use Undefined Behavior Sanitizer." OFF)
 if (SQLITECPP_USE_UBSAN)
     if ((CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 6) OR ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
         message (STATUS "Using Undefined Behavior Sanitizer")
-        target_compile_options(SQLiteCpp PRIVATE -fsanitize=undefined -fno-omit-frame-pointer)
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined")
-        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=undefined")
+        # Instrument linked tests and examples, including calls to inline public APIs.
+        target_compile_options(SQLiteCpp PUBLIC -fsanitize=undefined -fno-omit-frame-pointer)
+        target_link_options(SQLiteCpp PUBLIC -fsanitize=undefined)
     endif ()
 endif (SQLITECPP_USE_UBSAN)
 

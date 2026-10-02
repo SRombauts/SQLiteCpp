@@ -30,6 +30,7 @@ description: Build SQLiteCpp with CMake. Use for CMake builds, tests, options, o
 - `SQLITECPP_RUN_CPPCHECK` (ON): run cppcheck target.
 - `SQLITECPP_RUN_DOXYGEN` (OFF): generate docs.
 - `SQLITECPP_USE_ASAN` (OFF): address sanitizer.
+- `SQLITECPP_USE_UBSAN` (OFF): undefined behavior sanitizer for the library and linked consumers.
 - `SQLITECPP_USE_GCOV` (OFF): GCov coverage.
 - `SQLITECPP_DISABLE_STD_FILESYSTEM` (OFF): disable std::filesystem support.
 - `SQLITECPP_DISABLE_EXPANDED_SQL` (OFF): disable sqlite3_expanded_sql support.

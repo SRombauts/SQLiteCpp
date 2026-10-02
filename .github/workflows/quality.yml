@@ -33,12 +33,32 @@ jobs:
       run: >-
         cmake -S . -B build
         -DCMAKE_BUILD_TYPE=Debug
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         -DBUILD_SHARED_LIBS=ON
         -D${{ matrix.config.cmake_option }}=ON
         -DSQLITECPP_BUILD_TESTS=ON
         -DSQLITECPP_BUILD_EXAMPLES=ON
         -DSQLITECPP_RUN_CPPCHECK=OFF
         -DSQLITECPP_RUN_CPPLINT=OFF
+
+    - name: Verify UBSan instrumentation
+      if: matrix.config.cmake_option == 'SQLITECPP_USE_UBSAN'
+      run: |
+        python3 - <<'PY'
+        import json
+        import shlex
+        from pathlib import Path
+
+        entries = json.loads(Path("build/compile_commands.json").read_text())
+        for target in ("SQLiteCpp", "SQLiteCpp_tests", "SQLiteCpp_example1"):
+            commands = [entry for entry in entries if f"CMakeFiles/{target}.dir/" in entry["command"]]
+            if not commands:
+                raise SystemExit(f"No compile commands found for {target}")
+            for entry in commands:
+                if "-fsanitize=undefined" not in shlex.split(entry["command"]):
+                    raise SystemExit(f"Missing UBSan instrumentation: {entry['file']}")
+            print(f"Verified UBSan instrumentation for {target}: {len(commands)} sources")
+        PY
 
     - name: Build
       run: cmake --build build --config Debug

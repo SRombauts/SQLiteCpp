@@ -79,3 +79,12 @@ Genuinely not worth chasing:
   portable test cannot reach without a real loadable extension binary.
 
 Cover the genuinely reachable lines and leave the rest.
+
+## Sanitizers
+
+- The `Quality` workflow already runs separate Clang ASan and UBSan jobs on Ubuntu.
+- A sanitizer runtime on the link command does not instrument a translation unit. UBSan
+  compile flags must reach the library, unit tests, and examples, including inline API calls.
+- `SQLITECPP_USE_UBSAN` propagates compile and link options through the SQLiteCpp target.
+  The UBSan CI job verifies every project compile command before building.
+- Keep `UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1` so a diagnostic fails the job.

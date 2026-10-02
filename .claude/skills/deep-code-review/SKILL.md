@@ -78,10 +78,15 @@ requested deep review. Fixes require the usual project workflow.
 
 1. Reuse the dedicated review branch when continuing a review. Record the current source commit;
    do not assume the priority inventory covers the current revision. Re-enumerate all groups.
-2. Dedicate a separate agent to each source/header pair and each independent header. Queue agents
-   when concurrency is limited. Each agent owns one group and may inspect dependencies. It must
-   read the whole assigned implementation/header and relevant tests, not just previous findings.
-   Start from raw source rather than the old finding list to reduce confirmation bias.
+   When validating an existing report, compare its source revision with the current source and
+   mark already-fixed findings as resolved. Scope delegated work to the reports under review.
+2. For a full source audit, assign each source/header pair and independent header its own review.
+   Prefer a separate agent per group. If the service limits the total number of agent threads,
+   reuse completed reviewers with a fresh assignment for each queued group. Each assignment owns
+   one group and returns a separate finding and coverage ledger. For report validation, delegate
+   the affected groups. Each reviewer may inspect dependencies. It must read the whole assigned
+   implementation/header and relevant tests, not just previous findings. Start from raw source
+   rather than the old finding list to reduce confirmation bias.
 3. Check ownership/destruction, exception safety, state transitions, moves/copies, callbacks,
    pointer/row/buffer lifetimes, lengths and arithmetic, NULL/empty inputs, SQL construction,
    untrusted data, feature macros, exported ABI, and supported compiler/platform behavior.
@@ -102,12 +107,16 @@ requested deep review. Fixes require the usual project workflow.
 7. Independently check and deduplicate agents' findings. Attribute cross-file defects to the
    responsible API. Security impact needs a realistic input path and consequence; do not infer
    exploitability solely from a high risk score. Use high/medium/low severity for actual impact,
-   not the inventory's ordinal importance scores.
+   not the inventory's ordinal importance scores. Rank fix urgency by confirmed consequences and
+   realistic triggers. Give confirmed bugs stable IDs, status, and focused regression requirements;
+   keep documentation defects and unvalidated concerns separate.
 8. Save [references/findings-bugs.md](references/findings-bugs.md) with the source revision,
-   complete per-group review ledger, severity-ranked findings, reproduction evidence, rejected
-   concerns, and validation limits. Keep the existing priority inventory separate. Preserve useful
-   probe sources in `references/review-probes/` with exact build/run instructions when needed to
-   make important findings reproducible. Review results do not certify absence of vulnerabilities.
+   severity-ranked findings, reproduction evidence, rejected concerns, and validation limits.
+   Include a complete per-group ledger for a full audit. For report validation, identify checked
+   reports/groups and link retained historical assessments with their original revision. Keep the
+   existing priority inventory separate. Preserve useful probe sources in
+   `references/review-probes/` with exact build/run instructions when needed to make important
+   findings reproducible. Review results do not certify absence of vulnerabilities.
 9. Validate skill metadata, report links, complete file coverage, and the diff. Report the most
    important confirmed findings and remaining limits. Commit review artifacts when the user's
    ongoing review workflow already authorizes it; do not commit unrelated changes.

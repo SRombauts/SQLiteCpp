@@ -217,10 +217,10 @@ target_compile_features(SQLiteCpp PUBLIC cxx_std_17)
 
 # Options relative to SQLite and SQLiteC++ functions
 
-option(SQLITE_ENABLE_COLUMN_METADATA "Enable Column::getColumnOriginName(). Require support from sqlite3 library." ON)
+option(SQLITE_ENABLE_COLUMN_METADATA "Enable SQLite column origin metadata (requires SQLite support)." ON)
 if (SQLITE_ENABLE_COLUMN_METADATA)
-    # Enable the use of SQLite column metadata and Column::getColumnOriginName() method,
-    # Require that the sqlite3 library is also compiled with this flag (default under Debian/Ubuntu, but not on Mac OS X).
+    # Enable SQLite column origin metadata.
+    # The sqlite3 library must also be compiled with SQLITE_ENABLE_COLUMN_METADATA.
     target_compile_definitions(SQLiteCpp PUBLIC SQLITE_ENABLE_COLUMN_METADATA)
 endif (SQLITE_ENABLE_COLUMN_METADATA)
 

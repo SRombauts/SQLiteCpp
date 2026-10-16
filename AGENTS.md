@@ -16,6 +16,9 @@
 **Goal:** Keep this documentation accurate and comprehensive so future sessions benefit from corrections and
 clarifications.
 
+Treat changes to AGENTS.md and skills as documentation maintenance. Commit them separately from implementation,
+tests, and CI changes, even when the same task prompts both kinds of work.
+
 ## Core Non-Negotiables (MUST Follow)
 
 1. **RAII only**: Acquire resources in constructors, release in destructors

@@ -17,7 +17,8 @@ description: SQLiteCpp and sqlite3 feature flags for CMake and Meson builds.
 - `SQLITECPP_DISABLE_SQLITE3_EXPANDED_SQL` (OFF): disable sqlite3_expanded_sql.
 
 ## SQLite feature flags (CMake and Meson)
-- `SQLITE_ENABLE_COLUMN_METADATA`: enable `getColumnOriginName()` (CMake default `ON`, Meson default `false`).
+- `SQLITE_ENABLE_COLUMN_METADATA`: enable SQLite column origin metadata
+  (CMake default `ON`, Meson default `false`).
 - `SQLITE_ENABLE_ASSERT_HANDLER` (OFF): enable custom assert handler.
 - `SQLITE_HAS_CODEC` (OFF): enable codec API (SQLCipher).
 - `SQLITE_USE_LEGACY_STRUCT` (OFF): legacy `sqlite3_value`.

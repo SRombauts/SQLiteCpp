@@ -74,7 +74,12 @@ add source, test, or documentation commits after it, reorder the branch before p
   the investigation. Add detail only when essential to understand the change; omit the body for a truly
   self-explanatory change. Put fuller explanations and validation results in the PR description or task response.
 - Make commits **atomic and independent**. Each commit must have exactly one purpose and be reviewable
-  on its own. Include only the implementation, tests, and documentation required for that purpose.
+  on its own. Include only the implementation, tests, and public API documentation required for that
+  purpose.
+- Keep new consumer or integration tests with the build and CI changes needed to run them. A minimal
+  fix can stand alone, followed by a commit adding its consumer test and CI coverage together.
+- Treat `AGENTS.md` and `.claude/skills/**` maintenance as documentation work. Use a separate
+  documentation commit, even when it describes the implementation or CI from the same task.
 - Do not mix distinct bug fixes, API additions, refactoring, formatting, workflow changes, or other
   unrelated work in one commit. A task containing separable outcomes, such as fixing existing behavior
   and adding a new API, requires separate commits.

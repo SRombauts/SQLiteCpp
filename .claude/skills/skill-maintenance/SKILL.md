@@ -18,6 +18,14 @@ For the upstream specification, see Anthropic's
 [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices).
 The conventions below are repo-local extensions and reinforcements of that guide.
 
+## Commit scope
+
+Skill maintenance is documentation work. Commit changes to skills and agent instructions separately
+from implementation, tests, build configuration, and CI workflows, even when the same task prompts
+them. Related skill and `AGENTS.md` updates may share one documentation commit.
+
+Follow `sqlitecpp-workflow` for commit ordering, including its separate final CHANGELOG commit.
+
 ## Markdown style
 
 Wrap markdown at **100 characters**. In rendered Markdown, single newlines fold into spaces, so

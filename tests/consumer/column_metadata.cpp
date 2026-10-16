@@ -50,6 +50,13 @@ int main()
     {
         return 1;
     }
+    const char* pStatementTable = query.getColumnTableName(0);
+    const char* pColumnTable = query.getColumn(0).getTableName();
+    if (!pStatementTable || !pColumnTable ||
+        std::strcmp(pStatementTable, "test") != 0 || std::strcmp(pColumnTable, "test") != 0)
+    {
+        return 1;
+    }
 #endif
 
     return 0;

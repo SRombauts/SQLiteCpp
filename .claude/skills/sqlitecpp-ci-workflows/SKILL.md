@@ -1,6 +1,7 @@
 ---
 name: sqlitecpp-ci-workflows
-description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, matrices, or test steps.
+description: >-
+  SQLiteCpp CI workflow patterns. Use for GitHub Actions, matrices, or test steps.
 ---
 
 # SQLiteCpp CI Workflows
@@ -35,10 +36,17 @@ description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, matrices, o
 ## GitHub Actions (Meson)
 - Use `pipx install meson ninja`.
 - Set `CC`, `CXX`, and optional linkers.
-- Setup with tests/examples and sqlite3 fallback:
-  `meson setup builddir -DSQLITECPP_BUILD_TESTS=true -DSQLITECPP_BUILD_EXAMPLES=true --force-fallback-for=sqlite3`.
+- Setup with tests/examples and sqlite3 fallback: `meson setup builddir`
+  `-DSQLITECPP_BUILD_TESTS=true -DSQLITECPP_BUILD_EXAMPLES=true --force-fallback-for=sqlite3`.
 - Build: `meson compile -C builddir`.
 - Test: `meson test -C builddir`.
+- Keep column metadata coverage with `-DSQLITE_ENABLE_COLUMN_METADATA=true`: shared and static
+  SQLite fallback builds, plus a system SQLite build with `--wrap-mode=nofallback` and the SQLite/GTest
+  development packages installed. The fallback wrap enables metadata in SQLite itself.
+- Build and run the standalone column metadata consumer through `sqlitecpp_dep` only. It must check
+  that the public feature definition matches the option and call both origin-name APIs when enabled;
+  do not add `SQLITE_ENABLE_COLUMN_METADATA` directly to consumer compiler flags. Default Meson jobs
+  cover the metadata-disabled consumer.
 
 ## Coverage (Coveralls)
 The `Coverage` workflow (`.github/workflows/coverage.yml`) builds with `-DSQLITECPP_USE_GCOV=ON`

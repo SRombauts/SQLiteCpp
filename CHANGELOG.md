@@ -25,8 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix Meson builds with a custom assertion handler (#590)
-
 - Instrument unit tests and examples in UBSan builds (#593)
+- Fix column metadata API visibility for Meson consumers (#595)
 
 ## [3.4.0] - 2026-09-21
 

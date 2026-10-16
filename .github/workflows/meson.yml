@@ -81,3 +81,47 @@ jobs:
       run: |
         # run the tests
         meson test -C builddir
+
+  column-metadata:
+    name: (Meson) Column metadata / ${{ matrix.sqlite3 }} / ${{ matrix.library }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - sqlite3: fallback
+            library: shared
+            dependency_args: --force-fallback-for=sqlite3
+          - sqlite3: fallback
+            library: static
+            dependency_args: --force-fallback-for=sqlite3
+          - sqlite3: system
+            library: shared
+            dependency_args: --wrap-mode=nofallback
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Meson and Ninja
+        run: pipx install meson ninja
+
+      - name: Install system dependencies
+        if: matrix.sqlite3 == 'system'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsqlite3-dev libgtest-dev
+
+      - name: Configure with column metadata
+        run: >
+          meson setup builddir
+          -Ddefault_library=${{ matrix.library }}
+          -DSQLITECPP_BUILD_TESTS=true
+          -DSQLITECPP_BUILD_EXAMPLES=true
+          -DSQLITE_ENABLE_COLUMN_METADATA=true
+          ${{ matrix.dependency_args }}
+
+      - name: Build library, tests, examples, and consumer
+        run: meson compile -C builddir
+
+      - name: Test
+        run: meson test -C builddir --verbose --print-errorlogs

@@ -28,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Instrument unit tests and examples in UBSan builds (#593)
 - Fix column metadata API visibility for Meson consumers (#595)
 
+### Added
+
+- Add source table-name accessors to Statement and Column (#594)
+
 ## [3.4.0] - 2026-09-21
 
 ### Added

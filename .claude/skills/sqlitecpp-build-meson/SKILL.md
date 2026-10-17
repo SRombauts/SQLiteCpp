@@ -31,6 +31,8 @@ description: Builds SQLiteCpp with Meson. Use when configuring Meson builds, tes
 - `SQLITE_OMIT_LOAD_EXTENSION`: omit load extension.
 
 ## Notes
+- SQLiteCpp requires SQLite 3.38.0 or newer. Meson checks the sqlite3 dependency version,
+  and the source-level compile-time check covers custom dependency configurations.
 - C++17 is the SQLiteCpp project minimum; Meson defaults to `cpp_std=c++17` and rejects older standards.
 - MSVC requires VS2017 15.9 / MSVC 19.16 or newer, matching the CMake minimum and its CI coverage.
 - C++20 can be selected explicitly for compatibility testing.

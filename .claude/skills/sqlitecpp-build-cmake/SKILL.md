@@ -43,7 +43,9 @@ description: Build SQLiteCpp with CMake. Use for CMake builds, tests, options, o
 ## Notes
 - Tests can use a system `GTest`; otherwise they fall back to the `googletest` submodule.
 - If the submodule is needed: `git submodule update --init --recursive`.
-- SQLiteCpp requires CMake 3.16 or newer and C++17 or newer.
+- SQLiteCpp requires CMake 3.16 or newer, C++17 or newer, and SQLite 3.38.0 or newer.
+- `find_package(SQLite3 3.38.0 REQUIRED)` checks discovered system SQLite versions.
+  Custom SQLite targets are also covered by the source-level compile-time version check.
 - MSVC requires VS2017 15.9 / MSVC 19.16 or newer, enforced with a fatal configuration diagnostic.
 - `cxx_std_17` requests a standard mode; it does not prove complete C++17 feature support.
   Old MSVC toolsets are a special case: CMake can advertise standard meta-features even when the

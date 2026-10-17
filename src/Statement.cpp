@@ -116,6 +116,15 @@ void Statement::bind(const int aIndex, const std::string& aValue)
     check(ret);
 }
 
+// Bind a string_view value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bind(const int aIndex, const std::string_view aValue)
+{
+    const char* data = aValue.empty() ? "" : aValue.data();
+    const int ret = sqlite3_bind_text64(getPreparedStatement(), aIndex, data,
+                                        aValue.size(), SQLITE_TRANSIENT, SQLITE_UTF8);
+    check(ret);
+}
+
 // Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const char* apValue)
 {
@@ -143,6 +152,15 @@ void Statement::bindNoCopy(const int aIndex, const std::string& aValue)
 {
     const int ret = sqlite3_bind_text64(getPreparedStatement(), aIndex, aValue.c_str(),
                                         static_cast<sqlite3_uint64>(aValue.size()), SQLITE_STATIC, SQLITE_UTF8);
+    check(ret);
+}
+
+// Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
+void Statement::bindNoCopy(const int aIndex, const std::string_view aValue)
+{
+    const char* data = aValue.empty() ? "" : aValue.data();
+    const int ret = sqlite3_bind_text64(getPreparedStatement(), aIndex, data,
+                                        aValue.size(), SQLITE_STATIC, SQLITE_UTF8);
     check(ret);
 }
 

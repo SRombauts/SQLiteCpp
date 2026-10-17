@@ -410,6 +410,93 @@ TEST(Statement, bindings)
     }
 }
 
+TEST(Statement, stringView)
+{
+    // Create a new database
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+
+    // Create a new table
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY,"
+                         " txt1 TEXT, txt2 TEXT, bin1 BLOB, bin2 BLOB)"));
+    EXPECT_EQ(SQLite::OK, db.getErrorCode());
+
+    // Insertion with bindable parameters
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?, ?)");
+
+    // Compile a SQL query to check the results
+    SQLite::Statement query(db, "SELECT * FROM test");
+    EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
+    EXPECT_EQ(5, query.getColumnCount());
+
+    std::string_view sv1, sv2;
+    auto test_sv = [&](const bool noCopy)
+    {
+        // Insert row
+        if (noCopy)
+        {
+            insert.bindNoCopy(1, sv1);
+            insert.bindNoCopy(2, sv2);
+            insert.bindNoCopy(3, sv1);
+            insert.bindNoCopy(4, sv2);
+        }
+        else
+        {
+            insert.bind(1, sv1);
+            insert.bind(2, sv2);
+            insert.bind(3, sv1);
+            insert.bind(4, sv2);
+        }
+        EXPECT_EQ(1, insert.exec());
+        EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
+
+        // Check result
+        // Note: memcmp returns 0 when n=0 (C11 -- 7.24.1.2)
+        query.executeStep();
+        EXPECT_TRUE(   query.hasRow());
+        EXPECT_FALSE(  query.getColumn(1).isNull());
+        EXPECT_EQ(sv1, query.getColumn(1).getStringView());
+        EXPECT_EQ(sv2, query.getColumn(2).getStringView());
+        EXPECT_FALSE(  query.getColumn(2).isNull());
+        EXPECT_EQ(sv1, query.getColumn(1).getString());
+        EXPECT_EQ(sv2, query.getColumn(2).getString());
+        EXPECT_EQ(sv1.size(), query.getColumn(1).getBytes());
+        EXPECT_EQ(0, memcmp(sv1.data() == nullptr ? "" : sv1.data(),
+                            query.getColumn(1).getText(), sv1.size()));
+        EXPECT_EQ(sv2.size(), query.getColumn(2).getBytes());
+        EXPECT_EQ(0, memcmp(sv2.data() == nullptr ? "" : sv2.data(),
+                            query.getColumn(2).getText(), sv2.size()));
+        EXPECT_FALSE(  query.getColumn(3).isNull());
+        EXPECT_EQ(sv1, query.getColumn(3).getStringView());
+        EXPECT_EQ(sv2, query.getColumn(4).getStringView());
+        EXPECT_FALSE(  query.getColumn(4).isNull());
+        EXPECT_EQ(sv1, query.getColumn(3).getString());
+        EXPECT_EQ(sv2, query.getColumn(4).getString());
+        EXPECT_EQ(sv1.size(), query.getColumn(3).getBytes());
+        EXPECT_EQ(0, memcmp(sv1.data() == nullptr ? "" : sv1.data(),
+                            query.getColumn(3).getBlob(), sv1.size()));
+        EXPECT_EQ(sv2.size(), query.getColumn(4).getBytes());
+        EXPECT_EQ(0, memcmp(sv2.data() == nullptr ? "" : sv2.data(),
+                            query.getColumn(4).getBlob(), sv2.size()));
+    };
+
+    // Non-empty
+    const char* text = "123\0test";
+    sv1 = std::string_view(text, 8);
+    sv2 = "abcd";
+    test_sv(false);
+    insert.reset();
+    test_sv(true);
+    insert.reset();
+
+    // Empty
+    sv1 = std::string_view();
+    sv2 = "";
+    test_sv(false);
+    insert.reset();
+    test_sv(true);
+}
+
 TEST(Statement, bindNoCopy)
 {
     // Create a new database

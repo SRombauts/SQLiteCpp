@@ -16,6 +16,7 @@
 
 #include <string>
 #include <memory>
+#include <string_view>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3_stmt;
@@ -96,6 +97,15 @@ public:
      *          thus you must copy it before using it beyond its scope (to a std::string for instance).
      */
     const void* getBlob() const noexcept;
+    /**
+     * @brief Return a std::string_view for a TEXT or BLOB column.
+     *
+     * Note this correctly handles strings that contain null bytes.
+     * 
+     * @warning returned string_view is only valid until there is a type
+     *      conversion or the statement is stepped or reset.
+     */
+    std::string_view getStringView() const;
     /**
      * @brief Return a std::string for a TEXT or BLOB column.
      *
@@ -225,6 +235,18 @@ public:
     operator std::string() const
     {
         return getString();
+    }
+
+    /**
+     * @brief Inline cast operator to std::string_view
+     *
+     * Handles BLOB or TEXT, which may contain null bytes within
+     *
+     * @see getStringView
+     */
+    operator std::string_view() const
+    {
+        return getStringView();
     }
 
 private:

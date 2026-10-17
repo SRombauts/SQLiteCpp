@@ -16,6 +16,10 @@
 #include <SQLiteCpp/Statement.h>
 
 #include <sqlite3.h>
+
+#if SQLITE_VERSION_NUMBER < 3038000
+    #error "SQLiteCpp 4.0 requires SQLite 3.38.0 or newer"
+#endif
 #include <climits>
 #include <fstream>
 #include <string.h>

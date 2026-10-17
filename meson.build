@@ -34,6 +34,7 @@ thread_dep = dependency('threads')
 # sqlite3 support
 sqlite3_dep = dependency(
                 'sqlite3',
+                version: '>=3.38.0',
                 fallback: ['sqlite3', 'sqlite3_dep']
 )
 

@@ -65,6 +65,8 @@ tests, and CI changes, even when the same task prompts both kinds of work.
 - Max 120 characters per line
 
 ## Build System Compatibility
+- SQLiteCpp 4.x requires SQLite 3.38.0 or newer, whether bundled or provided externally.
+  A compile-time check rejects older SQLite headers; CMake and Meson also check discovered dependency versions.
 - The MSVC minimum is Visual Studio 2017 15.9 (MSVC 19.16 / v141 toolset 14.16).
   Keep its explicit build-system diagnostics and dedicated CI coverage aligned. Assert the actual
   compiler version and exercise required library facilities so CI cannot silently use a newer toolset.

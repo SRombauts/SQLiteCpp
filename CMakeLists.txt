@@ -345,7 +345,7 @@ elseif (SQLITECPP_FIND_SQLITE)
             target_link_libraries(SQLiteCpp PRIVATE ${sqlcipher_LIBRARY})
         endif()
     else()
-        find_package (SQLite3 REQUIRED)
+        find_package (SQLite3 3.38.0 REQUIRED)
         message(STATUS "Link to sqlite3 system library ${SQLite3_VERSION}")
         target_link_libraries(SQLiteCpp PUBLIC SQLite::SQLite3)
         if(SQLite3_VERSION VERSION_LESS "3.19")
@@ -450,6 +450,7 @@ if (SQLITECPP_RUN_CPPCHECK)
     find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
     if (CPPCHECK_EXECUTABLE)
         # Add an explicit cppcheck target for the quality workflow.
+        # Provide the bundled SQLite header so cppcheck can evaluate SQLITE_VERSION_NUMBER.
         add_custom_target(SQLiteCpp_cppcheck
             COMMAND ${CPPCHECK_EXECUTABLE}
                 -j 8
@@ -457,6 +458,7 @@ if (SQLITECPP_RUN_CPPCHECK)
                 --error-exitcode=1
                 --quiet
                 --std=c++17
+                -I${PROJECT_SOURCE_DIR}/sqlite3
                 ${CPPCHECK_ARG_TEMPLATE}
                 ${PROJECT_SOURCE_DIR}/src
         )

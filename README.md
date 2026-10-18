@@ -52,6 +52,8 @@ All of the code and documentation in SQLite has been dedicated to the public dom
 - to be light and fast
 
 **C++17 baseline:** SQLiteCpp 4.x requires C++17. SQLiteCpp 3.4.x is the final release line supporting C++11; maintenance fixes for the 3.x series remain on the `sqlitecpp-3.4.x` branch.
+
+**SQLite baseline:** SQLiteCpp 4.x requires SQLite 3.38.0 or newer.
 - to be thread-safe only as much as SQLite "Multi-thread" mode (see below)
 - to have a good unit test coverage
 - to use API names sticking with those of the SQLite library
@@ -87,7 +89,7 @@ and the CMake compatibility workflow also exercises C++20.
 - a C++17-capable compiler and standard library
 - Visual Studio 2017 15.9 (MSVC 19.16 / v141 toolset 14.16) or newer when using MSVC
 - exception support (the class Exception inherits from std::runtime_error)
-- the SQLite library (3.8.7 minimum from 2014-10-17), either by linking to it dynamically or statically
+- the SQLite library (3.38.0 minimum, released 2022-02-22), either by linking to it dynamically or statically
   (install the libsqlite3-dev package under Debian/Ubuntu/Mint Linux),
   or by adding its source file in your project code base (source code provided in src/sqlite3 for Windows),
   with the `SQLITE_ENABLE_COLUMN_METADATA` macro defined (see http://www.sqlite.org/compile.html#enable_column_metadata).

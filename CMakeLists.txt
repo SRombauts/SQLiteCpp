@@ -450,6 +450,7 @@ if (SQLITECPP_RUN_CPPCHECK)
     find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
     if (CPPCHECK_EXECUTABLE)
         # Add an explicit cppcheck target for the quality workflow.
+        # Provide the bundled SQLite header so cppcheck can evaluate SQLITE_VERSION_NUMBER.
         add_custom_target(SQLiteCpp_cppcheck
             COMMAND ${CPPCHECK_EXECUTABLE}
                 -j 8
@@ -457,6 +458,7 @@ if (SQLITECPP_RUN_CPPCHECK)
                 --error-exitcode=1
                 --quiet
                 --std=c++17
+                -I${PROJECT_SOURCE_DIR}/sqlite3
                 ${CPPCHECK_ARG_TEMPLATE}
                 ${PROJECT_SOURCE_DIR}/src
         )

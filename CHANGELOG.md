@@ -9,10 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bump the shared-library ABI version from 0 to 1 for SQLiteCpp 4.0
+- Update bundled SQLite from 3.53.4 to 3.54.1 (2026-10-16) (#597)
 - Require SQLite 3.38.0 or newer (#596)
 - Require C++17 and CMake 3.16 or newer (#580)
 - Adopt CMake 4.4 policies and test them (#581)
+- Bump the shared-library ABI version from 0 to 1 for SQLiteCpp 4.0
 - Use fixed-width integer types in `SQLite::Header`, making field widths consistent across platforms (ABI change) (#582)
 - Update googletest to v1.18.0 (#583)
 - Improve tests for `Savepoint::rollbackTo()` and scope-exit rollback semantics (#584)

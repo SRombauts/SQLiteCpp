@@ -226,7 +226,16 @@ int Statement::tryExecuteStep() noexcept
         return SQLITE_MISUSE; // Statement needs to be reseted !
     }
 
-    const int ret = sqlite3_step(mpPreparedStatement.get());
+    sqlite3_stmt* const pStmt = mpPreparedStatement.get();
+    // sqlite3_step() may automatically reprepare the statement after a schema change.
+    // sqlite3_stmt_status() requires a non-null statement (unlike sqlite3_step()).
+    const int reprepareCount = pStmt ? sqlite3_stmt_status(pStmt, SQLITE_STMTSTATUS_REPREPARE, 0) : 0;
+    const int ret = sqlite3_step(pStmt);
+    if (pStmt && (reprepareCount != sqlite3_stmt_status(pStmt, SQLITE_STMTSTATUS_REPREPARE, 0)))
+    {
+        mColumnCount = sqlite3_column_count(pStmt);
+        mColumnNames.clear();
+    }
     if (SQLITE_ROW == ret) // one row is ready : call getColumn(N) to access it
     {
         mbHasRow = true;

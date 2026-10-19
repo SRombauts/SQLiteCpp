@@ -495,6 +495,22 @@ TEST(Statement, stringView)
     test_sv(false);
     insert.reset();
     test_sv(true);
+
+    // Test insert with named bindings
+    SQLite::Statement insert2(db, "INSERT INTO test VALUES (NULL, @txt1, @txt2, @bin1, @bin2)");
+    sv1 = "abc";
+    sv2 = "def";
+    insert2.bind("@txt1", sv1);
+    insert2.bind(std::string("@txt2"), sv2);
+    insert2.bindNoCopy("@bin1", sv1);
+    insert2.bindNoCopy(std::string("@bin2"), sv2);
+    EXPECT_EQ(1, insert2.exec());
+    query.executeStep();
+    EXPECT_TRUE(query.hasRow());
+    EXPECT_TRUE(sv1 == query.getColumn(1).getStringView());
+    EXPECT_TRUE(sv2 == query.getColumn(2).getStringView());
+    EXPECT_TRUE(sv1 == query.getColumn(3).getStringView());
+    EXPECT_TRUE(sv2 == query.getColumn(4).getStringView());
 }
 
 TEST(Statement, bindNoCopy)

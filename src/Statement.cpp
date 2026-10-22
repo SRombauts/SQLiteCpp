@@ -291,6 +291,13 @@ const char* Statement::getColumnOriginName(const int aIndex) const
     checkIndex(aIndex);
     return sqlite3_column_origin_name(getPreparedStatement(), aIndex);
 }
+
+// Return the original table name for the specified result column.
+const char* Statement::getColumnTableName(const int aIndex) const
+{
+    checkIndex(aIndex);
+    return sqlite3_column_table_name(getPreparedStatement(), aIndex);
+}
 #endif
 
 // Return the index of the specified (potentially aliased) column name

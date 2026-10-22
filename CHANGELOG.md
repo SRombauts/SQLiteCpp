@@ -331,3 +331,7 @@ Version 3.4.0 - 2026 Sep 21
 - Remove AppVeyor and retain Visual Studio 2022 Release Win32/x86 coverage in GitHub Actions (#573)
 - Add C++11 & C++17 standard tests (#574)
 - Update copyright years to 2026 across project files (#578)
+
+Version 3.5.0 - 2026 ???
+
+- Fix Meson column metadata visibility for library consumers (#600)

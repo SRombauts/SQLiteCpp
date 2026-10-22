@@ -78,3 +78,21 @@ jobs:
       run: |
         # run the tests
         meson test -C builddir
+
+  column-metadata:
+    name: (Meson) Column metadata enabled
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Meson and Ninja
+        run: pipx install meson ninja
+      - name: Configure with column metadata
+        run: >
+          meson setup builddir
+          -DSQLITECPP_BUILD_TESTS=true
+          -DSQLITE_ENABLE_COLUMN_METADATA=true
+          --force-fallback-for=sqlite3
+      - name: Build
+        run: meson compile -C builddir
+      - name: Test
+        run: meson test -C builddir --verbose --print-errorlogs

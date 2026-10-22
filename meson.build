@@ -318,6 +318,15 @@ if get_option('SQLITECPP_BUILD_TESTS')
     test_args = []
 
     test('sqlitecpp unit tests', testexe, args: test_args)
+
+    metadata_consumer = executable(
+        'column_metadata_consumer',
+        'tests/consumer/column_metadata.cpp',
+        dependencies: sqlitecpp_dep,
+        cpp_args: ['-DSQLITECPP_EXPECT_COLUMN_METADATA=' +
+                   (get_option('SQLITE_ENABLE_COLUMN_METADATA') ? '1' : '0')],
+    )
+    test('sqlitecpp column metadata consumer', metadata_consumer)
 endif
 if get_option('SQLITECPP_BUILD_EXAMPLES')
     subdir('examples')

@@ -107,6 +107,9 @@ if get_option('SQLITE_ENABLE_COLUMN_METADATA')
     sqlitecpp_args += [
         '-DSQLITE_ENABLE_COLUMN_METADATA',
     ]
+    sqlitecpp_dep_args += [
+        '-DSQLITE_ENABLE_COLUMN_METADATA',
+    ]
 endif
 
 if get_option('SQLITE_ENABLE_ASSERT_HANDLER')

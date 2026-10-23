@@ -473,11 +473,13 @@ TEST(Statement, stringView)
         EXPECT_EQ(sv1, query.getColumn(3).getString());
         EXPECT_EQ(sv2, query.getColumn(4).getString());
         EXPECT_EQ(sv1.size(), query.getColumn(3).getBytes());
+        const void* pData = query.getColumn(3).getBlob();
         EXPECT_EQ(0, memcmp(sv1.data() == nullptr ? "" : sv1.data(),
-                            query.getColumn(3).getBlob(), sv1.size()));
+                            pData == nullptr ? "" : pData, sv1.size()));
         EXPECT_EQ(sv2.size(), query.getColumn(4).getBytes());
+        pData = query.getColumn(4).getBlob();
         EXPECT_EQ(0, memcmp(sv2.data() == nullptr ? "" : sv2.data(),
-                            query.getColumn(4).getBlob(), sv2.size()));
+                            pData == nullptr ? "" : pData, sv2.size()));
     };
 
     // Non-empty

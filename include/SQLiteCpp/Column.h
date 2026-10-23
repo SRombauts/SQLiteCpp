@@ -72,6 +72,16 @@ public:
      * - and also when compiling this wrapper.
      */
     const char* getOriginName() const noexcept;
+
+    /**
+     * @brief Return the original table name for this result column.
+     *
+     * @return UTF-8 table name, or nullptr for an expression or allocation failure.
+     * @note Requires SQLITE_ENABLE_COLUMN_METADATA in both SQLite and this wrapper.
+     * @warning The pointer belongs to the prepared statement. Copy it before finalization,
+     *          automatic repreparation, or requesting the same metadata in another encoding.
+     */
+    const char* getTableName() const noexcept;
 #endif
 
     /// Return the integer value of the column.

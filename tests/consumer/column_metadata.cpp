@@ -32,6 +32,11 @@ int main()
     {
         return 1;
     }
+    const char* pStatementTable = query.getColumnTableName(0);
+    if (!pStatementTable || std::strcmp(pStatementTable, "test") != 0)
+    {
+        return 1;
+    }
 #endif
 
     if (!query.executeStep() || query.getColumn(0).getInt() != 42)
@@ -42,6 +47,11 @@ int main()
 #ifdef SQLITE_ENABLE_COLUMN_METADATA
     const char* pColumnOrigin = query.getColumn(0).getOriginName();
     if (!pColumnOrigin || std::strcmp(pColumnOrigin, "value") != 0)
+    {
+        return 1;
+    }
+    const char* pColumnTable = query.getColumn(0).getTableName();
+    if (!pColumnTable || std::strcmp(pColumnTable, "test") != 0)
     {
         return 1;
     }

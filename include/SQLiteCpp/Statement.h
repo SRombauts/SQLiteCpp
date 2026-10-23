@@ -668,6 +668,18 @@ public:
      *  Throw an exception if the specified index is out of the [0, getColumnCount()) range.
      */
     const char* getColumnOriginName(const int aIndex) const;
+
+    /**
+     * @brief Return the original table name for a result column, even before executing the query.
+     *
+     * @param[in] aIndex    Index of the column in the range [0, getColumnCount()).
+     * @return UTF-8 table name, or nullptr for an expression or allocation failure.
+     * @throw SQLite::Exception if the index is out of range or the statement was moved from.
+     * @note Requires SQLITE_ENABLE_COLUMN_METADATA in both SQLite and this wrapper.
+     * @warning The pointer belongs to the prepared statement. Copy it before finalization,
+     *          automatic repreparation, or requesting the same metadata in another encoding.
+     */
+    const char* getColumnTableName(const int aIndex) const;
 #endif
 
     /**

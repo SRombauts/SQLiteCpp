@@ -237,6 +237,24 @@ TEST(Column, getName)
 #endif
 }
 
+#ifdef SQLITE_ENABLE_COLUMN_METADATA
+TEST(Column, getTableName)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    db.exec("CREATE TABLE source (id INTEGER)");
+    db.exec("INSERT INTO source VALUES (1)");
+    SQLite::Statement query(db, "SELECT id AS item, id + 1 FROM source AS s");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_STREQ("source", query.getColumn(0).getTableName());
+    EXPECT_EQ(nullptr, query.getColumn(1).getTableName());
+
+    // A Column shares ownership of the prepared statement, including its metadata.
+    const SQLite::Column retained = db.execAndGet("SELECT id FROM source");
+    EXPECT_STREQ("source", retained.getTableName());
+    EXPECT_EQ(1, retained.getInt());
+}
+#endif
+
 TEST(Column, stream)
 {
     // Create a new database

@@ -15,6 +15,7 @@
 #include <cstdint>     // for int64_t
 #include <iterator>    // for std::iterator_traits, std::input_iterator_tag
 #include <type_traits> // for std::is_same
+#include <utility>     // for std::move
 #include <sqlite3.h>   // for SQLITE_DONE
 
 #include <gtest/gtest.h>
@@ -970,6 +971,30 @@ TEST(Statement, getName)
     EXPECT_EQ("msg", oname1);
 #endif
 }
+
+#ifdef SQLITE_ENABLE_COLUMN_METADATA
+TEST(Statement, getColumnTableName)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    db.exec("CREATE TABLE first (id INTEGER)");
+    db.exec("CREATE TABLE second (id INTEGER)");
+    SQLite::Statement query(db, "SELECT a.id AS item, b.id, a.id + b.id, 42 "
+                                "FROM first AS a JOIN second AS b ON a.id = b.id");
+
+    EXPECT_STREQ("first", query.getColumnTableName(0));
+    EXPECT_STREQ("second", query.getColumnTableName(1));
+    EXPECT_EQ(nullptr, query.getColumnTableName(2));
+    EXPECT_EQ(nullptr, query.getColumnTableName(3));
+    EXPECT_THROW(query.getColumnTableName(-1), SQLite::Exception);
+    EXPECT_THROW(query.getColumnTableName(4), SQLite::Exception);
+    EXPECT_FALSE(query.executeStep());
+    EXPECT_STREQ("first", query.getColumnTableName(0));
+
+    SQLite::Statement moved(std::move(query));
+    EXPECT_STREQ("second", moved.getColumnTableName(1));
+    EXPECT_THROW(query.getColumnTableName(0), SQLite::Exception);
+}
+#endif
 
 TEST(Statement, getColumnDeclaredType)
 {

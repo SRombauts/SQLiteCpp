@@ -335,3 +335,4 @@ Version 3.4.0 - 2026 Sep 21
 Version 3.5.0 - 2026 ???
 
 - Fix Meson column metadata visibility for library consumers (#600)
+- Add source table-name accessors to Statement and Column (#601)

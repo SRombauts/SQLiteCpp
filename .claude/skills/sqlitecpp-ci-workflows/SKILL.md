@@ -34,6 +34,9 @@ description: SQLiteCpp CI workflow patterns. Use for GitHub Actions, matrices, o
   `meson setup builddir -DSQLITECPP_BUILD_TESTS=true -DSQLITECPP_BUILD_EXAMPLES=true --force-fallback-for=sqlite3`.
 - Build: `meson compile -C builddir`.
 - Test: `meson test -C builddir`.
+- Test custom assertion handlers with `SQLITE_ENABLE_ASSERT_HANDLER=true` and
+  `default_library=static`, including an independent consumer and C++11 build.
+  Verify that enabling the option with a shared library fails during Meson setup.
 
 ## Coverage (Coveralls)
 The `Coverage` workflow (`.github/workflows/coverage.yml`) builds with `-DSQLITECPP_USE_GCOV=ON`

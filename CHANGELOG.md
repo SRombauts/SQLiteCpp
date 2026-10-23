@@ -337,3 +337,4 @@ Version 3.5.0 - 2026 ???
 - Fix Meson column metadata visibility for library consumers (#600)
 - Add source table-name accessors to Statement and Column (#601)
 - Fix supplied assertion handler signatures and cover handler-enabled builds (#602)
+- Fix custom assertion handlers in Meson builds (#604)

@@ -6,7 +6,18 @@
 
 #include <SQLiteCpp/SQLiteCpp.h>
 
+#include <cstdlib>
 #include <cstring>
+
+#ifdef SQLITECPP_ENABLE_ASSERT_HANDLER
+namespace SQLite
+{
+void assertion_failed(const char*, const int, const char*, const char*, const char*)
+{
+    std::abort();
+}
+} // namespace SQLite
+#endif
 
 #if SQLITECPP_EXPECT_COLUMN_METADATA
 #ifndef SQLITE_ENABLE_COLUMN_METADATA

@@ -117,3 +117,49 @@ jobs:
         run: meson compile -C builddir
       - name: Test
         run: meson test -C builddir --verbose --print-errorlogs
+
+  assertion-handler:
+    name: (Meson) Custom assertion handler / static
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Meson, Ninja and system dependencies
+        run: |
+          pipx install meson ninja
+          sudo apt-get update
+          sudo apt-get install -y libsqlite3-dev libgtest-dev
+      - name: Reject shared-library assertion handlers
+        run: |
+          if meson setup build-invalid \
+              -Ddefault_library=shared \
+              -DSQLITE_ENABLE_ASSERT_HANDLER=true \
+              --wrap-mode=nofallback > shared.log 2>&1; then
+            echo "Shared builds unexpectedly accepted an application assertion handler."
+            exit 1
+          fi
+          grep -F "requires -Ddefault_library=static" shared.log
+      - name: Configure static library with assertion handler
+        run: >
+          meson setup build-handler
+          -Ddefault_library=static
+          -DSQLITE_ENABLE_ASSERT_HANDLER=true
+          -DSQLITECPP_BUILD_TESTS=true
+          -DSQLITECPP_BUILD_EXAMPLES=true
+          --wrap-mode=nofallback
+      - name: Build tests, examples and custom-handler consumer
+        run: meson compile -C build-handler
+      - name: Test custom-handler configuration
+        run: meson test -C build-handler --verbose --print-errorlogs
+      - name: Configure C++11 static-library compatibility
+        run: >
+          meson setup build-cxx11
+          -Dcpp_std=c++11
+          -Ddefault_library=static
+          -DSQLITE_ENABLE_ASSERT_HANDLER=true
+          -DSQLITECPP_BUILD_TESTS=false
+          -DSQLITECPP_BUILD_EXAMPLES=true
+          --wrap-mode=nofallback
+      - name: Build C++11 library and examples
+        run: meson compile -C build-cxx11

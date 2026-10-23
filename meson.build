@@ -113,8 +113,14 @@ if get_option('SQLITE_ENABLE_COLUMN_METADATA')
 endif
 
 if get_option('SQLITE_ENABLE_ASSERT_HANDLER')
+    if get_option('default_library') != 'static'
+        error('SQLITE_ENABLE_ASSERT_HANDLER requires -Ddefault_library=static so the application can define the handler')
+    endif
     sqlitecpp_args += [
-        '-DSQLITE_ENABLE_ASSERT_HANDLER',
+        '-DSQLITECPP_ENABLE_ASSERT_HANDLER',
+    ]
+    sqlitecpp_dep_args += [
+        '-DSQLITECPP_ENABLE_ASSERT_HANDLER',
     ]
 endif
 
@@ -327,6 +333,15 @@ if get_option('SQLITECPP_BUILD_TESTS')
                    (get_option('SQLITE_ENABLE_COLUMN_METADATA') ? '1' : '0')],
     )
     test('sqlitecpp column metadata consumer', metadata_consumer)
+
+    if get_option('SQLITE_ENABLE_ASSERT_HANDLER')
+        assertion_handler_consumer = executable(
+            'assertion_handler_consumer',
+            'tests/consumer/assertion_handler.cpp',
+            dependencies: sqlitecpp_dep,
+        )
+        test('sqlitecpp custom assertion handler consumer', assertion_handler_consumer)
+    endif
 endif
 if get_option('SQLITECPP_BUILD_EXAMPLES')
     subdir('examples')

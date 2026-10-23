@@ -47,6 +47,12 @@ const char* Column::getOriginName() const noexcept
 {
     return sqlite3_column_origin_name(mStmtPtr.get(), mIndex);
 }
+
+// Return the original table name for this result column.
+const char* Column::getTableName() const noexcept
+{
+    return sqlite3_column_table_name(mStmtPtr.get(), mIndex);
+}
 #endif
 
 // Return the integer value of the column specified by its index starting at 0

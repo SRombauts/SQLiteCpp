@@ -16,6 +16,18 @@ SQLiteC++ (SQLiteCpp) is a lean and easy to use C++ SQLite3 wrapper.
 <!--Keywords: sqlite, sqlite3, C, library, wrapper C++-->
 <meta name="keywords" content="sqlite, sqlite3, C, library, wrapper C++">
 
+## Supported release lines
+
+- **SQLiteCpp 4.x (`master`)** is the actively developed line. It requires C++17 and
+  SQLite 3.38.0 or newer, and may introduce API/ABI-breaking changes.
+- **SQLiteCpp 3.x ([`sqlitecpp-3.x`](https://github.com/SRombauts/SQLiteCpp/tree/sqlitecpp-3.x))**
+  is the C++11-compatible maintenance line, starting from release 3.4.0. It keeps the
+  SQLite 3.8.7 minimum and focuses on compatible bug fixes and backports without adopting
+  the breaking changes of 4.x. The core library supports C++11; some optional headers use C++14.
+
+The older [`sqlitecpp-3.4.x`](https://github.com/SRombauts/SQLiteCpp/tree/sqlitecpp-3.4.x)
+branch remains available for the 3.4.x series; ongoing C++11 maintenance targets `sqlitecpp-3.x`.
+
 ## About SQLiteC++:
 
 SQLiteC++ offers an encapsulation around the native C APIs of SQLite,
@@ -51,9 +63,6 @@ All of the code and documentation in SQLite has been dedicated to the public dom
 - to be portable
 - to be light and fast
 
-**C++17 baseline:** SQLiteCpp 4.x requires C++17. SQLiteCpp 3.4.x is the final release line supporting C++11; maintenance fixes for the 3.x series remain on the `sqlitecpp-3.4.x` branch.
-
-**SQLite baseline:** SQLiteCpp 4.x requires SQLite 3.38.0 or newer.
 - to be thread-safe only as much as SQLite "Multi-thread" mode (see below)
 - to have a good unit test coverage
 - to use API names sticking with those of the SQLite library
@@ -70,7 +79,7 @@ and then is always valid until destroyed.
 
 ### Supported platforms:
 
-SQLiteCpp 4.x requires a C++17 compiler. Use branch [sqlitecpp-3.4.x](https://github.com/SRombauts/SQLiteCpp/tree/sqlitecpp-3.4.x) for the final C++11-compatible release line.
+The platform and compiler requirements below describe `master` (SQLiteCpp 4.x).
 
 The continuous integration builds and tests on:
 

@@ -2,8 +2,14 @@
 ## Enable SQLite column origin metadata in the wrapper and its consumers.
 ## The SQLite library must also be compiled with SQLITE_ENABLE_COLUMN_METADATA.
 option('SQLITE_ENABLE_COLUMN_METADATA', type: 'boolean', value: false, description: 'Enable SQLite column origin metadata (requires SQLite support).')
-## Enable the user definition of a assertion_failed() handler (default to false, easier to handler for beginners).
-option('SQLITE_ENABLE_ASSERT_HANDLER', type: 'boolean', value: false, description: 'Enable the user definition of a assertion_failed() handler.')
+## Allow the application to define SQLite::assertion_failed() (disabled by default).
+## Requires a static library so the application's handler can satisfy the link.
+option(
+    'SQLITE_ENABLE_ASSERT_HANDLER',
+    type: 'boolean',
+    value: false,
+    description: 'Enable an application-defined assertion_failed() handler (requires a static library).',
+)
 ## Enable database encryption API. Requires implementations of sqlite3_key & sqlite3_rekey.
 ## SQLCipher, SQLite Multiple Ciphers, and the commercial SQLite Encryption Extensions provide
 ## these API functions for encrypting a database.

@@ -575,20 +575,29 @@ public:
     void rekey(const void* apNewKey, std::size_t aSize) const;
 
     /**
-    * @brief Test if a file contains an unencrypted database.
+    * @brief Test whether a file has the standard SQLite database signature.
     *
-    *  This is a simple test that reads the first bytes of a database file and
-    *  compares them to the standard header for unencrypted databases. If the
-    *  header does not match the standard string, we assume that we have an
-    *  encrypted file.
+    * Reads and compares the first 16 bytes without opening the file through SQLite.
+    * An encrypted or corrupt database may still have this signature.
     *
-    * @param[in] aFilename path/uri to a file
-    *
-    * @return true if the database has the standard header.
-    *
-    * @throw SQLite::Exception in case of error
+    * @param[in] aFilename Path to the database file
+    * @return true if the file starts with the SQLite format signature
+    * @throw SQLite::Exception if the file cannot be opened
     */
-    static bool isUnencrypted(const std::string& aFilename);
+    static bool hasSQLiteHeader(const std::string& aFilename);
+
+    /**
+    * @brief Test whether SQLite can read a database without an encryption key.
+    *
+    * Opens the database read-only and queries its schema. Returns false for
+    * encrypted, corrupt, or unsupported database files; this does not prove
+    * the file is encrypted. SQLite also accepts empty database files.
+    *
+    * @param[in] aFilename SQLite database filename
+    * @return true if SQLite can read its schema without an encryption key
+    * @throw SQLite::Exception on file access or other operational errors
+    */
+    static bool isReadableWithoutKey(const std::string& aFilename);
 
     /**
     * @brief Parse SQLite header data from a database file.

@@ -607,20 +607,20 @@ TEST(Database, getHeaderInfo)
     remove("test.db3");
 }
 
-TEST(Database, isUnencryptedHeaderCheck)
+TEST(Database, hasSQLiteHeader)
 {
     remove("test.db3");
     {
         // Empty filename and non-existent file are reported as errors
-        EXPECT_THROW(SQLite::Database::isUnencrypted(""), SQLite::Exception);
-        EXPECT_THROW(SQLite::Database::isUnencrypted("test.db3"), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::hasSQLiteHeader(""), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::hasSQLiteHeader("test.db3"), SQLite::Exception);
 
-        // A real SQLite database file is reported as unencrypted
+        // A real SQLite database file has the expected signature
         {
             SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
             db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
         }
-        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_TRUE(SQLite::Database::hasSQLiteHeader("test.db3"));
         remove("test.db3");
 
         // A file shorter than the 16-byte header must not match and must not crash
@@ -632,7 +632,7 @@ TEST(Database, isUnencryptedHeaderCheck)
             shortDb.write(shortData, sizeof(shortData) - 1);
             shortDb.close();
 
-            EXPECT_FALSE(SQLite::Database::isUnencrypted("short.db3"));
+            EXPECT_FALSE(SQLite::Database::hasSQLiteHeader("short.db3"));
             remove("short.db3");
         }
 
@@ -645,11 +645,137 @@ TEST(Database, isUnencryptedHeaderCheck)
             garbageDb.write(garbage, sizeof(garbage));
             garbageDb.close();
 
-            EXPECT_FALSE(SQLite::Database::isUnencrypted("garbage.db3"));
+            EXPECT_FALSE(SQLite::Database::hasSQLiteHeader("garbage.db3"));
             remove("garbage.db3");
         }
     }
     remove("test.db3");
+}
+
+TEST(Database, isReadableWithoutKey)
+{
+    remove("test.db3");
+    {
+        // Empty filename and non-existent file are reported as errors
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey(""), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey("test.db3"), SQLite::Exception);
+
+        // A real SQLite database can be read without a key
+        {
+            SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+            db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+        }
+        EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("test.db3"));
+
+        // Reproduce a plaintext header with unreadable (encrypted-like) contents.
+        // Only the first 32 bytes are genuine SQLite header bytes.
+        {
+            char prefix[32] = {};
+            std::ifstream plainDb("test.db3", std::ios::binary);
+            plainDb.read(prefix, sizeof(prefix));
+            ASSERT_EQ(static_cast<std::streamsize>(sizeof(prefix)), plainDb.gcount());
+
+            std::ofstream disguisedDb("plaintext-header.db3", std::ios::trunc | std::ios::binary);
+            disguisedDb.write(prefix, sizeof(prefix));
+            const std::string unreadableData(8192 - sizeof(prefix), static_cast<char>(0xa5));
+            disguisedDb.write(unreadableData.data(), static_cast<std::streamsize>(unreadableData.size()));
+            disguisedDb.close();
+
+            EXPECT_TRUE(SQLite::Database::hasSQLiteHeader("plaintext-header.db3"));
+            EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("plaintext-header.db3"));
+            remove("plaintext-header.db3");
+        }
+        remove("test.db3");
+
+        // SQLite accepts a zero-byte file as an empty unencrypted database.
+        {
+            std::ofstream emptyDb("empty.db3", std::ios::trunc | std::ios::binary);
+            emptyDb.close();
+            EXPECT_FALSE(SQLite::Database::hasSQLiteHeader("empty.db3"));
+            EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("empty.db3"));
+            remove("empty.db3");
+        }
+
+        // A file shorter than the 16-byte header must not match and must not crash
+        {
+            const char shortData[] = "SQLite format";  // 13 bytes, no trailing NUL written
+            remove("short.db3");
+            std::ofstream shortDb;
+            shortDb.open("short.db3", std::ios::trunc | std::ios::binary);
+            shortDb.write(shortData, sizeof(shortData) - 1);
+            shortDb.close();
+
+            EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("short.db3"));
+            remove("short.db3");
+        }
+
+        // A 16-byte file with a garbage header does not match the magic string
+        {
+            const char garbage[16] = "garbage header";
+            remove("garbage.db3");
+            std::ofstream garbageDb;
+            garbageDb.open("garbage.db3", std::ios::trunc | std::ios::binary);
+            garbageDb.write(garbage, sizeof(garbage));
+            garbageDb.close();
+
+            EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("garbage.db3"));
+            remove("garbage.db3");
+        }
+    }
+    remove("test.db3");
+}
+
+TEST(Database, isReadableWithoutKeyErrors)
+{
+    remove("unreadable.db3");
+    {
+        SQLite::Database db("unreadable.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY)");
+
+        // A lock is an operational error, not evidence of encryption.
+        db.exec("BEGIN EXCLUSIVE");
+        try
+        {
+            (void)SQLite::Database::isReadableWithoutKey("unreadable.db3");
+            FAIL() << "Expected SQLITE_BUSY";
+        }
+        catch (const SQLite::Exception& e)
+        {
+            EXPECT_EQ(SQLITE_BUSY, e.getErrorCode());
+        }
+        db.exec("ROLLBACK");
+    }
+
+    // An invalid b-tree page is corrupt even with a valid file signature.
+    {
+        std::fstream file("unreadable.db3", std::ios::in | std::ios::out | std::ios::binary);
+        ASSERT_TRUE(file.is_open());
+        file.seekp(100, std::ios::beg);
+        const char invalidPageType = 0;
+        file.write(&invalidPageType, 1);
+    }
+    EXPECT_TRUE(SQLite::Database::hasSQLiteHeader("unreadable.db3"));
+    {
+        SQLite::Database db("unreadable.db3", SQLite::OPEN_READONLY);
+        EXPECT_EQ(SQLITE_CORRUPT, db.tryExec("SELECT count(*) FROM sqlite_schema"));
+    }
+    EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("unreadable.db3"));
+    remove("unreadable.db3");
+
+    // An unsupported SQLite schema format also makes the schema unreadable.
+    {
+        SQLite::Database db("unreadable.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY)");
+    }
+    {
+        std::fstream file("unreadable.db3", std::ios::in | std::ios::out | std::ios::binary);
+        ASSERT_TRUE(file.is_open());
+        file.seekp(47, std::ios::beg);
+        const char unsupportedFormat = 15;
+        file.write(&unsupportedFormat, 1);
+    }
+    EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("unreadable.db3"));
+    remove("unreadable.db3");
 }
 
 TEST(Database, keyAndRekeyValidateBufferArguments)
@@ -671,8 +797,8 @@ TEST(Database, encryptAndDecrypt)
     {
         // Try to open the non-existing database
         EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
-        EXPECT_THROW(SQLite::Database::isUnencrypted("test.db3"), SQLite::Exception);
-        EXPECT_THROW(SQLite::Database::isUnencrypted(""), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey("test.db3"), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey(""), SQLite::Exception);
 
         // Create a new database
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
@@ -682,14 +808,14 @@ TEST(Database, encryptAndDecrypt)
     } // Close DB test.db3
     {
         // Reopen the database file and encrypt it
-        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
         // Encrypt the database
         db.rekey("123secret");
     } // Close DB test.db3
     {
         // Reopen the database file and try to use it
-        EXPECT_FALSE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READONLY);
         EXPECT_THROW(db.tableExists("test"), SQLite::Exception);
         db.key("123secret");
@@ -697,7 +823,7 @@ TEST(Database, encryptAndDecrypt)
     } // Close DB test.db3
     {
         // Reopen the database file and decrypt it
-        EXPECT_FALSE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
         // Decrypt the database
         db.key("123secret");
@@ -705,7 +831,7 @@ TEST(Database, encryptAndDecrypt)
     } // Close DB test.db3
     {
         // Reopen the database file and use it
-        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
         EXPECT_TRUE(db.tableExists("test"));
     } // Close DB test.db3
@@ -733,7 +859,7 @@ TEST(Database, encryptAndDecryptWithBinaryKey)
         db.rekey(nullptr, 0);
     } // Close DB binary-key.db3
     {
-        EXPECT_TRUE(SQLite::Database::isUnencrypted("binary-key.db3"));
+        EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("binary-key.db3"));
         SQLite::Database db("binary-key.db3", SQLite::OPEN_READWRITE);
         EXPECT_TRUE(db.tableExists("test"));
     } // Close DB binary-key.db3
@@ -746,8 +872,8 @@ TEST(Database, encryptAndDecrypt)
     {
         // Try to open the non-existing database
         EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
-        EXPECT_THROW(SQLite::Database::isUnencrypted("test.db3"), SQLite::Exception);
-        EXPECT_THROW(SQLite::Database::isUnencrypted(""), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey("test.db3"), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey(""), SQLite::Exception);
 
         // Create a new database
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
@@ -757,7 +883,7 @@ TEST(Database, encryptAndDecrypt)
     } // Close DB test.db3
     {
         // Reopen the database file and encrypt it
-        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
         // An empty key is a no-op even when built without encryption support
         EXPECT_NO_THROW(db.key(""));

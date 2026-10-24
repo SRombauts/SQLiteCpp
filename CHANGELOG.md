@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix Meson builds with a custom assertion handler (#590)
 - Instrument unit tests and examples in UBSan builds (#593)
 - Fix column metadata API visibility for Meson consumers (#595)
+- Fix keyless database readability detection and add `hasSQLiteHeader()` (#608)
 - Refresh cached result-column metadata after SQLite reprepares a statement (#598)
 
 ### Added

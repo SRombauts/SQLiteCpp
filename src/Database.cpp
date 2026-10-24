@@ -299,8 +299,8 @@ void Database::rekey(const void* apNewKey, const std::size_t aSize) const
 #endif // SQLITE_HAS_CODEC
 }
 
-// Test if a file contains an unencrypted database.
-bool Database::isUnencrypted(const std::string& aFilename)
+// Test whether a file starts with the standard SQLite format signature.
+bool Database::hasSQLiteHeader(const std::string& aFilename)
 {
     if (aFilename.empty())
     {
@@ -325,6 +325,34 @@ bool Database::isUnencrypted(const std::string& aFilename)
     }
 
     return memcmp(header, "SQLite format 3\000", 16) == 0;
+}
+
+// Test whether SQLite can read the database schema without a key.
+bool Database::isReadableWithoutKey(const std::string& aFilename)
+{
+    if (aFilename.empty())
+    {
+        throw SQLite::Exception("Could not open database, the aFilename parameter was empty.");
+    }
+
+    Database db(aFilename, SQLite::OPEN_READONLY);
+    const int ret = db.tryExec("SELECT count(*) FROM sqlite_schema");
+
+    if (SQLITE_OK == ret)
+    {
+        return true;
+    }
+
+    switch (ret & 0xff)
+    {
+    case SQLITE_NOTADB:
+    case SQLITE_CORRUPT:
+    case SQLITE_ERROR:
+        return false;
+
+    default:
+        throw SQLite::Exception(db.getHandle(), ret);
+    }
 }
 
 // Parse header data from a database.

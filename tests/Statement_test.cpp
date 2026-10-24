@@ -1144,6 +1144,17 @@ TEST(Statement, reprepareAfterMove)
     EXPECT_EQ(2, moved.getColumnCount());
     EXPECT_EQ(22, moved.getColumn("only").getInt());
     EXPECT_EQ(11, moved.getColumn("a").getInt());
+
+    // Move again after the reprepare counter has advanced, then reprepare once more.
+    moved.reset();
+    SQLite::Statement movedAgain(std::move(moved));
+    EXPECT_EQ(SQLITE_MISUSE, moved.tryExecuteStep());
+    db.exec("DROP VIEW selected");
+    db.exec("CREATE VIEW selected AS SELECT a FROM source");
+    ASSERT_TRUE(movedAgain.executeStep());
+    EXPECT_EQ(1, movedAgain.getColumnCount());
+    EXPECT_EQ(11, movedAgain.getColumn("a").getInt());
+    EXPECT_THROW(movedAgain.getColumnIndex("only"), SQLite::Exception);
 }
 
 TEST(Statement, getColumnDeclaredType)

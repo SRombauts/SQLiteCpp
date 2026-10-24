@@ -873,6 +873,7 @@ private:
     sqlite3*                mpSQLite;               //!< Pointer to SQLite Database Connection Handle
     TStatementPtr           mpPreparedStatement;    //!< Shared Pointer to the prepared SQLite Statement Object
     int                     mColumnCount = 0;       //!< Number of columns in the result of the prepared statement
+    int                     mReprepareCount = 0;    //!< Last observed automatic-reprepare counter
     bool                    mbHasRow = false;       //!< true when a row has been fetched with executeStep()
     bool                    mbDone = false;         //!< true when the last executeStep() had no more row to fetch
 

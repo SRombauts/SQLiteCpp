@@ -650,10 +650,14 @@ public:
     Column  getColumn(const char* apName) const;
 
      /**
-     * @brief Return an instance of T constructed from copies of the first N columns
+     * @brief Construct T from the first N columns of the current result row.
      *
      *  Can be used to access the data of the current row of result when applicable,
      * while the executeStep() method returns true.
+     *
+     * @warning Pointer and view members (e.g. const char* or std::string_view) refer to SQLite-owned memory.
+     *          Copy their data before stepping, resetting, or finalizing the statement, or a conversion
+     *          that could invalidate the underlying buffer.
      *
      *  Throw an exception if there is no row to return a Column from:
      * - if provided column count is out of bound

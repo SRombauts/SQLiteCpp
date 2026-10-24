@@ -722,7 +722,9 @@ public:
     // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
     std::string getExpandedSQL() const;
 
-    /// Return the number of columns in the result set returned by the prepared statement
+    /// Return the number of columns in the prepared statement's result set.
+    /// @note After a schema change, the count may remain stale until the next executeStep() or tryExecuteStep()
+    ///       automatically reprepares the statement.
     int getColumnCount() const
     {
         return mColumnCount;

@@ -80,6 +80,11 @@ The continuous integration builds and tests on:
 The build matrices cover GCC, Clang, AppleClang, MinGW, and MSVC. The core library requires C++11;
 selected headers use C++14 features as documented below.
 
+The bundled SQLite 3.54.1 requires **Windows Vista or later**. SQLite 3.54.0 dropped support for
+Windows XP and earlier, including Windows CE ([release notes](https://sqlite.org/releaselog/3_54_0.html)).
+This is SQLite's minimum; actual compatibility also depends on the compiler and runtime. Builds linked
+against an external SQLite library follow that library's Windows compatibility requirements.
+
 ### Dependencies
 
 - a modern C++11 STL implementation with GCC, Clang, or Visual Studio 2015

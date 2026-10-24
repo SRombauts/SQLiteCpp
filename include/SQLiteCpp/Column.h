@@ -16,7 +16,9 @@
 
 #include <string>
 #include <memory>
+#include <optional>
 #include <string_view>
+#include <type_traits>
 
 // Forward declarations to avoid inclusion of <sqlite3.h> in a header
 struct sqlite3_stmt;
@@ -266,6 +268,42 @@ public:
     operator std::string_view() const
     {
         return getStringView();
+    }
+
+    /**
+     * @brief Return the column value as an optional, preserving SQL NULL.
+     *
+     * Uses the string accessors for std::string and std::string_view, and the existing Column
+     * conversion operators for other types. NULL is distinct from an empty string or zero.
+     *
+     * @tparam T Destination value type, such as int, double, std::string, or std::string_view.
+     * @return std::nullopt for SQL NULL; otherwise the converted value.
+     * @note std::optional indicates whether the value is NULL; it does not imply ownership.
+     * @note Check for NULL before any other type conversions of the same column.
+     * @warning If T is a pointer or view, the result borrows SQLite-owned memory and may be
+     *          invalidated by column conversions or stepping, resetting, or finalizing the statement.
+     *          Use an owning T (e.g. std::string) to retain the value independently.
+     * @note A zero-length BLOB may produce an engaged optional<const void*> containing nullptr.
+     */
+    template<typename T>
+    std::optional<T> getOptional() const
+    {
+        if (isNull())
+        {
+            return std::nullopt;
+        }
+        if constexpr (std::is_same_v<T, std::string>)
+        {
+            return getString();
+        }
+        else if constexpr (std::is_same_v<T, std::string_view>)
+        {
+            return getStringView();
+        }
+        else
+        {
+            return static_cast<T>(*this);
+        }
     }
 
 private:

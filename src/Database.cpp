@@ -299,6 +299,34 @@ void Database::rekey(const void* apNewKey, const std::size_t aSize) const
 #endif // SQLITE_HAS_CODEC
 }
 
+// Test whether a file starts with the standard SQLite format signature.
+bool Database::hasSQLiteHeader(const std::string& aFilename)
+{
+    if (aFilename.empty())
+    {
+        throw SQLite::Exception("Could not open database, the aFilename parameter was empty.");
+    }
+
+    std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
+    char header[16] = {};
+    if (fileBuffer.is_open())
+    {
+        fileBuffer.seekg(0, std::ios::beg);
+        fileBuffer.read(header, 16);
+        fileBuffer.close();
+        if (fileBuffer.gcount() != 16)
+        {
+            return false;
+        }
+    }
+    else
+    {
+        throw SQLite::Exception("Error opening file: " + aFilename);
+    }
+
+    return memcmp(header, "SQLite format 3\000", 16) == 0;
+}
+
 // Test if a file contains an unencrypted database.
 bool Database::isUnencrypted(const std::string& aFilename)
 {

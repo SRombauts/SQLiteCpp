@@ -575,6 +575,18 @@ public:
     void rekey(const void* apNewKey, std::size_t aSize) const;
 
     /**
+    * @brief Test whether a file has the standard SQLite database signature.
+    *
+    * Reads and compares the first 16 bytes without opening the file through SQLite.
+    * An encrypted or corrupt database may still have this signature.
+    *
+    * @param[in] aFilename Path to the database file
+    * @return true if the file starts with the SQLite format signature
+    * @throw SQLite::Exception if the file cannot be opened
+    */
+    static bool hasSQLiteHeader(const std::string& aFilename);
+
+    /**
     * @brief Test if a file contains an unencrypted database.
     *
     *  This is a simple test that reads the first bytes of a database file and

@@ -108,12 +108,14 @@ public:
      */
     const void* getBlob() const noexcept;
     /**
-     * @brief Return a std::string_view for a TEXT or BLOB column.
+     * @brief Return a non-owning view of the UTF-8 bytes in a TEXT or BLOB column.
      *
-     * Note this correctly handles strings that contain null bytes.
-     * 
-     * @warning returned string_view is only valid until there is a type
-     *      conversion or the statement is stepped or reset.
+     * Preserves embedded NUL bytes. SQL NULL and empty values both return an empty view;
+     * use isNull() to distinguish them.
+     *
+     * @return View of the column bytes, without copying them.
+     * @warning A type conversion or stepping, resetting, or finalizing the statement
+     *          may invalidate the view. Copy it to retain the data.
      */
     std::string_view getStringView() const;
     /**

@@ -597,7 +597,7 @@ public:
     * @return true if SQLite can read its schema without an encryption key
     * @throw SQLite::Exception on file access or other operational errors
     */
-    static bool isUnencrypted(const std::string& aFilename);
+    static bool isReadableWithoutKey(const std::string& aFilename);
 
     /**
     * @brief Parse SQLite header data from a database file.

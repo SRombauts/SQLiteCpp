@@ -328,7 +328,7 @@ bool Database::hasSQLiteHeader(const std::string& aFilename)
 }
 
 // Test whether SQLite can read the database schema without a key.
-bool Database::isUnencrypted(const std::string& aFilename)
+bool Database::isReadableWithoutKey(const std::string& aFilename)
 {
     if (aFilename.empty())
     {

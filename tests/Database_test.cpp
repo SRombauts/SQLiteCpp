@@ -652,20 +652,20 @@ TEST(Database, hasSQLiteHeader)
     remove("test.db3");
 }
 
-TEST(Database, isUnencryptedReadability)
+TEST(Database, isReadableWithoutKey)
 {
     remove("test.db3");
     {
         // Empty filename and non-existent file are reported as errors
-        EXPECT_THROW(SQLite::Database::isUnencrypted(""), SQLite::Exception);
-        EXPECT_THROW(SQLite::Database::isUnencrypted("test.db3"), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey(""), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey("test.db3"), SQLite::Exception);
 
         // A real SQLite database can be read without a key
         {
             SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
             db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
         }
-        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("test.db3"));
 
         // Reproduce a plaintext header with unreadable (encrypted-like) contents.
         // Only the first 32 bytes are genuine SQLite header bytes.
@@ -682,7 +682,7 @@ TEST(Database, isUnencryptedReadability)
             disguisedDb.close();
 
             EXPECT_TRUE(SQLite::Database::hasSQLiteHeader("plaintext-header.db3"));
-            EXPECT_FALSE(SQLite::Database::isUnencrypted("plaintext-header.db3"));
+            EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("plaintext-header.db3"));
             remove("plaintext-header.db3");
         }
         remove("test.db3");
@@ -692,7 +692,7 @@ TEST(Database, isUnencryptedReadability)
             std::ofstream emptyDb("empty.db3", std::ios::trunc | std::ios::binary);
             emptyDb.close();
             EXPECT_FALSE(SQLite::Database::hasSQLiteHeader("empty.db3"));
-            EXPECT_TRUE(SQLite::Database::isUnencrypted("empty.db3"));
+            EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("empty.db3"));
             remove("empty.db3");
         }
 
@@ -705,7 +705,7 @@ TEST(Database, isUnencryptedReadability)
             shortDb.write(shortData, sizeof(shortData) - 1);
             shortDb.close();
 
-            EXPECT_FALSE(SQLite::Database::isUnencrypted("short.db3"));
+            EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("short.db3"));
             remove("short.db3");
         }
 
@@ -718,7 +718,7 @@ TEST(Database, isUnencryptedReadability)
             garbageDb.write(garbage, sizeof(garbage));
             garbageDb.close();
 
-            EXPECT_FALSE(SQLite::Database::isUnencrypted("garbage.db3"));
+            EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("garbage.db3"));
             remove("garbage.db3");
         }
     }
@@ -744,8 +744,8 @@ TEST(Database, encryptAndDecrypt)
     {
         // Try to open the non-existing database
         EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
-        EXPECT_THROW(SQLite::Database::isUnencrypted("test.db3"), SQLite::Exception);
-        EXPECT_THROW(SQLite::Database::isUnencrypted(""), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey("test.db3"), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey(""), SQLite::Exception);
 
         // Create a new database
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
@@ -755,14 +755,14 @@ TEST(Database, encryptAndDecrypt)
     } // Close DB test.db3
     {
         // Reopen the database file and encrypt it
-        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
         // Encrypt the database
         db.rekey("123secret");
     } // Close DB test.db3
     {
         // Reopen the database file and try to use it
-        EXPECT_FALSE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READONLY);
         EXPECT_THROW(db.tableExists("test"), SQLite::Exception);
         db.key("123secret");
@@ -770,7 +770,7 @@ TEST(Database, encryptAndDecrypt)
     } // Close DB test.db3
     {
         // Reopen the database file and decrypt it
-        EXPECT_FALSE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
         // Decrypt the database
         db.key("123secret");
@@ -778,7 +778,7 @@ TEST(Database, encryptAndDecrypt)
     } // Close DB test.db3
     {
         // Reopen the database file and use it
-        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
         EXPECT_TRUE(db.tableExists("test"));
     } // Close DB test.db3
@@ -806,7 +806,7 @@ TEST(Database, encryptAndDecryptWithBinaryKey)
         db.rekey(nullptr, 0);
     } // Close DB binary-key.db3
     {
-        EXPECT_TRUE(SQLite::Database::isUnencrypted("binary-key.db3"));
+        EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("binary-key.db3"));
         SQLite::Database db("binary-key.db3", SQLite::OPEN_READWRITE);
         EXPECT_TRUE(db.tableExists("test"));
     } // Close DB binary-key.db3
@@ -819,8 +819,8 @@ TEST(Database, encryptAndDecrypt)
     {
         // Try to open the non-existing database
         EXPECT_THROW(SQLite::Database not_found("test.db3"), SQLite::Exception);
-        EXPECT_THROW(SQLite::Database::isUnencrypted("test.db3"), SQLite::Exception);
-        EXPECT_THROW(SQLite::Database::isUnencrypted(""), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey("test.db3"), SQLite::Exception);
+        EXPECT_THROW(SQLite::Database::isReadableWithoutKey(""), SQLite::Exception);
 
         // Create a new database
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
@@ -830,7 +830,7 @@ TEST(Database, encryptAndDecrypt)
     } // Close DB test.db3
     {
         // Reopen the database file and encrypt it
-        EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+        EXPECT_TRUE(SQLite::Database::isReadableWithoutKey("test.db3"));
         SQLite::Database db("test.db3", SQLite::OPEN_READWRITE);
         // An empty key is a no-op even when built without encryption support
         EXPECT_NO_THROW(db.key(""));

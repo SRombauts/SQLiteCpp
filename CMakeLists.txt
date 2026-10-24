@@ -404,7 +404,7 @@ if (SQLITECPP_INSTALL)
     write_basic_package_version_file(
         cmake/${PROJECT_NAME}ConfigVersion.cmake
         VERSION ${PROJECT_VERSION}
-        COMPATIBILITY AnyNewerVersion)
+        COMPATIBILITY SameMajorVersion)
     configure_package_config_file(
         cmake/${PROJECT_NAME}Config.cmake.in
         cmake/${PROJECT_NAME}Config.cmake

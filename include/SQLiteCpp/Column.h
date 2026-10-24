@@ -95,17 +95,20 @@ public:
     /// Return the double (64bits float) value of the column
     double      getDouble() const noexcept;
     /**
-     * @brief Return a pointer to the text value (NULL terminated string) of the column.
+     * @brief Return a pointer to the UTF-8 text value (NULL-terminated string) of the column.
      *
-     * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
-     *          thus you must copy it before using it beyond its scope (to a std::string for instance).
+     * @param[in] apDefaultValue Value returned if SQLite returns nullptr (empty string by default).
+     * @return Text pointer, or apDefaultValue if SQLite provides no text pointer.
+     * @note SQLite can return nullptr for SQL NULL or an out-of-memory conversion error.
+     * @warning Type conversions or stepping, resetting, or finalizing the statement may invalidate the
+     *          returned pointer. Copy the text if it must be retained.
      */
     const char* getText(const char* apDefaultValue = "") const noexcept;
     /**
      * @brief Return a pointer to the binary blob value of the column.
      *
-     * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
-     *          thus you must copy it before using it beyond its scope (to a std::string for instance).
+     * @warning Type conversions or stepping, resetting, or finalizing the statement may invalidate the
+     *          returned pointer. Copy the data if it must be retained.
      */
     const void* getBlob() const noexcept;
     /**
@@ -221,13 +224,15 @@ public:
         return getDouble();
     }
     /**
-     * @brief Inline cast operator to char*
+     * @brief Convert to a text pointer, returning nullptr for SQL NULL.
      *
+     * Unlike getText() without arguments, this does not replace a null pointer with an empty string.
+     * @warning Type conversions or stepping, resetting, or finalizing the statement may invalidate the pointer.
      * @see getText
      */
     operator const char*() const
     {
-        return getText();
+        return getText(nullptr);
     }
     /**
      * @brief Inline cast operator to void*

@@ -1342,6 +1342,66 @@ TEST(Statement, getColumns)
     EXPECT_DOUBLE_EQ(0.0, testStruct2.real);
 }
 
+TEST(Statement, getColumnsNullableText)
+{
+    struct NullableText
+    {
+        const char* text;
+    };
+
+    struct StringText
+    {
+        std::string text;
+    };
+
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    ASSERT_EQ(0, db.exec("CREATE TABLE test (value TEXT)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (NULL)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES ('')"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES ('hello')"));
+
+    SQLite::Statement query(db, "SELECT value FROM test ORDER BY rowid");
+
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_TRUE(query.getColumn(0).isNull());
+    const auto nullRow = query.getColumns<NullableText, 1>();
+    EXPECT_EQ(nullptr, nullRow.text);
+    const char* nullText = query.getColumn(0);
+    EXPECT_EQ(nullptr, nullText);
+    EXPECT_STREQ("", query.getColumn(0).getText()); // Keep the safe default.
+    EXPECT_EQ(nullptr, query.getColumn(0).getText(nullptr));
+    EXPECT_STREQ("[null]", query.getColumn(0).getText("[null]"));
+    const std::string nullString = query.getColumn(0);
+    EXPECT_TRUE(nullString.empty());
+    const std::string_view nullView = query.getColumn(0);
+    EXPECT_TRUE(nullView.empty());
+    const auto nullStringRow = query.getColumns<StringText, 1>();
+    EXPECT_TRUE(nullStringRow.text.empty());
+
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_FALSE(query.getColumn(0).isNull());
+    const auto emptyRow = query.getColumns<NullableText, 1>();
+    ASSERT_NE(nullptr, emptyRow.text);
+    EXPECT_STREQ("", emptyRow.text);
+    const char* emptyText = query.getColumn(0);
+    ASSERT_NE(nullptr, emptyText);
+    EXPECT_STREQ("", emptyText);
+    const auto emptyStringRow = query.getColumns<StringText, 1>();
+    EXPECT_EQ("", emptyStringRow.text);
+
+    ASSERT_TRUE(query.executeStep());
+    const auto textRow = query.getColumns<NullableText, 1>();
+    ASSERT_NE(nullptr, textRow.text);
+    EXPECT_STREQ("hello", textRow.text);
+    const char* text = query.getColumn(0);
+    ASSERT_NE(nullptr, text);
+    EXPECT_STREQ("hello", text);
+    const auto textStringRow = query.getColumns<StringText, 1>();
+    EXPECT_EQ("hello", textStringRow.text);
+
+    EXPECT_FALSE(query.executeStep());
+}
+
 TEST(Statement, rowIteratorTraits)
 {
     using Iter = SQLite::Statement::RowIterator;

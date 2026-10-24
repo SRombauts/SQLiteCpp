@@ -339,3 +339,4 @@ Version 3.5.0 - 2026 ???
 - Fix supplied assertion handler signatures and cover handler-enabled builds (#602)
 - Fix custom assertion handlers in Meson builds (#604)
 - Instrument unit tests and examples in UBSan builds (#605)
+- Update bundled SQLite from 3.53.4 to 3.54.1 (2026-10-16) (#606)

@@ -171,7 +171,7 @@ int main()
         {
             // Demonstrates how to get some typed column value (and the equivalent explicit call)
             const int         id     = query.getColumn(0); // = query.getColumn(0).getInt();
-          //const char*       pvalue = query.getColumn(1); // = query.getColumn(1).getText();
+          //const char*       pvalue = query.getColumn(1); // = query.getColumn(1).getText(nullptr);
             const std::string value  = query.getColumn(1); // = query.getColumn(1).getText();
             const int         bytes  = query.getColumn(1).size(); // .getColumn(1).getBytes();
             const double      weight = query.getColumn(2); // = query.getColumn(2).getInt();

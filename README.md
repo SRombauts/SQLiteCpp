@@ -387,7 +387,7 @@ try
         const char* value   = query.getColumn(1);
         int         size    = query.getColumn(2);
 
-        std::cout << "row: " << id << ", " << value << ", " << size << std::endl;
+        std::cout << "row: " << id << ", " << (value ? value : "<NULL>") << ", " << size << std::endl;
     }
 }
 catch (std::exception& e)
@@ -395,6 +395,9 @@ catch (std::exception& e)
     std::cout << "exception: " << e.what() << std::endl;
 }
 ```
+
+The `const char*` conversion returns `nullptr` for SQL `NULL`, so check the pointer before streaming it.
+The pointer refers to the current row; copy the text if it must outlive the row.
 
 `Statement` also provides a `RowIterator`, so the loop above can be written as a range-based `for`:
 
@@ -405,7 +408,7 @@ for (auto&& row : query)
     const char* value   = row.getColumn(1);
     int         size    = row.getColumn(2);
 
-    std::cout << "row: " << id << ", " << value << ", " << size << std::endl;
+    std::cout << "row: " << id << ", " << (value ? value : "<NULL>") << ", " << size << std::endl;
 }
 ```
 

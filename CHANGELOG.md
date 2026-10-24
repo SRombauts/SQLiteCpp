@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix link errors in supplied assertion handlers and add handler-enabled CI coverage (#587)
 - Make column type constants usable in constant expressions (ABI change) (#609)
 - Restrict CMake package compatibility to the same major version (#610)
+- Preserve SQL NULL as nullptr in implicit `const char*` conversions; use `getText()` for the old fallback (#612)
 
 ### Removed
 

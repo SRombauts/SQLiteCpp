@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add source table-name accessors to Statement and Column (#594)
 - Add `std::string_view` binding and column access, with tests and documentation (#518) (#607)
+- Add `Column::getOptional<T>()` to preserve SQL NULL in typed column values (#614)
 
 ## [3.4.0] - 2026-09-21
 

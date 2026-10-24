@@ -19,6 +19,73 @@
 #include <stdint.h>
 
 
+TEST(Column, getOptional)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    ASSERT_EQ(0, db.exec("CREATE TABLE test (number INTEGER, amount REAL, text TEXT, data BLOB)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (NULL, NULL, NULL, NULL)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (0, 0.0, '', X'')"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (42, 1.5, 'A' || char(0) || 'B', X'410042')"));
+
+    // Read each SQLite result column through only one conversion path.
+    SQLite::Statement query(db,
+        "SELECT number, number, amount, text, text, data, data FROM test ORDER BY rowid");
+
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_FALSE(query.getColumn(0).getOptional<int>().has_value());
+    EXPECT_FALSE(query.getColumn(1).getOptional<int64_t>().has_value());
+    EXPECT_FALSE(query.getColumn(2).getOptional<double>().has_value());
+    EXPECT_FALSE(query.getColumn(3).getOptional<std::string>().has_value());
+    EXPECT_FALSE(query.getColumn(4).getOptional<std::string_view>().has_value());
+    EXPECT_FALSE(query.getColumn(5).getOptional<std::string>().has_value());
+    EXPECT_FALSE(query.getColumn(6).getOptional<const void*>().has_value());
+
+    ASSERT_TRUE(query.executeStep());
+    const auto zero = query.getColumn(0).getOptional<int>();
+    ASSERT_TRUE(zero.has_value());
+    EXPECT_EQ(0, *zero);
+    const auto zeroReal = query.getColumn(2).getOptional<double>();
+    ASSERT_TRUE(zeroReal.has_value());
+    EXPECT_DOUBLE_EQ(0.0, *zeroReal);
+    const auto emptyText = query.getColumn(3).getOptional<std::string>();
+    ASSERT_TRUE(emptyText.has_value());
+    EXPECT_TRUE(emptyText->empty());
+    const auto emptyPointer = query.getColumn(4).getOptional<const char*>();
+    ASSERT_TRUE(emptyPointer.has_value());
+    ASSERT_NE(nullptr, *emptyPointer);
+    EXPECT_STREQ("", *emptyPointer);
+    const auto emptyBlob = query.getColumn(5).getOptional<std::string_view>();
+    ASSERT_TRUE(emptyBlob.has_value());
+    EXPECT_TRUE(emptyBlob->empty());
+    const auto emptyBlobPointer = query.getColumn(6).getOptional<const void*>();
+    ASSERT_TRUE(emptyBlobPointer.has_value());
+    EXPECT_EQ(nullptr, *emptyBlobPointer);
+
+    ASSERT_TRUE(query.executeStep());
+    const auto number = query.getColumn(1).getOptional<int64_t>();
+    ASSERT_TRUE(number.has_value());
+    EXPECT_EQ(42, *number);
+    const auto amount = query.getColumn(2).getOptional<double>();
+    ASSERT_TRUE(amount.has_value());
+    EXPECT_DOUBLE_EQ(1.5, *amount);
+    const std::string embedded({'A', char(0), 'B'});
+    const auto text = query.getColumn(3).getOptional<std::string>();
+    ASSERT_TRUE(text.has_value());
+    EXPECT_EQ(embedded, *text);
+    const auto textView = query.getColumn(4).getOptional<std::string_view>();
+    ASSERT_TRUE(textView.has_value());
+    EXPECT_EQ(std::string_view(embedded), *textView);
+    const auto blob = query.getColumn(5).getOptional<std::string>();
+    ASSERT_TRUE(blob.has_value());
+    EXPECT_EQ(embedded, *blob);
+    const auto blobView = query.getColumn(6).getOptional<std::string_view>();
+    ASSERT_TRUE(blobView.has_value());
+    EXPECT_EQ(std::string_view(embedded), *blobView);
+
+    EXPECT_FALSE(query.executeStep());
+}
+
+
 TEST(Column, typeConstantsAsCaseLabels)
 {
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);

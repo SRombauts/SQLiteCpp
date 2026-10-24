@@ -365,6 +365,19 @@ until the parameter is rebound or the statement is finalized. Calling `reset()`
 does not release that binding. The view returned by `getStringView()` also
 borrows SQLite-owned memory; copy it if it must outlive the current row.
 
+### Owning and borrowing column values
+
+`Column::getString()` and `getOptional<std::string>()` return owning copies.
+For non-NULL columns, `getStringView()`, `getText(nullptr)`, and
+`getOptional<std::string_view>()` return non-owning views or pointers into
+SQLite-managed buffers. These avoid copies, but the data may be invalidated by
+column type conversions or by stepping, resetting, or finalizing the statement.
+
+`std::optional<T>` only preserves SQL NULL; it does not make `T` owning.
+This is similar to Rust's borrowed `&str` versus owned `String`, except C++
+does not enforce borrowing lifetimes at compile time. Use an owning type when
+the value must outlive the current SQLite result.
+
 ### The first sample demonstrates how to query a database and get results:
 
 ```C++

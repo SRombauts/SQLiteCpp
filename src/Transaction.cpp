@@ -46,46 +46,42 @@ Transaction::Transaction(Database &aDatabase) :
     mDatabase.exec("BEGIN TRANSACTION");
 }
 
-// Safely rollback the transaction if it has not been committed.
+// Safely rollback the transaction if it has not already been committed or rolled back.
 Transaction::~Transaction()
 {
-    if (false == mbCommited)
+    if (!mbFinished)
     {
-        try
-        {
-            mDatabase.exec("ROLLBACK TRANSACTION");
-        }
-        catch (...)
-        {
-            // Never throw an exception in a destructor: error if already rollbacked, but no harm is caused by this.
-        }
+        const int ret = mDatabase.tryExec("ROLLBACK TRANSACTION");
+        (void)ret;  // Avoid an unused-variable warning when assertions are disabled.
+        SQLITECPP_ASSERT(SQLITE_OK == ret, mDatabase.getErrorMsg());
     }
 }
 
 // Commit the transaction.
 void Transaction::commit()
 {
-    if (false == mbCommited)
+    if (!mbFinished)
     {
         mDatabase.exec("COMMIT TRANSACTION");
-        mbCommited = true;
+        mbFinished = true;
     }
     else
     {
-        throw SQLite::Exception("Transaction already committed.");
+        throw SQLite::Exception("Transaction already finished.");
     }
 }
 
 // Rollback the transaction
 void Transaction::rollback()
 {
-    if (false == mbCommited)
+    if (!mbFinished)
     {
         mDatabase.exec("ROLLBACK TRANSACTION");
+        mbFinished = true;
     }
     else
     {
-        throw SQLite::Exception("Transaction already committed.");
+        throw SQLite::Exception("Transaction already finished.");
     }
 }
 

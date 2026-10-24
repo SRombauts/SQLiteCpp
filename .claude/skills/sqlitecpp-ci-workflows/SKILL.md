@@ -77,3 +77,11 @@ Genuinely not worth chasing:
   portable test cannot reach without a real loadable extension binary.
 
 Cover the genuinely reachable lines and leave the rest.
+
+## Sanitizers
+
+- The Quality workflow runs separate Clang ASan and UBSan builds on Ubuntu.
+- UBSan compile instrumentation must cover SQLiteCpp, tests, and examples, including inline APIs.
+- Under CMake 3.5, PUBLIC compile options and a PUBLIC sanitizer link flag propagate through SQLiteCpp.
+  The UBSan job verifies compile commands and link commands before building.
+- Keep `UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1` so diagnostics fail CI.

@@ -338,3 +338,4 @@ Version 3.5.0 - 2026 ???
 - Add source table-name accessors to Statement and Column (#601)
 - Fix supplied assertion handler signatures and cover handler-enabled builds (#602)
 - Fix custom assertion handlers in Meson builds (#604)
+- Instrument unit tests and examples in UBSan builds (#605)

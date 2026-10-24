@@ -652,7 +652,7 @@ TEST(Database, hasSQLiteHeader)
     remove("test.db3");
 }
 
-TEST(Database, isUnencryptedHeaderCheck)
+TEST(Database, isUnencryptedReadability)
 {
     remove("test.db3");
     {
@@ -660,13 +660,41 @@ TEST(Database, isUnencryptedHeaderCheck)
         EXPECT_THROW(SQLite::Database::isUnencrypted(""), SQLite::Exception);
         EXPECT_THROW(SQLite::Database::isUnencrypted("test.db3"), SQLite::Exception);
 
-        // A real SQLite database file is reported as unencrypted
+        // A real SQLite database can be read without a key
         {
             SQLite::Database db("test.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
             db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
         }
         EXPECT_TRUE(SQLite::Database::isUnencrypted("test.db3"));
+
+        // Reproduce a plaintext header with unreadable (encrypted-like) contents.
+        // Only the first 32 bytes are genuine SQLite header bytes.
+        {
+            char prefix[32] = {};
+            std::ifstream plainDb("test.db3", std::ios::binary);
+            plainDb.read(prefix, sizeof(prefix));
+            ASSERT_EQ(static_cast<std::streamsize>(sizeof(prefix)), plainDb.gcount());
+
+            std::ofstream disguisedDb("plaintext-header.db3", std::ios::trunc | std::ios::binary);
+            disguisedDb.write(prefix, sizeof(prefix));
+            const std::string unreadableData(8192 - sizeof(prefix), static_cast<char>(0xa5));
+            disguisedDb.write(unreadableData.data(), static_cast<std::streamsize>(unreadableData.size()));
+            disguisedDb.close();
+
+            EXPECT_TRUE(SQLite::Database::hasSQLiteHeader("plaintext-header.db3"));
+            EXPECT_FALSE(SQLite::Database::isUnencrypted("plaintext-header.db3"));
+            remove("plaintext-header.db3");
+        }
         remove("test.db3");
+
+        // SQLite accepts a zero-byte file as an empty unencrypted database.
+        {
+            std::ofstream emptyDb("empty.db3", std::ios::trunc | std::ios::binary);
+            emptyDb.close();
+            EXPECT_FALSE(SQLite::Database::hasSQLiteHeader("empty.db3"));
+            EXPECT_TRUE(SQLite::Database::isUnencrypted("empty.db3"));
+            remove("empty.db3");
+        }
 
         // A file shorter than the 16-byte header must not match and must not crash
         {

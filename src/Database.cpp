@@ -327,7 +327,7 @@ bool Database::hasSQLiteHeader(const std::string& aFilename)
     return memcmp(header, "SQLite format 3\000", 16) == 0;
 }
 
-// Test if a file contains an unencrypted database.
+// Test whether SQLite can read the database schema without a key.
 bool Database::isUnencrypted(const std::string& aFilename)
 {
     if (aFilename.empty())
@@ -335,24 +335,25 @@ bool Database::isUnencrypted(const std::string& aFilename)
         throw SQLite::Exception("Could not open database, the aFilename parameter was empty.");
     }
 
-    std::ifstream fileBuffer(aFilename.c_str(), std::ios::in | std::ios::binary);
-    char header[16] = {};
-    if (fileBuffer.is_open())
+    Database db(aFilename, SQLite::OPEN_READONLY);
+    const int ret = db.tryExec("SELECT count(*) FROM sqlite_schema");
+
+    if (SQLITE_OK == ret)
     {
-        fileBuffer.seekg(0, std::ios::beg);
-        fileBuffer.read(header, 16);
-        fileBuffer.close();
-        if (fileBuffer.gcount() != 16)
-        {
-            return false;
-        }
-    }
-    else
-    {
-        throw SQLite::Exception("Error opening file: " + aFilename);
+        return true;
     }
 
-    return memcmp(header, "SQLite format 3\000", 16) == 0;
+    switch (ret & 0xff)
+    {
+    case SQLITE_NOTADB:
+    case SQLITE_CORRUPT:
+    case SQLITE_ERROR:
+        return false;
+
+    default:
+        db.check(ret);
+        return false; // Unreachable
+    }
 }
 
 // Parse header data from a database.

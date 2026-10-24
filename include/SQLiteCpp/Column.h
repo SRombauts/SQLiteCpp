@@ -24,11 +24,12 @@ struct sqlite3_stmt;
 namespace SQLite
 {
 
-SQLITECPP_API extern const int INTEGER;   ///< SQLITE_INTEGER
-SQLITECPP_API extern const int FLOAT;     ///< SQLITE_FLOAT
-SQLITECPP_API extern const int TEXT;      ///< SQLITE_TEXT
-SQLITECPP_API extern const int BLOB;      ///< SQLITE_BLOB
-SQLITECPP_API extern const int Null;      ///< SQLITE_NULL
+/// SQLite result type codes, usable in constant expressions without including sqlite3.h.
+inline constexpr int INTEGER = 1;   ///< SQLITE_INTEGER
+inline constexpr int FLOAT   = 2;   ///< SQLITE_FLOAT
+inline constexpr int TEXT    = 3;   ///< SQLITE_TEXT
+inline constexpr int BLOB    = 4;   ///< SQLITE_BLOB
+inline constexpr int Null    = 5;   ///< SQLITE_NULL
 
 /**
  * @brief Encapsulation of a Column in a row of the result pointed by the prepared Statement.

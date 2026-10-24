@@ -426,8 +426,7 @@ TEST(Statement, stringView)
     SQLite::Statement insert(db, "INSERT INTO test VALUES (NULL, ?, ?, ?, ?)");
 
     // Compile a SQL query to check the results
-    SQLite::Statement query(db, "SELECT * FROM test");
-    EXPECT_STREQ("SELECT * FROM test", query.getQuery().c_str());
+    SQLite::Statement query(db, "SELECT * FROM test ORDER BY id DESC LIMIT 1");
     EXPECT_EQ(5, query.getColumnCount());
 
     std::string_view sv1, sv2;
@@ -451,14 +450,14 @@ TEST(Statement, stringView)
         EXPECT_EQ(1, insert.exec());
         EXPECT_EQ(SQLITE_DONE, db.getErrorCode());
 
-        // Check result
+        // Reset before each SELECT: a running cursor is not required to see new inserts.
         // Note: memcmp returns 0 when n=0 (C11 -- 7.24.1.2)
-        query.executeStep();
-        EXPECT_TRUE(   query.hasRow());
-        EXPECT_FALSE(  query.getColumn(1).isNull());
+        query.reset();
+        ASSERT_TRUE(query.executeStep());
+        EXPECT_TRUE(   query.getColumn(1).isText());
         EXPECT_EQ(sv1, query.getColumn(1).getStringView());
         EXPECT_EQ(sv2, query.getColumn(2).getStringView());
-        EXPECT_FALSE(  query.getColumn(2).isNull());
+        EXPECT_TRUE(   query.getColumn(2).isText());
         EXPECT_EQ(sv1, query.getColumn(1).getString());
         EXPECT_EQ(sv2, query.getColumn(2).getString());
         EXPECT_EQ(sv1.size(), query.getColumn(1).getBytes());
@@ -467,10 +466,10 @@ TEST(Statement, stringView)
         EXPECT_EQ(sv2.size(), query.getColumn(2).getBytes());
         EXPECT_EQ(0, memcmp(sv2.data() == nullptr ? "" : sv2.data(),
                             query.getColumn(2).getText(), sv2.size()));
-        EXPECT_FALSE(  query.getColumn(3).isNull());
+        EXPECT_TRUE(   query.getColumn(3).isText());
         EXPECT_EQ(sv1, query.getColumn(3).getStringView());
         EXPECT_EQ(sv2, query.getColumn(4).getStringView());
-        EXPECT_FALSE(  query.getColumn(4).isNull());
+        EXPECT_TRUE(   query.getColumn(4).isText());
         EXPECT_EQ(sv1, query.getColumn(3).getString());
         EXPECT_EQ(sv2, query.getColumn(4).getString());
         EXPECT_EQ(sv1.size(), query.getColumn(3).getBytes());
@@ -508,8 +507,8 @@ TEST(Statement, stringView)
     insert2.bindNoCopy("@bin1", sv1);
     insert2.bindNoCopy(std::string("@bin2"), sv2);
     EXPECT_EQ(1, insert2.exec());
-    query.executeStep();
-    EXPECT_TRUE(query.hasRow());
+    query.reset();
+    ASSERT_TRUE(query.executeStep());
     EXPECT_TRUE(sv1 == query.getColumn(1).getStringView());
     EXPECT_TRUE(sv2 == query.getColumn(2).getStringView());
     EXPECT_TRUE(sv1 == query.getColumn(3).getStringView());

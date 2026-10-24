@@ -97,6 +97,7 @@ public:
     /**
      * @brief Return a pointer to the text value (NULL terminated string) of the column.
      *
+     * @param[in] apDefaultValue Value to return for SQL NULL (empty string by default, or nullptr if requested).
      * @warning The value pointed at is only valid while the statement is valid (ie. not finalized),
      *          thus you must copy it before using it beyond its scope (to a std::string for instance).
      */
@@ -221,13 +222,15 @@ public:
         return getDouble();
     }
     /**
-     * @brief Inline cast operator to char*
+     * @brief Convert to a text pointer, preserving SQL NULL as nullptr.
      *
+     * Unlike getText() without arguments, this does not replace NULL with an empty string.
+     * @warning The returned pointer is only valid while the statement data is valid.
      * @see getText
      */
     operator const char*() const
     {
-        return getText();
+        return getText(nullptr);
     }
     /**
      * @brief Inline cast operator to void*

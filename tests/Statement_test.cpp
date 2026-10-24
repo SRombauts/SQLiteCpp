@@ -1342,6 +1342,50 @@ TEST(Statement, getColumns)
     EXPECT_DOUBLE_EQ(0.0, testStruct2.real);
 }
 
+TEST(Statement, getColumnsNullableText)
+{
+    struct NullableText
+    {
+        const char* text;
+    };
+
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    ASSERT_EQ(0, db.exec("CREATE TABLE test (value TEXT)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES (NULL)"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES ('')"));
+    ASSERT_EQ(1, db.exec("INSERT INTO test VALUES ('hello')"));
+
+    SQLite::Statement query(db, "SELECT value FROM test ORDER BY rowid");
+
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_TRUE(query.getColumn(0).isNull());
+    const auto nullRow = query.getColumns<NullableText, 1>();
+    EXPECT_EQ(nullptr, nullRow.text);
+    const char* nullText = query.getColumn(0);
+    EXPECT_EQ(nullptr, nullText);
+    EXPECT_STREQ("", query.getColumn(0).getText()); // Keep the safe default.
+    EXPECT_EQ(nullptr, query.getColumn(0).getText(nullptr));
+
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_FALSE(query.getColumn(0).isNull());
+    const auto emptyRow = query.getColumns<NullableText, 1>();
+    ASSERT_NE(nullptr, emptyRow.text);
+    EXPECT_STREQ("", emptyRow.text);
+    const char* emptyText = query.getColumn(0);
+    ASSERT_NE(nullptr, emptyText);
+    EXPECT_STREQ("", emptyText);
+
+    ASSERT_TRUE(query.executeStep());
+    const auto textRow = query.getColumns<NullableText, 1>();
+    ASSERT_NE(nullptr, textRow.text);
+    EXPECT_STREQ("hello", textRow.text);
+    const char* text = query.getColumn(0);
+    ASSERT_NE(nullptr, text);
+    EXPECT_STREQ("hello", text);
+
+    EXPECT_FALSE(query.executeStep());
+}
+
 TEST(Statement, rowIteratorTraits)
 {
     using Iter = SQLite::Statement::RowIterator;

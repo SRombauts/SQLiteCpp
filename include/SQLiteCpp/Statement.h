@@ -326,7 +326,8 @@ public:
      *
      * The string can contain null characters as it is bound using its size.
      *
-     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remain unchanged while executing the statement.
+     * @warning Uses SQLITE_STATIC. Keep the data valid and unchanged until the parameter is
+     *          rebound or the statement is finalized. Resetting the statement does not clear bindings.
      */
     void bindNoCopy(const char* apName, const std::string_view aValue)
     {
@@ -476,7 +477,8 @@ public:
      *
      * The string can contain null characters as it is bound using its size.
      *
-     * @warning Uses the SQLITE_STATIC flag, avoiding a copy of the data. The string must remain unchanged while executing the statement.
+     * @warning Uses SQLITE_STATIC. Keep the data valid and unchanged until the parameter is
+     *          rebound or the statement is finalized. Resetting the statement does not clear bindings.
      */
     void bindNoCopy(const std::string& aName, const std::string_view aValue)
     {

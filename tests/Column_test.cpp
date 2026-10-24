@@ -215,6 +215,59 @@ TEST(Column, basis16)
     test_column_basis(true);
 }
 
+
+// Verify the actual SQLite storage types and byte lengths, including in UTF-16 databases.
+static void test_string_view_values(bool utf16)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    if (utf16)
+    {
+        EXPECT_EQ(0, db.exec("PRAGMA encoding = 'UTF-16'"));
+    }
+
+    EXPECT_EQ(0, db.exec("CREATE TABLE test (plain TEXT, embedded TEXT, data BLOB, nullval BLOB,"
+                         " emptyblob BLOB, emptytext TEXT)"));
+    SQLite::Statement insert(db, "INSERT INTO test VALUES (?, ?, ?, NULL, x'', '')");
+    const std::string utf8 = "caf\xC3\xA9";
+    const char embedded[] = {'A', '\0', 'B'};
+
+    insert.bind(1, std::string_view(utf8));
+    insert.bind(2, std::string_view(embedded, sizeof(embedded)));
+    insert.bind(3, embedded, static_cast<int>(sizeof(embedded))); // Bind as a real BLOB.
+    EXPECT_EQ(1, insert.exec());
+
+    SQLite::Statement query(db, "SELECT * FROM test");
+    ASSERT_TRUE(query.executeStep());
+
+    EXPECT_TRUE(query.getColumn(0).isText());
+    EXPECT_EQ(utf8, query.getColumn(0).getStringView());
+
+    EXPECT_TRUE(query.getColumn(1).isText());
+    EXPECT_EQ(std::string_view(embedded, sizeof(embedded)), query.getColumn(1).getStringView());
+
+    EXPECT_TRUE(query.getColumn(2).isBlob());
+    EXPECT_EQ(std::string_view(embedded, sizeof(embedded)), query.getColumn(2).getStringView());
+
+    EXPECT_TRUE(query.getColumn(3).isNull());
+    EXPECT_TRUE(query.getColumn(3).getStringView().empty());
+
+    EXPECT_TRUE(query.getColumn(4).isBlob());
+    EXPECT_TRUE(query.getColumn(4).getStringView().empty());
+
+    EXPECT_TRUE(query.getColumn(5).isText());
+    EXPECT_TRUE(query.getColumn(5).getStringView().empty());
+}
+
+TEST(Column, stringViewValues)
+{
+    test_string_view_values(false);
+}
+
+TEST(Column, stringViewValues16)
+{
+    test_string_view_values(true);
+}
+
 TEST(Column, getName)
 {
     // Create a new database

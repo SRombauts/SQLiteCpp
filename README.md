@@ -336,6 +336,35 @@ valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose b
 or uncoment the line at the end of [build.sh](build.sh)
 
 ## Examples
+
+### Using `std::string_view` (C++17)
+
+Binding a string view copies exactly its bytes, even if the view is not null-terminated:
+
+```C++
+SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+db.exec("CREATE TABLE messages (value TEXT)");
+
+const std::string source = "prefix:hello:suffix";
+const std::string_view part(source.data() + 7, 5); // "hello", without a terminator
+
+SQLite::Statement insert(db, "INSERT INTO messages (value) VALUES (?)");
+insert.bind(1, part); // SQLite copies the five bytes
+insert.exec();
+
+SQLite::Statement query(db, "SELECT value FROM messages");
+if (query.executeStep())
+{
+    const std::string_view value = query.getColumn(0).getStringView();
+    // Use value while the row is active, or copy it before stepping/resetting.
+}
+```
+
+`bindNoCopy()` avoids the copy, but the backing data must stay valid and unchanged
+until the parameter is rebound or the statement is finalized. Calling `reset()`
+does not release that binding. The view returned by `getStringView()` also
+borrows SQLite-owned memory; copy it if it must outlive the current row.
+
 ### The first sample demonstrates how to query a database and get results:
 
 ```C++

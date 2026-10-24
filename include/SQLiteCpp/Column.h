@@ -108,8 +108,9 @@ public:
      */
     const void* getBlob() const noexcept;
     /**
-     * @brief Return a non-owning view of the UTF-8 bytes in a TEXT or BLOB column.
+     * @brief Return a non-owning byte view of a TEXT or BLOB column.
      *
+     * TEXT is returned as UTF-8; BLOB bytes are unchanged.
      * Preserves embedded NUL bytes. SQL NULL and empty values both return an empty view;
      * use isNull() to distinguish them.
      *

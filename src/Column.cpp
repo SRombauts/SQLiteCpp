@@ -17,11 +17,11 @@
 namespace SQLite
 {
 
-const int INTEGER   = SQLITE_INTEGER;
-const int FLOAT     = SQLITE_FLOAT;
-const int TEXT      = SQLITE_TEXT;
-const int BLOB      = SQLITE_BLOB;
-const int Null      = SQLITE_NULL;
+static_assert(INTEGER == SQLITE_INTEGER, "SQLite::INTEGER must match SQLITE_INTEGER");
+static_assert(FLOAT == SQLITE_FLOAT, "SQLite::FLOAT must match SQLITE_FLOAT");
+static_assert(TEXT == SQLITE_TEXT, "SQLite::TEXT must match SQLITE_TEXT");
+static_assert(BLOB == SQLITE_BLOB, "SQLite::BLOB must match SQLITE_BLOB");
+static_assert(Null == SQLITE_NULL, "SQLite::Null must match SQLITE_NULL");
 
 
 // Encapsulation of a Column in a row of the result pointed by the prepared Statement.

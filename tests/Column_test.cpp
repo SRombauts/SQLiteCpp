@@ -19,6 +19,41 @@
 #include <stdint.h>
 
 
+TEST(Column, typeConstantsAsCaseLabels)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    SQLite::Statement query(db, "SELECT 42, 1.5, 'text', X'1234', NULL");
+
+    ASSERT_TRUE(query.executeStep());
+    ASSERT_EQ(5, query.getColumnCount());
+
+    // Each label must be a constant expression, and each code must match SQLite's runtime type.
+    for (int i = 0; i < query.getColumnCount(); ++i)
+    {
+        switch (query.getColumn(i).getType())
+        {
+            case SQLite::INTEGER:
+                EXPECT_EQ(0, i);
+                break;
+            case SQLite::FLOAT:
+                EXPECT_EQ(1, i);
+                break;
+            case SQLite::TEXT:
+                EXPECT_EQ(2, i);
+                break;
+            case SQLite::BLOB:
+                EXPECT_EQ(3, i);
+                break;
+            case SQLite::Null:
+                EXPECT_EQ(4, i);
+                break;
+            default:
+                FAIL() << "Unexpected type for column " << i;
+        }
+    }
+}
+
+
 static void test_column_basis(bool utf16)
 {
     // Create a new database

@@ -1119,6 +1119,148 @@ TEST(Statement, getColumnTableNameAfterReprepare)
 }
 #endif
 
+
+TEST(Statement, columnNamesAfterReprepare)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    db.exec("CREATE TABLE source (a INTEGER, b INTEGER)");
+    db.exec("INSERT INTO source VALUES (11, 22)");
+    db.exec("CREATE VIEW selected AS SELECT a AS first, b AS second FROM source");
+
+    SQLite::Statement query(db, "SELECT * FROM selected");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_EQ(2, query.getColumnCount());
+    EXPECT_EQ(0, query.getColumnIndex("first"));
+    EXPECT_EQ(1, query.getColumnIndex("second"));
+    EXPECT_EQ(11, query.getColumn("first").getInt());
+    EXPECT_EQ(22, query.getColumn("second").getInt());
+    query.reset();
+
+    // Same columns, different indexes: the cached name-to-index mapping must be replaced.
+    db.exec("DROP VIEW selected");
+    db.exec("CREATE VIEW selected AS SELECT b AS second, a AS first FROM source");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_EQ(2, query.getColumnCount());
+    EXPECT_EQ(1, query.getColumnIndex("first"));
+    EXPECT_EQ(0, query.getColumnIndex("second"));
+    EXPECT_EQ(11, query.getColumn("first").getInt());
+    EXPECT_EQ(22, query.getColumn("second").getInt());
+    query.reset();
+
+    // Same count, different names: obsolete names must no longer be accepted.
+    db.exec("DROP VIEW selected");
+    db.exec("CREATE VIEW selected AS SELECT b AS second, NULL AS added FROM source");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_EQ(2, query.getColumnCount());
+    EXPECT_THROW(query.getColumnIndex("first"), SQLite::Exception);
+    EXPECT_THROW(query.getColumn("first"), SQLite::Exception);
+    EXPECT_EQ(0, query.getColumnIndex("second"));
+    EXPECT_EQ(1, query.getColumnIndex("added"));
+    EXPECT_EQ(22, query.getColumn("second").getInt());
+    EXPECT_FALSE(query.isColumnNull("second"));
+    EXPECT_TRUE(query.isColumnNull("added"));
+}
+
+TEST(Statement, columnCountAfterReprepare)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    db.exec("CREATE TABLE source (a INTEGER, b INTEGER)");
+    db.exec("INSERT INTO source VALUES (11, 22)");
+    db.exec("CREATE VIEW selected AS SELECT a FROM source");
+
+    SQLite::Statement query(db, "SELECT * FROM selected");
+    ASSERT_EQ(SQLITE_ROW, query.tryExecuteStep());
+    EXPECT_EQ(1, query.getColumnCount());
+    EXPECT_EQ(11, query.getColumn(0).getInt());
+    query.reset();
+
+    db.exec("DROP VIEW selected");
+    db.exec("CREATE VIEW selected AS SELECT a, b, NULL AS extra FROM source");
+    ASSERT_EQ(SQLITE_ROW, query.tryExecuteStep());
+    EXPECT_EQ(3, query.getColumnCount());
+    EXPECT_STREQ("extra", query.getColumnName(2));
+    EXPECT_EQ(1, query.getColumnIndex("b"));
+    EXPECT_TRUE(query.isColumnNull(2));
+    EXPECT_THROW(query.getColumn(3), SQLite::Exception);
+    query.reset();
+
+    db.exec("DROP VIEW selected");
+    db.exec("CREATE VIEW selected AS SELECT b AS only FROM source");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_EQ(1, query.getColumnCount());
+    EXPECT_STREQ("only", query.getColumnName(0));
+    EXPECT_EQ(22, query.getColumn(0).getInt());
+    EXPECT_THROW(query.getColumn(1), SQLite::Exception);
+    EXPECT_THROW(query.isColumnNull(1), SQLite::Exception);
+    EXPECT_THROW(query.getColumnName(1), SQLite::Exception);
+    EXPECT_THROW(query.getColumnIndex("b"), SQLite::Exception);
+}
+
+TEST(Statement, columnMetadataAfterReprepareWithoutRows)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    db.exec("CREATE TABLE source (a INTEGER, b INTEGER)");
+    db.exec("INSERT INTO source VALUES (11, 22)");
+    db.exec("CREATE VIEW selected AS SELECT a FROM source");
+
+    SQLite::Statement query(db, "SELECT * FROM selected");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_EQ(0, query.getColumnIndex("a"));
+    query.reset();
+
+    db.exec("DROP VIEW selected");
+    db.exec("CREATE VIEW selected AS SELECT a, b FROM source WHERE 0");
+    EXPECT_EQ(SQLITE_DONE, query.tryExecuteStep());
+    EXPECT_TRUE(query.isDone());
+    EXPECT_FALSE(query.hasRow());
+    EXPECT_EQ(2, query.getColumnCount());
+    EXPECT_STREQ("b", query.getColumnName(1));
+    EXPECT_EQ(1, query.getColumnIndex("b"));
+    EXPECT_THROW(query.getColumn(1), SQLite::Exception);
+    query.reset();
+
+    db.exec("DROP VIEW selected");
+    db.exec("CREATE VIEW selected AS SELECT b AS only FROM source");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_EQ(1, query.getColumnCount());
+    EXPECT_EQ(22, query.getColumn("only").getInt());
+    EXPECT_THROW(query.getColumnIndex("b"), SQLite::Exception);
+}
+
+TEST(Statement, reprepareAfterMove)
+{
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    db.exec("CREATE TABLE source (a INTEGER, b INTEGER)");
+    db.exec("INSERT INTO source VALUES (11, 22)");
+    db.exec("CREATE VIEW selected AS SELECT a FROM source");
+
+    SQLite::Statement query(db, "SELECT * FROM selected");
+    ASSERT_TRUE(query.executeStep());
+    EXPECT_EQ(0, query.getColumnIndex("a"));
+    query.reset();
+
+    SQLite::Statement moved(std::move(query));
+    EXPECT_EQ(SQLITE_MISUSE, query.tryExecuteStep());
+
+    db.exec("DROP VIEW selected");
+    db.exec("CREATE VIEW selected AS SELECT b AS only, a FROM source");
+    ASSERT_TRUE(moved.executeStep());
+    EXPECT_EQ(2, moved.getColumnCount());
+    EXPECT_EQ(22, moved.getColumn("only").getInt());
+    EXPECT_EQ(11, moved.getColumn("a").getInt());
+
+    // Move again after the reprepare counter has advanced, then reprepare once more.
+    moved.reset();
+    SQLite::Statement movedAgain(std::move(moved));
+    EXPECT_EQ(SQLITE_MISUSE, moved.tryExecuteStep());
+    db.exec("DROP VIEW selected");
+    db.exec("CREATE VIEW selected AS SELECT a FROM source");
+    ASSERT_TRUE(movedAgain.executeStep());
+    EXPECT_EQ(1, movedAgain.getColumnCount());
+    EXPECT_EQ(11, movedAgain.getColumn("a").getInt());
+    EXPECT_THROW(movedAgain.getColumnIndex("only"), SQLite::Exception);
+}
+
 TEST(Statement, getColumnDeclaredType)
 {
     // Create a new database

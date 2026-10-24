@@ -44,12 +44,14 @@ Statement::Statement(Statement&& aStatement) noexcept :
     mpSQLite(aStatement.mpSQLite),
     mpPreparedStatement(std::move(aStatement.mpPreparedStatement)),
     mColumnCount(aStatement.mColumnCount),
+    mReprepareCount(aStatement.mReprepareCount),
     mbHasRow(aStatement.mbHasRow),
     mbDone(aStatement.mbDone),
     mColumnNames(std::move(aStatement.mColumnNames))
 {
     aStatement.mpSQLite = nullptr;
     aStatement.mColumnCount = 0;
+    aStatement.mReprepareCount = 0;
     aStatement.mbHasRow = false;
     aStatement.mbDone = false;
 }
@@ -244,7 +246,20 @@ int Statement::tryExecuteStep() noexcept
         return SQLITE_MISUSE; // Statement needs to be reseted !
     }
 
-    const int ret = sqlite3_step(mpPreparedStatement.get());
+    sqlite3_stmt* const pStmt = mpPreparedStatement.get();
+    const int ret = sqlite3_step(pStmt);
+    // sqlite3_step() may automatically reprepare the statement after a schema change.
+    // sqlite3_stmt_status() requires a non-null statement (unlike sqlite3_step()).
+    if (pStmt)
+    {
+        const int reprepareCount = sqlite3_stmt_status(pStmt, SQLITE_STMTSTATUS_REPREPARE, 0);
+        if (reprepareCount != mReprepareCount)
+        {
+            mReprepareCount = reprepareCount;
+            mColumnCount = sqlite3_column_count(pStmt);
+            mColumnNames.clear();
+        }
+    }
     if (SQLITE_ROW == ret) // one row is ready : call getColumn(N) to access it
     {
         mbHasRow = true;

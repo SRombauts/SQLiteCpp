@@ -780,7 +780,9 @@ public:
     // Return a UTF-8 string containing the SQL text of prepared statement with bound parameters expanded.
     std::string getExpandedSQL() const;
 
-    /// Return the number of columns in the result set returned by the prepared statement
+    /// Return the number of columns in the prepared statement's result set.
+    /// @note After a schema change, the count may remain stale until the next executeStep() or tryExecuteStep()
+    ///       automatically reprepares the statement.
     int getColumnCount() const
     {
         return mColumnCount;
@@ -931,6 +933,7 @@ private:
     sqlite3*                mpSQLite;               //!< Pointer to SQLite Database Connection Handle
     TStatementPtr           mpPreparedStatement;    //!< Shared Pointer to the prepared SQLite Statement Object
     int                     mColumnCount = 0;       //!< Number of columns in the result of the prepared statement
+    int                     mReprepareCount = 0;    //!< Last observed automatic-reprepare counter
     bool                    mbHasRow = false;       //!< true when a row has been fetched with executeStep()
     bool                    mbDone = false;         //!< true when the last executeStep() had no more row to fetch
 

@@ -351,8 +351,7 @@ bool Database::isReadableWithoutKey(const std::string& aFilename)
         return false;
 
     default:
-        db.check(ret);
-        return false; // Unreachable
+        throw SQLite::Exception(db.getHandle(), ret);
     }
 }
 

@@ -725,6 +725,59 @@ TEST(Database, isReadableWithoutKey)
     remove("test.db3");
 }
 
+TEST(Database, isReadableWithoutKeyErrors)
+{
+    remove("unreadable.db3");
+    {
+        SQLite::Database db("unreadable.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY)");
+
+        // A lock is an operational error, not evidence of encryption.
+        db.exec("BEGIN EXCLUSIVE");
+        try
+        {
+            (void)SQLite::Database::isReadableWithoutKey("unreadable.db3");
+            FAIL() << "Expected SQLITE_BUSY";
+        }
+        catch (const SQLite::Exception& e)
+        {
+            EXPECT_EQ(SQLITE_BUSY, e.getErrorCode());
+        }
+        db.exec("ROLLBACK");
+    }
+
+    // An invalid b-tree page is corrupt even with a valid file signature.
+    {
+        std::fstream file("unreadable.db3", std::ios::in | std::ios::out | std::ios::binary);
+        ASSERT_TRUE(file.is_open());
+        file.seekp(100, std::ios::beg);
+        const char invalidPageType = 0;
+        file.write(&invalidPageType, 1);
+    }
+    EXPECT_TRUE(SQLite::Database::hasSQLiteHeader("unreadable.db3"));
+    {
+        SQLite::Database db("unreadable.db3", SQLite::OPEN_READONLY);
+        EXPECT_EQ(SQLITE_CORRUPT, db.tryExec("SELECT count(*) FROM sqlite_schema"));
+    }
+    EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("unreadable.db3"));
+    remove("unreadable.db3");
+
+    // An unsupported SQLite schema format also makes the schema unreadable.
+    {
+        SQLite::Database db("unreadable.db3", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        db.exec("CREATE TABLE test (id INTEGER PRIMARY KEY)");
+    }
+    {
+        std::fstream file("unreadable.db3", std::ios::in | std::ios::out | std::ios::binary);
+        ASSERT_TRUE(file.is_open());
+        file.seekp(47, std::ios::beg);
+        const char unsupportedFormat = 15;
+        file.write(&unsupportedFormat, 1);
+    }
+    EXPECT_FALSE(SQLite::Database::isReadableWithoutKey("unreadable.db3"));
+    remove("unreadable.db3");
+}
+
 TEST(Database, keyAndRekeyValidateBufferArguments)
 {
     SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
